@@ -8,6 +8,8 @@ export function createUbiquitySvg(): SVGElement {
   const svgElement = svgDoc.documentElement.cloneNode(true) as SVGElement;
 
   svgElement.id = "logo";
+  svgElement.setAttribute("role", "img");
+  svgElement.setAttribute("aria-label", "Ubiquity DAO logo");
   svgElement.setAttribute("fill", "currentColor");
   svgElement.setAttribute("viewBox", "0 0 132 151");
 
