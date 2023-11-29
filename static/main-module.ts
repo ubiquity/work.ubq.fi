@@ -59,6 +59,12 @@ async function fetchIssues(container: HTMLDivElement) {
 
     const octokit = new Octokit();
 
+    try {
+      const { data: rateLimit } = await octokit.request("GET /rate_limit");
+      console.log("Rate limit remaining: ", rateLimit.rate.remaining);
+    } catch (error) {
+      console.error(error);
+    }
     const freshIssues = (await octokit.paginate("GET /repos/ubiquity/devpool-directory/issues", {
       state: "open",
     })) as GitHubIssue[];
@@ -67,6 +73,7 @@ async function fetchIssues(container: HTMLDivElement) {
     const sortedIssuesByPriority = sortIssuesByPriority(sortedIssuesByTime);
     displayIssues(container, sortedIssuesByPriority);
   } catch (error) {
-    container.innerHTML = `<p>Error loading issues: ${error}</p>`;
+    console.error(error);
+    // container.innerHTML = `<p>Error loading issues: ${error}</p>`;
   }
 }

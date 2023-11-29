@@ -1,15 +1,14 @@
 import { GitHubIssue } from "../github-types";
 
-window.addEventListener("scroll", updateScale);
-updateScale();
-
 export function displayIssues(container: HTMLDivElement, issues: GitHubIssue[]) {
+  const avatarCache: Record<string, string> = JSON.parse(localStorage.getItem("avatarCache") || "{}");
+  const fetchInProgress = new Set(); // Track in-progress fetches
   const existingIssueIds = new Set(Array.from(container.querySelectorAll(".issue-element-inner")).map((element) => element.getAttribute("data-issue-id")));
 
   let delay = 0;
   const baseDelay = 1000 / 15; // Base delay in milliseconds
 
-  issues.forEach((issue) => {
+  issues.forEach(async (issue) => {
     if (!existingIssueIds.has(issue.id.toString())) {
       const issueWrapper = document.createElement("div");
       const issueElement = document.createElement("div");
@@ -72,57 +71,31 @@ export function displayIssues(container: HTMLDivElement, issues: GitHubIssue[]) 
 
       // Set the issueWrapper background-image to the organization's avatar
       if (organizationName) {
-        fetch(`https://api.github.com/orgs/${organizationName}`)
-          .then((response) => response.json())
-          .then((data) => {
+        const cachedAvatar = avatarCache[organizationName];
+        if (cachedAvatar) {
+          issueWrapper.style.backgroundImage = `url("${cachedAvatar}")`;
+        } else if (!fetchInProgress.has(organizationName)) {
+          // Mark this organization's avatar as being fetched
+          fetchInProgress.add(organizationName);
+
+          try {
+            const response = await fetch(`https://api.github.com/orgs/${organizationName}`);
+            const data = await response.json();
             if (data && data.avatar_url) {
+              avatarCache[organizationName] = data.avatar_url;
+              localStorage.setItem("avatarCache", JSON.stringify(avatarCache));
               issueWrapper.style.backgroundImage = `url("${data.avatar_url}")`;
             }
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+          } catch (error) {
+            console.error("Error fetching avatar:", error);
+          } finally {
+            // Fetch is complete, remove from the in-progress set
+            fetchInProgress.delete(organizationName);
+          }
+        }
       }
 
       container.appendChild(issueWrapper);
-    }
-  });
-}
-function updateScale() {
-  const viewportHeight = window.innerHeight;
-  const elements = Array.from(document.querySelectorAll(".issue-element-wrapper"));
-
-  elements.forEach((element) => {
-    const bounds = element.getBoundingClientRect();
-    const elementBottom = bounds.bottom; // Get the bottom position of the element
-
-    let scale;
-
-    const OFFSET = (viewportHeight - 32) / viewportHeight;
-
-    if (elementBottom <= viewportHeight * OFFSET) {
-      // If the bottom of the element is above the bottom of the viewport, it's at full scale
-      scale = 1;
-    } else {
-      // Calculate the distance from the bottom of the viewport
-      const distanceFromBottom = elementBottom - viewportHeight;
-      // Normalize the distance based on the height of the viewport
-      const distanceRatio = distanceFromBottom / viewportHeight;
-
-      // The scale decreases linearly from the bottom of the viewport to the bottom edge of the element
-      scale = OFFSET - distanceRatio;
-      // Ensure the scale does not go below 0.5
-      scale = Math.max(scale, 0.5);
-    }
-
-    //   element.style.transform = `scale(${scale}) translateX(${- scale}vw)`;
-    // element.style.filter = `blur(${blurValue}px)`;
-
-    // Add "active" class to elements that are fully scaled
-    if (scale === 1) {
-      element.classList.add("active");
-    } else {
-      element.classList.remove("active");
     }
   });
 }
