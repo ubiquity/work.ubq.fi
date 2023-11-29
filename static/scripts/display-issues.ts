@@ -53,23 +53,42 @@ export function displayIssues(container: HTMLDivElement, issues: GitHubIssue[]) 
       const labels = filteredLabels.map((label) => {
         // Remove the prefix from the label name
         const name = label.name.replace(/(Time|Pricing|Priority): /, "");
+        if(label.name.startsWith("Pricing: ")){
+            return `<div class="label pricing">${name}</div>`;
+        } else {
+            return `<div class="label">${name}</div>`;
 
-        return `<div class="label">${name}</div>`;
+        }
       });
 
       issueElement.innerHTML = `
-      <div class="info"><div class="labels">${labels.join("")}</div><div class="partner"><p class="organization-name">${organizationName}</p><p class="repository-name">${repositoryName}</p></div></div>
+      <div class="info"><div class="labels">${labels.join(
+        ""
+      )}</div><div class="partner"><p class="organization-name">${organizationName}</p><p class="repository-name">${repositoryName}</p></div></div>
       <div class="title"><h3>${issue.title}</h3></div>
       `;
 
       issueElement.addEventListener("click", () => {
         console.log(issue);
-
         //   console.log(foundUrls);
         //   window.open(foundUrls?.shift(), "_blank");
       });
 
       issueWrapper.appendChild(issueElement);
+
+      // Set the issueWrapper background-image to the organization's avatar
+      if (organizationName) {
+        fetch(`https://api.github.com/orgs/${organizationName}`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data && data.avatar_url) {
+              issueWrapper.style.backgroundImage = `url("${data.avatar_url}")`;
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
 
       // Append the issue element after the delay
       setTimeout(() => {
