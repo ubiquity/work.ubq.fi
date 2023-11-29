@@ -4,22 +4,27 @@ export async function mainModule() {
   await fetchIssues();
 
   async function fetchIssues() {
-    function sortIssuesByComments(issues: GitHubIssue[]) {
-      return issues.sort((a, b) => b.comments - a.comments);
-    }
-    const container = document.getElementById("issues-container");
+    const container = document.getElementById('issues-container');
     if (!container) {
-      throw new Error("No issues container found");
+      throw new Error('Could not find issues container');
     }
-
-    container.innerHTML = "<p>Loading issues...</p>";
+    container.innerHTML = '<p>Loading issues...</p>';
 
     try {
-      const response = await fetch("https://api.github.com/repos/ubiquity/devpool-directory/issues");
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+      const cachedIssues = localStorage.getItem('githubIssues');
+      let issues;
+
+      if (cachedIssues) {
+        issues = JSON.parse(cachedIssues);
+      } else {
+        const response = await fetch('https://api.github.com/repos/ubiquity/devpool-directory/issues');
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+        issues = await response.json();
+        localStorage.setItem('githubIssues', JSON.stringify(issues));
       }
-      const issues = await response.json();
+
       const sortedIssues = sortIssuesByComments(issues);
       displayIssues(sortedIssues);
     } catch (error) {
@@ -38,6 +43,19 @@ export async function mainModule() {
       container?.appendChild(issueElement);
     });
   }
+
+  function sortIssuesByComments(issues: GitHubIssue[]) {
+    return issues.sort((a, b) => {
+      if (a.comments > b.comments) {
+        return -1;
+      }
+      if (a.comments < b.comments) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+
 }
 mainModule()
   .then(() => {
