@@ -54,6 +54,13 @@ body {
   /* border-left: 1px solid; */
 }
 
+#issues-container * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 #issues-container > div:first-child {
   border-top: 1px solid #80808040;
 }
@@ -77,9 +84,11 @@ body {
   opacity: 1 !important;
   border-left: 4px solid #808080;
   padding-left: 13px;
+  /* background: #80808020; */
 }
 #issues-container > div:active {
   border-left: 4px solid #fff;
+  background: #80808020;
 }
 
 h3 {
@@ -98,7 +107,7 @@ p {
   text-align: right;
   letter-spacing: 0.5px;
   text-rendering: geometricPrecision;
-  position: absolute;
+  /* position: absolute; */
   top: 0;
   right: 0;
 }
@@ -111,9 +120,42 @@ p {
 p.organization-name {
   /* margin-bottom: 12px; */
   opacity: 0.5;
-  transform: translateY(-50%);
+  /* transform: translateY(-50%); */
+  display: inline-block;
 }
 p.repository-name {
   /* margin-top: 12px; */
-  transform: translateY(50%);
+  /* transform: translateY(50%); */
+  display: inline-block;
+  margin-left: 2px;
+}
+.labels > .label:first-child {
+  margin-left: 0;
+}
+.labels > .label {
+  display: inline-block;
+  padding: 4px 6px;
+  border-radius: 4px;
+  margin: 8px 4px 0px;
+  font-size: 12px;
+  /* font-weight: 400; */
+  /* line-height: 1; */
+  text-align: center;
+  white-space: nowrap;
+  /* vertical-align: baseline; */
+  background-color: #80808040;
+  /* color: #fff; */
+  /* text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25); */
+  /* cursor: pointer; */
+  width: 64px;
+  letter-spacing: 0.5px;
+}
+.labels {
+  text-align: right;
+}
+
+.partner {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
