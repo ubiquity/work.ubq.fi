@@ -26,7 +26,7 @@ body {
   from {
     opacity: 0;
     /* background-color: #fff; */
-    filter: blur(16px);
+    filter: blur(48px);
     margin-left: 100vw;
   }
   to {
@@ -52,6 +52,9 @@ body {
   /* border-radius: 8px; */
   padding: 8px;
   /* border-left: 1px solid; */
+  max-width: 640px;
+  margin: auto;
+  border-left: 1px solid #80808010;
 }
 
 #issues-container * {
@@ -71,14 +74,16 @@ body {
   border-bottom: none;
 } */
 #issues-container > div {
-  padding: 8px 16px;
+  padding: 0 16px;
   border-bottom: 1px solid #80808040;
   /* opacity: 0.875 */
   /* margin: 24px auto; */
   /* line-height: 1; */
   overflow: hidden;
   border-left: 1px solid #80808040;
+  border-right: 1px solid #80808040;
   cursor: pointer;
+  /* width: 640px; */
 }
 #issues-container > div:hover {
   opacity: 1 !important;
@@ -92,11 +97,16 @@ body {
 }
 
 h3 {
-  margin: auto;
+  margin: 12px;
   line-height: 1;
-  white-space: pre;
+  /* white-space: pre; */
   font-size: 16px;
   /* font-weight: 100; */
+  /* text-align: left; */
+  /* display: inline-block; */
+  /* vertical-align: middle; */
+  text-overflow: ellipsis;
+  vertical-align: middle;
 }
 
 p {
@@ -113,8 +123,11 @@ p {
 }
 
 .issue-element-inner {
-  margin: 12px auto;
+  /* margin: 24px auto; */
   position: relative;
+  text-align: left;
+  display: flex;
+  padding: 12px 0px;
 }
 
 p.organization-name {
@@ -136,7 +149,7 @@ p.repository-name {
   display: inline-block;
   padding: 4px 6px;
   border-radius: 4px;
-  margin: 8px 4px 0px;
+  margin: 0px 4px 0px;
   font-size: 12px;
   /* font-weight: 400; */
   /* line-height: 1; */
@@ -149,13 +162,44 @@ p.repository-name {
   /* cursor: pointer; */
   width: 64px;
   letter-spacing: 0.5px;
+  flex-grow: 3;
 }
 .labels {
   text-align: right;
+  display: inline-block;
+  display: flex;
 }
 
 .partner {
-  position: absolute;
-  top: 0;
-  right: 0;
+  /* position: absolute; */
+  bottom: 0;
+  text-align: right;
+  margin: 4px 4px 0;
+}
+
+body {
+  text-align: center;
+}
+.info {
+  /* position: absolute; */
+  /* top: 0; */
+  /* right: 0; */
+  /* transform: translateY(-25%); */
+  /* padding: 10px; */
+  /* z-index: -1; */
+  /* width: 248px; */
+  /* display: inline-block; */
+}
+
+.title {
+  /* padding: 24px; */
+  /* display: inline-block; */
+  /* text-align: left; */
+  /* position: absolute; */
+  /* background: #ffffff10; */
+  /* z-index: 1; */
+  /* backdrop-filter: blur(4px); */
+  /* flex-grow: 1; */
+  /* vertical-align: middle; */
+  display: flex;
 }
