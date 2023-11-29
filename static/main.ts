@@ -1,8 +1,10 @@
+import { GitHubIssue } from "./github-types";
+
 export async function mainModule() {
   await fetchIssues();
 
   async function fetchIssues() {
-    function sortIssuesByComments(issues: any[]) {
+    function sortIssuesByComments(issues: GitHubIssue[]) {
       return issues.sort((a, b) => b.comments - a.comments);
     }
     const container = document.getElementById("issues-container");
@@ -25,7 +27,7 @@ export async function mainModule() {
     }
   }
 
-  function displayIssues(issues: any[]) {
+  function displayIssues(issues: GitHubIssue[]) {
     const container = document.getElementById("issues-container");
     issues.forEach((issue) => {
       const issueElement = document.createElement("div");
