@@ -10,9 +10,9 @@ import { esBuildContext } from "./esbuild-build";
 
 export async function server() {
   const _context = await esbuild.context(esBuildContext);
-  const url = await _context.serve({
+  const { port } = await _context.serve({
     servedir: "static",
     port: 8080,
   });
-  console.log(`http://localhost:${url.port}`);
+  console.log(`http://localhost:${port}`);
 }
