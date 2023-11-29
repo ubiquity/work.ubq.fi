@@ -7,42 +7,66 @@ export async function mainModule() {
   if (!container) {
     throw new Error("Could not find issues container");
   }
-  await fetchIssues();
+  await fetchIssues(container);
+}
 
-  async function fetchIssues() {
-    try {
-      const cachedIssues = localStorage.getItem("githubIssues");
+function sortIssuesByPriority(issues: GitHubIssue[]) {
+  return issues.sort((a, b) => {
+    const priorityRegex = /Priority: (\d+)/;
+    const aPriorityMatch = a.labels.find((label) => priorityRegex.test(label.name));
+    const bPriorityMatch = b.labels.find((label) => priorityRegex.test(label.name));
+    const aPriority = aPriorityMatch ? parseInt(aPriorityMatch.name.match(priorityRegex)![1], 10) : 0;
+    const bPriority = bPriorityMatch ? parseInt(bPriorityMatch.name.match(priorityRegex)![1], 10) : 0;
+    return bPriority - aPriority;
+  });
+}
 
-      if (cachedIssues) {
-        try {
-          const issues = JSON.parse(cachedIssues);
-          const sortedIssues = sortIssuesByComments(issues);
-          displayIssues(container, sortedIssues);
-        } catch (error) {
-          console.error(error);
-        }
+function sortIssuesByTime(issues: GitHubIssue[]) {
+  return issues.sort((a, b) => {
+    const aTimeValue = a.labels.reduce((acc, label) => acc + calculateLabelValue(label.name), 0);
+    const bTimeValue = b.labels.reduce((acc, label) => acc + calculateLabelValue(label.name), 0);
+    return bTimeValue - aTimeValue;
+  });
+}
+
+export function calculateLabelValue(label: string): number {
+  const matches = label.match(/\d+/);
+  const number = matches && matches.length > 0 ? parseInt(matches[0]) || 0 : 0;
+  if (label.toLowerCase().includes("priority")) return number;
+  // throw new Error(`Label ${label} is not a priority label`);
+  if (label.toLowerCase().includes("minute")) return number * 0.002;
+  if (label.toLowerCase().includes("hour")) return number * 0.125;
+  if (label.toLowerCase().includes("day")) return 1 + (number - 1) * 0.25;
+  if (label.toLowerCase().includes("week")) return number + 1;
+  if (label.toLowerCase().includes("month")) return 5 + (number - 1) * 8;
+  return 0;
+}
+
+async function fetchIssues(container: HTMLDivElement) {
+  try {
+    const cachedIssues = localStorage.getItem("githubIssues");
+
+    if (cachedIssues) {
+      try {
+        const issues = JSON.parse(cachedIssues);
+        const sortedIssuesByTime = sortIssuesByTime(issues);
+        const sortedIssuesByPriority = sortIssuesByPriority(sortedIssuesByTime);
+        displayIssues(container, sortedIssuesByPriority);
+      } catch (error) {
+        console.error(error);
       }
-
-      const octokit = new Octokit();
-
-      const freshIssues = (await octokit.paginate("GET /repos/ubiquity/devpool-directory/issues")) as GitHubIssue[];
-      localStorage.setItem("githubIssues", JSON.stringify(freshIssues));
-      const sortedIssues = sortIssuesByComments(freshIssues);
-      displayIssues(container, sortedIssues);
-    } catch (error) {
-      container.innerHTML = `<p>Error loading issues: ${error}</p>`;
     }
-  }
 
-  function sortIssuesByComments(issues: GitHubIssue[]) {
-    return issues.sort((a, b) => {
-      if (a.comments > b.comments) {
-        return -1;
-      }
-      if (a.comments < b.comments) {
-        return 1;
-      }
-      return 0;
-    });
+    const octokit = new Octokit();
+
+    const freshIssues = (await octokit.paginate("GET /repos/ubiquity/devpool-directory/issues", {
+      state: "open",
+    })) as GitHubIssue[];
+    localStorage.setItem("githubIssues", JSON.stringify(freshIssues));
+    const sortedIssuesByTime = sortIssuesByTime(freshIssues);
+    const sortedIssuesByPriority = sortIssuesByPriority(sortedIssuesByTime);
+    displayIssues(container, sortedIssuesByPriority);
+  } catch (error) {
+    container.innerHTML = `<p>Error loading issues: ${error}</p>`;
   }
 }

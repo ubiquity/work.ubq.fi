@@ -1,9 +1,10 @@
 import { GitHubIssue } from "../github-types";
 
+window.addEventListener("scroll", updateScale);
+updateScale();
+
 export function displayIssues(container: HTMLDivElement, issues: GitHubIssue[]) {
   const existingIssueIds = new Set(Array.from(container.querySelectorAll(".issue-element-inner")).map((element) => element.getAttribute("data-issue-id")));
-
-  //   container.innerHTML = "";
 
   let delay = 0;
   const baseDelay = 1000 / 15; // Base delay in milliseconds
@@ -18,8 +19,6 @@ export function displayIssues(container: HTMLDivElement, issues: GitHubIssue[]) 
       setTimeout(() => issueWrapper.classList.add("active"), delay);
 
       delay += baseDelay;
-
-      // Parse organization name and repository name from the issue's URL
 
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       const mirrorUrls = issue.body.match(urlRegex);
@@ -66,7 +65,6 @@ export function displayIssues(container: HTMLDivElement, issues: GitHubIssue[]) 
 
       issueElement.addEventListener("click", () => {
         console.log(issue);
-        //   console.log(match);
         window.open(match?.input, "_blank");
       });
 
@@ -86,21 +84,7 @@ export function displayIssues(container: HTMLDivElement, issues: GitHubIssue[]) 
           });
       }
 
-      //   const issueRowHeight = container.querySelector(".issue-element-wrapper")?.clientHeight || 0;
-      //   const viewportHeight = window.innerHeight;
-      //   const rowsInView = Math.floor(viewportHeight / issueRowHeight);
-
-      // Function to update the scale of issue elements based on their position in the viewport
-
-      //   window.addEventListener("scroll", updateScale);
-      //   updateScale();
-      // Append the issue element after the delay
-      //   setTimeout(() => {
       container.appendChild(issueWrapper);
-      // Trigger the animation by adding the 'visible' class
-      // issueWrapper.classList.add("active");
-      // updateScale();
-      //   }, delay);
     }
   });
 }
@@ -113,14 +97,12 @@ function updateScale() {
     const elementBottom = bounds.bottom; // Get the bottom position of the element
 
     let scale;
-    // , blurValue;
 
-    const SPECIAL = (viewportHeight - 32) / viewportHeight;
+    const OFFSET = (viewportHeight - 32) / viewportHeight;
 
-    if (elementBottom <= viewportHeight * SPECIAL) {
+    if (elementBottom <= viewportHeight * OFFSET) {
       // If the bottom of the element is above the bottom of the viewport, it's at full scale
       scale = 1;
-      //   blurValue = 0;
     } else {
       // Calculate the distance from the bottom of the viewport
       const distanceFromBottom = elementBottom - viewportHeight;
@@ -128,12 +110,9 @@ function updateScale() {
       const distanceRatio = distanceFromBottom / viewportHeight;
 
       // The scale decreases linearly from the bottom of the viewport to the bottom edge of the element
-      scale = SPECIAL - distanceRatio;
+      scale = OFFSET - distanceRatio;
       // Ensure the scale does not go below 0.5
       scale = Math.max(scale, 0.5);
-
-      // Blur increases as the element moves below the viewport
-      //   blurValue = distanceRatio * 1000; // Adjust the multiplier as needed
     }
 
     //   element.style.transform = `scale(${scale}) translateX(${- scale}vw)`;
@@ -147,7 +126,3 @@ function updateScale() {
     }
   });
 }
-
-// Call updateScale initially and on scroll
-window.addEventListener("scroll", updateScale);
-updateScale();
