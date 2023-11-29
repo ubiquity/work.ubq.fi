@@ -69,10 +69,11 @@ body {
 }
 
 #issues-container > div:hover {
-  background-position: 9px calc(100% - 9px);
+  /* background-position: 9px calc(100% - 9px); */
   opacity: 1;
 
   background-color: #80808010;
+  transition: background-color 0s;
 }
 
 #issues-container > div:hover .info {
@@ -83,8 +84,8 @@ body {
   opacity: 1;
 }
 #issues-container > div:active {
-  border-left: 4px solid #00ffff;
-  background-color: #80808020;
+  /* border-left: 4px solid #00ffff; */
+  background-color: #80808040;
 }
 
 h3 {
