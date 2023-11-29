@@ -55,6 +55,13 @@ body {
   max-width: 640px;
   margin: auto;
   border-left: 1px solid #80808010;
+  cursor: pointer;
+
+}
+
+#issues-container:hover .issue-element-inner {
+  opacity: 0.75;
+  transition: 0.125s opacity ease-in-out;
 }
 
 #issues-container * {
@@ -65,24 +72,24 @@ body {
 }
 
 #issues-container > div:first-child {
-  border-top: 1px solid #80808040;
+  border-top: 1px solid #80808020;
 }
 #issues-container > div:last-child {
-  border-bottom: 1px solid #80808040;
+  border-top: 1px solid #80808020;
 }
 /* #issues-container > div:last-child {
-  border-bottom: none;
+  border-top: none;
 } */
 #issues-container > div {
+  /* border-radius: 4px; */
   padding: 0 16px;
-  border-bottom: 1px solid #80808040;
+  border-top: 1px solid #80808020;
   /* opacity: 0.875 */
   /* margin: 24px auto; */
   /* line-height: 1; */
   overflow: hidden;
-  border-left: 1px solid #80808040;
-  border-right: 1px solid #80808040;
-  cursor: pointer;
+  border-left: 1px solid #80808020;
+  border-right: 1px solid #80808020;
   /* width: 640px; */
   background-size: 20px;
   background-position: 12px calc(100% - 9px);
@@ -96,8 +103,20 @@ body {
   opacity: 1 !important;
   border-left: 4px solid #808080;
   padding-left: 13px;
-  /* background: #80808020; */
+  background-color: #80808010;
   filter: grayscale(0%) !important;
+  border-top: 1px solid #80808040;
+  border-right: 1px solid #80808040;
+}
+#issues-container > div:hover + div {
+  border-top: 1px solid #80808080;
+}
+#issues-container > div:hover .info {
+  opacity: 1;
+}
+#issues-container > div:hover .issue-element-inner {
+  transition: 0.125s opacity ease-in-out;
+  opacity: 1;
 }
 #issues-container > div:active {
   border-left: 4px solid #fff;
@@ -197,6 +216,8 @@ body {
   /* z-index: -1; */
   /* width: 248px; */
   /* display: inline-block; */
+  opacity: 0.66;
+  transition: 0.125s opacity ease-in-out;
 }
 
 .title {

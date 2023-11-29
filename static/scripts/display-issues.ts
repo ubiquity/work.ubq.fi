@@ -53,11 +53,10 @@ export function displayIssues(container: HTMLDivElement, issues: GitHubIssue[]) 
       const labels = filteredLabels.map((label) => {
         // Remove the prefix from the label name
         const name = label.name.replace(/(Time|Pricing|Priority): /, "");
-        if(label.name.startsWith("Pricing: ")){
-            return `<div class="label pricing">${name}</div>`;
+        if (label.name.startsWith("Pricing: ")) {
+          return `<div class="label pricing">${name}</div>`;
         } else {
-            return `<div class="label">${name}</div>`;
-
+          return `<div class="label">${name}</div>`;
         }
       });
 
