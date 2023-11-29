@@ -6,7 +6,7 @@
   "author": "Ubiquity DAO",
   "license": "MIT",
   "engines": {
-    "node": ">=v20.3.0"
+    "node": ">=20.10.0"
   },
   "scripts": {
     "start": "tsx build/esbuild-server.ts",
