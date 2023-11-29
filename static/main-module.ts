@@ -57,7 +57,9 @@ async function fetchIssues(container: HTMLDivElement) {
       }
     }
 
-    const octokit = new Octokit();
+    const octokit = new Octokit({
+      auth: process.env.GITHUB_TOKEN, // This will be replaced with the actual token value by esbuild
+    });
 
     try {
       const { data: rateLimit } = await octokit.request("GET /rate_limit");

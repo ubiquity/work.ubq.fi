@@ -2137,6 +2137,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"esbuild-plugin-env@npm:^1.0.8":
+  version: 1.0.8
+  resolution: "esbuild-plugin-env@npm:1.0.8"
+  checksum: 80a2cd5231a36a360f2c5bcb56c4f69effff2b810321f0cc51f093fea30047fda0d51442ba3dd19afbb1f83e925700e09b6ad8748ec6e7d3d86ff9549a5bb331
+  languageName: node
+  linkType: hard
+
 "esbuild@npm:^0.19.8":
   version: 0.19.8
   resolution: "esbuild@npm:0.19.8"
@@ -5627,6 +5634,7 @@ __metadata:
     "@typescript-eslint/parser": ^6.13.1
     dotenv: ^16.3.1
     esbuild: ^0.19.8
+    esbuild-plugin-env: ^1.0.8
     eslint: ^8.54.0
     eslint-config-prettier: ^9.0.0
     eslint-plugin-prettier: ^5.0.1

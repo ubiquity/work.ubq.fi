@@ -1,12 +1,17 @@
 import esbuild from "esbuild";
 const typescriptEntries = ["static/main.ts"];
 // const cssEntries = ["static/style.css"];
+import * as dotenv from "dotenv";
+dotenv.config();
 const entries = [
   ...typescriptEntries,
   //  ...cssEntries
 ];
 
 export const esBuildContext: esbuild.BuildOptions = {
+  define: {
+    "process.env.GITHUB_TOKEN": JSON.stringify(process.env.GITHUB_TOKEN),
+  },
   sourcemap: true,
   entryPoints: entries,
   bundle: true,
