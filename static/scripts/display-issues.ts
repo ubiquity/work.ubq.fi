@@ -6,21 +6,18 @@ export function displayIssues(container: HTMLDivElement, issues: GitHubIssue[]) 
   //   container.innerHTML = "";
 
   let delay = 0;
-  const baseDelay = 125; // Base delay in milliseconds
+  const baseDelay = 1000 / 15; // Base delay in milliseconds
 
-  issues.forEach((issue, index) => {
+  issues.forEach((issue) => {
     if (!existingIssueIds.has(issue.id.toString())) {
       const issueWrapper = document.createElement("div");
       const issueElement = document.createElement("div");
       issueElement.setAttribute("data-issue-id", issue.id.toString());
       issueWrapper.classList.add("issue-element-wrapper");
       issueElement.classList.add("issue-element-inner");
-      issueWrapper.classList.add("issue-fade-in");
+      setTimeout(() => issueWrapper.classList.add("active"), delay);
 
-      // Calculate the delay using an approximation of the cubic-bezier(0,1,1,1) easing function
-      delay = baseDelay * ((index * index) / (issues.length - 1));
-
-      issueElement.style.animationDelay = `${delay}ms`;
+      delay += baseDelay;
 
       // Parse organization name and repository name from the issue's URL
 
@@ -69,8 +66,8 @@ export function displayIssues(container: HTMLDivElement, issues: GitHubIssue[]) 
 
       issueElement.addEventListener("click", () => {
         console.log(issue);
-        //   console.log(foundUrls);
-        //   window.open(foundUrls?.shift(), "_blank");
+        //   console.log(match);
+          window.open(match?.input, "_blank");
       });
 
       issueWrapper.appendChild(issueElement);
@@ -89,12 +86,68 @@ export function displayIssues(container: HTMLDivElement, issues: GitHubIssue[]) 
           });
       }
 
+      //   const issueRowHeight = container.querySelector(".issue-element-wrapper")?.clientHeight || 0;
+      //   const viewportHeight = window.innerHeight;
+      //   const rowsInView = Math.floor(viewportHeight / issueRowHeight);
+
+      // Function to update the scale of issue elements based on their position in the viewport
+
+      //   window.addEventListener("scroll", updateScale);
+      //   updateScale();
       // Append the issue element after the delay
-      setTimeout(() => {
-        container.appendChild(issueWrapper);
-        // Trigger the animation by adding the 'visible' class
-        issueElement.classList.add("visible");
-      }, delay);
+      //   setTimeout(() => {
+      container.appendChild(issueWrapper);
+      // Trigger the animation by adding the 'visible' class
+      // issueWrapper.classList.add("active");
+      // updateScale();
+      //   }, delay);
     }
   });
 }
+function updateScale() {
+  const viewportHeight = window.innerHeight;
+  const elements = Array.from(document.querySelectorAll(".issue-element-wrapper"));
+
+  elements.forEach((element) => {
+    const bounds = element.getBoundingClientRect();
+    const elementBottom = bounds.bottom; // Get the bottom position of the element
+
+    let scale;
+    // , blurValue;
+
+    const SPECIAL = (viewportHeight - 32) / viewportHeight;
+
+    if (elementBottom <= viewportHeight * SPECIAL) {
+      // If the bottom of the element is above the bottom of the viewport, it's at full scale
+      scale = 1;
+      //   blurValue = 0;
+    } else {
+      // Calculate the distance from the bottom of the viewport
+      const distanceFromBottom = elementBottom - viewportHeight;
+      // Normalize the distance based on the height of the viewport
+      const distanceRatio = distanceFromBottom / viewportHeight;
+
+      // The scale decreases linearly from the bottom of the viewport to the bottom edge of the element
+      scale = SPECIAL - distanceRatio;
+      // Ensure the scale does not go below 0.5
+      scale = Math.max(scale, 0.5);
+
+      // Blur increases as the element moves below the viewport
+      //   blurValue = distanceRatio * 1000; // Adjust the multiplier as needed
+    }
+
+    //   element.style.transform = `scale(${scale}) translateX(${- scale}vw)`;
+    // element.style.filter = `blur(${blurValue}px)`;
+
+    // Add "active" class to elements that are fully scaled
+    if (scale === 1) {
+      element.classList.add("active");
+    } else {
+      element.classList.remove("active");
+    }
+  });
+}
+
+// Call updateScale initially and on scroll
+window.addEventListener("scroll", updateScale);
+updateScale();
