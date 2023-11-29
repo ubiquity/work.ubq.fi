@@ -27,6 +27,7 @@ body {
   margin: auto;
   border-left: 1px solid #80808010;
   cursor: pointer;
+  padding: 48px 0;
 }
 
 #issues-container:hover .issue-element-inner {

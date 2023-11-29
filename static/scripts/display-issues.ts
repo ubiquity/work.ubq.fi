@@ -67,7 +67,7 @@ export function displayIssues(container: HTMLDivElement, issues: GitHubIssue[]) 
       issueElement.addEventListener("click", () => {
         console.log(issue);
         //   console.log(match);
-          window.open(match?.input, "_blank");
+        window.open(match?.input, "_blank");
       });
 
       issueWrapper.appendChild(issueElement);
