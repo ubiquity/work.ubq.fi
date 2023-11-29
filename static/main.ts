@@ -1,28 +1,30 @@
+import { Octokit } from "@octokit/rest";
 import { GitHubIssue } from "./github-types";
 
 export async function mainModule() {
   await fetchIssues();
 
   async function fetchIssues() {
-    const container = document.getElementById('issues-container');
+    const container = document.getElementById("issues-container");
     if (!container) {
-      throw new Error('Could not find issues container');
+      throw new Error("Could not find issues container");
     }
-    container.innerHTML = '<p>Loading issues...</p>';
+    container.innerHTML = "<p>Loading issues...</p>";
 
     try {
-      const cachedIssues = localStorage.getItem('githubIssues');
-      let issues;
+      const cachedIssues = localStorage.getItem("githubIssues");
+      let issues: GitHubIssue[];
+
+      const octokit = new Octokit();
+      const freshIssues = await octokit.paginate("GET /repos/ubiquity/devpool-directory/issues") as GitHubIssue[];
 
       if (cachedIssues) {
         issues = JSON.parse(cachedIssues);
+        // Update the cache with fresh issues
+        localStorage.setItem("githubIssues", JSON.stringify(freshIssues));
       } else {
-        const response = await fetch('https://api.github.com/repos/ubiquity/devpool-directory/issues');
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-        issues = await response.json();
-        localStorage.setItem('githubIssues', JSON.stringify(issues));
+        issues = freshIssues;
+        localStorage.setItem("githubIssues", JSON.stringify(issues));
       }
 
       const sortedIssues = sortIssuesByComments(issues);
@@ -55,7 +57,6 @@ export async function mainModule() {
       return 0;
     });
   }
-
 }
 mainModule()
   .then(() => {
