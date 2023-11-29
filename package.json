@@ -46,5 +46,8 @@
       "yarn format:prettier --write",
       "yarn format:lint --fix"
     ]
+  },
+  "commitlint": {
+    "extends": ["@commitlint/config-conventional"]
   }
 }
