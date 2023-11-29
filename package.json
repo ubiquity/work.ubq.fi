@@ -9,9 +9,12 @@
     "node": ">=v20.3.0"
   },
   "scripts": {
+    "start": "tsx build/esbuild-server.ts",
+    "build": "tsx build/esbuild-build.ts",
     "format": "run-s format:prettier format:lint",
     "format:lint": "eslint --fix .",
-    "format:prettier": "prettier --write ."
+    "format:prettier": "prettier --write .",
+    "prepare": "husky install"
   },
   "keywords": [
     "typescript",
@@ -21,7 +24,8 @@
     "open-source"
   ],
   "dependencies": {
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "esbuild": "latest"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.6",
@@ -34,10 +38,13 @@
     "lint-staged": "^15.1.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.8",
-    "tsx": "^3.12.7",
+    "tsx": "^4.6.0",
     "typescript": "^5.1.0"
   },
   "lint-staged": {
-    "*.ts": "yarn format"
+    "*.ts": [
+      "yarn format:prettier --write",
+      "yarn format:lint --fix"
+    ]
   }
 }
