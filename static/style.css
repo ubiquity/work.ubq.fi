@@ -1,0 +1,25 @@
+#issues-container {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+#issues-container div {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+#issues-container div:last-child {
+    border-bottom: none;
+}
+
+h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+p {
+    margin: 0;
+    color: #666;
+}
