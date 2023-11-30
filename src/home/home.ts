@@ -1,13 +1,20 @@
-import { authenticatedGetGitHubUser } from "./authenticated-get-github-user";
+import { GitHubUser, authenticatedGetGitHubUser } from "./authenticated-get-github-user";
+import { checkForGitHubAccessToken } from "./check-for-github-access-token";
 import { displayGitHubIssues } from "./display-github-issues";
 import { displayGitHubUserInformation } from "./display-github-user-information";
-displayGitHubIssues()
-  .then(async () => {
-    const gitHubUser = await authenticatedGetGitHubUser();
-    displayGitHubUserInformation(gitHubUser);
-    console.trace({ gitHubUser });
+
+const gitHubToken = checkForGitHubAccessToken();
+
+displayGitHubIssues(gitHubToken)
+  .then(authenticatedGetGitHubUser)
+  .then((gitHubUser: null | GitHubUser) => {
+
+    if (gitHubUser) {
+      console.trace({ gitHubUser });
+      displayGitHubUserInformation(gitHubUser);
+    }
+
   })
   .catch((error) => {
-    // Handle any errors
     console.error(error);
   });

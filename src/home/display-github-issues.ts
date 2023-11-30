@@ -2,12 +2,12 @@ import { Octokit } from "@octokit/rest";
 import { homeController } from "./home-controller";
 import { GitHubIssue } from "./github-types";
 
-export async function displayGitHubIssues() {
+export async function displayGitHubIssues(accessToken: string | null) {
   const container = document.getElementById("issues-container") as HTMLDivElement;
   if (!container) {
     throw new Error("Could not find issues container");
   }
-  await fetchIssues(container);
+  await fetchIssues(container, accessToken);
 }
 
 function sortIssuesByPriority(issues: GitHubIssue[]) {
@@ -42,7 +42,7 @@ export function calculateLabelValue(label: string): number {
   return 0;
 }
 
-async function fetchIssues(container: HTMLDivElement) {
+async function fetchIssues(container: HTMLDivElement, accessToken: string | null) {
   try {
     const cachedIssues = localStorage.getItem("githubIssues");
 
@@ -57,9 +57,7 @@ async function fetchIssues(container: HTMLDivElement) {
       }
     }
 
-    const octokit = new Octokit({
-      auth: process.env.GITHUB_TOKEN,
-    });
+    const octokit = new Octokit({ auth: accessToken ?? process.env.GITHUB_TOKEN });
 
     try {
       const { data: rateLimit } = await octokit.request("GET /rate_limit");

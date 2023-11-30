@@ -206,10 +206,43 @@ button {
   border-style: unset;
   border-color: unset;
   border-image: unset;
-  border: 1px solid #80808080;
+  border: 1px solid #80808020;
   padding: 8px 16px;
   border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 1px;
   background-color: #80808010;
+}
+
+#toolbar {
+  position: fixed;
+  width: 100vw;
+  height: 48px;
+  /* background: red; */
+  bottom: 0;
+  backdrop-filter: blur(4px);
+  padding: 4px;
+  display: flex;
+  /* text-align: right; */
+  border-top: 1px solid #80808020;
+  /* text-align: center; */
+  /* align-items: stretch; */
+  justify-content: center;
+}
+#toolbar > * {
+  /* justify-content: center; */
+  /* align-items: center; */
+  display: inline-flex;
+  text-align: left;
+}
+
+#authenticated > * {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 4px;
+  max-height: 48px;
+}
+#authenticated > img {
+  border-radius: 50%;
 }

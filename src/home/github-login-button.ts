@@ -7,12 +7,11 @@ if (!supabaseAnonKey) throw new Error("SUPABASE_KEY not found");
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-async function handleGitHubLogin() {
+async function gitHubLoginButton() {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
       redirectTo: "https://wfzpewmlyiozupulbuur.supabase.co/auth/v1/callback",
-      //   https://telegram-ubiquibot.cloudflare-17b.workers.dev/register
     },
   });
 
@@ -21,9 +20,9 @@ async function handleGitHubLogin() {
   }
 }
 
-const button = document.createElement("button");
-button.textContent = "Login with GitHub";
-button.addEventListener("click", handleGitHubLogin);
-document.body.appendChild(button);
-
-export default handleGitHubLogin;
+export function renderGitHubLoginButton() {
+  const button = document.createElement("button");
+  button.textContent = "Login with GitHub";
+  button.addEventListener("click", gitHubLoginButton);
+  document.getElementById("toolbar")?.appendChild(button);
+}

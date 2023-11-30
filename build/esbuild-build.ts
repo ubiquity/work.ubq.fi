@@ -1,7 +1,7 @@
 import esbuild from "esbuild";
 const typescriptEntries = [
   "src/home/home.ts",
-  "src/login/login.ts",
+  // "src/login/login.ts",
   // "src/authenticated/authenticated.ts"
 ];
 // const cssEntries = ["static/style.css"];
