@@ -182,3 +182,90 @@ body {
   transition: 0.33s all cubic-bezier(0, 1, 1, 1);
   filter: blur(4px);
 }
+
+button {
+  appearance: unset;
+  text-rendering: unset;
+  color: unset;
+  letter-spacing: unset;
+  word-spacing: unset;
+  line-height: unset;
+  text-transform: unset;
+  text-indent: unset;
+  text-shadow: unset;
+  display: unset;
+  text-align: unset;
+  align-items: unset;
+  cursor: pointer;
+  box-sizing: unset;
+  background-color: unset;
+  margin: unset;
+  padding-block: unset;
+  padding-inline: unset;
+  border-width: unset;
+  border-style: unset;
+  border-color: unset;
+  border-image: unset;
+  border: 1px solid #80808020;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background-color: #80808010;
+}
+button:hover {
+  background-color: #80808020;
+}
+button:active {
+  background-color: #80808040;
+}
+
+#toolbar {
+  position: fixed;
+  width: 100vw;
+  height: 48px;
+  /* background: red; */
+  bottom: 0;
+  backdrop-filter: blur(4px);
+  padding: 4px;
+  display: flex;
+  /* text-align: right; */
+  border-top: 1px solid #80808020;
+  /* text-align: center; */
+  /* align-items: stretch; */
+  justify-content: center;
+}
+#toolbar > * {
+  /* justify-content: center; */
+  align-items: center;
+  display: inline-flex;
+  text-align: left;
+}
+
+#authenticated > * {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 4px;
+  max-height: 48px;
+}
+#authenticated > img {
+  border-radius: 50%;
+  height: 40px;
+  padding: 4px 0;
+}
+
+#toolbar[data-authenticated] > * {
+  /* opacity: 0; */
+  /* transition: 1s opacity ease-in-out; */
+}
+#toolbar[data-authenticated="true"] > #github-login-button {
+  display: none;
+}
+
+#toolbar {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
