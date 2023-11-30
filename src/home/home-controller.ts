@@ -1,6 +1,6 @@
-import { GitHubIssue } from "../github-types";
+import { GitHubIssue } from "./github-types";
 
-export function displayIssues(container: HTMLDivElement, issues: GitHubIssue[]) {
+export function homeController(container: HTMLDivElement, issues: GitHubIssue[]) {
   const avatarCache: Record<string, string> = JSON.parse(localStorage.getItem("avatarCache") || "{}");
   const fetchInProgress = new Set(); // Track in-progress fetches
   const existingIssueIds = new Set(Array.from(container.querySelectorAll(".issue-element-inner")).map((element) => element.getAttribute("data-issue-id")));

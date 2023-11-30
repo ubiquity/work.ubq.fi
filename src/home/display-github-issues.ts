@@ -1,8 +1,8 @@
 import { Octokit } from "@octokit/rest";
+import { homeController } from "./home-controller";
 import { GitHubIssue } from "./github-types";
-import { displayIssues } from "./scripts/display-issues";
 
-export async function mainModule() {
+export async function displayGitHubIssues() {
   const container = document.getElementById("issues-container") as HTMLDivElement;
   if (!container) {
     throw new Error("Could not find issues container");
@@ -51,14 +51,14 @@ async function fetchIssues(container: HTMLDivElement) {
         const issues = JSON.parse(cachedIssues);
         const sortedIssuesByTime = sortIssuesByTime(issues);
         const sortedIssuesByPriority = sortIssuesByPriority(sortedIssuesByTime);
-        displayIssues(container, sortedIssuesByPriority);
+        homeController(container, sortedIssuesByPriority);
       } catch (error) {
         console.error(error);
       }
     }
 
     const octokit = new Octokit({
-      auth: process.env.GITHUB_TOKEN, // This will be replaced with the actual token value by esbuild
+      auth: process.env.GITHUB_TOKEN,
     });
 
     try {
@@ -73,7 +73,7 @@ async function fetchIssues(container: HTMLDivElement) {
     localStorage.setItem("githubIssues", JSON.stringify(freshIssues));
     const sortedIssuesByTime = sortIssuesByTime(freshIssues);
     const sortedIssuesByPriority = sortIssuesByPriority(sortedIssuesByTime);
-    displayIssues(container, sortedIssuesByPriority);
+    homeController(container, sortedIssuesByPriority);
   } catch (error) {
     console.error(error);
     // container.innerHTML = `<p>Error loading issues: ${error}</p>`;
