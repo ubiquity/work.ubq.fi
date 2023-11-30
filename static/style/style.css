@@ -196,7 +196,7 @@ button {
   display: unset;
   text-align: unset;
   align-items: unset;
-  cursor: unset;
+  cursor: pointer;
   box-sizing: unset;
   background-color: unset;
   margin: unset;
@@ -212,6 +212,12 @@ button {
   text-transform: uppercase;
   letter-spacing: 1px;
   background-color: #80808010;
+}
+button:hover {
+  background-color: #80808020;
+}
+button:active {
+  background-color: #80808040;
 }
 
 #toolbar {
@@ -231,7 +237,7 @@ button {
 }
 #toolbar > * {
   /* justify-content: center; */
-  /* align-items: center; */
+  align-items: center;
   display: inline-flex;
   text-align: left;
 }
@@ -245,4 +251,21 @@ button {
 }
 #authenticated > img {
   border-radius: 50%;
+  height: 40px;
+  padding: 4px 0;
+}
+
+#toolbar[data-authenticated] > * {
+  /* opacity: 0; */
+  /* transition: 1s opacity ease-in-out; */
+}
+#toolbar[data-authenticated="true"] > #github-login-button {
+  display: none;
+}
+
+#toolbar {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }

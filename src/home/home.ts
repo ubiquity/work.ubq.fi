@@ -8,12 +8,10 @@ const gitHubToken = checkForGitHubAccessToken();
 displayGitHubIssues(gitHubToken)
   .then(authenticatedGetGitHubUser)
   .then((gitHubUser: null | GitHubUser) => {
-
     if (gitHubUser) {
       console.trace({ gitHubUser });
       displayGitHubUserInformation(gitHubUser);
     }
-
   })
   .catch((error) => {
     console.error(error);

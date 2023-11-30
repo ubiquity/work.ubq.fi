@@ -30,14 +30,17 @@ async function getNewSessionToken() {
   // &token_type=bearer
   const providerToken = params.get("provider_token");
 
+  if(!providerToken){
+    throw new Error("Access token not found in URL fragment");
+  }
+
   const expiresAt = params.get("expires_at");
   if (expiresAt && parseInt(expiresAt, 10) < Date.now() / 1000) {
     localStorage.removeItem("provider_token");
   } else if (providerToken) {
     localStorage.setItem("provider_token", providerToken);
-  } else {
-    throw new Error("Access token not found in URL fragment");
   }
+
   return providerToken;
 }
 

@@ -1,10 +1,10 @@
 import { GitHubUser } from "./authenticated-get-github-user";
 
 export function displayGitHubUserInformation(gitHubUser: GitHubUser) {
-  const container = document.getElementById("toolbar");
+  const toolbar = document.getElementById("toolbar");
   const authenticated = document.createElement("div");
   authenticated.id = "authenticated";
-  if (!container) throw new Error("container not found");
+  if (!toolbar) throw new Error("toolbar not found");
   // const div = document.createElement("div");
   // div.textContent = `Logged in as ${gitHubUser.login}`;
   // authenticated.appendChild(div);
@@ -27,5 +27,6 @@ export function displayGitHubUserInformation(gitHubUser: GitHubUser) {
   div.textContent = gitHubUser.name; // JSON.stringify(filteredUserInfo, null, 2);
 
   authenticated.appendChild(div);
-  container.appendChild(authenticated);
+  toolbar.appendChild(authenticated);
+  toolbar.setAttribute("data-authenticated", "true")
 }
