@@ -30,7 +30,7 @@ async function getNewSessionToken() {
   // &token_type=bearer
   const providerToken = params.get("provider_token");
 
-  if(!providerToken){
+  if (!providerToken) {
     throw new Error("Access token not found in URL fragment");
   }
 

@@ -28,5 +28,5 @@ export function displayGitHubUserInformation(gitHubUser: GitHubUser) {
 
   authenticated.appendChild(div);
   toolbar.appendChild(authenticated);
-  toolbar.setAttribute("data-authenticated", "true")
+  toolbar.setAttribute("data-authenticated", "true");
 }
