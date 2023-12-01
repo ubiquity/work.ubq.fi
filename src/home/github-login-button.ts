@@ -25,5 +25,8 @@ export function renderGitHubLoginButton() {
   button.id = "github-login-button";
   button.textContent = "Login with GitHub";
   button.addEventListener("click", gitHubLoginButton);
-  document.getElementById("toolbar")?.appendChild(button);
+  const toolbar = document.getElementById("toolbar");
+  if (!toolbar) throw new Error("toolbar not found");
+  toolbar.appendChild(button);
+  toolbar.classList.add("ready");
 }
