@@ -14,7 +14,7 @@
 }
 #branding > span {
   padding: 8px;
-  line-height: 1;
+  /* line-height: 1; */
 }
 html,
 body {
@@ -264,14 +264,14 @@ button:active {
   align-items: center;
   display: inline-flex;
   text-align: left;
-  padding: 8px 16px;
+  margin: 0 16px;
 }
-#toolbar > *:first-child {
+/* #toolbar > *:first-child {
   padding-left: 16px;
 }
 #toolbar > *:last-child {
   padding-right: 16px;
-}
+} */
 #authenticated > * {
   display: inline-flex;
   align-items: center;
@@ -321,4 +321,8 @@ button:active {
   .full {
     display: unset;
   }
+}
+
+#toolbar > button {
+  text-align: center;
 }

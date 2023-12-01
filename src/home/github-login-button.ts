@@ -23,7 +23,7 @@ async function gitHubLoginButton() {
 export function renderGitHubLoginButton() {
   const button = document.createElement("button");
   button.id = "github-login-button";
-  button.textContent = "Login with GitHub";
+  button.textContent = "Login";
   button.addEventListener("click", gitHubLoginButton);
   const toolbar = document.getElementById("toolbar");
   if (!toolbar) throw new Error("toolbar not found");
