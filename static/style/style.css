@@ -40,11 +40,10 @@ body {
 }
 
 #issues-container {
-  padding: 8px;
+  /* padding: 8px; */
   max-width: 640px;
   margin: auto;
   /* border-left: 1px solid #80808010; */
-
   padding: 48px 0;
   /* background: linear-gradient(to bottom, #80808000 0%, #808080ff 15%, #808080ff 85%, #80808000 100%); */
   -webkit-mask-image: linear-gradient(to bottom, #00000000, #000000ff 0%, #000000ff 75%, #00000000 100%);
@@ -52,9 +51,9 @@ body {
   overflow: scroll;
   scrollbar-width: none; /* For Firefox */
   -ms-overflow-style: none; /* For Internet Explorer and Edge */
-  &::-webkit-scrollbar {
-    display: none; /* For Chrome, Safari, and Opera */
-  }
+}
+&::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
 }
 
 #issues-container:hover .issue-element-inner {
@@ -319,7 +318,7 @@ button:active {
 }
 @media screen and (min-width: 640px) {
   .full {
-    display: unset;
+    display: unset !important;
   }
 }
 
