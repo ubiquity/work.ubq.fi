@@ -13,11 +13,8 @@ const entries = [
 ];
 
 export const esBuildContext: esbuild.BuildOptions = {
-  define: {
-    "process.env.GITHUB_TOKEN": JSON.stringify(process.env.GITHUB_TOKEN),
-    "process.env.SUPABASE_URL": JSON.stringify(process.env.SUPABASE_URL),
-    "process.env.SUPABASE_KEY": JSON.stringify(process.env.SUPABASE_KEY),
-  },
+  define: createEnvDefines(["GITHUB_TOKEN", "SUPABASE_URL", "SUPABASE_KEY"]),
+
   sourcemap: true,
   entryPoints: entries,
   bundle: true,
@@ -42,3 +39,14 @@ esbuild
     console.error(err);
     process.exit(1);
   });
+
+function createEnvDefines(variableNames: string[]): Record<string, string> {
+  const defines: Record<string, string> = {};
+  for (const name of variableNames) {
+    const envVar = process.env[name];
+    if (envVar !== undefined) {
+      defines[`process.env.${name}`] = JSON.stringify(envVar);
+    }
+  }
+  return defines;
+}
