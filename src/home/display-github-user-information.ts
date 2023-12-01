@@ -16,14 +16,6 @@ export function displayGitHubUserInformation(gitHubUser: GitHubUser) {
 
   const div = document.createElement("div");
 
-  // const filteredUserInfo = Object.entries(gitHubUser)
-  //   .filter(([key]) => !key.includes("url"))
-  //   .filter(([key]) => !key.includes("_id"))
-  //   .reduce((obj, [key, value]) => {
-  //     obj[key] = value;
-  //     return obj;
-  //   }, {});
-
   div.textContent = gitHubUser.name; // JSON.stringify(filteredUserInfo, null, 2);
 
   authenticated.appendChild(div);
