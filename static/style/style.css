@@ -14,6 +14,7 @@
 }
 #branding > span {
   padding: 8px;
+  line-height: 1;
 }
 html,
 body {
@@ -243,7 +244,7 @@ button:active {
   height: 48px;
   /* background: red; */
   bottom: 0;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
   padding: 4px;
   display: flex;
   /* text-align: right; */
@@ -251,13 +252,12 @@ button:active {
   /* text-align: center; */
   /* align-items: stretch; */
   justify-content: center;
-  -webkit-backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(8px);
   /* display: flex; */
   justify-content: space-between;
   /* align-items: flex-end; This will align the items to the bottom of the container */
   /* width: 100%; */
   /* padding: 0 16.66%; Adding padding to the container so that items align approximately at 33% and 66% */
-
 }
 #toolbar > * {
   /* justify-content: center; */
@@ -266,7 +266,12 @@ button:active {
   text-align: left;
   padding: 8px 16px;
 }
-
+#toolbar > *:first-child {
+  padding-left: 16px;
+}
+#toolbar > *:last-child {
+  padding-right: 16px;
+}
 #authenticated > * {
   display: inline-flex;
   align-items: center;
@@ -307,4 +312,13 @@ button:active {
   letter-spacing: 1.5px;
   font-weight: 400;
   text-rendering: geometricPrecision;
+}
+
+.full {
+  display: none !important;
+}
+@media screen and (min-width: 640px) {
+  .full {
+    display: unset;
+  }
 }

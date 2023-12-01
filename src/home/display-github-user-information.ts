@@ -17,7 +17,7 @@ export function displayGitHubUserInformation(gitHubUser: GitHubUser) {
   const div = document.createElement("div");
 
   div.textContent = gitHubUser.name; // JSON.stringify(filteredUserInfo, null, 2);
-
+  div.classList.add("full");
   authenticated.appendChild(div);
   toolbar.appendChild(authenticated);
   toolbar.setAttribute("data-authenticated", "true");
