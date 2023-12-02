@@ -1,0 +1,10 @@
+@media (prefers-color-scheme: dark) {
+  html {
+    background-color: #06061aff;
+  }
+}
+@media (prefers-color-scheme: light) {
+  html {
+    background-color: #f0f0f0;
+  }
+}
