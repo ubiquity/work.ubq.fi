@@ -16,3 +16,28 @@ displayGitHubIssues(gitHubToken)
   .catch((error) => {
     console.error(error);
   });
+
+const isLight = prefersLightMode();
+if (isLight) {
+  downloadStylesheet("style/inverted-style.css");
+}
+
+function downloadStylesheet(url: string) {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", url, true);
+  xhr.onreadystatechange = () => {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      if (xhr.status === 200) {
+        const style = document.createElement("style");
+        style.textContent = xhr.responseText;
+        document.head.appendChild(style);
+      } else {
+        console.error("Failed to load stylesheet", url);
+      }
+    }
+  };
+  xhr.send();
+}
+function prefersLightMode() {
+  return window.matchMedia("(prefers-color-scheme: light)").matches;
+}
