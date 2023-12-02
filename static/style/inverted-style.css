@@ -46,13 +46,14 @@
     max-width: 640px;
     margin: auto;
     /* border-left: 1px solid #7f7f7f10; */
-    padding: 48px 0;
+    /* padding: 0 0 48px; */
     /* background: linear-gradient(to bottom, #7f7f7f00 0%, #7f7f7fff 15%, #7f7f7fff 85%, #7f7f7f00 100%); */
     -webkit-mask-image: linear-gradient(to bottom, #ffffff00, #ffffffff 0%, #ffffffff 75%, #ffffff00 100%);
-    height: calc(100vh - 96px);
+    /* height: calc(100vh - 48px); */
     overflow: scroll;
     scrollbar-width: none; /* For Firefox */
     -ms-overflow-style: none; /* For Internet Explorer and Edge */
+    height: 100vh;
   }
   &::-webkit-scrollbar {
     display: none; /* For Chrome, Safari, and Opera */
@@ -163,7 +164,7 @@
     font-size: 12px;
     text-align: center;
     white-space: nowrap;
-    background-color: #7f7f7f40;
+    background-color: #7f7f7f20;
     width: 64px;
     letter-spacing: 0.5px;
     flex-grow: 3;
@@ -196,7 +197,7 @@
     transition: 0.125s opacity ease-in-out;
     /* display: flex; */
     align-items: center;
-    margin: 0 0 0 48px;
+    margin: 0 0 0 50px;
   }
 
   .title {
@@ -337,7 +338,7 @@
     .issue-element-inner {
       display: block;
     }
-    .labels{
+    .labels {
       margin-left: 48px;
       margin-top: 4px;
     }

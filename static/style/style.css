@@ -163,7 +163,7 @@
     font-size: 12px;
     text-align: center;
     white-space: nowrap;
-    background-color: #80808040;
+    background-color: #80808020;
     width: 64px;
     letter-spacing: 0.5px;
     flex-grow: 3;
@@ -337,7 +337,7 @@
     .issue-element-inner {
       display: block;
     }
-    .labels{
+    .labels {
       margin-left: 48px;
       margin-top: 4px;
     }

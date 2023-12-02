@@ -56,7 +56,9 @@ export function homeController(container: HTMLDivElement, issues: GitHubIssue[])
       });
 
       issueElement.innerHTML = `
-      <div class="info"><div class="title"><h3>${issue.title}</h3></div><div class="partner"><p class="organization-name">${organizationName}</p><p class="repository-name">${repositoryName}</p></div></div><div class="labels">${labels.join(
+      <div class="info"><div class="title"><h3>${
+        issue.title
+      }</h3></div><div class="partner"><p class="organization-name">${organizationName}</p><p class="repository-name">${repositoryName}</p></div></div><div class="labels">${labels.join(
         ""
       )}</div>`;
 
