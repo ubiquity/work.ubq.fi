@@ -34,7 +34,7 @@ export const invertColors: esbuild.Plugin = {
         }
 
         // If the color is not greyscale, return it as is, including the alpha channel
-        return `#${color}${alpha || ''}`;
+        return `#${color}${alpha || ""}`;
       });
 
       // Define the output path for the new CSS file
