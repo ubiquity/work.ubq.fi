@@ -82,7 +82,10 @@ async function fetchIssues(container: HTMLDivElement, accessToken: string | null
     homeController(container, sortedIssuesByPriority);
 
     // Remove the 'isNew' flag before saving to localStorage
-    const issuesToSave = freshIssues.map(({ ...issue }) => issue);
+    const issuesToSave = freshIssues.map(({ ...issue }) => {
+      delete issue.isNew;
+      return issue;
+    });
     localStorage.setItem("githubIssues", JSON.stringify(issuesToSave));
   } catch (error) {
     console.error(error);

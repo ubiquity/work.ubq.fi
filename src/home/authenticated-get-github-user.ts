@@ -31,7 +31,8 @@ async function getNewSessionToken() {
   const providerToken = params.get("provider_token");
 
   if (!providerToken) {
-    throw new Error("Access token not found in URL fragment");
+    // throw new Error("Access token not found in URL fragment");
+    return null;
   }
 
   const expiresAt = params.get("expires_at");
