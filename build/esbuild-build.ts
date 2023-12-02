@@ -1,20 +1,17 @@
+import * as dotenv from "dotenv";
 import esbuild from "esbuild";
+import { invertColors } from "./plugins/invert-colors";
 const typescriptEntries = [
   "src/home/home.ts",
   // "src/login/login.ts",
   // "src/authenticated/authenticated.ts"
 ];
-// const cssEntries = ["static/style.css"];
-import * as dotenv from "dotenv";
-dotenv.config();
-const entries = [
-  ...typescriptEntries,
-  //  ...cssEntries
-];
+const cssEntries = ["static/style/style.css"];
+const entries = [...typescriptEntries, ...cssEntries];
 
 export const esBuildContext: esbuild.BuildOptions = {
   define: createEnvDefines(["GITHUB_TOKEN", "SUPABASE_URL", "SUPABASE_KEY"]),
-
+  plugins: [invertColors],
   sourcemap: true,
   entryPoints: entries,
   bundle: true,
@@ -42,6 +39,7 @@ esbuild
 
 function createEnvDefines(variableNames: string[]): Record<string, string> {
   const defines: Record<string, string> = {};
+  dotenv.config();
   for (const name of variableNames) {
     const envVar = process.env[name];
     if (envVar !== undefined) {

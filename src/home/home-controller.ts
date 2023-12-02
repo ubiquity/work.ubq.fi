@@ -96,6 +96,7 @@ export function homeController(container: HTMLDivElement, issues: GitHubIssue[])
       }
 
       container.appendChild(issueWrapper);
+      container.classList.add("ready");
     }
   });
 }

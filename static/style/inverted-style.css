@@ -1,4 +1,4 @@
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
     --grid-background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABYWlDQ1BrQ0dDb2xvclNwYWNlRGlzcGxheVAzAAAokWNgYFJJLCjIYWFgYMjNKykKcndSiIiMUmB/yMAOhLwMYgwKicnFBY4BAT5AJQwwGhV8u8bACKIv64LMOiU1tUm1XsDXYqbw1YuvRJsw1aMArpTU4mQg/QeIU5MLikoYGBhTgGzl8pICELsDyBYpAjoKyJ4DYqdD2BtA7CQI+whYTUiQM5B9A8hWSM5IBJrB+API1klCEk9HYkPtBQFul8zigpzESoUAYwKuJQOUpFaUgGjn/ILKosz0jBIFR2AopSp45iXr6SgYGRiaMzCAwhyi+nMgOCwZxc4gxJrvMzDY7v////9uhJjXfgaGjUCdXDsRYhoWDAyC3AwMJ3YWJBYlgoWYgZgpLY2B4dNyBgbeSAYG4QtAPdHFacZGYHlGHicGBtZ7//9/VmNgYJ/MwPB3wv//vxf9//93MVDzHQaGA3kAFSFl7jXH0fsAAAA4ZVhJZk1NACoAAAAIAAGHaQAEAAAAAQAAABoAAAAAAAKgAgAEAAAAAQAAABigAwAEAAAAAQAAABgAAAAAwf1XlwAAACNJREFUSA3t0IEAAAAMBKFHm7/UTaQQWnXDgAEDBgwYMGDgAXaJAz4RVVHYAAAAAElFTkSuQmCC");
   }
@@ -27,7 +27,7 @@
 
   * {
     font-family: "Proxima Nova", "Ubiquity Nova", sans-serif;
-    color: #fff;
+    color: #000000undefined;
     font-weight: 400;
   }
   @font-face {
@@ -45,10 +45,10 @@
     /* padding: 8px; */
     max-width: 640px;
     margin: auto;
-    /* border-left: 1px solid #80808010; */
+    /* border-left: 1px solid #7f7f7f10; */
     padding: 48px 0;
-    /* background: linear-gradient(to bottom, #80808000 0%, #808080ff 15%, #808080ff 85%, #80808000 100%); */
-    -webkit-mask-image: linear-gradient(to bottom, #00000000, #000000ff 0%, #000000ff 75%, #00000000 100%);
+    /* background: linear-gradient(to bottom, #7f7f7f00 0%, #7f7f7fff 15%, #7f7f7fff 85%, #7f7f7f00 100%); */
+    -webkit-mask-image: linear-gradient(to bottom, #ffffff00, #ffffffff 0%, #ffffffff 75%, #ffffff00 100%);
     height: calc(100vh - 96px);
     overflow: scroll;
     scrollbar-width: none; /* For Firefox */
@@ -71,10 +71,10 @@
   }
 
   #issues-container > div:first-child {
-    border-top: 1px solid #80808020;
+    border-top: 1px solid #7f7f7f20;
   }
   #issues-container > div:last-child {
-    border-top: 1px solid #80808020;
+    border-top: 1px solid #7f7f7f20;
   }
 
   #issues-container > div {
@@ -85,7 +85,7 @@
     background-repeat: no-repeat;
     opacity: 0.25;
     margin: 3px auto;
-    border: 1px solid #80808020;
+    border: 1px solid #7f7f7f20;
     border-radius: 4px;
     cursor: pointer;
   }
@@ -101,7 +101,7 @@
     /* background-position: 9px calc(100% - 9px); */
     opacity: 1;
 
-    background-color: #80808010;
+    background-color: #7f7f7f10;
     transition: background-color 0s;
   }
 
@@ -114,7 +114,7 @@
   }
   #issues-container > div:active {
     /* border-left: 4px solid #00ffff; */
-    background-color: #80808040;
+    background-color: #7f7f7f40;
   }
 
   h3 {
@@ -127,7 +127,7 @@
   p {
     margin: 0;
     line-height: 1;
-    color: #bfbfbf;
+    color: #404040undefined;
     font-size: 12px;
     text-align: right;
     letter-spacing: 0.5px;
@@ -162,7 +162,7 @@
     font-size: 12px;
     text-align: center;
     white-space: nowrap;
-    background-color: #80808040;
+    background-color: #7f7f7f40;
     width: 64px;
     letter-spacing: 0.5px;
     flex-grow: 3;
@@ -225,18 +225,18 @@
     border-style: unset;
     border-color: unset;
     border-image: unset;
-    border: 1px solid #80808020;
+    border: 1px solid #7f7f7f20;
     padding: 8px 16px;
     border-radius: 4px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    background-color: #80808010;
+    background-color: #7f7f7f10;
   }
   button:hover {
-    background-color: #80808020;
+    background-color: #7f7f7f20;
   }
   button:active {
-    background-color: #80808040;
+    background-color: #7f7f7f40;
   }
 
   #toolbar {
@@ -249,7 +249,7 @@
     padding: 4px;
     display: flex;
     /* text-align: right; */
-    border-top: 1px solid #80808020;
+    border-top: 1px solid #7f7f7f20;
     /* text-align: center; */
     /* align-items: stretch; */
     justify-content: center;

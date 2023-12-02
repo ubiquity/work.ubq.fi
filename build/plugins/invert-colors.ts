@@ -1,0 +1,51 @@
+import esbuild from "esbuild";
+import fs from "fs";
+import path from "path";
+
+export const invertColors: esbuild.Plugin = {
+  name: "invert-colors",
+  setup(build) {
+    build.onLoad({ filter: /\.css$/ }, async (args) => {
+      const contents = await fs.promises.readFile(args.path, "utf8");
+
+      const updatedContents = contents.replace(/prefers-color-scheme: dark/g, "prefers-color-scheme: light");
+
+      // Invert greyscale colors and accommodate alpha channels in the CSS content
+      const invertedContents = updatedContents.replace(/#([0-9A-Fa-f]{3,6})([0-9A-Fa-f]{2})?\b/g, (match, rgb, alpha) => {
+        let color = rgb.startsWith("#") ? rgb.slice(1) : rgb;
+        if (color.length === 3) {
+          color = color
+            .split("")
+            .map((char) => char + char)
+            .join("");
+        }
+        const r = parseInt(color.slice(0, 2), 16);
+        const g = parseInt(color.slice(2, 4), 16);
+        const b = parseInt(color.slice(4, 6), 16);
+        // const a = alpha ? parseInt(alpha, 16) : 255;
+
+        // Check if the color is greyscale (R, G, and B components are equal)
+        if (r === g && g === b) {
+          // Invert RGB values and calculate inverted alpha
+          const invertedColorValue = (255 - r).toString(16).padStart(2, "0");
+          // const invertedAlphaValue = (255 - a).toString(16).padStart(2, "0");
+          // Return the inverted greyscale color with alpha channel
+          return `#${invertedColorValue}${invertedColorValue}${invertedColorValue}${alpha}`;
+        }
+
+        // If the color is not greyscale, return it as is, including the alpha channel
+        return `#${color}${alpha || ""}`;
+      });
+
+      // Define the output path for the new CSS file
+      const outputPath = path.resolve("static/style", "inverted-style.css");
+      const outputDir = path.dirname(outputPath);
+      await fs.promises.mkdir(outputDir, { recursive: true });
+      // Write the new contents to the output file
+      await fs.promises.writeFile(outputPath, invertedContents, "utf8");
+
+      // Return an empty result to esbuild since we're writing the file ourselves
+      return { contents: "", loader: "css" };
+    });
+  },
+};
