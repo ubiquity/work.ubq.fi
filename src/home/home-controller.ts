@@ -1,6 +1,6 @@
-import { GitHubIssue } from "./github-types";
+import { GitHubIssueWithNewFlag } from "./display-github-issues";
 
-export function homeController(container: HTMLDivElement, issues: GitHubIssue[]) {
+export function homeController(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
   const avatarCache: Record<string, string> = JSON.parse(localStorage.getItem("avatarCache") || "{}");
   const fetchInProgress = new Set(); // Track in-progress fetches
   const existingIssueIds = new Set(Array.from(container.querySelectorAll(".issue-element-inner")).map((element) => element.getAttribute("data-issue-id")));
@@ -13,7 +13,11 @@ export function homeController(container: HTMLDivElement, issues: GitHubIssue[])
       const issueWrapper = document.createElement("div");
       const issueElement = document.createElement("div");
       issueElement.setAttribute("data-issue-id", issue.id.toString());
-      issueWrapper.classList.add("issue-element-wrapper");
+
+      if (issue.isNew) {
+        issueWrapper.classList.add("new-issue");
+      }
+      // issueWrapper.classList.add("issue-element-wrapper", "new-issue"); // Add "new-issue" class here
       issueElement.classList.add("issue-element-inner");
       setTimeout(() => issueWrapper.classList.add("active"), delay);
 

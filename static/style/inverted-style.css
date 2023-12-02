@@ -46,14 +46,13 @@
     max-width: 640px;
     margin: auto;
     /* border-left: 1px solid #7f7f7f10; */
-    /* padding: 0 0 48px; */
+    padding: 0 0 48px;
     /* background: linear-gradient(to bottom, #7f7f7f00 0%, #7f7f7fff 15%, #7f7f7fff 85%, #7f7f7f00 100%); */
     -webkit-mask-image: linear-gradient(to bottom, #ffffff00, #ffffffff 0%, #ffffffff 75%, #ffffff00 100%);
-    /* height: calc(100vh - 48px); */
+    height: calc(100vh - 96px);
     overflow: scroll;
     scrollbar-width: none; /* For Firefox */
     -ms-overflow-style: none; /* For Internet Explorer and Edge */
-    height: 100vh;
   }
   &::-webkit-scrollbar {
     display: none; /* For Chrome, Safari, and Opera */
@@ -331,6 +330,19 @@
   .full {
     display: unset !important;
   }
+  .new-issue {
+    position: relative;
+  }
+  .new-issue::before {
+    content: ""; /* This is required for the pseudo-element to display */
+    display: inline-block;
+    position: absolute;
+    height: 100%;
+    width: 4px;
+    right: 0px; /* Position the pseudo-element to the right of the .new-issue element */
+    background-color: #00ffff; /* Example background color */
+  }
+
   @media screen and (max-width: 640px) {
     .full {
       display: none !important;

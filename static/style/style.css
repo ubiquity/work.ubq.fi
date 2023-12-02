@@ -330,6 +330,19 @@
   .full {
     display: unset !important;
   }
+  .new-issue {
+    position: relative;
+  }
+  .new-issue::before {
+    content: ""; /* This is required for the pseudo-element to display */
+    display: inline-block;
+    position: absolute;
+    height: 100%;
+    width: 4px;
+    right: 0px; /* Position the pseudo-element to the right of the .new-issue element */
+    background-color: #00ffff; /* Example background color */
+  }
+
   @media screen and (max-width: 640px) {
     .full {
       display: none !important;
