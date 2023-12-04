@@ -1,6 +1,6 @@
 import { GitHubIssueWithNewFlag } from "./display-github-issues";
 
-export function homeController(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
+export async function homeController(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
   const avatarCache: Record<string, string> = JSON.parse(localStorage.getItem("avatarCache") || "{}");
   const fetchInProgress = new Set(); // Track in-progress fetches
   const existingIssueIds = new Set(Array.from(container.querySelectorAll(".issue-element-inner")).map((element) => element.getAttribute("data-issue-id")));
@@ -8,7 +8,7 @@ export function homeController(container: HTMLDivElement, issues: GitHubIssueWit
   let delay = 0;
   const baseDelay = 1000 / 15; // Base delay in milliseconds
 
-  issues.forEach(async (issue) => {
+  for (const issue of issues) {
     if (!existingIssueIds.has(issue.id.toString())) {
       const issueWrapper = document.createElement("div");
       const issueElement = document.createElement("div");
@@ -100,7 +100,7 @@ export function homeController(container: HTMLDivElement, issues: GitHubIssueWit
       }
 
       container.appendChild(issueWrapper);
-      container.classList.add("ready");
     }
-  });
+  }
+  container.classList.add("ready");
 }

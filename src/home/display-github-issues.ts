@@ -53,7 +53,7 @@ async function fetchIssues(container: HTMLDivElement, accessToken: string | null
         const issues = JSON.parse(cachedIssues);
         const sortedIssuesByTime = sortIssuesByTime(issues);
         const sortedIssuesByPriority = sortIssuesByPriority(sortedIssuesByTime);
-        homeController(container, sortedIssuesByPriority);
+        await homeController(container, sortedIssuesByPriority);
       } catch (error) {
         console.error(error);
       }
@@ -81,7 +81,7 @@ async function fetchIssues(container: HTMLDivElement, accessToken: string | null
     const sortedIssuesByPriority = sortIssuesByPriority(sortedIssuesByTime);
 
     // Pass the fresh issues to the homeController
-    homeController(container, sortedIssuesByPriority);
+    await homeController(container, sortedIssuesByPriority);
 
     // Remove the 'isNew' flag before saving to localStorage
     const issuesToSave = freshIssues.map(({ ...issue }) => {
