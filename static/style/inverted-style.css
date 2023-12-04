@@ -41,19 +41,20 @@
   #issues-container {
     max-width: 640px;
     margin: auto;
-    padding: 0 0 48px;
+    padding: 0 0 56px;
     /* overflow: scroll; */
     scrollbar-width: none;
     -ms-overflow-style: none;
+    padding: calc(50vh - 56px) 0;
   }
   &::-webkit-scrollbar {
     display: none;
   }
   #issues-container .issue-element-inner {
+    transition: 125ms opacity ease-out 62.5ms ;
   }
   #issues-container:hover .issue-element-inner {
-    transition: 250ms opacity ease-out 1000ms ;
-    /* opacity: 0.75; */
+    opacity: 0.5;
   }
 
   #issues-container * {
@@ -81,6 +82,7 @@
     cursor: pointer;
     margin: 8px;
     /* background-color: #ffffff; */
+    filter: blur(4px);
   }
   #issues-container > div.active {
     transition: 125ms all ease-in-out;

@@ -45,6 +45,7 @@
     /* overflow: scroll; */
     scrollbar-width: none;
     -ms-overflow-style: none;
+    padding: calc(25vh - 56px) 0;
   }
   &::-webkit-scrollbar {
     display: none;
@@ -81,6 +82,7 @@
     cursor: pointer;
     margin: 8px;
     /* background-color: #000; */
+    filter: blur(4px);
   }
   #issues-container > div.active {
     transition: 125ms all ease-in-out;
