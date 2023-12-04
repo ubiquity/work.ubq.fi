@@ -52,7 +52,7 @@
     display: none;
   }
   #issues-container .issue-element-inner {
-    transition: 125ms opacity ease-out 62.5ms ;
+    transition: 125ms opacity ease-out 62.5ms;
   }
   #issues-container:hover .issue-element-inner {
     opacity: 0.5;
@@ -272,6 +272,7 @@
     justify-content: center;
     -webkit-backdrop-filter: blur(8px);
     justify-content: space-between;
+    justify-content: space-evenly;
   }
   #toolbar > * {
     align-items: center;
@@ -292,6 +293,7 @@
     height: 40px;
     padding: 4px 0;
   }
+
   #toolbar[data-authenticated="true"] > #github-login-button {
     display: none;
   }
@@ -361,11 +363,17 @@
     margin-right: 8px;
   }
   #issues-container img {
-    max-height: 24px;
+    height: 24px;
     border-radius: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 24px;
+    opacity: 0;
+  }
+
+  #issues-container img[src] {
+    opacity: 1;
   }
 
   background,
