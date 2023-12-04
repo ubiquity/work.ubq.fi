@@ -331,7 +331,7 @@
     right: 0;
     background-color: #0ff;
   }
-  @media screen and (max-width: 896px) {
+  @media screen and (max-width: 904px) {
     .full {
       display: none !important;
     }
