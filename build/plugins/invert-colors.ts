@@ -22,18 +22,16 @@ export const invertColors: esbuild.Plugin = {
         const r = parseInt(color.slice(0, 2), 16);
         const g = parseInt(color.slice(2, 4), 16);
         const b = parseInt(color.slice(4, 6), 16);
-        // const a = alpha ? parseInt(alpha, 16) : 255;
 
         // Check if the color is greyscale (R, G, and B components are equal)
         if (r === g && g === b) {
-          // Invert RGB values and calculate inverted alpha
+          // Invert RGB values
           const invertedColorValue = (255 - r).toString(16).padStart(2, "0");
-          // const invertedAlphaValue = (255 - a).toString(16).padStart(2, "0");
-          // Return the inverted greyscale color with alpha channel
-          return `#${invertedColorValue}${invertedColorValue}${invertedColorValue}${alpha}`;
+          // Return the inverted greyscale color with alpha channel if present
+          return `#${invertedColorValue}${invertedColorValue}${invertedColorValue}${alpha || ""}`;
         }
 
-        // If the color is not greyscale, return it as is, including the alpha channel
+        // If the color is not greyscale, return it as is, including the alpha channel if present
         return `#${color}${alpha || ""}`;
       });
 
