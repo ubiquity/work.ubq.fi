@@ -9,7 +9,10 @@ const previewContent = document.createElement("div");
 previewContent.classList.add("preview-content");
 const previewHeader = document.createElement("div");
 previewHeader.classList.add("preview-header");
-const title = document.createElement("h1");
+const titleAnchor = document.createElement("a");
+titleAnchor.setAttribute("target", "_blank");
+titleAnchor.href = "#";
+const titleHeader = document.createElement("h1");
 const closeButton = document.createElement("button");
 closeButton.classList.add("close-preview");
 closeButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z"/></svg>`;
@@ -20,7 +23,8 @@ previewBodyInner.classList.add("preview-body-inner");
 
 // Assemble the preview box
 previewHeader.appendChild(closeButton);
-previewHeader.appendChild(title);
+titleAnchor.appendChild(titleHeader);
+previewHeader.appendChild(titleAnchor);
 previewBody.appendChild(previewBodyInner);
 previewContent.appendChild(previewHeader);
 previewContent.appendChild(previewBody);
@@ -167,10 +171,10 @@ function issuesSynced() {
 // Function to update and show the preview
 function previewIssue(issuePreview: GitHubIssueWithNewFlag) {
   const issuesFull = JSON.parse(localStorage.getItem("githubIssuesFull") || "[]");
-  console.trace({
-    issuesFull,
-    issue: issuePreview,
-  });
+  // console.trace({
+  //   issuesFull,
+  //   issue: issuePreview,
+  // });
   const issuePreviewUrl = issuePreview.body.match(/https:\/\/github\.com\/[^/]+\/[^/]+\/issues\/\d+/)?.[0];
   if (!issuePreviewUrl) throw new Error("Issue preview URL not found");
 
@@ -178,7 +182,8 @@ function previewIssue(issuePreview: GitHubIssueWithNewFlag) {
   if (!issueFull) throw new Error("Issue not found");
 
   // Update the title and body for the new issue
-  title.textContent = issuePreview.title;
+  titleHeader.textContent = issuePreview.title;
+  titleAnchor.href = issuePreviewUrl;
   previewBodyInner.innerHTML = marked(issueFull.body) as string;
 
   // Show the preview

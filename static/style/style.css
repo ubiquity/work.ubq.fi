@@ -511,7 +511,11 @@
     /* justify-content: space-between; */
     margin-bottom: 8px;
   }
-
+  .preview-header > a  {word-wrap: initial;}
+  .preview-header > a > h1 {
+    word-wrap: initial;
+    word-break: normal;
+  }
   .preview-body {
     margin: 16px;
     overflow: scroll;
@@ -528,7 +532,7 @@
     right: 0;
     top: 0;
     margin: 8px;
-    height: 48px;
+    /* height: 48px; */
   }
   .preview li {
     margin-bottom: 8px;
