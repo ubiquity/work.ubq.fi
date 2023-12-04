@@ -57,6 +57,11 @@
   #issues-container.preview-active {
     transform: translateX(-50%);
   }
+  #issues-container.preview-active .issue-element-inner {
+    opacity: 0.5;
+    /* transition: 0.33s all cubic-bezier(0, 1, 1, 1); */
+    filter: blur(4px);
+  }
   &::-webkit-scrollbar {
     display: none;
   }
@@ -437,12 +442,15 @@
     mask-image: radial-gradient(#00000020 0, #00000080 100%);
     pointer-events: none;
   }
-  .preview blockquote{
+  .preview blockquote {
     margin-left: 16px;
     opacity: 0.66;
-}
-  .preview sup{
-    display: block
+  }
+  .preview sup {
+    display: block;
+  }
+  .preview hr {
+    border-color: #ffffff40;
   }
   .preview p {
     line-height: 1.25;
@@ -483,15 +491,19 @@
     /* display: block; */
     /* white-space: inherit; */
     position: absolute;
+    font-family: monospace;
   }
   .preview ul,
   .preview ol {
     padding-left: 12px;
+    margin-left: 4px;
   }
+
   .preview h1 {
     margin: 8px;
     /* text-align: center; */
     font-size: 24px;
+    margin-right: 16px;
   }
   .preview a {
     word-break: break-all;
@@ -573,5 +585,6 @@
     letter-spacing: 0;
     font-size: 16px;
     line-height: 1.25;
+    /* width: calc(100% - 24px); */
   }
 }
