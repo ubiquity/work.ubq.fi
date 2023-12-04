@@ -15,7 +15,7 @@ titleAnchor.href = "#";
 const titleHeader = document.createElement("h1");
 const closeButton = document.createElement("button");
 closeButton.classList.add("close-preview");
-closeButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z"/></svg>`;
+closeButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z"/></svg>`;
 const previewBody = document.createElement("div");
 previewBody.classList.add("preview-body");
 const previewBodyInner = document.createElement("div");
@@ -24,7 +24,7 @@ previewBodyInner.classList.add("preview-body-inner");
 // Assemble the preview box
 previewHeader.appendChild(closeButton);
 titleAnchor.appendChild(titleHeader);
-const openNewLinkIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg>`;
+const openNewLinkIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"/></svg>`;
 const openNewLink = document.createElement("span");
 openNewLink.classList.add("open-new-link");
 openNewLink.innerHTML = openNewLinkIcon;
