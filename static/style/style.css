@@ -438,9 +438,10 @@
     pointer-events: none;
   }
   .preview p {
-    line-height: 1.25;
+    line-height: 1.5;
     word-break: break-word;
     margin-bottom: 12px;
+    letter-spacing: 0;
   }
   .preview img {
     max-width: 100%;
@@ -511,7 +512,9 @@
     /* justify-content: space-between; */
     margin-bottom: 8px;
   }
-  .preview-header > a  {word-wrap: initial;}
+  .preview-header > a {
+    word-wrap: initial;
+  }
   .preview-header > a > h1 {
     word-wrap: initial;
     word-break: normal;
@@ -536,5 +539,6 @@
   }
   .preview li {
     margin-bottom: 8px;
+    letter-spacing: 0;
   }
 }
