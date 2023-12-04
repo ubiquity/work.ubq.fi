@@ -359,6 +359,7 @@
     right: 0;
     background-color: #0ff;
   }
+
   @media screen and (max-width: 896px) {
     .full {
       display: none !important;
@@ -391,10 +392,10 @@
     .preview.active {
       position: fixed;
       right: 0;
-      transform: translateX(0);
+      transform: translateX(0) !important;
     }
     #issues-container.preview-active {
-      transform: translateX(0);
+      transform: translateX(0) !important;
     }
   }
   #toolbar > button {
@@ -464,7 +465,7 @@
     word-break: break-all;
   }
   .preview-body-inner {
-    width: calc(100% - 48px);
+    /* width: calc(100% - 48px); */
     max-width: 640px;
     overflow: scroll;
   }
@@ -493,7 +494,7 @@
     transform: translateX(0%);
     flex-wrap: wrap;
     overflow: scroll;
-    max-height: calc(100vh - 130px);
+    max-height: calc(100vh - 71px);
     pointer-events: none;
   }
   .close-preview svg {
