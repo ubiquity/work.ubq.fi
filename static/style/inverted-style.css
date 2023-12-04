@@ -457,7 +457,7 @@
     padding-left: 12px;
   }
   .preview h1 {
-    margin: 16px;
+    margin: 8px;
     /* text-align: center; */
   }
   .preview a {
@@ -507,7 +507,7 @@
   .preview-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     margin-bottom: 8px;
   }
 

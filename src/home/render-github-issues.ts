@@ -157,7 +157,9 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
 }
 
 function issuesSynced() {
-  const issuesFull = JSON.parse(localStorage.getItem("githubIssuesFull"));
+  const gitHubIssuesFull = localStorage.getItem("githubIssuesFull");
+  if (!gitHubIssuesFull) return false;
+  const issuesFull = JSON.parse(gitHubIssuesFull);
   if (!issuesFull) return false;
   else return true;
 }
