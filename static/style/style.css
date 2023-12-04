@@ -116,7 +116,7 @@
   #issues-container > div:active {
     background-color: #80808040;
   }
-  h3 {
+  #issues-container h3 {
     line-height: 1;
     font-size: 16px;
     text-overflow: ellipsis;
