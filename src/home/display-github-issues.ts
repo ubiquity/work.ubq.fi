@@ -1,94 +1,106 @@
-import { Octokit } from "@octokit/rest";
-import { GitHubIssue } from "./github-types";
-import { homeController } from "./home-controller";
+import { GitHubIssueWithNewFlag } from "./fetch-github-issues";
 
-export type GitHubIssueWithNewFlag = GitHubIssue & { isNew?: boolean };
+export async function displayGitHubIssues(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
+  const avatarCache: Record<string, string> = JSON.parse(localStorage.getItem("avatarCache") || "{}");
+  const fetchInProgress = new Set(); // Track in-progress fetches
+  const existingIssueIds = new Set(Array.from(container.querySelectorAll(".issue-element-inner")).map((element) => element.getAttribute("data-issue-id")));
 
-export async function displayGitHubIssues(accessToken: string | null) {
-  const container = document.getElementById("issues-container") as HTMLDivElement;
-  if (!container) {
-    throw new Error("Could not find issues container");
-  }
-  await fetchIssues(container, accessToken);
-}
+  let delay = 0;
+  const baseDelay = 1000 / 15; // Base delay in milliseconds
 
-function sortIssuesByPriority(issues: GitHubIssue[]) {
-  return issues.sort((a, b) => {
-    const priorityRegex = /Priority: (\d+)/;
-    const aPriorityMatch = a.labels.find((label) => priorityRegex.test(label.name));
-    const bPriorityMatch = b.labels.find((label) => priorityRegex.test(label.name));
-    const aPriority = aPriorityMatch ? parseInt(aPriorityMatch.name.match(priorityRegex)![1], 10) : 0;
-    const bPriority = bPriorityMatch ? parseInt(bPriorityMatch.name.match(priorityRegex)![1], 10) : 0;
-    return bPriority - aPriority;
-  });
-}
+  for (const issue of issues) {
+    if (!existingIssueIds.has(issue.id.toString())) {
+      const issueWrapper = document.createElement("div");
+      const issueElement = document.createElement("div");
+      issueElement.setAttribute("data-issue-id", issue.id.toString());
 
-function sortIssuesByTime(issues: GitHubIssue[]) {
-  return issues.sort((a, b) => {
-    const aTimeValue = a.labels.reduce((acc, label) => acc + calculateLabelValue(label.name), 0);
-    const bTimeValue = b.labels.reduce((acc, label) => acc + calculateLabelValue(label.name), 0);
-    return bTimeValue - aTimeValue;
-  });
-}
-
-export function calculateLabelValue(label: string): number {
-  const matches = label.match(/\d+/);
-  const number = matches && matches.length > 0 ? parseInt(matches[0]) || 0 : 0;
-  if (label.toLowerCase().includes("priority")) return number;
-  // throw new Error(`Label ${label} is not a priority label`);
-  if (label.toLowerCase().includes("minute")) return number * 0.002;
-  if (label.toLowerCase().includes("hour")) return number * 0.125;
-  if (label.toLowerCase().includes("day")) return 1 + (number - 1) * 0.25;
-  if (label.toLowerCase().includes("week")) return number + 1;
-  if (label.toLowerCase().includes("month")) return 5 + (number - 1) * 8;
-  return 0;
-}
-
-async function fetchIssues(container: HTMLDivElement, accessToken: string | null) {
-  try {
-    const cachedIssues = localStorage.getItem("githubIssues");
-
-    if (cachedIssues) {
-      try {
-        const issues = JSON.parse(cachedIssues);
-        const sortedIssuesByTime = sortIssuesByTime(issues);
-        const sortedIssuesByPriority = sortIssuesByPriority(sortedIssuesByTime);
-        await homeController(container, sortedIssuesByPriority);
-      } catch (error) {
-        console.error(error);
+      if (issue.isNew) {
+        issueWrapper.classList.add("new-issue");
       }
+      // issueWrapper.classList.add("issue-element-wrapper", "new-issue"); // Add "new-issue" class here
+      issueElement.classList.add("issue-element-inner");
+      setTimeout(() => issueWrapper.classList.add("active"), delay);
+
+      delay += baseDelay;
+
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      const mirrorUrls = issue.body.match(urlRegex);
+
+      const urlPattern = /https:\/\/github\.com\/([^/]+)\/([^/]+)\//;
+      const match = mirrorUrls?.shift()?.match(urlPattern);
+      const organizationName = match?.[1];
+      const repositoryName = match?.[2];
+
+      type LabelKey = "Pricing: " | "Time: " | "Priority: ";
+
+      const labelOrder: Record<LabelKey, number> = { "Pricing: ": 1, "Time: ": 2, "Priority: ": 3 };
+
+      issue.labels.sort((a, b) => {
+        const matchA = a.name.match(/^(Pricing|Time|Priority): /)?.[0] as LabelKey | undefined;
+        const matchB = b.name.match(/^(Pricing|Time|Priority): /)?.[0] as LabelKey | undefined;
+        const orderA = matchA ? labelOrder[matchA] : 0;
+        const orderB = matchB ? labelOrder[matchB] : 0;
+        return orderA - orderB;
+      });
+
+      // Filter labels that begin with specific prefixes
+      const filteredLabels = issue.labels.filter((label) => {
+        return label.name.startsWith("Time: ") || label.name.startsWith("Pricing: ") || label.name.startsWith("Priority: ");
+      });
+
+      // Map the filtered labels to HTML elements
+      const labels = filteredLabels.map((label) => {
+        // Remove the prefix from the label name
+        const name = label.name.replace(/(Time|Pricing|Priority): /, "");
+        if (label.name.startsWith("Pricing: ")) {
+          return `<label class="pricing">${name}</label>`;
+        } else {
+          return `<label class="label">${name}</label>`;
+        }
+      });
+
+      issueElement.innerHTML = `
+      <div class="info"><div class="title"><h3>${
+        issue.title
+      }</h3></div><div class="partner"><p class="organization-name">${organizationName}</p><p class="repository-name">${repositoryName}</p></div></div><div class="labels">${labels.join(
+        ""
+      )}</div>`;
+
+      issueElement.addEventListener("click", () => {
+        console.log(issue);
+        window.open(match?.input, "_blank");
+      });
+
+      issueWrapper.appendChild(issueElement);
+
+      // Set the issueWrapper background-image to the organization's avatar
+      if (organizationName) {
+        const cachedAvatar = avatarCache[organizationName];
+        if (cachedAvatar) {
+          issueWrapper.style.backgroundImage = `url("${cachedAvatar}")`;
+        } else if (!fetchInProgress.has(organizationName)) {
+          // Mark this organization's avatar as being fetched
+          fetchInProgress.add(organizationName);
+
+          try {
+            const response = await fetch(`https://api.github.com/orgs/${organizationName}`);
+            const data = await response.json();
+            if (data && data.avatar_url) {
+              avatarCache[organizationName] = data.avatar_url;
+              localStorage.setItem("avatarCache", JSON.stringify(avatarCache));
+              issueWrapper.style.backgroundImage = `url("${data.avatar_url}")`;
+            }
+          } catch (error) {
+            console.error("Error fetching avatar:", error);
+          } finally {
+            // Fetch is complete, remove from the in-progress set
+            fetchInProgress.delete(organizationName);
+          }
+        }
+      }
+
+      container.appendChild(issueWrapper);
     }
-
-    const octokit = new Octokit({
-      auth: accessToken,
-    });
-
-    try {
-      const { data: rateLimit } = await octokit.request("GET /rate_limit");
-      console.log("Rate limit remaining: ", rateLimit.rate.remaining);
-    } catch (error) {
-      console.error(error);
-    }
-    // Fetch fresh issues and mark them as new
-    const freshIssues: GitHubIssue[] = await octokit.paginate("GET /repos/ubiquity/devpool-directory/issues", {
-      state: "open",
-    });
-    const freshIssuesWithNewFlag = freshIssues.map((issue) => ({ ...issue, isNew: true })) as GitHubIssueWithNewFlag[];
-
-    // Sort the fresh issues
-    const sortedIssuesByTime = sortIssuesByTime(freshIssuesWithNewFlag);
-    const sortedIssuesByPriority = sortIssuesByPriority(sortedIssuesByTime);
-
-    // Pass the fresh issues to the homeController
-    await homeController(container, sortedIssuesByPriority);
-
-    // Remove the 'isNew' flag before saving to localStorage
-    const issuesToSave = freshIssuesWithNewFlag.map(({ ...issue }) => {
-      delete issue.isNew;
-      return issue;
-    });
-    localStorage.setItem("githubIssues", JSON.stringify(issuesToSave));
-  } catch (error) {
-    console.error(error);
   }
+  container.classList.add("ready");
 }

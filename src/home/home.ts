@@ -1,15 +1,16 @@
-import { GitHubUser, authenticatedGetGitHubUser } from "./authenticated-get-github-user";
-import { checkForGitHubAccessToken } from "./check-for-github-access-token";
-import { displayGitHubIssues } from "./display-github-issues";
-import { displayGitHubUserInformation } from "./display-github-user-information";
+import { authentication } from "./authentication";
 
-const gitHubToken = checkForGitHubAccessToken();
+authentication();
+filterButtons();
+function filterButtons() {
+  const filters = document.getElementById("filters");
+  if (!filters) throw new Error("filters not found");
+  const buttons = filters.querySelectorAll("input");
 
-displayGitHubIssues(gitHubToken)
-  .then(authenticatedGetGitHubUser)
-  .then((gitHubUser: null | GitHubUser) => {
-    if (gitHubUser) {
-      displayGitHubUserInformation(gitHubUser);
-    }
-  })
-  .catch((error) => console.error(error));
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      console.trace(button);
+      sortIssuesBy(button.value);
+    });
+  });
+}
