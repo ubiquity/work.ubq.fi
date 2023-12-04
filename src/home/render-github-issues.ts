@@ -2,6 +2,46 @@ import { marked } from "marked";
 
 import { GitHubIssueWithNewFlag } from "./fetch-github-issues";
 
+// Create the preview elements outside of the previewIssue function
+const preview = document.createElement("div");
+preview.classList.add("preview");
+const previewContent = document.createElement("div");
+previewContent.classList.add("preview-content");
+const previewHeader = document.createElement("div");
+previewHeader.classList.add("preview-header");
+const title = document.createElement("h3");
+const closeButton = document.createElement("button");
+closeButton.classList.add("close-preview");
+closeButton.textContent = "Close";
+const previewBody = document.createElement("div");
+previewBody.classList.add("preview-body");
+const previewBodyInner = document.createElement("div");
+previewBodyInner.classList.add("preview-body-inner");
+
+// Assemble the preview box
+previewHeader.appendChild(title);
+previewHeader.appendChild(closeButton);
+previewBody.appendChild(previewBodyInner);
+previewContent.appendChild(previewHeader);
+previewContent.appendChild(previewBody);
+preview.appendChild(previewContent);
+document.body.appendChild(preview);
+
+// Initially hide the preview
+// preview.classList.add("inactive"); //  = 'none';
+
+// Event listeners for closing the preview
+preview.addEventListener("click", (event) => {
+  if (event.target === preview) {
+    preview.classList.remove("active"); //  = 'none';
+  }
+});
+
+closeButton.addEventListener("click", () => {
+  preview.classList.remove("active"); //  = 'none';
+});
+
+
 export async function renderGitHubIssues(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
   const avatarCache: Record<string, string> = JSON.parse(localStorage.getItem("avatarCache") || "{}");
   const fetchInProgress = new Set(); // Track in-progress fetches
@@ -109,6 +149,7 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
   container.classList.add("ready");
 }
 
+// Function to update and show the preview
 function previewIssue(issuePreview: GitHubIssueWithNewFlag) {
   const issuesFull = JSON.parse(localStorage.getItem("githubIssuesFull") || "[]");
   console.trace({
@@ -121,48 +162,15 @@ function previewIssue(issuePreview: GitHubIssueWithNewFlag) {
   const issueFull = findIssueByUrl(issuesFull, issuePreviewUrl);
   if (!issueFull) throw new Error("Issue not found");
 
-  const preview = document.createElement("div");
-  preview.classList.add("preview");
-  const previewContent = document.createElement("div");
-  previewContent.classList.add("preview-content");
-  const previewHeader = document.createElement("div");
-  previewHeader.classList.add("preview-header");
-
-  const title = document.createElement("h3");
+  // Update the title and body for the new issue
   title.textContent = issuePreview.title;
-  previewHeader.appendChild(title);
+  previewBodyInner.innerHTML = marked(issueFull.body) as string;
 
-  const closeButton = document.createElement("button");
-  closeButton.classList.add("close-preview");
-  closeButton.textContent = "Close";
-  previewHeader.appendChild(closeButton);
-
-  const previewBody = document.createElement("div");
-  previewBody.classList.add("preview-body");
-
-  const previewBodyInner = document.createElement("div");
-  previewBodyInner.classList.add("preview-body-inner");
-  // const mmmmarked = new marked(issueFull.body);
-  previewBodyInner.innerHTML = marked.parse(issueFull.body);
-
-  previewBody.appendChild(previewBodyInner);
-
-  previewContent.appendChild(previewHeader);
-  previewContent.appendChild(previewBody);
-  preview.appendChild(previewContent);
-
-  document.body.appendChild(preview);
-  preview.addEventListener("click", (event) => {
-    if (event.target === preview) {
-      preview.remove();
-    }
-  });
-  // const closeButton = preview.querySelector(".close-preview") as HTMLButtonElement;
-  closeButton.addEventListener("click", () => {
-    preview.remove();
-  });
+  // Show the preview
+  preview.classList.add("active"); //  = 'block';
 }
 
+// Function to find an issue by URL
 function findIssueByUrl(issues: GitHubIssueWithNewFlag[], url: string) {
   console.trace({
     issues,

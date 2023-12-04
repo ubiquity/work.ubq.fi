@@ -409,27 +409,25 @@
     mask-image: radial-gradient(#00000020 0, #00000080 100%);
     pointer-events: none;
   }
+
   .preview {
     text-align: left;
     position: fixed;
     bottom: 0;
     left: 0;
     width: calc(100vw - 32px);
-    /* height: 100%; */
-    /* background-color: #00000080; */
-    /* display: flex; */
-    /* align-items: center; */
-    /* justify-content: center; */
-    /* pointer-events: none; */
-    /* opacity: 0; */
-    transition: 0.5s opacity ease-in-out;
-    /* z-index: 100; */
+    transition: 0.125s opacity ease-in-out;
     display: block;
     background: #000;
     padding: 16px;
     max-width: 640px;
     border: 1px solid #80808020;
     border-radius: 4px;
+    opacity: 0;
+  }
+  .preview.active {
+    opacity: 1;
+    pointer-events: all;
   }
   .preview-header {
     display: flex;

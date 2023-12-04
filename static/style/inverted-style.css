@@ -111,12 +111,27 @@
     text-overflow: ellipsis;
     margin: 0;
   }
+  #issues-container p {
+    text-align: right;
+  }
+
   p {
     margin: 0;
     line-height: 1;
     color: #404040;
     font-size: 12px;
-    text-align: right;
+
+    letter-spacing: 0.5px;
+    text-rendering: geometricPrecision;
+    top: 0;
+    right: 0;
+  }
+  li {
+    margin: 0;
+    line-height: 1;
+    color: #404040;
+    font-size: 12px;
+
     letter-spacing: 0.5px;
     text-rendering: geometricPrecision;
     top: 0;
@@ -394,11 +409,17 @@
     mask-image: radial-gradient(#ffffff20 0, #ffffff80 100%);
     pointer-events: none;
   }
+
+  .preview.active {
+    opacity: 1;
+    pointer-events: all;
+  }
   .preview {
+    text-align: left;
     position: fixed;
     bottom: 0;
     left: 0;
-    width: 100%;
+    width: calc(100vw - 32px);
     /* height: 100%; */
     /* background-color: #ffffff80; */
     /* display: flex; */
@@ -411,14 +432,18 @@
     display: block;
     background: #ffffff;
     padding: 16px;
+    max-width: 640px;
+    border: 1px solid #7f7f7f20;
+    border-radius: 4px;
   }
   .preview-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 8px;
   }
 
-  .preview-body{
-    padding: 8px
+  .preview-body {
+    padding: 8px;
   }
 }
