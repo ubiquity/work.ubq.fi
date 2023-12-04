@@ -57,10 +57,10 @@
   #issues-container.preview-active {
     transform: translateX(-50%);
   }
-  #issues-container.preview-active .issue-element-wrapper {
+  #issues-container.preview-active .issue-element-inner {
     opacity: 0.5;
-    transition: 0.33s all cubic-bezier(0, 1, 1, 1);
-    filter: blur(8px);
+    /* transition: 0.33s all cubic-bezier(0, 1, 1, 1); */
+    filter: blur(4px);
   }
   &::-webkit-scrollbar {
     display: none;
@@ -491,13 +491,14 @@
     /* display: block; */
     /* white-space: inherit; */
     position: absolute;
+    font-family: monospace;
   }
   .preview ul,
   .preview ol {
     padding-left: 12px;
-    /* width: calc(100% - 24px); */
-    margin-left: 12px;
+    margin-left: 4px;
   }
+
   .preview h1 {
     margin: 8px;
     /* text-align: center; */
@@ -511,6 +512,8 @@
     /* width: calc(100% - 48px); */
     max-width: 640px;
     overflow: scroll;
+    max-height: calc(100vh - 168px);
+    pointer-events: all;
   }
 
   .preview {
@@ -536,7 +539,6 @@
     display: flex;
     transform: translateX(0%);
     flex-wrap: wrap;
-    overflow: scroll;
     max-height: calc(100vh - 71px);
     pointer-events: none;
   }
@@ -550,9 +552,10 @@
   }
   .preview-header {
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     /* justify-content: space-between; */
-    margin-bottom: 8px;
+    /* margin-bottom: 8px; */
+    /* position: fixed; */
   }
   .preview-header > a {
     word-wrap: initial;
@@ -564,11 +567,16 @@
   .preview-body {
     margin: 16px;
     overflow: scroll;
-    width: calc(100% - 48px);
+    width: calc(100% - 32px);
+    /* margin-top: 48px; */
+    /* height: calc( 100% - 512px); */
+    overflow: hidden;
+    /* background: red; */
   }
   .preview-content {
     /* padding: 16px; */
     width: 100%;
+    /* position: relative; */
   }
   .preview button.close-preview {
     /* height: 100%; */
