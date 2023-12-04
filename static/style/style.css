@@ -413,7 +413,7 @@
     fill: #ffffff80;
     vertical-align: middle;
     /* margin-bottom: 6px; */
-    margin-left: 8px;
+    /* margin-left: 8px; */
     height: 20px;
   }
   .preview p {
@@ -511,6 +511,9 @@
     text-decoration: none;
     opacity: 0.75;
     /* vertical-align: middle; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .preview-header > a:hover {
     opacity: 1;
@@ -518,8 +521,11 @@
   .preview-header > a > h1 {
     word-wrap: initial;
     word-break: normal;
-    display: inline-block;
+    display: inline;
     vertical-align: middle;
+    margin-right: 12px;
+    /* float: left; */
+    text-align: right;
   }
   .preview-body {
     margin: 16px;
