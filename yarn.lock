@@ -4199,6 +4199,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"marked@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "marked@npm:11.0.0"
+  bin:
+    marked: bin/marked.js
+  checksum: 18d73767cc75096f43d99ae42b53d60c0a28e8af6cb7183271fc4de0f03072734314d4311258ab3cc7a8bc17645471d30082653e9755dbf8b3894042d6581094
+  languageName: node
+  linkType: hard
+
 "mem@npm:^6.0.1":
   version: 6.1.1
   resolution: "mem@npm:6.1.1"
@@ -5895,6 +5904,7 @@ __metadata:
     husky: ^8.0.3
     knip: ^3.3.0
     lint-staged: ^15.1.0
+    marked: ^11.0.0
     npm-run-all: ^4.1.5
     prettier: ^3.1.0
     tsx: ^4.6.0

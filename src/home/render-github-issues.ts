@@ -1,3 +1,5 @@
+import { marked } from "marked";
+
 import { GitHubIssueWithNewFlag } from "./fetch-github-issues";
 
 export async function renderGitHubIssues(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
@@ -68,7 +70,8 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
 
       issueElement.addEventListener("click", () => {
         console.log(issue);
-        window.open(match?.input, "_blank");
+        previewIssue(issue);
+        // window.open(match?.input, "_blank");
       });
 
       issueWrapper.appendChild(issueElement);
@@ -104,4 +107,66 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
     }
   }
   container.classList.add("ready");
+}
+
+function previewIssue(issuePreview: GitHubIssueWithNewFlag) {
+  const issuesFull = JSON.parse(localStorage.getItem("githubIssuesFull") || "[]");
+  console.trace({
+    issuesFull,
+    issue: issuePreview,
+  });
+  const issuePreviewUrl = issuePreview.body.match(/https:\/\/github\.com\/[^/]+\/[^/]+\/issues\/\d+/)?.[0];
+  if (!issuePreviewUrl) throw new Error("Issue preview URL not found");
+
+  const issueFull = findIssueByUrl(issuesFull, issuePreviewUrl);
+  if (!issueFull) throw new Error("Issue not found");
+
+  const preview = document.createElement("div");
+  preview.classList.add("preview");
+  const previewContent = document.createElement("div");
+  previewContent.classList.add("preview-content");
+  const previewHeader = document.createElement("div");
+  previewHeader.classList.add("preview-header");
+
+  const title = document.createElement("h3");
+  title.textContent = issuePreview.title;
+  previewHeader.appendChild(title);
+
+  const closeButton = document.createElement("button");
+  closeButton.classList.add("close-preview");
+  closeButton.textContent = "Close";
+  previewHeader.appendChild(closeButton);
+
+  const previewBody = document.createElement("div");
+  previewBody.classList.add("preview-body");
+
+  const previewBodyInner = document.createElement("div");
+  previewBodyInner.classList.add("preview-body-inner");
+  // const mmmmarked = new marked(issueFull.body);
+  previewBodyInner.innerHTML = marked.parse(issueFull.body);
+
+  previewBody.appendChild(previewBodyInner);
+
+  previewContent.appendChild(previewHeader);
+  previewContent.appendChild(previewBody);
+  preview.appendChild(previewContent);
+
+  document.body.appendChild(preview);
+  preview.addEventListener("click", (event) => {
+    if (event.target === preview) {
+      preview.remove();
+    }
+  });
+  // const closeButton = preview.querySelector(".close-preview") as HTMLButtonElement;
+  closeButton.addEventListener("click", () => {
+    preview.remove();
+  });
+}
+
+function findIssueByUrl(issues: GitHubIssueWithNewFlag[], url: string) {
+  console.trace({
+    issues,
+    url,
+  });
+  return issues.find((issue) => issue.html_url === url);
 }

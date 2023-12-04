@@ -13,7 +13,7 @@ export async function fetchGitHubIssues(sorting?: Sorting) {
   if (!container) {
     throw new Error("Could not find issues container");
   }
-  await fetchIssues(container, sorting);
+  return await fetchIssues(container, sorting);
 }
 
 export function sortIssuesBy(issues: GitHubIssue[], sortBy: string) {
@@ -73,7 +73,7 @@ function calculateLabelValue(label: string): number {
 async function fetchIssues(container: HTMLDivElement, sorting?: Sorting) {
   let issues;
   try {
-    issues = await fetchCachedIssues();
+    issues = fetchCachedIssues();
     if (issues) {
       await displayIssues(issues, container, sorting);
       issues = await fetchNewIssues();
@@ -81,8 +81,10 @@ async function fetchIssues(container: HTMLDivElement, sorting?: Sorting) {
       issues = await fetchNewIssues();
       await displayIssues(issues, container, sorting);
     }
+    return issues;
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
@@ -129,7 +131,7 @@ async function fetchNewIssues(): Promise<GitHubIssueWithNewFlag[]> {
   return freshIssuesWithNewFlag;
 }
 
-async function fetchCachedIssues(): Promise<GitHubIssue[] | null> {
+export function fetchCachedIssues(): GitHubIssue[] | null {
   const cachedIssues = localStorage.getItem("githubIssues");
   if (cachedIssues) {
     try {
@@ -139,4 +141,28 @@ async function fetchCachedIssues(): Promise<GitHubIssue[] | null> {
     }
   }
   return null;
+}
+
+export async function fetchIssuesFull(cachedIssues: GitHubIssue[]) {
+  const authToken = getGitHubAccessToken();
+  if (!authToken) throw new Error("No auth token found");
+  const octokit = new Octokit({ auth: getGitHubAccessToken() });
+  const downloaded: unknown[] = [];
+  for (const issue of cachedIssues) {
+    const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
+    const match = issue.body.match(urlPattern);
+    if (!match || !match.groups) {
+      console.error("Invalid issue body URL format");
+      continue;
+    }
+    const { org, repo, issue_number } = match.groups;
+
+    const { data: issueData } = await octokit.request("GET /repos/{org}/{repo}/issues/{issue_number}", {
+      issue_number,
+      repo,
+      org,
+    });
+    downloaded.push(issueData);
+  }
+  return downloaded;
 }

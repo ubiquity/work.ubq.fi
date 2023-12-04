@@ -304,7 +304,7 @@
     user-select: none;
     opacity: 0;
     transition: 0.5s opacity ease-in-out;
-    background-image: var(--grid-background-image);
+    /* background-image: var(--grid-background-image); */
   }
   #toolbar.ready {
     opacity: 1;
@@ -393,5 +393,32 @@
     -webkit-mask-image: radial-gradient(#ffffff20 0, #ffffff80 100%);
     mask-image: radial-gradient(#ffffff20 0, #ffffff80 100%);
     pointer-events: none;
+  }
+  .preview {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    /* height: 100%; */
+    /* background-color: #ffffff80; */
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: center; */
+    /* pointer-events: none; */
+    /* opacity: 0; */
+    transition: 0.5s opacity ease-in-out;
+    /* z-index: 100; */
+    display: block;
+    background: #ffffff;
+    padding: 16px;
+  }
+  .preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .preview-body{
+    padding: 8px
   }
 }
