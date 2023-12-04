@@ -76,6 +76,7 @@
     border: 1px solid #80808020;
     border-radius: 4px;
     cursor: pointer;
+    margin: 8px;
   }
   #issues-container > div.active {
     transition: 125ms all ease-in-out;
