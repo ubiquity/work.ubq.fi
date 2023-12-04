@@ -14,7 +14,6 @@ if (cachedIssues) {
   const fullIssues = fetchCachedIssuesFull();
 
   if (!fullIssues) {
-
     fetchIssuesFull(cachedIssues)
       .then((downloaded) => {
         localStorage.setItem("githubIssuesFull", JSON.stringify(downloaded));

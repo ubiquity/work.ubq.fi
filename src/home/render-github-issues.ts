@@ -19,8 +19,8 @@ const previewBodyInner = document.createElement("div");
 previewBodyInner.classList.add("preview-body-inner");
 
 // Assemble the preview box
-previewHeader.appendChild(title);
 previewHeader.appendChild(closeButton);
+previewHeader.appendChild(title);
 previewBody.appendChild(previewBodyInner);
 previewContent.appendChild(previewHeader);
 previewContent.appendChild(previewBody);
@@ -186,9 +186,5 @@ function previewIssue(issuePreview: GitHubIssueWithNewFlag) {
 
 // Function to find an issue by URL
 function findIssueByUrl(issues: GitHubIssueWithNewFlag[], url: string) {
-  console.trace({
-    issues,
-    url,
-  });
   return issues.find((issue) => issue.html_url === url);
 }

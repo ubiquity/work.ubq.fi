@@ -457,14 +457,14 @@
     padding-left: 12px;
   }
   .preview h1 {
-    margin: 16px;
+    margin: 8px;
     /* text-align: center; */
   }
-  .preview a{
+  .preview a {
     word-break: break-all;
   }
   .preview-body-inner {
-    width: calc( 100% - 48px);
+    width: calc(100% - 48px);
     max-width: 640px;
     overflow: scroll;
   }
@@ -496,7 +496,7 @@
     max-height: calc(100vh - 130px);
     pointer-events: none;
   }
-  .close-preview svg{
+  .close-preview svg {
     fill: #ffffff80;
   }
   .preview.active {
@@ -507,7 +507,7 @@
   .preview-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     margin-bottom: 8px;
   }
 
