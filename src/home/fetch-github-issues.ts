@@ -5,7 +5,8 @@ import { renderGitHubIssues } from "./render-github-issues";
 
 export type GitHubIssueWithNewFlag = GitHubIssue & { isNew?: boolean };
 
-export type Sorting = "priority" | "time" | "price";
+export const SORTING_OPTIONS = ["priority", "time", "price"] as const;
+export type Sorting = (typeof SORTING_OPTIONS)[number];
 
 export async function fetchGitHubIssues(sorting?: Sorting) {
   const container = document.getElementById("issues-container") as HTMLDivElement;

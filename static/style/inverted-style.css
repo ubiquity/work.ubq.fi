@@ -119,6 +119,7 @@
     text-align: left;
     display: flex;
     padding: 12px 0;
+    align-items: center;
   }
   p.organization-name {
     opacity: 0.5;
@@ -141,7 +142,7 @@
     background-color: #7f7f7f20;
     width: 64px;
     letter-spacing: 0.5px;
-    flex-grow: 3;
+    flex-grow: 4;
     display: flex;
     justify-content: center;
     display: flex;
@@ -160,6 +161,10 @@
   }
   #filters label {
     cursor: pointer;
+    /* background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20height%3D%2216%22%20viewBox%3D%220%20-960%20960%20960%22%20width%3D%2216%22%3E%3Cpath%20fill%3D%22%23ffffff80%22%20d%3D%22M120-240v-80h240v80H120Zm0-200v-80h480v80H120Zm0-200v-80h720v80H120Z%22/%3E%3C/svg%3E"); */
+    /* background-repeat: no-repeat; */
+    /* background-position: 4px 4px; */
+    /* text-align: right; */
   }
   #filters label:hover {
     background-color: #7f7f7f40;
@@ -170,6 +175,23 @@
   input[type="radio"]:checked + label {
     background-color: #7f7f7f80 !important;
   }
+
+  input[type="radio"] + label > .icon > svg {
+    fill: #00000080;
+  }
+  input[type="radio"] + label > .active.icon > svg {
+    display: none;
+  }
+  input[type="radio"] + label > .default.icon > svg {
+    display: unset;
+  }
+  input[type="radio"]:checked + label > .default.icon > svg {
+    display: none;
+  }
+  input[type="radio"]:checked + label > .active.icon > svg {
+    display: unset;
+  }
+
   .labels {
     display: flex;
     margin-left: auto;
@@ -186,7 +208,7 @@
     opacity: 0.66;
     transition: 125ms opacity ease-in-out;
     align-items: center;
-    margin: 0 0 0 50px;
+    /* margin: 0 0 0 12px; */
   }
   #issues-container > .issue-element-wrapper {
     opacity: 0.5;
@@ -305,7 +327,7 @@
       display: block;
     }
     #issues-container .labels {
-      margin-left: 48px;
+      /* margin-left: 48px; */
       margin-top: 4px;
     }
     #branding {
@@ -328,5 +350,12 @@
   #filters button {
     margin-top: 8px;
     margin-right: 8px;
+  }
+  #issues-container img {
+    max-height: 24px;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

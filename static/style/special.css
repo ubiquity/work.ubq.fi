@@ -2,15 +2,15 @@
   html {
     background-color: #06061aff;
   }
-  #toolbar.ready{
-    background-color: #06061a80
+  #toolbar.ready {
+    background-color: #06061a80;
   }
 }
 @media (prefers-color-scheme: light) {
   html {
     background-color: #f0f0f0;
   }
-  #toolbar.ready{
+  #toolbar.ready {
     background-color: #f0f0f080;
   }
 }

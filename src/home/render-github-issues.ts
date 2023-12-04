@@ -64,7 +64,7 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
         issue.title
       }</h3></div><div class="partner"><p class="organization-name">${organizationName}</p><p class="repository-name">${repositoryName}</p></div></div><div class="labels">${labels.join(
         ""
-      )}</div>`;
+      )}<img /></div>`;
 
       issueElement.addEventListener("click", () => {
         console.log(issue);
@@ -76,8 +76,9 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
       // Set the issueWrapper background-image to the organization's avatar
       if (organizationName) {
         const cachedAvatar = avatarCache[organizationName];
+        const image = issueElement.querySelector("img") as HTMLImageElement;
         if (cachedAvatar) {
-          issueWrapper.style.backgroundImage = `url("${cachedAvatar}")`;
+          image.src = cachedAvatar;
         } else if (!fetchInProgress.has(organizationName)) {
           // Mark this organization's avatar as being fetched
           fetchInProgress.add(organizationName);
@@ -88,7 +89,7 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
             if (data && data.avatar_url) {
               avatarCache[organizationName] = data.avatar_url;
               localStorage.setItem("avatarCache", JSON.stringify(avatarCache));
-              issueWrapper.style.backgroundImage = `url("${data.avatar_url}")`;
+              image.src = data.avatar_url;
             }
           } catch (error) {
             console.error("Error fetching avatar:", error);
