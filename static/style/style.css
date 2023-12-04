@@ -49,10 +49,13 @@
   &::-webkit-scrollbar {
     display: none;
   }
-  #issues-container:hover .issue-element-inner {
-    opacity: 0.75;
-    transition: 500ms opacity ease-in-out;
+  #issues-container .issue-element-inner {
+    transition: 125ms opacity ease-out 62.5ms ;
   }
+  #issues-container:hover .issue-element-inner {
+    opacity: 0.5;
+  }
+
   #issues-container * {
     -webkit-user-select: none;
     -moz-user-select: none;
