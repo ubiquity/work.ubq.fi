@@ -16,7 +16,7 @@ export const invertColors: esbuild.Plugin = {
         if (color.length === 3) {
           color = color
             .split("")
-            .map((char) => char + char)
+            .map((char: string) => char + char)
             .join("");
         }
         const r = parseInt(color.slice(0, 2), 16);

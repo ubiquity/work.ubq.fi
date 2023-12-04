@@ -12,13 +12,7 @@ export function getSupabase() {
 }
 
 async function gitHubLoginButton() {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "github",
-    options: {
-      redirectTo: "https://wfzpewmlyiozupulbuur.supabase.co/auth/v1/callback",
-    },
-  });
-
+  const { error } = await supabase.auth.signInWithOAuth({ provider: "github" });
   if (error) {
     console.error("Error logging in:", error);
   }

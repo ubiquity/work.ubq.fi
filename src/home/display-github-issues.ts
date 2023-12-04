@@ -1,6 +1,6 @@
 import { Octokit } from "@octokit/rest";
-import { homeController } from "./home-controller";
 import { GitHubIssue } from "./github-types";
+import { homeController } from "./home-controller";
 
 export type GitHubIssueWithNewFlag = GitHubIssue & { isNew?: boolean };
 
@@ -70,21 +70,20 @@ async function fetchIssues(container: HTMLDivElement, accessToken: string | null
       console.error(error);
     }
     // Fetch fresh issues and mark them as new
-    const freshIssues: GitHubIssueWithNewFlag[] = (
-      await octokit.paginate("GET /repos/ubiquity/devpool-directory/issues", {
-        state: "open",
-      })
-    ).map((issue) => ({ ...issue, isNew: true }));
+    const freshIssues: GitHubIssue[] = await octokit.paginate("GET /repos/ubiquity/devpool-directory/issues", {
+      state: "open",
+    });
+    const freshIssuesWithNewFlag = freshIssues.map((issue) => ({ ...issue, isNew: true })) as GitHubIssueWithNewFlag[];
 
     // Sort the fresh issues
-    const sortedIssuesByTime = sortIssuesByTime(freshIssues);
+    const sortedIssuesByTime = sortIssuesByTime(freshIssuesWithNewFlag);
     const sortedIssuesByPriority = sortIssuesByPriority(sortedIssuesByTime);
 
     // Pass the fresh issues to the homeController
     await homeController(container, sortedIssuesByPriority);
 
     // Remove the 'isNew' flag before saving to localStorage
-    const issuesToSave = freshIssues.map(({ ...issue }) => {
+    const issuesToSave = freshIssuesWithNewFlag.map(({ ...issue }) => {
       delete issue.isNew;
       return issue;
     });

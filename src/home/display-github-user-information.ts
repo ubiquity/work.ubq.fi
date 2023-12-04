@@ -35,7 +35,7 @@ async function signOut() {
     console.error("Error logging out:", error);
     alert(error);
   }
-  localStorage.removeItem("provider_token");
-  localStorage.removeItem("expires_at");
+  // localStorage.removeItem("provider_token");
+  // localStorage.removeItem("expires_at");
   window.location.reload();
 }
