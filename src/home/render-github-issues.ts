@@ -1,6 +1,7 @@
 import { marked } from "marked";
 
 import { GitHubIssueWithNewFlag } from "./fetch-github-issues";
+import { GitHubIssue } from "./github-types";
 
 // Create the preview elements outside of the previewIssue function
 const preview = document.createElement("div");
@@ -121,11 +122,12 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
         ""
       )}<img /></div>`;
 
-      issueElement.addEventListener("click", () => {
+      issueElement.addEventListener("click", function () {
         console.log(issue);
-        const isLocal = issuesSynced();
-        if (isLocal) {
-          previewIssue(issue);
+        // const isLocal = issuesSynced();
+        const issueFullId = Number(this.getAttribute("data-issue-full-id"));
+        if (issueFullId) {
+          previewIssue(issueFullId);
         } else {
           window.open(match?.input, "_blank");
         }
@@ -166,21 +168,24 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
   container.classList.add("ready");
 }
 
-function issuesSynced() {
-  const gitHubIssuesFull = localStorage.getItem("githubIssuesFull");
-  if (!gitHubIssuesFull) return false;
-  const issuesFull = JSON.parse(gitHubIssuesFull);
-  if (!issuesFull) return false;
-  else return true;
-}
+// function issuesSynced() {
+//   const gitHubIssuesFull = localStorage.getItem("githubIssuesFull");
+//   if (!gitHubIssuesFull) return false;
+//   const issuesFull = JSON.parse(gitHubIssuesFull);
+//   if (!issuesFull) return false;
+//   else return true;
+// }
 
 // Function to update and show the preview
-function previewIssue(issuePreview: GitHubIssueWithNewFlag) {
-  const issuesFull = JSON.parse(localStorage.getItem("githubIssuesFull") || "[]");
-  // console.trace({
-  //   issuesFull,
-  //   issue: issuePreview,
-  // });
+function previewIssue(issueFullId: number) {
+  const issuesFull = JSON.parse(localStorage.getItem("githubIssuesFull") || "{}") as Record<number, GitHubIssue>;
+  const issuePreview = issuesFull[issueFullId];
+  if (!issuePreview) throw new Error("Issue preview not found");
+  console.trace({
+    issuesFull,
+    issuePreview,
+  });
+
   const issuePreviewUrl = issuePreview.body.match(/https:\/\/github\.com\/[^/]+\/[^/]+\/issues\/\d+/)?.[0];
   if (!issuePreviewUrl) throw new Error("Issue preview URL not found");
 
@@ -198,6 +203,11 @@ function previewIssue(issuePreview: GitHubIssueWithNewFlag) {
 }
 
 // Function to find an issue by URL
-function findIssueByUrl(issues: GitHubIssueWithNewFlag[], url: string) {
-  return issues.find((issue) => issue.html_url === url);
+function findIssueByUrl(issues: Record<number, GitHubIssue>, url: string) {
+  for (const key in issues) {
+    if (issues[key].html_url === url) {
+      return issues[key];
+    }
+  }
+  return null;
 }

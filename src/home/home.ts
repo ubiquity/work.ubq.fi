@@ -11,29 +11,25 @@ grid(document.getElementById("grid") as HTMLElement);
 const cachedIssues = fetchCachedIssues();
 
 if (cachedIssues) {
-  const fullIssues = fetchCachedIssuesFull();
+  // const fullIssues = fetchCachedIssuesFull();
 
-  if (!fullIssues) {
-    fetchIssuesFull(cachedIssues)
-      .then((downloaded) => {
-        localStorage.setItem("githubIssuesFull", JSON.stringify(downloaded));
-        return downloaded;
-      })
-      .then((downloaded) => console.log(downloaded))
-      .catch((error) => console.error(error));
-  } else {
-    console.trace({ fullIssues });
-  }
+  // if (!fullIssues) {
+  fetchIssuesFull(cachedIssues)
+    .then((downloaded) => console.log(downloaded))
+    .catch((error) => console.error(error));
+  // } else {
+  //   console.trace({ fullIssues });
+  // }
 }
 
-export function fetchCachedIssuesFull() {
-  const cachedIssues = localStorage.getItem("githubIssuesFull");
-  if (cachedIssues) {
-    try {
-      return JSON.parse(cachedIssues);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  return null;
-}
+// function fetchCachedIssuesFull() {
+//   const cachedIssues = localStorage.getItem("githubIssuesFull");
+//   if (cachedIssues) {
+//     try {
+//       return JSON.parse(cachedIssues);
+//     } catch (error) {
+//       console.error(error);
+//     }
+//   }
+//   return null;
+// }

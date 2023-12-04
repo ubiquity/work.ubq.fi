@@ -3,6 +3,8 @@ import { getGitHubAccessToken } from "./get-github-access-token";
 import { GitHubIssue } from "./github-types";
 import { renderGitHubIssues } from "./render-github-issues";
 
+export type GitHubIssueFull = Record<number, GitHubIssue>;
+
 export type GitHubIssueWithNewFlag = GitHubIssue & { isNew?: boolean };
 
 export const SORTING_OPTIONS = ["priority", "time", "price"] as const;
@@ -131,11 +133,18 @@ async function fetchNewIssues(): Promise<GitHubIssueWithNewFlag[]> {
   return freshIssuesWithNewFlag;
 }
 
-export function fetchCachedIssues(): GitHubIssue[] | null {
-  const cachedIssues = localStorage.getItem("githubIssues");
-  if (cachedIssues) {
+export function fetchCachedIssues(): GitHubIssueFull[] | null {
+  // const gitHubIssues = localStorage.getItem("githubIssues");
+  const gitHubIssuesFull = localStorage.getItem("githubIssuesFull");
+  if (gitHubIssuesFull) {
     try {
-      return JSON.parse(cachedIssues);
+      const cachedIssues = JSON.parse(gitHubIssuesFull);
+
+      for (const cachedIssueId in cachedIssues) {
+        const cachedIssue = cachedIssues[cachedIssueId];
+        document.querySelector(`[data-issue-id="${cachedIssueId}"]`)?.setAttribute("data-issue-full-id", cachedIssue.id);
+      }
+      return cachedIssues;
     } catch (error) {
       console.error(error);
     }
@@ -143,13 +152,18 @@ export function fetchCachedIssues(): GitHubIssue[] | null {
   return null;
 }
 
-export async function fetchIssuesFull(cachedIssues: GitHubIssue[]) {
+export async function fetchIssuesFull(cachedIssues: GitHubIssueFull[]) {
   const authToken = getGitHubAccessToken();
   if (!authToken) throw new Error("No auth token found");
   console.trace(`fetching full issues`);
   const octokit = new Octokit({ auth: getGitHubAccessToken() });
-  const downloaded: unknown[] = [];
-  for (const issue of cachedIssues) {
+  // const gitHubIssuesMapping = {} as GitHubIssueFull;
+  const gitHubIssuesMapping = {} as Record<number, GitHubIssue>;
+  const mirroredToRealIssueIdMap = {} as Record<number, number>;
+
+  for (const issueId in cachedIssues) {
+    const issue = cachedIssues[Number(issueId)];
+
     const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
     const match = issue.body.match(urlPattern);
     if (!match || !match.groups) {
@@ -163,7 +177,24 @@ export async function fetchIssuesFull(cachedIssues: GitHubIssue[]) {
       repo,
       org,
     });
-    downloaded.push(issueData);
+    gitHubIssuesMapping[issue.id] = issueData;
+
+    document.querySelector(`[data-issue-id="${issue.id}"]`)?.setAttribute("data-issue-full-id", issueData.id);
+    console.trace({
+      "issue.id": issue.id,
+      "issueData.id": issueData.id,
+    });
+
+    // Store the mapping of mirrored issue ID to real issue ID
+    mirroredToRealIssueIdMap[issue.id] = issueData.id;
+    gitHubIssuesMapping[issue.id] = issueData;
+
+    // const existingGitHubIssuesFull = localStorage.getItem("githubIssuesFull");
+    // const existingIssuesMapping = existingGitHubIssuesFull ? (JSON.parse(existingGitHubIssuesFull) as GitHubIssueFull) : {};
+    // const mergedIssuesMapping = { ...existingIssuesMapping, ...gitHubIssuesMapping };
+
+    localStorage.setItem("mirroredToRealIssueIdMap", JSON.stringify(mirroredToRealIssueIdMap));
+    localStorage.setItem("githubIssuesFull", JSON.stringify(gitHubIssuesMapping));
   }
-  return downloaded;
+  return gitHubIssuesMapping;
 }
