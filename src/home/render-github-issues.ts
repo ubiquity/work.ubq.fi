@@ -1,6 +1,6 @@
 import { GitHubIssueWithNewFlag } from "./fetch-github-issues";
 
-export async function displayGitHubIssues(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
+export async function renderGitHubIssues(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
   const avatarCache: Record<string, string> = JSON.parse(localStorage.getItem("avatarCache") || "{}");
   const fetchInProgress = new Set(); // Track in-progress fetches
   const existingIssueIds = new Set(Array.from(container.querySelectorAll(".issue-element-inner")).map((element) => element.getAttribute("data-issue-id")));

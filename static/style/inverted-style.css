@@ -186,7 +186,10 @@
     border: none;
     /* margin: 0; */
   }
-  #filters label{
+  #filters{
+    padding: 4px 6px
+  }
+  #filters label {
     cursor: pointer;
   }
   #filters label:hover {

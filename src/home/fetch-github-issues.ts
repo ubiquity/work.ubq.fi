@@ -1,15 +1,18 @@
 import { Octokit } from "@octokit/rest";
-import { displayGitHubIssues } from "./display-github-issues";
+import { getGitHubAccessToken } from "./get-github-access-token";
 import { GitHubIssue } from "./github-types";
+import { renderGitHubIssues } from "./render-github-issues";
 
 export type GitHubIssueWithNewFlag = GitHubIssue & { isNew?: boolean };
 
-export async function fetchGitHubIssues(accessToken: string | null) {
+export type Sorting = "priority" | "time" | "price";
+
+export async function fetchGitHubIssues(sorting?: Sorting) {
   const container = document.getElementById("issues-container") as HTMLDivElement;
   if (!container) {
     throw new Error("Could not find issues container");
   }
-  await fetchIssues(container, accessToken);
+  await fetchIssues(container, sorting);
 }
 
 export function sortIssuesBy(issues: GitHubIssue[], sortBy: string) {
@@ -46,17 +49,18 @@ function sortIssuesByTime(issues: GitHubIssue[]) {
 
 function sortIssuesByPrice(issues: GitHubIssue[]) {
   return issues.sort((a, b) => {
-    const aPriceValue = a.labels.reduce((acc, label) => acc + calculateLabelValue(label.name), 0);
-    const bPriceValue = b.labels.reduce((acc, label) => acc + calculateLabelValue(label.name), 0);
-    return bPriceValue - aPriceValue;
+    const aPriceLabel = a.labels.find((label) => label.name.startsWith("Pricing: "));
+    const bPriceLabel = b.labels.find((label) => label.name.startsWith("Pricing: "));
+    const aPrice = aPriceLabel ? parseInt(aPriceLabel.name.match(/Pricing: (\d+)/)![1], 10) : 0;
+    const bPrice = bPriceLabel ? parseInt(bPriceLabel.name.match(/Pricing: (\d+)/)![1], 10) : 0;
+    return bPrice - aPrice;
   });
 }
 
-export function calculateLabelValue(label: string): number {
+function calculateLabelValue(label: string): number {
   const matches = label.match(/\d+/);
   const number = matches && matches.length > 0 ? parseInt(matches[0]) || 0 : 0;
-  if (label.toLowerCase().includes("priority")) return number;
-  // throw new Error(`Label ${label} is not a priority label`);
+
   if (label.toLowerCase().includes("minute")) return number * 0.002;
   if (label.toLowerCase().includes("hour")) return number * 0.125;
   if (label.toLowerCase().includes("day")) return 1 + (number - 1) * 0.25;
@@ -65,51 +69,73 @@ export function calculateLabelValue(label: string): number {
   return 0;
 }
 
-async function fetchIssues(container: HTMLDivElement, accessToken: string | null) {
+async function fetchIssues(container: HTMLDivElement, sorting?: Sorting) {
+  let issues;
   try {
-    const cachedIssues = localStorage.getItem("githubIssues");
-
-    if (cachedIssues) {
-      try {
-        const issues = JSON.parse(cachedIssues);
-        const sortedIssuesByTime = sortIssuesByTime(issues);
-        const sortedIssuesByPriority = sortIssuesByPriority(sortedIssuesByTime);
-        await displayGitHubIssues(container, sortedIssuesByPriority);
-      } catch (error) {
-        console.error(error);
-      }
+    issues = await fetchCachedIssues();
+    if (issues) {
+      await displayIssues(issues, container, sorting);
+      issues = await fetchNewIssues();
+    } else {
+      issues = await fetchNewIssues();
+      await displayIssues(issues, container, sorting);
     }
-
-    const octokit = new Octokit({
-      auth: accessToken,
-    });
-
-    try {
-      const { data: rateLimit } = await octokit.request("GET /rate_limit");
-      console.log("Rate limit remaining: ", rateLimit.rate.remaining);
-    } catch (error) {
-      console.error(error);
-    }
-    // Fetch fresh issues and mark them as new
-    const freshIssues: GitHubIssue[] = await octokit.paginate("GET /repos/ubiquity/devpool-directory/issues", {
-      state: "open",
-    });
-    const freshIssuesWithNewFlag = freshIssues.map((issue) => ({ ...issue, isNew: true })) as GitHubIssueWithNewFlag[];
-
-    // Sort the fresh issues
-    const sortedIssuesByTime = sortIssuesByTime(freshIssuesWithNewFlag);
-    const sortedIssuesByPriority = sortIssuesByPriority(sortedIssuesByTime);
-
-    // Pass the fresh issues to the homeController
-    await displayGitHubIssues(container, sortedIssuesByPriority);
-
-    // Remove the 'isNew' flag before saving to localStorage
-    const issuesToSave = freshIssuesWithNewFlag.map(({ ...issue }) => {
-      delete issue.isNew;
-      return issue;
-    });
-    localStorage.setItem("githubIssues", JSON.stringify(issuesToSave));
   } catch (error) {
     console.error(error);
   }
+}
+
+async function displayIssues(issues: GitHubIssueWithNewFlag[], container: HTMLDivElement, sorting?: Sorting) {
+  let sortedIssues = issues;
+
+  if (!sorting) {
+    // Sort the fresh issues
+    const sortedIssuesByTime = sortIssuesByTime(sortedIssues);
+    const sortedIssuesByPriority = sortIssuesByPriority(sortedIssuesByTime);
+    sortedIssues = sortedIssuesByPriority;
+  } else {
+    sortedIssues = sortIssuesBy(sortedIssues, sorting);
+  }
+  // Pass the fresh issues to the homeController
+  if (container.classList.contains("ready")) {
+    container.classList.remove("ready");
+    container.innerHTML = "";
+  }
+  await renderGitHubIssues(container, sortedIssues);
+}
+
+async function fetchNewIssues(): Promise<GitHubIssueWithNewFlag[]> {
+  const octokit = new Octokit({ auth: getGitHubAccessToken() });
+
+  try {
+    const { data: rateLimit } = await octokit.request("GET /rate_limit");
+    console.log("Rate limit remaining: ", rateLimit.rate.remaining);
+  } catch (error) {
+    console.error(error);
+  }
+  // Fetch fresh issues and mark them as new
+  const freshIssues: GitHubIssue[] = await octokit.paginate("GET /repos/ubiquity/devpool-directory/issues", {
+    state: "open",
+  });
+  const freshIssuesWithNewFlag = freshIssues.map((issue) => ({ ...issue, isNew: true })) as GitHubIssueWithNewFlag[];
+
+  // Remove the 'isNew' flag before saving to localStorage
+  const issuesToSave = freshIssuesWithNewFlag.map(({ ...issue }) => {
+    delete issue.isNew;
+    return issue;
+  });
+  localStorage.setItem("githubIssues", JSON.stringify(issuesToSave));
+  return freshIssuesWithNewFlag;
+}
+
+async function fetchCachedIssues(): Promise<GitHubIssue[] | null> {
+  const cachedIssues = localStorage.getItem("githubIssues");
+  if (cachedIssues) {
+    try {
+      return JSON.parse(cachedIssues);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  return null;
 }

@@ -1,13 +1,16 @@
-import { GitHubUser, authenticatedGetGitHubUser } from "./authenticated-get-github-user";
-import { checkForGitHubAccessToken } from "./check-for-github-access-token";
 import { displayGitHubUserInformation } from "./display-github-user-information";
-import { fetchGitHubIssues } from "./fetch-github-issues";
+import { getGitHubAccessToken } from "./get-github-access-token";
+import { GitHubUser, getGitHubUser } from "./get-github-user";
+import { renderGitHubLoginButton } from "./github-login-button";
 
 export function authentication() {
-  const gitHubToken = checkForGitHubAccessToken();
 
-  fetchGitHubIssues(gitHubToken)
-    .then(authenticatedGetGitHubUser)
+  const accessToken = getGitHubAccessToken();
+  if (!accessToken) {
+    renderGitHubLoginButton();
+  }
+
+  getGitHubUser()
     .then((gitHubUser: null | GitHubUser) => {
       if (gitHubUser) {
         displayGitHubUserInformation(gitHubUser);

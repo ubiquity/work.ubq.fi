@@ -1,4 +1,4 @@
-import { GitHubUser } from "./authenticated-get-github-user";
+import { GitHubUser } from "./get-github-user";
 import { getSupabase } from "./github-login-button";
 
 export function displayGitHubUserInformation(gitHubUser: GitHubUser) {
@@ -6,9 +6,6 @@ export function displayGitHubUserInformation(gitHubUser: GitHubUser) {
   const authenticated = document.createElement("div");
   authenticated.id = "authenticated";
   if (!toolbar) throw new Error("toolbar not found");
-  // const div = document.createElement("div");
-  // div.textContent = `Logged in as ${gitHubUser.login}`;
-  // authenticated.appendChild(div);
 
   const img = document.createElement("img");
   img.src = gitHubUser.avatar_url;
@@ -35,7 +32,5 @@ async function signOut() {
     console.error("Error logging out:", error);
     alert(error);
   }
-  // localStorage.removeItem("provider_token");
-  // localStorage.removeItem("expires_at");
   window.location.reload();
 }

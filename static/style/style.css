@@ -186,7 +186,10 @@
     border: none;
     /* margin: 0; */
   }
-  #filters label{
+  #filters {
+    padding: 4px;
+  }
+  #filters label {
     cursor: pointer;
   }
   #filters label:hover {
@@ -204,6 +207,8 @@
     display: flex;
     /* justify-content: center; */
     margin-left: auto;
+    /* max-width: 640px; */
+    /* margin: 0 auto; */
   }
 
   .partner {
@@ -387,7 +392,9 @@
     text-align: center;
   }
   #filters > div {
-    text-align: right;
+    /* text-align: center; */
+    margin: 0 auto;
+    max-width: 640px;
   }
   #filters button {
     margin-top: 8px;
