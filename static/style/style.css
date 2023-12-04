@@ -41,7 +41,7 @@
   #issues-container {
     max-width: 640px;
     margin: auto;
-    padding: 0 0 48px;
+    padding: 0 0 56px;
     /* overflow: scroll; */
     scrollbar-width: none;
     -ms-overflow-style: none;
