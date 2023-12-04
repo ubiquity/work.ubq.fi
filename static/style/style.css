@@ -7,10 +7,12 @@
     height: 28px;
     margin-right: 2px;
   }
+  #authenticated,
   #branding {
     opacity: 0.5;
     transition: 0.125s opacity ease-in-out;
   }
+  #authenticated:hover,
   #branding:hover {
     opacity: 1;
   }
@@ -278,6 +280,7 @@
     display: inline-flex;
     text-align: left;
     margin: 0 16px;
+    cursor: pointer;
   }
   /* #toolbar > *:first-child {
   padding-left: 16px;

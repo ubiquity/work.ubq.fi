@@ -7,6 +7,10 @@ if (!supabaseAnonKey) throw new Error("SUPABASE_KEY not found");
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+export function getSupabase() {
+  return supabase;
+}
+
 async function gitHubLoginButton() {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",

@@ -59,7 +59,9 @@ async function fetchIssues(container: HTMLDivElement, accessToken: string | null
       }
     }
 
-    const octokit = new Octokit({ auth: accessToken ?? process.env.GITHUB_TOKEN });
+    const octokit = new Octokit({
+      auth: accessToken,
+    });
 
     try {
       const { data: rateLimit } = await octokit.request("GET /rate_limit");

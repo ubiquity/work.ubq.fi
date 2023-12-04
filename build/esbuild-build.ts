@@ -10,7 +10,7 @@ const cssEntries = ["static/style/style.css"];
 const entries = [...typescriptEntries, ...cssEntries];
 
 export const esBuildContext: esbuild.BuildOptions = {
-  define: createEnvDefines(["GITHUB_TOKEN", "SUPABASE_URL", "SUPABASE_KEY"]),
+  define: createEnvDefines(["SUPABASE_URL", "SUPABASE_KEY"]),
   plugins: [invertColors],
   sourcemap: true,
   entryPoints: entries,

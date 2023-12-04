@@ -7,10 +7,12 @@
     height: 28px;
     margin-right: 2px;
   }
+  #authenticated,
   #branding {
     opacity: 0.5;
     transition: 0.125s opacity ease-in-out;
   }
+  #authenticated:hover,
   #branding:hover {
     opacity: 1;
   }
@@ -27,7 +29,7 @@
 
   * {
     font-family: "Proxima Nova", "Ubiquity Nova", sans-serif;
-    color: #000000undefined;
+    color: #000000;
     font-weight: 400;
   }
   @font-face {
@@ -128,7 +130,7 @@
   p {
     margin: 0;
     line-height: 1;
-    color: #404040undefined;
+    color: #404040;
     font-size: 12px;
     text-align: right;
     letter-spacing: 0.5px;
@@ -278,6 +280,7 @@
     display: inline-flex;
     text-align: left;
     margin: 0 16px;
+    cursor: pointer;
   }
   /* #toolbar > *:first-child {
   padding-left: 16px;
