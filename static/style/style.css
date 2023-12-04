@@ -40,13 +40,22 @@
   }
   #issues-container {
     max-width: 640px;
-    margin: auto;
-    padding: 0 0 56px;
+    /* margin: 0 auto; */
+    /* padding: 0 0 56px; */
     /* overflow: scroll; */
     scrollbar-width: none;
     -ms-overflow-style: none;
     /* padding: calc(25vh - 56px) 0; */
     padding: 56px 0;
+    /* display: inline-block; */
+    /* flex-grow: 2; */
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* align-items: flex-end; */
+    transition: 0.25s all cubic-bezier(0, 1, 1, 1);
+  }
+  #issues-container.preview-active {
+    transform: translateX(-50%);
   }
   &::-webkit-scrollbar {
     display: none;
@@ -84,6 +93,8 @@
     margin: 8px;
     /* background-color: #000; */
     filter: blur(4px);
+    display: block;
+    /* width: 100%; */
   }
   #issues-container > div.active {
     transition: 125ms all ease-in-out;
@@ -111,12 +122,27 @@
     text-overflow: ellipsis;
     margin: 0;
   }
+  #issues-container p {
+    text-align: right;
+  }
+
   p {
     margin: 0;
     line-height: 1;
     color: #bfbfbf;
     font-size: 12px;
-    text-align: right;
+
+    letter-spacing: 0.5px;
+    text-rendering: geometricPrecision;
+    top: 0;
+    right: 0;
+  }
+  li {
+    margin: 0;
+    line-height: 1;
+    color: #bfbfbf;
+    font-size: 12px;
+
     letter-spacing: 0.5px;
     text-rendering: geometricPrecision;
     top: 0;
@@ -152,7 +178,6 @@
     width: 64px;
     letter-spacing: 0.5px;
     flex-grow: 4;
-    display: flex;
     justify-content: center;
     display: flex;
     align-items: center;
@@ -210,8 +235,12 @@
     margin: 0;
   }
   body {
-    text-align: center;
+    /* text-align: center; */
     /* background-image: var(--grid-background-image); */
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
   }
   .info {
     opacity: 0.66;
@@ -304,7 +333,7 @@
     user-select: none;
     opacity: 0;
     transition: 0.5s opacity ease-in-out;
-    background-image: var(--grid-background-image);
+    /* background-image: var(--grid-background-image); */
   }
   #toolbar.ready {
     opacity: 1;
@@ -355,6 +384,19 @@
       padding: 12px 16px;
     }
   }
+  @media screen and (max-width: 1280px) {
+    body {
+      /* background-color: red; */
+    }
+    .preview.active {
+      position: fixed;
+      right: 0;
+      transform: translateX(0);
+    }
+    #issues-container.preview-active {
+      transform: translateX(0);
+    }
+  }
   #toolbar > button {
     text-align: center;
   }
@@ -393,5 +435,101 @@
     -webkit-mask-image: radial-gradient(#00000020 0, #00000080 100%);
     mask-image: radial-gradient(#00000020 0, #00000080 100%);
     pointer-events: none;
+  }
+  .preview p {
+    line-height: 1.25;
+    word-break: break-word;
+    margin-bottom: 12px;
+  }
+  .preview img {
+    max-width: 100%;
+  }
+  .preview pre {
+    /* width: calc(100% - 48px); */
+    overflow: scroll;
+  }
+  .preview code {
+    width: 100%;
+    white-space: initial;
+  }
+  .preview ul,
+  .preview ol {
+    padding-left: 12px;
+  }
+  .preview h1 {
+    margin: 8px;
+    /* text-align: center; */
+  }
+  .preview a {
+    word-break: break-all;
+  }
+  .preview-body-inner {
+    width: calc(100% - 48px);
+    max-width: 640px;
+    overflow: scroll;
+  }
+
+  .preview {
+    overflow: hidden;
+    text-align: left;
+    position: fixed;
+    /* bottom: 0; */
+    /* left: 0; */
+    /* width: calc(100vw - 32px); */
+    transition: 0.25s all cubic-bezier(0, 1, 1, 1);
+    /* display: inline-block; */
+    /* background: #000; */
+    /* padding: 16px; */
+    max-width: 640px;
+    border: 1px solid #80808020;
+    border-radius: 4px;
+    opacity: 0;
+    /* position: fixed; */
+    top: 64px;
+    /* display: flex; */
+    flex-direction: row;
+    /* flex-grow: 4; */
+    display: flex;
+    transform: translateX(0%);
+    flex-wrap: wrap;
+    overflow: scroll;
+    max-height: calc(100vh - 130px);
+    pointer-events: none;
+  }
+  .close-preview svg {
+    fill: #ffffff80;
+  }
+  .preview.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(50%);
+  }
+  .preview-header {
+    display: flex;
+    align-items: center;
+    /* justify-content: space-between; */
+    margin-bottom: 8px;
+  }
+
+  .preview-body {
+    margin: 16px;
+    overflow: scroll;
+    width: calc(100% - 48px);
+  }
+  .preview-content {
+    /* padding: 16px; */
+    width: 100%;
+  }
+  .preview button.close-preview {
+    /* height: 100%; */
+    /* display: block; */
+    /* position: absolute; */
+    right: 0;
+    top: 0;
+    margin: 8px;
+    height: 48px;
+  }
+  .preview li {
+    margin-bottom: 8px;
   }
 }

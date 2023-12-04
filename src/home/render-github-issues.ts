@@ -1,4 +1,49 @@
+import { marked } from "marked";
+
 import { GitHubIssueWithNewFlag } from "./fetch-github-issues";
+
+// Create the preview elements outside of the previewIssue function
+const preview = document.createElement("div");
+preview.classList.add("preview");
+const previewContent = document.createElement("div");
+previewContent.classList.add("preview-content");
+const previewHeader = document.createElement("div");
+previewHeader.classList.add("preview-header");
+const title = document.createElement("h1");
+const closeButton = document.createElement("button");
+closeButton.classList.add("close-preview");
+closeButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z"/></svg>`;
+const previewBody = document.createElement("div");
+previewBody.classList.add("preview-body");
+const previewBodyInner = document.createElement("div");
+previewBodyInner.classList.add("preview-body-inner");
+
+// Assemble the preview box
+previewHeader.appendChild(closeButton);
+previewHeader.appendChild(title);
+previewBody.appendChild(previewBodyInner);
+previewContent.appendChild(previewHeader);
+previewContent.appendChild(previewBody);
+preview.appendChild(previewContent);
+document.body.appendChild(preview);
+
+// Initially hide the preview
+// preview.classList.add("inactive"); //  = 'none';
+
+const issuesContainer = document.getElementById("issues-container");
+
+// Event listeners for closing the preview
+preview.addEventListener("click", (event) => {
+  if (event.target === preview) {
+    preview.classList.remove("active"); //  = 'none';
+    issuesContainer?.classList.remove("preview-active");
+  }
+});
+
+closeButton.addEventListener("click", () => {
+  preview.classList.remove("active"); //  = 'none';
+  issuesContainer?.classList.remove("preview-active");
+});
 
 export async function renderGitHubIssues(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
   const avatarCache: Record<string, string> = JSON.parse(localStorage.getItem("avatarCache") || "{}");
@@ -68,7 +113,12 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
 
       issueElement.addEventListener("click", () => {
         console.log(issue);
-        window.open(match?.input, "_blank");
+        const isLocal = issuesSynced();
+        if (isLocal) {
+          previewIssue(issue);
+        } else {
+          window.open(match?.input, "_blank");
+        }
       });
 
       issueWrapper.appendChild(issueElement);
@@ -104,4 +154,39 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
     }
   }
   container.classList.add("ready");
+}
+
+function issuesSynced() {
+  const gitHubIssuesFull = localStorage.getItem("githubIssuesFull");
+  if (!gitHubIssuesFull) return false;
+  const issuesFull = JSON.parse(gitHubIssuesFull);
+  if (!issuesFull) return false;
+  else return true;
+}
+
+// Function to update and show the preview
+function previewIssue(issuePreview: GitHubIssueWithNewFlag) {
+  const issuesFull = JSON.parse(localStorage.getItem("githubIssuesFull") || "[]");
+  console.trace({
+    issuesFull,
+    issue: issuePreview,
+  });
+  const issuePreviewUrl = issuePreview.body.match(/https:\/\/github\.com\/[^/]+\/[^/]+\/issues\/\d+/)?.[0];
+  if (!issuePreviewUrl) throw new Error("Issue preview URL not found");
+
+  const issueFull = findIssueByUrl(issuesFull, issuePreviewUrl);
+  if (!issueFull) throw new Error("Issue not found");
+
+  // Update the title and body for the new issue
+  title.textContent = issuePreview.title;
+  previewBodyInner.innerHTML = marked(issueFull.body) as string;
+
+  // Show the preview
+  preview.classList.add("active"); //  = 'block';
+  issuesContainer?.classList.add("preview-active");
+}
+
+// Function to find an issue by URL
+function findIssueByUrl(issues: GitHubIssueWithNewFlag[], url: string) {
+  return issues.find((issue) => issue.html_url === url);
 }
