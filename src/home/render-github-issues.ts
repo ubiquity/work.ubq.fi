@@ -1,6 +1,6 @@
-import { GitHubIssueWithNewFlag } from "./display-github-issues";
+import { GitHubIssueWithNewFlag } from "./fetch-github-issues";
 
-export async function homeController(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
+export async function renderGitHubIssues(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
   const avatarCache: Record<string, string> = JSON.parse(localStorage.getItem("avatarCache") || "{}");
   const fetchInProgress = new Set(); // Track in-progress fetches
   const existingIssueIds = new Set(Array.from(container.querySelectorAll(".issue-element-inner")).map((element) => element.getAttribute("data-issue-id")));
@@ -53,9 +53,9 @@ export async function homeController(container: HTMLDivElement, issues: GitHubIs
         // Remove the prefix from the label name
         const name = label.name.replace(/(Time|Pricing|Priority): /, "");
         if (label.name.startsWith("Pricing: ")) {
-          return `<div class="label pricing">${name}</div>`;
+          return `<label class="pricing">${name}</label>`;
         } else {
-          return `<div class="label">${name}</div>`;
+          return `<label class="label">${name}</label>`;
         }
       });
 

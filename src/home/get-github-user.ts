@@ -1,16 +1,16 @@
 import { Octokit } from "@octokit/rest";
-import { getLocalStoreOauth } from "./check-for-github-access-token";
+import { getLocalStoreOauth } from "./get-github-access-token";
 
-export async function authenticatedGetGitHubUser(): Promise<GitHubUser | null> {
-  const activeSessionToken = await getActiveSessionToken();
+export async function getGitHubUser(): Promise<GitHubUser | null> {
+  const activeSessionToken = await getSessionToken();
   if (activeSessionToken) {
-    return getGitHubUser(activeSessionToken);
+    return getNewGitHubUser(activeSessionToken);
   } else {
     return null;
   }
 }
 
-async function getActiveSessionToken(): Promise<string | null> {
+async function getSessionToken(): Promise<string | null> {
   const cachedSessionToken = getLocalStoreOauth();
   if (cachedSessionToken) {
     return cachedSessionToken.provider_token;
@@ -36,7 +36,7 @@ async function getNewSessionToken(): Promise<string | null> {
   return providerToken;
 }
 
-async function getGitHubUser(providerToken: string): Promise<GitHubUser> {
+async function getNewGitHubUser(providerToken: string): Promise<GitHubUser> {
   const octokit = new Octokit({ auth: providerToken });
   const response = (await octokit.request("GET /user")) as GitHubUserResponse;
   return response.data;

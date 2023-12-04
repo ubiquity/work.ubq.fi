@@ -9,6 +9,13 @@
     <link rel="stylesheet" href="style/inverted-style.css" />
   </head>
   <body>
+    <div id="filters">
+      <div class="labels">
+        <input type="radio" id="price" name="filter" value="price" /><label for="price">Price</label>
+        <input type="radio" id="time" name="filter" value="time" /><label for="time">Time</label>
+        <input type="radio" id="priority" name="filter" value="priority" /><label for="priority">Priority</label>
+      </div>
+    </div>
     <div id="issues-container"></div>
     <div id="toolbar" data-authenticated="false"
       ><div id="branding"

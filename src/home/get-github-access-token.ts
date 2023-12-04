@@ -1,6 +1,4 @@
-import { renderGitHubLoginButton } from "./github-login-button";
-
-export function checkForGitHubAccessToken(): string | null {
+export function getGitHubAccessToken(): string | null {
   const oauthToken = getLocalStoreOauth();
 
   const expiresAt = oauthToken?.expires_at;
@@ -13,9 +11,8 @@ export function checkForGitHubAccessToken(): string | null {
   const accessToken = oauthToken?.provider_token;
   if (accessToken) {
     return accessToken;
-  } else {
-    renderGitHubLoginButton();
   }
+
   return null;
 }
 
