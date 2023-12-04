@@ -50,8 +50,8 @@
     /* border-left: 1px solid #7f7f7f10; */
     padding: 0 0 48px;
     /* background: linear-gradient(to bottom, #7f7f7f00 0%, #7f7f7fff 15%, #7f7f7fff 85%, #7f7f7f00 100%); */
-    -webkit-mask-image: linear-gradient(to bottom, #ffffff00, #ffffffff 48px, #ffffffff 75%, #ffffff00 100%);
-    height: calc(100vh - 96px);
+    /* -webkit-mask-image: linear-gradient(to bottom, #ffffff00, #ffffffff 48px, #ffffffff 75%, #ffffff00 100%); */
+    /* height: calc(100vh - 96px); */
     overflow: scroll;
     scrollbar-width: none; /* For Firefox */
     -ms-overflow-style: none; /* For Internet Explorer and Edge */
@@ -187,7 +187,7 @@
     /* margin: 0; */
   }
   #filters {
-    padding: 4px 6px;
+    /* padding: 4px; */
   }
   #filters label {
     cursor: pointer;
@@ -207,6 +207,8 @@
     display: flex;
     /* justify-content: center; */
     margin-left: auto;
+    /* max-width: 640px; */
+    /* margin: 0 auto; */
   }
 
   .partner {
@@ -282,7 +284,7 @@
 
   #toolbar {
     position: fixed;
-    width: 100vw;
+    width: calc(100vw - 8px);
     height: 48px;
     /* background: red; */
     bottom: 0;
@@ -300,6 +302,7 @@
     /* align-items: flex-end; This will align the items to the bottom of the container */
     /* width: 100%; */
     /* padding: 0 16.66%; Adding padding to the container so that items align approximately at 33% and 66% */
+    /* justify-content: end; */
   }
   #toolbar > * {
     /* justify-content: center; */
@@ -373,16 +376,30 @@
     background-color: #00ffff; /* Example background color */
   }
 
-  @media screen and (max-width: 640px) {
+  @media screen and (max-width: 896px) {
     .full {
       display: none !important;
     }
     .issue-element-inner {
       display: block;
     }
-    .labels {
+    #issues-container .labels {
       margin-left: 48px;
       margin-top: 4px;
+    }
+    #branding {
+      margin: auto;
+      margin-left: 12px;
+    }
+    #branding > span {
+      padding: 0;
+    }
+    #toolbar > * {
+      margin: auto;
+    }
+    #toolbar > button{
+      /* margin: 16px auto; */
+      padding: 12px 16px;
     }
   }
 
@@ -390,7 +407,9 @@
     text-align: center;
   }
   #filters > div {
-    text-align: right;
+    /* text-align: center; */
+    /* margin: 0 auto; */
+    /* max-width: 640px; */
   }
   #filters button {
     margin-top: 8px;
