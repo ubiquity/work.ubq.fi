@@ -11,8 +11,19 @@ function filterButtons() {
   const buttons = filters.querySelectorAll("input");
 
   buttons.forEach((button) => {
+    let isChecked = button.checked;
+    button.addEventListener("mousedown", () => {
+      isChecked = button.checked;
+    });
     button.addEventListener("click", () => {
-      fetchGitHubIssues(button.value as Sorting).catch((error) => console.error(error));
+      if (isChecked) {
+        button.checked = false;
+        fetchGitHubIssues().catch((error) => console.error(error));
+      } else {
+        fetchGitHubIssues(button.value as Sorting).catch((error) => console.error(error));
+      }
+      // Update the flag to the current state for the next click
+      isChecked = button.checked;
     });
   });
 }

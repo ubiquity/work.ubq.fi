@@ -2,7 +2,6 @@
   :root {
     --grid-background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABYWlDQ1BrQ0dDb2xvclNwYWNlRGlzcGxheVAzAAAokWNgYFJJLCjIYWFgYMjNKykKcndSiIiMUmB/yMAOhLwMYgwKicnFBY4BAT5AJQwwGhV8u8bACKIv64LMOiU1tUm1XsDXYqbw1YuvRJsw1aMArpTU4mQg/QeIU5MLikoYGBhTgGzl8pICELsDyBYpAjoKyJ4DYqdD2BtA7CQI+whYTUiQM5B9A8hWSM5IBJrB+API1klCEk9HYkPtBQFul8zigpzESoUAYwKuJQOUpFaUgGjn/ILKosz0jBIFR2AopSp45iXr6SgYGRiaMzCAwhyi+nMgOCwZxc4gxJrvMzDY7v////9uhJjXfgaGjUCdXDsRYhoWDAyC3AwMJ3YWJBYlgoWYgZgpLY2B4dNyBgbeSAYG4QtAPdHFacZGYHlGHicGBtZ7//9/VmNgYJ/MwPB3wv//vxf9//93MVDzHQaGA3kAFSFl7jXH0fsAAAA4ZVhJZk1NACoAAAAIAAGHaQAEAAAAAQAAABoAAAAAAAKgAgAEAAAAAQAAABigAwAEAAAAAQAAABgAAAAAwf1XlwAAACNJREFUSA3t0IEAAAAMBKFHm7/UTaQQWnXDgAEDBgwYMGDgAXaJAz4RVVHYAAAAAElFTkSuQmCC");
   }
-
   #logo {
     height: 28px;
     margin-right: 2px;
@@ -10,7 +9,7 @@
   #authenticated,
   #branding {
     opacity: 0.5;
-    transition: 0.125s opacity ease-in-out;
+    transition: 125ms opacity ease-in-out;
   }
   #authenticated:hover,
   #branding:hover {
@@ -18,15 +17,12 @@
   }
   #branding > span {
     padding: 8px;
-    /* line-height: 1; */
   }
-  html,
-  body {
+  body,
+  html {
     margin: 0;
     padding: 0;
-    /* background-image: var(--grid-background-image); */
   }
-
   * {
     font-family: "Proxima Nova", "Ubiquity Nova", sans-serif;
     color: #000000;
@@ -36,49 +32,39 @@
     font-family: "Ubiquity Nova";
     font-style: normal;
     font-weight: 400;
-    src: url(./fonts/ubiquity-nova-standard.eot);
+    src: url(fonts/ubiquity-nova-standard.eot);
     src:
-      url(./fonts/ubiquity-nova-standard.eot#iefix) format("embedded-opentype"),
-      url(./fonts/ubiquity-nova-standard.woff) format("woff"),
-      url(./fonts/ubiquity-nova-standard.ttf) format("truetype");
+      url(fonts/ubiquity-nova-standard.eot#iefix) format("embedded-opentype"),
+      url(fonts/ubiquity-nova-standard.woff) format("woff"),
+      url(fonts/ubiquity-nova-standard.ttf) format("truetype");
   }
-
   #issues-container {
-    /* padding: 8px; */
     max-width: 640px;
     margin: auto;
-    /* border-left: 1px solid #7f7f7f10; */
     padding: 0 0 48px;
-    /* background: linear-gradient(to bottom, #7f7f7f00 0%, #7f7f7fff 15%, #7f7f7fff 85%, #7f7f7f00 100%); */
-    /* -webkit-mask-image: linear-gradient(to bottom, #ffffff00, #ffffffff 48px, #ffffffff 75%, #ffffff00 100%); */
-    /* height: calc(100vh - 96px); */
     overflow: scroll;
-    scrollbar-width: none; /* For Firefox */
-    -ms-overflow-style: none; /* For Internet Explorer and Edge */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
   &::-webkit-scrollbar {
-    display: none; /* For Chrome, Safari, and Opera */
+    display: none;
   }
-
   #issues-container:hover .issue-element-inner {
     opacity: 0.5;
-    transition: 0.125s opacity ease-in-out;
+    transition: 125ms opacity ease-in-out;
   }
-
   #issues-container * {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
   }
-
   #issues-container > div:first-child {
     border-top: 1px solid #7f7f7f20;
   }
   #issues-container > div:last-child {
     border-top: 1px solid #7f7f7f20;
   }
-
   #issues-container > div {
     padding: 0 16px;
     overflow: hidden;
@@ -91,42 +77,32 @@
     border-radius: 4px;
     cursor: pointer;
   }
-
   #issues-container > div.active {
-    transition: 0.125s all ease-in-out;
-    /* margin-left: 1px; */
+    transition: 125ms all ease-in-out;
     opacity: 1;
-    filter: blur(0px);
+    filter: blur(0);
   }
-
   #issues-container > div:hover {
-    /* background-position: 9px calc(100% - 9px); */
     opacity: 1;
-
     background-color: #7f7f7f10;
     transition: background-color 0s;
   }
-
   #issues-container > div:hover .info {
     opacity: 1;
   }
   #issues-container > div:hover .issue-element-inner {
-    transition: 0.125s opacity ease-in-out;
+    transition: 125ms opacity ease-in-out;
     opacity: 1;
   }
   #issues-container > div:active {
-    /* border-left: 4px solid #00ffff; */
     background-color: #7f7f7f40;
   }
-
   h3 {
-    /* margin: 0 0 0 12px; */
     line-height: 1;
     font-size: 16px;
     text-overflow: ellipsis;
     margin: 0;
   }
-
   p {
     margin: 0;
     line-height: 1;
@@ -138,14 +114,12 @@
     top: 0;
     right: 0;
   }
-
   .issue-element-inner {
     position: relative;
     text-align: left;
     display: flex;
-    padding: 12px 0px;
+    padding: 12px 0;
   }
-
   p.organization-name {
     opacity: 0.5;
     display: inline-block;
@@ -158,10 +132,9 @@
     margin-left: 0;
   }
   label {
-    /* display: inline-block; */
     padding: 4px 6px;
     border-radius: 4px;
-    margin: 0px 4px 0px;
+    margin: 0 4px 0;
     font-size: 12px;
     text-align: center;
     white-space: nowrap;
@@ -176,18 +149,14 @@
     height: 16px;
   }
   input[type="radio"] {
-    /* width: 64px; */
     background-color: unset;
     cursor: default;
     appearance: unset;
+    display: none;
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     border: none;
-    /* margin: 0; */
-  }
-  #filters {
-    /* padding: 4px; */
   }
   #filters label {
     cursor: pointer;
@@ -202,49 +171,28 @@
     background-color: #7f7f7f80 !important;
   }
   .labels {
-    /* text-align: right; */
-    /* display: inline-block; */
     display: flex;
-    /* justify-content: center; */
     margin-left: auto;
-    /* max-width: 640px; */
-    /* margin: 0 auto; */
   }
-
   .partner {
     bottom: 0;
-    /* text-align: right; */
-    /* margin: 4px 4px 0; */
     margin: 0;
   }
-
   body {
     text-align: center;
     background-image: var(--grid-background-image);
   }
   .info {
     opacity: 0.66;
-    transition: 0.125s opacity ease-in-out;
-    /* display: flex; */
+    transition: 125ms opacity ease-in-out;
     align-items: center;
     margin: 0 0 0 50px;
   }
-
-  .title {
-    /* display: flex; */
-    /* align-items: center; */
-  }
-
-  .label.pricing {
-  }
-
   #issues-container > .issue-element-wrapper {
     opacity: 0.5;
-    /* margin-left: 100vw; */
     transition: 0.33s all cubic-bezier(0, 1, 1, 1);
     filter: blur(8px);
   }
-
   button {
     appearance: unset;
     text-rendering: unset;
@@ -281,43 +229,26 @@
   button:active {
     background-color: #7f7f7f40;
   }
-
   #toolbar {
     position: fixed;
     width: calc(100vw - 8px);
     height: 48px;
-    /* background: red; */
     bottom: 0;
     backdrop-filter: blur(8px);
     padding: 4px;
     display: flex;
-    /* text-align: right; */
     border-top: 1px solid #7f7f7f20;
-    /* text-align: center; */
-    /* align-items: stretch; */
     justify-content: center;
     -webkit-backdrop-filter: blur(8px);
-    /* display: flex; */
     justify-content: space-between;
-    /* align-items: flex-end; This will align the items to the bottom of the container */
-    /* width: 100%; */
-    /* padding: 0 16.66%; Adding padding to the container so that items align approximately at 33% and 66% */
-    /* justify-content: end; */
   }
   #toolbar > * {
-    /* justify-content: center; */
     align-items: center;
     display: inline-flex;
     text-align: left;
     margin: 0 16px;
     cursor: pointer;
   }
-  /* #toolbar > *:first-child {
-  padding-left: 16px;
-}
-#toolbar > *:last-child {
-  padding-right: 16px;
-} */
   #authenticated > * {
     display: inline-flex;
     align-items: center;
@@ -330,15 +261,9 @@
     height: 40px;
     padding: 4px 0;
   }
-
-  #toolbar[data-authenticated] > * {
-    /* opacity: 0; */
-    /* transition: 1s opacity ease-in-out; */
-  }
   #toolbar[data-authenticated="true"] > #github-login-button {
     display: none;
   }
-
   #toolbar {
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -348,18 +273,15 @@
     transition: 0.5s opacity ease-in-out;
     background-image: var(--grid-background-image);
   }
-
   #toolbar.ready {
     opacity: 1;
   }
-
   #branding {
     text-transform: uppercase;
     letter-spacing: 1.5px;
     font-weight: 400;
     text-rendering: geometricPrecision;
   }
-
   .full {
     display: unset !important;
   }
@@ -367,15 +289,14 @@
     position: relative;
   }
   .new-issue::before {
-    content: ""; /* This is required for the pseudo-element to display */
+    content: "";
     display: inline-block;
     position: absolute;
     height: 100%;
     width: 4px;
-    right: 0px; /* Position the pseudo-element to the right of the .new-issue element */
-    background-color: #00ffff; /* Example background color */
+    right: 0;
+    background-color: #00ffff;
   }
-
   @media screen and (max-width: 896px) {
     .full {
       display: none !important;
@@ -397,19 +318,12 @@
     #toolbar > * {
       margin: auto;
     }
-    #toolbar > button{
-      /* margin: 16px auto; */
+    #toolbar > button {
       padding: 12px 16px;
     }
   }
-
   #toolbar > button {
     text-align: center;
-  }
-  #filters > div {
-    /* text-align: center; */
-    /* margin: 0 auto; */
-    /* max-width: 640px; */
   }
   #filters button {
     margin-top: 8px;
