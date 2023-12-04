@@ -1,16 +1,27 @@
 @media (prefers-color-scheme: dark) {
   html {
-    background-color: #06061aff;
+    /* background-color: #06061aff; */
+    background-color: #000410;
   }
   #toolbar.ready {
-    background-color: #06061a80;
+    /* background-color: #06061a80; */
+    background-color: #00041080;
+  }
+  #issues-container > div {
+    background-color: #000410;
+  }
+  #issues-container > div:hover{
+    /* background-color: #000410; */
   }
 }
 @media (prefers-color-scheme: light) {
   html {
-    background-color: #f0f0f0;
+    /* background-color: #f0f0f0; */
   }
   #toolbar.ready {
     background-color: #f0f0f080;
+  }
+  #grid {
+    opacity: 0.25;
   }
 }

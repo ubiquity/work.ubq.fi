@@ -42,7 +42,7 @@
     max-width: 640px;
     margin: auto;
     padding: 0 0 48px;
-    overflow: scroll;
+    /* overflow: scroll; */
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -50,8 +50,8 @@
     display: none;
   }
   #issues-container:hover .issue-element-inner {
-    opacity: 0.5;
-    transition: 125ms opacity ease-in-out;
+    opacity: 0.75;
+    transition: 500ms opacity ease-in-out;
   }
   #issues-container * {
     -webkit-user-select: none;
@@ -77,6 +77,7 @@
     border-radius: 4px;
     cursor: pointer;
     margin: 8px;
+    /* background-color: #000; */
   }
   #issues-container > div.active {
     transition: 125ms all ease-in-out;
@@ -85,7 +86,7 @@
   }
   #issues-container > div:hover {
     opacity: 1;
-    background-color: #80808010;
+    /* background-color: #80808010; */
     transition: background-color 0s;
   }
   #issues-container > div:hover .info {
@@ -121,6 +122,7 @@
     display: flex;
     padding: 12px 0;
     align-items: center;
+    /* background-color: #00000080; */
   }
   p.organization-name {
     opacity: 0.5;
@@ -203,7 +205,7 @@
   }
   body {
     text-align: center;
-    background-image: var(--grid-background-image);
+    /* background-image: var(--grid-background-image); */
   }
   .info {
     opacity: 0.66;
@@ -358,5 +360,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  background,
+  background #grid {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  /* html,
+  background {
+    background-color: #000410;
+  } */
+
+  background #grid {
+    -webkit-mask-image: radial-gradient(#00000020 0, #00000080 100%);
+    mask-image: radial-gradient(#00000020 0, #00000080 100%);
+    pointer-events: none;
   }
 }
