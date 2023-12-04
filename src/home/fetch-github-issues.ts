@@ -146,6 +146,7 @@ export function fetchCachedIssues(): GitHubIssue[] | null {
 export async function fetchIssuesFull(cachedIssues: GitHubIssue[]) {
   const authToken = getGitHubAccessToken();
   if (!authToken) throw new Error("No auth token found");
+  console.trace(`fetching full issues`);
   const octokit = new Octokit({ auth: getGitHubAccessToken() });
   const downloaded: unknown[] = [];
   for (const issue of cachedIssues) {

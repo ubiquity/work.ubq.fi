@@ -8,6 +8,9 @@
   #issues-container > div {
     background-color: #000410;
   }
+  .preview {
+    background-color: #000410;
+  }
 }
 @media (prefers-color-scheme: light) {
   #toolbar.ready {
@@ -17,6 +20,9 @@
     opacity: 0.25;
   }
   #issues-container > div {
+    background-color: #f0f0f0;
+  }
+  .preview {
     background-color: #f0f0f0;
   }
 }
