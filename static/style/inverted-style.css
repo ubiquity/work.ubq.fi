@@ -437,10 +437,19 @@
     mask-image: radial-gradient(#ffffff20 0, #ffffff80 100%);
     pointer-events: none;
   }
+  .preview blockquote{
+    margin-left: 16px;
+    opacity: 0.66;
+}
+  .preview sup{
+    display: block
+  }
   .preview p {
     line-height: 1.25;
     word-break: break-word;
     margin-bottom: 12px;
+    letter-spacing: 0;
+    font-size: 16px;
   }
   .preview img {
     max-width: 100%;
@@ -460,6 +469,7 @@
   .preview h1 {
     margin: 8px;
     /* text-align: center; */
+    font-size: 24px;
   }
   .preview a {
     word-break: break-all;
@@ -538,5 +548,8 @@
   }
   .preview li {
     margin-bottom: 8px;
+    letter-spacing: 0;
+    font-size: 16px;
+    line-height: 1.25;
   }
 }

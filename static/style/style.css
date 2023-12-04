@@ -437,22 +437,52 @@
     mask-image: radial-gradient(#00000020 0, #00000080 100%);
     pointer-events: none;
   }
+  .preview blockquote{
+    margin-left: 16px;
+    opacity: 0.66;
+}
+  .preview sup{
+    display: block
+  }
   .preview p {
-    line-height: 1.5;
+    line-height: 1.25;
     word-break: break-word;
     margin-bottom: 12px;
     letter-spacing: 0;
+    font-size: 16px;
   }
   .preview img {
     max-width: 100%;
   }
   .preview pre {
     /* width: calc(100% - 48px); */
-    overflow: scroll;
-  }
-  .preview code {
+    /* overflow: scroll; */
+    /* margin: 0; */
+    /* overflow: hidden; */
+    /* white-space: unset; */
+    /* position: relative; */
+    /* width: 50%; */
+    /* display: inline-block; */
+    /* background: red; */
+    /* overflow: hidden; */
+    /* margin: 0; */
+    /* white-space: unset; */
+    position: relative;
+    /* margin: 48px auto; */
+    display: inline-block;
     width: 100%;
-    white-space: initial;
+    overflow: scroll;
+    height: 48px;
+  }
+  .preview pre code {
+    /* width: 100%; */
+    /* white-space: initial; */
+    /* max-width: 100vw; */
+    /* overflow: hidden; */
+    /* display: inline-block; */
+    /* display: block; */
+    /* white-space: inherit; */
+    position: absolute;
   }
   .preview ul,
   .preview ol {
@@ -461,6 +491,7 @@
   .preview h1 {
     margin: 8px;
     /* text-align: center; */
+    font-size: 24px;
   }
   .preview a {
     word-break: break-all;
@@ -540,5 +571,7 @@
   .preview li {
     margin-bottom: 8px;
     letter-spacing: 0;
+    font-size: 16px;
+    line-height: 1.25;
   }
 }
