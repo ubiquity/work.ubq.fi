@@ -45,7 +45,8 @@
     /* overflow: scroll; */
     scrollbar-width: none;
     -ms-overflow-style: none;
-    padding: calc(25vh - 56px) 0;
+    /* padding: calc(25vh - 56px) 0; */
+    padding: 56px 0;
   }
   &::-webkit-scrollbar {
     display: none;
