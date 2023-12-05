@@ -187,6 +187,11 @@
   #filters label:active {
     background-color: #80808080;
   }
+
+  input[type="radio"][data-ordering="reverse"] + label > .icon > svg {
+    transform: rotate(180deg);
+  }
+
   input[type="radio"]:checked + label {
     background-color: #80808080 !important;
   }
