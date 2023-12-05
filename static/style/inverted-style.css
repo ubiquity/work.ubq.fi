@@ -499,6 +499,7 @@
     opacity: 1;
     pointer-events: all;
     transform: translateX(50%);
+    box-shadow: 0 12px 48px #00000010;
   }
   .preview-header {
     display: flex;
