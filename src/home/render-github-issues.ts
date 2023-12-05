@@ -1,6 +1,6 @@
 import { marked } from "marked";
 
-import { GitHubIssueWithNewFlag } from "./fetch-github-issues";
+import { GitHubIssueWithNewFlag, getPreviewToFullMapping } from "./fetch-github-issues";
 
 // Create the preview elements outside of the previewIssue function
 const preview = document.createElement("div");
@@ -114,20 +114,24 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
         }
       });
 
+      const openNewLinkIcon = `<span class="open-new-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"></path></svg></span>`;
+
       issueElement.innerHTML = `
-      <div class="info"><div class="title"><h3>${
+      ${openNewLinkIcon}<div class="info"><div class="title"><h3>${
         issue.title
       }</h3></div><div class="partner"><p class="organization-name">${organizationName}</p><p class="repository-name">${repositoryName}</p></div></div><div class="labels">${labels.join(
         ""
       )}<img /></div>`;
 
-      issueElement.addEventListener("click", () => {
-        console.log(issue);
-        const isLocal = issuesSynced();
-        if (isLocal) {
-          previewIssue(issue);
-        } else {
+      issueElement.addEventListener("click", function () {
+        const mapping = getPreviewToFullMapping();
+        const previewId = Number(this.getAttribute("data-issue-id"));
+        console.trace({ mapping, previewId });
+        const full = mapping.get(previewId);
+        if (!full) {
           window.open(match?.input, "_blank");
+        } else {
+          previewIssue(issue);
         }
       });
 
@@ -164,14 +168,6 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
     }
   }
   container.classList.add("ready");
-}
-
-function issuesSynced() {
-  const gitHubIssuesFull = localStorage.getItem("githubIssuesFull");
-  if (!gitHubIssuesFull) return false;
-  const issuesFull = JSON.parse(gitHubIssuesFull);
-  if (!issuesFull) return false;
-  else return true;
 }
 
 // Function to update and show the preview

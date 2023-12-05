@@ -1,9 +1,9 @@
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken } from "./get-github-access-token";
-import { GitHubIssue } from "./github-types";
+import { GitHubIssue as GitHubIssuePreview } from "./github-types";
 import { renderGitHubIssues } from "./render-github-issues";
 
-export type GitHubIssueWithNewFlag = GitHubIssue & { isNew?: boolean };
+export type GitHubIssueWithNewFlag = GitHubIssuePreview & { isNew?: boolean };
 
 export const SORTING_OPTIONS = ["priority", "time", "price"] as const;
 export type Sorting = (typeof SORTING_OPTIONS)[number];
@@ -16,7 +16,7 @@ export async function fetchGitHubIssues(sorting?: Sorting) {
   return await fetchIssues(container, sorting);
 }
 
-export function sortIssuesBy(issues: GitHubIssue[], sortBy: string) {
+export function sortIssuesBy(issues: GitHubIssuePreview[], sortBy: string) {
   switch (sortBy) {
     case "priority":
       return sortIssuesByPriority(issues);
@@ -29,7 +29,7 @@ export function sortIssuesBy(issues: GitHubIssue[], sortBy: string) {
   }
 }
 
-function sortIssuesByPriority(issues: GitHubIssue[]) {
+function sortIssuesByPriority(issues: GitHubIssuePreview[]) {
   return issues.sort((a, b) => {
     const priorityRegex = /Priority: (\d+)/;
     const aPriorityMatch = a.labels.find((label) => priorityRegex.test(label.name));
@@ -40,7 +40,7 @@ function sortIssuesByPriority(issues: GitHubIssue[]) {
   });
 }
 
-function sortIssuesByTime(issues: GitHubIssue[]) {
+function sortIssuesByTime(issues: GitHubIssuePreview[]) {
   return issues.sort((a, b) => {
     const aTimeValue = a.labels.reduce((acc, label) => acc + calculateLabelValue(label.name), 0);
     const bTimeValue = b.labels.reduce((acc, label) => acc + calculateLabelValue(label.name), 0);
@@ -48,7 +48,7 @@ function sortIssuesByTime(issues: GitHubIssue[]) {
   });
 }
 
-function sortIssuesByPrice(issues: GitHubIssue[]) {
+function sortIssuesByPrice(issues: GitHubIssuePreview[]) {
   return issues.sort((a, b) => {
     const aPriceLabel = a.labels.find((label) => label.name.startsWith("Pricing: "));
     const bPriceLabel = b.labels.find((label) => label.name.startsWith("Pricing: "));
@@ -73,7 +73,7 @@ function calculateLabelValue(label: string): number {
 async function fetchIssues(container: HTMLDivElement, sorting?: Sorting) {
   let issues;
   try {
-    issues = fetchCachedIssues();
+    issues = fetchCachedPreviews();
     if (issues) {
       await displayIssues(issues, container, sorting);
       issues = await fetchNewIssues();
@@ -117,7 +117,7 @@ async function fetchNewIssues(): Promise<GitHubIssueWithNewFlag[]> {
     console.error(error);
   }
   // Fetch fresh issues and mark them as new
-  const freshIssues: GitHubIssue[] = await octokit.paginate("GET /repos/ubiquity/devpool-directory/issues", {
+  const freshIssues: GitHubIssuePreview[] = await octokit.paginate("GET /repos/ubiquity/devpool-directory/issues", {
     state: "open",
   });
   const freshIssuesWithNewFlag = freshIssues.map((issue) => ({ ...issue, isNew: true })) as GitHubIssueWithNewFlag[];
@@ -127,12 +127,12 @@ async function fetchNewIssues(): Promise<GitHubIssueWithNewFlag[]> {
     delete issue.isNew;
     return issue;
   });
-  localStorage.setItem("githubIssues", JSON.stringify(issuesToSave));
+  localStorage.setItem("gitHubIssuePreviews", JSON.stringify(issuesToSave));
   return freshIssuesWithNewFlag;
 }
 
-export function fetchCachedIssues(): GitHubIssue[] | null {
-  const cachedIssues = localStorage.getItem("githubIssues");
+export function fetchCachedPreviews(): GitHubIssuePreview[] | null {
+  const cachedIssues = localStorage.getItem("gitHubIssuePreviews");
   if (cachedIssues) {
     try {
       return JSON.parse(cachedIssues);
@@ -143,27 +143,34 @@ export function fetchCachedIssues(): GitHubIssue[] | null {
   return null;
 }
 
-export async function fetchIssuesFull(cachedIssues: GitHubIssue[]) {
+const map = new Map();
+
+export function getPreviewToFullMapping() {
+  return map;
+}
+
+export async function fetchIssuesFull(cachedIssues: GitHubIssuePreview[]) {
   const authToken = getGitHubAccessToken();
   if (!authToken) throw new Error("No auth token found");
   console.trace(`fetching full issues`);
   const octokit = new Octokit({ auth: getGitHubAccessToken() });
   const downloaded: unknown[] = [];
-  for (const issue of cachedIssues) {
-    const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
-    const match = issue.body.match(urlPattern);
+  const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
+  for (const preview of cachedIssues) {
+    const match = preview.body.match(urlPattern);
     if (!match || !match.groups) {
       console.error("Invalid issue body URL format");
       continue;
     }
+
     const { org, repo, issue_number } = match.groups;
 
-    const { data: issueData } = await octokit.request("GET /repos/{org}/{repo}/issues/{issue_number}", {
-      issue_number,
-      repo,
-      org,
-    });
-    downloaded.push(issueData);
+    const { data: full } = await octokit.request("GET /repos/{org}/{repo}/issues/{issue_number}", { issue_number, repo, org });
+    downloaded.push(full);
+    map.set(preview.id, full);
+    console.trace({ [preview.id]: full });
+    document.querySelector(`[data-issue-id="${preview.id}"]`)?.setAttribute("data-full-id", full.id);
   }
+
   return downloaded;
 }

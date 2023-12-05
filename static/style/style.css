@@ -54,6 +54,13 @@
   #issues-container .issue-element-inner {
     transition: 125ms opacity ease-out 62.5ms;
   }
+
+  #issues-container .issue-element-inner[data-issue-id] .open-new-link > svg {
+    display: unset;
+  }
+  #issues-container .issue-element-inner[data-issue-id][data-full-id] .open-new-link > svg {
+    display: none;
+  }
   #issues-container:hover .issue-element-inner {
     opacity: 0.5;
   }
@@ -131,6 +138,19 @@
     text-rendering: geometricPrecision;
     top: 0;
     right: 0;
+  }
+  .issue-element-inner > .open-new-link svg {
+    fill: #ffffff40;
+    position: absolute;
+    height: 12px;
+    width: 12px;
+    top: 10px;
+    right: -12px;
+    /* vertical-align: middle; */
+    transition: 125ms fill ease-in-out;
+  }
+  .issue-element-inner[data-full-id] > .open-new-link svg {
+    fill: #ffffff00;
   }
   .issue-element-inner {
     position: relative;
