@@ -1,6 +1,6 @@
 import { marked } from "marked";
 
-import { GitHubIssueWithNewFlag } from "./fetch-github-issues";
+import { GitHubIssueWithNewFlag, getPreviewToFullMapping } from "./fetch-github-issues";
 
 // Create the preview elements outside of the previewIssue function
 const preview = document.createElement("div");
@@ -121,13 +121,15 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
         ""
       )}<img /></div>`;
 
-      issueElement.addEventListener("click", () => {
-        console.log(issue);
-        const isLocal = issuesSynced();
-        if (isLocal) {
-          previewIssue(issue);
-        } else {
+      issueElement.addEventListener("click", function () {
+        const mapping = getPreviewToFullMapping();
+        const previewId = Number(this.getAttribute("data-issue-id"));
+        console.trace({ mapping, previewId });
+        const full = mapping.get(previewId);
+        if (!full) {
           window.open(match?.input, "_blank");
+        } else {
+          previewIssue(issue);
         }
       });
 
@@ -164,14 +166,6 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
     }
   }
   container.classList.add("ready");
-}
-
-function issuesSynced() {
-  const gitHubIssuesFull = localStorage.getItem("githubIssuesFull");
-  if (!gitHubIssuesFull) return false;
-  const issuesFull = JSON.parse(gitHubIssuesFull);
-  if (!issuesFull) return false;
-  else return true;
 }
 
 // Function to update and show the preview

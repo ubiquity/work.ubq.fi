@@ -54,6 +54,43 @@
   #issues-container .issue-element-inner {
     transition: 125ms opacity ease-out 62.5ms;
   }
+  #issues-container .issue-element-inner[data-issue-id]::before {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 0px;
+    border: 1px solid#bfbfbf;
+    background-color: #ffffff;
+    right: -13px;
+    bottom: 7px;
+    transform: rotate(-45deg);
+    transition: 125ms all ease-in-out;
+  }
+  #issues-container .issue-element-inner[data-issue-id]::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 0px;
+    border: 1px solid#bfbfbf;
+    right: -13px;
+    bottom: 7px;
+    transform: rotate(45deg);
+    transition: 125ms all ease-in-out;
+  }
+  #issues-container .issue-element-inner[data-issue-id][data-full-id]::before {
+    transform: rotate(45deg);
+    width: 4px;
+    right: -6px;
+    bottom: 7px;
+    border-color: #bfbfbf;
+  }
+  #issues-container .issue-element-inner[data-issue-id][data-full-id]::after {
+    transform: rotate(315deg);
+    width: 8px;
+    right: -13px;
+    bottom: 9px;
+    border-color: #bfbfbf;
+  }
   #issues-container:hover .issue-element-inner {
     opacity: 0.5;
   }
