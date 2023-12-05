@@ -7,9 +7,8 @@ import { generateSortingButtons } from "./sorting/generate-sorting-buttons";
 generateSortingButtons();
 grid(document.getElementById("grid") as HTMLElement);
 
-authentication().catch((error) => console.error(error));
-
-fetchAndDisplayIssuesCacheOrRemote()
+authentication()
+  .then(fetchAndDisplayIssuesCacheOrRemote)
   .then((downloaded) => {
     localStorage.setItem("gitHubIssues", JSON.stringify(downloaded));
     console.log(downloaded);
