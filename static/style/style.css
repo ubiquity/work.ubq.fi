@@ -55,8 +55,6 @@
     transition: 125ms opacity ease-out 62.5ms;
   }
 
-
-
   #issues-container:hover .issue-element-inner {
     opacity: 0.5;
   }
@@ -135,7 +133,6 @@
     top: 0;
     right: 0;
   }
-
 
   .issue-element-inner {
     position: relative;
