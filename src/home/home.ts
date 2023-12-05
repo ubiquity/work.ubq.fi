@@ -11,19 +11,13 @@ grid(document.getElementById("grid") as HTMLElement);
 const cachedPreviews = fetchCachedPreviews();
 
 if (cachedPreviews) {
-  // const fullIssues = fetchCachedIssuesFull();
-
-  // if (!fullIssues) {
-    fetchIssuesFull(cachedPreviews)
-      .then((downloaded) => {
-        localStorage.setItem("githubIssuesFull", JSON.stringify(downloaded));
-        return downloaded;
-      })
-      .then((downloaded) => console.log(downloaded))
-      .catch((error) => console.error(error));
-  // } else {
-  //   console.trace({ fullIssues });
-  // }
+  fetchIssuesFull(cachedPreviews)
+    .then((downloaded) => {
+      localStorage.setItem("githubIssuesFull", JSON.stringify(downloaded));
+      return downloaded;
+    })
+    .then((downloaded) => console.log(downloaded))
+    .catch((error) => console.error(error));
 }
 
 export function fetchCachedIssuesFull() {

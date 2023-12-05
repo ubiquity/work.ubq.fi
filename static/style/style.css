@@ -54,42 +54,12 @@
   #issues-container .issue-element-inner {
     transition: 125ms opacity ease-out 62.5ms;
   }
-  #issues-container .issue-element-inner[data-issue-id]::before {
-    content: "";
-    position: absolute;
-    width: 10px;
-    height: 0px;
-    border: 1px solid#404040;
-    background-color: #000;
-    right: -13px;
-    bottom: 7px;
-    transform: rotate(-45deg);
-    transition: 125ms all ease-in-out;
+
+  #issues-container .issue-element-inner[data-issue-id] .open-new-link > svg {
+    display: unset;
   }
-  #issues-container .issue-element-inner[data-issue-id]::after {
-    content: "";
-    position: absolute;
-    width: 10px;
-    height: 0px;
-    border: 1px solid#404040;
-    right: -13px;
-    bottom: 7px;
-    transform: rotate(45deg);
-    transition: 125ms all ease-in-out;
-  }
-  #issues-container .issue-element-inner[data-issue-id][data-full-id]::before {
-    transform: rotate(45deg);
-    width: 4px;
-    right: -6px;
-    bottom: 7px;
-    border-color: #404040;
-  }
-  #issues-container .issue-element-inner[data-issue-id][data-full-id]::after {
-    transform: rotate(315deg);
-    width: 8px;
-    right: -13px;
-    bottom: 9px;
-    border-color: #404040;
+  #issues-container .issue-element-inner[data-issue-id][data-full-id] .open-new-link > svg {
+    display: none;
   }
   #issues-container:hover .issue-element-inner {
     opacity: 0.5;
@@ -168,6 +138,19 @@
     text-rendering: geometricPrecision;
     top: 0;
     right: 0;
+  }
+  .issue-element-inner > .open-new-link svg {
+    fill: #ffffff40;
+    position: absolute;
+    height: 12px;
+    width: 12px;
+    top: 10px;
+    right: -12px;
+    /* vertical-align: middle; */
+    transition: 125ms fill ease-in-out;
+  }
+  .issue-element-inner[data-full-id] > .open-new-link svg {
+    fill: #ffffff00;
   }
   .issue-element-inner {
     position: relative;
