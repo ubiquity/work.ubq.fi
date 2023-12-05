@@ -7,6 +7,7 @@ export function getGitHubAccessToken(): string | null {
   if (expiresAt) {
     if (expiresAt < Date.now() / 1000) {
       localStorage.removeItem("sb-wfzpewmlyiozupulbuur-auth-token");
+      return null;
     }
   }
 
