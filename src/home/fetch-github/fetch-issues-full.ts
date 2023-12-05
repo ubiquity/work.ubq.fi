@@ -31,7 +31,6 @@ export function fetchIssuesFull(previews: GitHubIssue[]) {
       .then(({ data: response }) => {
         const full = response as GitHubIssue;
 
-        console.trace({ full });
         mapping.set(preview.id, full);
         const issueElement = document.querySelector(`[data-issue-id="${preview.id}"]`);
         issueElement?.setAttribute("data-full-id", full.id.toString());
@@ -76,8 +75,6 @@ export function fetchIssuesFull(previews: GitHubIssue[]) {
         return full;
       });
   });
-
-  console.trace({ issueFetchPromises });
 
   return issueFetchPromises;
 }

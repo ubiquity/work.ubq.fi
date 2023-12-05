@@ -12,17 +12,25 @@ export async function fetchIssuePreviews(): Promise<GitHubIssueWithNewFlag[]> {
   } catch (error) {
     console.error(error);
   }
-  // Fetch fresh issues and mark them as new
+  // Fetch fresh issues and mark them as new if they don't exist in local storage
   const freshIssues: GitHubIssue[] = await octokit.paginate("GET /repos/ubiquity/devpool-directory/issues", {
     state: "open",
   });
-  const freshIssuesWithNewFlag = freshIssues.map((issue) => ({ ...issue, isNew: true })) as GitHubIssueWithNewFlag[];
 
-  // Remove the 'isNew' flag before saving to localStorage
-  const issuesToSave = freshIssuesWithNewFlag.map(({ ...issue }) => {
-    delete issue.isNew;
-    return issue;
-  });
-  localStorage.setItem("gitHubIssuesPreview", JSON.stringify(issuesToSave));
+  // Retrieve existing issues from local storage
+  const storedIssuesJSON = localStorage.getItem("gitHubIssuesPreview");
+  const storedIssues = storedIssuesJSON ? (JSON.parse(storedIssuesJSON) as GitHubIssue[]) : [];
+
+  // Create a set of existing issue IDs for quick lookup
+  const existingIssueIds = new Set(storedIssues.map((issue) => issue.id));
+
+  // Map fresh issues to GitHubIssueWithNewFlag, setting isNew appropriately
+  const freshIssuesWithNewFlag = freshIssues.map((issue) => ({
+    ...issue,
+    isNew: !existingIssueIds.has(issue.id),
+  })) as GitHubIssueWithNewFlag[];
+
+  localStorage.setItem("gitHubIssuesPreview", JSON.stringify(freshIssuesWithNewFlag));
+
   return freshIssuesWithNewFlag;
 }
