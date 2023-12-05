@@ -362,9 +362,9 @@
     #issues-container.preview-active {
       transform: translateX(0) !important;
     }
-    #issues-container.preview-active .issue-element-inner {
+    #issues-container.preview-active > div {
       opacity: 0.5;
-      filter: blur(4px);
+      filter: blur(8px);
     }
   }
   #toolbar > button {
@@ -410,10 +410,11 @@
     border-color: #00000040;
   }
   .preview .open-new-link svg {
-    fill: #000000bf;
+    fill: #00000080;
     vertical-align: middle;
     /* margin-bottom: 6px; */
-    margin-left: 6px;
+    /* margin-left: 8px; */
+    height: 20px;
   }
   .preview p {
     line-height: 1.25;
@@ -459,9 +460,9 @@
     /* max-height: calc(100vh - 153px); */
     max-height: calc(100vh - 170px);
     pointer-events: all;
-    margin-top: 8px;
+    /* margin-top: 8px; */
     border-top: 1px solid #dfdfdf;
-    padding-top: 8px;
+    padding-top: 16px;
   }
   .preview {
     text-align: left;
@@ -492,6 +493,7 @@
   .close-preview svg {
     fill: #00000080;
     vertical-align: middle;
+    height: 36px;
   }
   .preview.active {
     opacity: 1;
@@ -502,12 +504,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 8px 16px;
+    margin: 16px 16px;
   }
   .preview-header > a {
     word-wrap: initial;
     text-decoration: none;
     opacity: 0.75;
+    /* vertical-align: middle; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .preview-header > a:hover {
     opacity: 1;
@@ -517,6 +523,9 @@
     word-break: normal;
     display: inline;
     vertical-align: middle;
+    margin-right: 12px;
+    /* float: left; */
+    text-align: right;
   }
   .preview-body {
     margin: 16px;
@@ -539,6 +548,7 @@
     /* vertical-align: middle; */
     border: none;
     background: none;
+    padding: 0;
   }
   .preview button.close-preview:hover svg {
     fill: #000000;
