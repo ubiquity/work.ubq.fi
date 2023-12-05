@@ -30,14 +30,15 @@ previewContent.appendChild(previewBody);
 preview.appendChild(previewContent);
 document.body.appendChild(preview);
 export const issuesContainer = document.getElementById("issues-container");
-// Event listeners for closing the preview
-preview.addEventListener("click", (event) => {
-  if (event.target === preview) {
-    preview.classList.remove("active"); //  = 'none';
-    issuesContainer?.classList.remove("preview-active");
+
+closeButton.addEventListener("click", closePreview);
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closePreview();
   }
 });
-closeButton.addEventListener("click", () => {
-  preview.classList.remove("active"); //  = 'none';
+
+function closePreview() {
+  preview.classList.remove("active");
   issuesContainer?.classList.remove("preview-active");
-});
+}

@@ -6,7 +6,6 @@ export function getLocalStore(key: string): (GitHubIssue | GitHubIssue)[] | OAut
   if (cachedIssues) {
     try {
       const value = JSON.parse(cachedIssues);
-      console.trace({ key, value });
       return value;
     } catch (error) {
       console.error(error);
