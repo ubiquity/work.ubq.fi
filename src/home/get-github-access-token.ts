@@ -1,5 +1,7 @@
+import { getLocalStore } from "./get-local-store";
+
 export function getGitHubAccessToken(): string | null {
-  const oauthToken = getLocalStoreOauth();
+  const oauthToken = getLocalStore("sb-wfzpewmlyiozupulbuur-auth-token") as OAuthToken;
 
   const expiresAt = oauthToken?.expires_at;
   if (expiresAt) {
@@ -16,13 +18,7 @@ export function getGitHubAccessToken(): string | null {
   return null;
 }
 
-export function getLocalStoreOauth(): ExampleAuthToken | null {
-  const oauthToken = localStorage.getItem("sb-wfzpewmlyiozupulbuur-auth-token");
-  if (!oauthToken) return null;
-  return JSON.parse(oauthToken);
-}
-
-interface ExampleAuthToken {
+export interface OAuthToken {
   provider_token: string;
   access_token: string;
   expires_in: number;

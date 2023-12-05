@@ -56,10 +56,11 @@
   }
 
   #issues-container .issue-element-inner[data-issue-id] .open-new-link > svg {
-    display: unset;
+    opacity: 1;
+    transition: 125ms opacity ease-in-out;
   }
   #issues-container .issue-element-inner[data-issue-id][data-full-id] .open-new-link > svg {
-    display: none;
+    opacity: 0;
   }
   #issues-container:hover .issue-element-inner {
     opacity: 0.5;

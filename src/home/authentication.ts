@@ -1,19 +1,17 @@
 import { displayGitHubUserInformation } from "./display-github-user-information";
 import { getGitHubAccessToken } from "./get-github-access-token";
-import { GitHubUser, getGitHubUser } from "./get-github-user";
+import {  getGitHubUser } from "./get-github-user";
 import { renderGitHubLoginButton } from "./github-login-button";
+import { GitHubUser } from "./github-types";
 
-export function authentication() {
+export async function authentication() {
   const accessToken = getGitHubAccessToken();
   if (!accessToken) {
     renderGitHubLoginButton();
   }
 
-  getGitHubUser()
-    .then((gitHubUser: null | GitHubUser) => {
-      if (gitHubUser) {
-        displayGitHubUserInformation(gitHubUser);
-      }
-    })
-    .catch((error) => console.error(error));
+  const gitHubUser: null | GitHubUser = await getGitHubUser();
+  if (gitHubUser) {
+    displayGitHubUserInformation(gitHubUser);
+  }
 }

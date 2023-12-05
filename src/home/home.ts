@@ -1,33 +1,30 @@
 import { grid } from "../the-grid";
 import { authentication } from "./authentication";
-import { fetchCachedPreviews, fetchGitHubIssues, fetchIssuesFull } from "./fetch-github-issues";
-import { sortingButtons } from "./sorting-buttons";
+import { fetchAndDisplayIssuesCacheOrRemote } from "./fetch-github/fetch-display-cached-remote-issues";
+import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
+import { generateSortingButtons } from "./sorting/generate-sorting-buttons";
 
-fetchGitHubIssues().catch((error) => console.error(error));
-authentication();
-sortingButtons();
+generateSortingButtons();
 grid(document.getElementById("grid") as HTMLElement);
 
-const cachedPreviews = fetchCachedPreviews();
+authentication().catch((error) => console.error(error));
 
-if (cachedPreviews) {
-  fetchIssuesFull(cachedPreviews)
-    .then((downloaded) => {
-      localStorage.setItem("gitHubIssuesFull", JSON.stringify(downloaded));
-      return downloaded;
-    })
-    .then((downloaded) => console.log(downloaded))
-    .catch((error) => console.error(error));
-}
-
-export function fetchCachedIssuesFull() {
-  const cachedIssues = localStorage.getItem("gitHubIssuesFull");
-  if (cachedIssues) {
-    try {
-      return JSON.parse(cachedIssues);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  return null;
-}
+fetchAndDisplayIssuesCacheOrRemote()
+  .then((downloaded) => {
+    localStorage.setItem("gitHubIssues", JSON.stringify(downloaded));
+    console.log(downloaded);
+    return downloaded;
+  })
+  .then((downloaded) => {
+    const toolbar = document.getElementById("toolbar");
+    if (!toolbar) throw new Error("toolbar not found");
+    toolbar.classList.add("ready");
+    return downloaded;
+  })
+  .then(fetchIssuesFull)
+  .then((downloaded) => {
+    localStorage.setItem("gitHubIssuesFull", JSON.stringify(downloaded));
+    console.log(downloaded);
+    return downloaded;
+  })
+  .catch((error) => console.error(error));

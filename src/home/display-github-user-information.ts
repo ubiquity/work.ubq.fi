@@ -1,5 +1,5 @@
-import { GitHubUser } from "./get-github-user";
 import { getSupabase } from "./github-login-button";
+import { GitHubUser } from "./github-types";
 
 export function displayGitHubUserInformation(gitHubUser: GitHubUser) {
   const toolbar = document.getElementById("toolbar");
@@ -14,23 +14,21 @@ export function displayGitHubUserInformation(gitHubUser: GitHubUser) {
 
   const div = document.createElement("div");
 
-  div.textContent = gitHubUser.name; // JSON.stringify(filteredUserInfo, null, 2);
+  div.textContent = gitHubUser.name;
   div.classList.add("full");
   authenticated.appendChild(div);
 
-  authenticated.addEventListener("click", signOut);
+  authenticated.addEventListener("click", async function signOut() {
+    const supabase = getSupabase();
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Error logging out:", error);
+      alert(error);
+    }
+    window.location.reload();
+  });
 
   toolbar.appendChild(authenticated);
   toolbar.setAttribute("data-authenticated", "true");
   toolbar.classList.add("ready");
-}
-
-async function signOut() {
-  const supabase = getSupabase();
-  const { error } = await supabase.auth.signOut();
-  if (error) {
-    console.error("Error logging out:", error);
-    alert(error);
-  }
-  window.location.reload();
 }

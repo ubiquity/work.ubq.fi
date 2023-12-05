@@ -1,6 +1,8 @@
 import { marked } from "marked";
 
-import { GitHubIssueWithNewFlag, getPreviewToFullMapping } from "./fetch-github-issues";
+import { mapping } from "./fetch-github/fetch-issues-full";
+import { GitHubIssueWithNewFlag } from "./fetch-github/preview-to-full-mapping";
+import { GitHubIssue } from "./github-types";
 
 // Create the preview elements outside of the previewIssue function
 const preview = document.createElement("div");
@@ -37,9 +39,6 @@ previewContent.appendChild(previewBody);
 preview.appendChild(previewContent);
 document.body.appendChild(preview);
 
-// Initially hide the preview
-// preview.classList.add("inactive"); //  = 'none';
-
 const issuesContainer = document.getElementById("issues-container");
 
 // Event listeners for closing the preview
@@ -55,7 +54,11 @@ closeButton.addEventListener("click", () => {
   issuesContainer?.classList.remove("preview-active");
 });
 
-export async function renderGitHubIssues(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
+export function renderGitHubIssues(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
+  if (container.classList.contains("ready")) {
+    container.classList.remove("ready");
+    container.innerHTML = "";
+  }
   const avatarCache: Record<string, string> = JSON.parse(localStorage.getItem("avatarCache") || "{}");
   const fetchInProgress = new Set(); // Track in-progress fetches
   const existingIssueIds = new Set(Array.from(container.querySelectorAll(".issue-element-inner")).map((element) => element.getAttribute("data-issue-id")));
@@ -72,7 +75,6 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
       if (issue.isNew) {
         issueWrapper.classList.add("new-issue");
       }
-      // issueWrapper.classList.add("issue-element-wrapper", "new-issue"); // Add "new-issue" class here
       issueElement.classList.add("issue-element-inner");
       setTimeout(() => issueWrapper.classList.add("active"), delay);
 
@@ -124,7 +126,6 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
       )}<img /></div>`;
 
       issueElement.addEventListener("click", function () {
-        const mapping = getPreviewToFullMapping();
         const previewId = Number(this.getAttribute("data-issue-id"));
         console.trace({ mapping, previewId });
         const full = mapping.get(previewId);
@@ -147,23 +148,24 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
           // Mark this organization's avatar as being fetched
           fetchInProgress.add(organizationName);
 
-          try {
-            const response = await fetch(`https://api.github.com/orgs/${organizationName}`);
-            const data = await response.json();
-            if (data && data.avatar_url) {
-              avatarCache[organizationName] = data.avatar_url;
-              localStorage.setItem("avatarCache", JSON.stringify(avatarCache));
-              image.src = data.avatar_url;
-            }
-          } catch (error) {
-            console.error("Error fetching avatar:", error);
-          } finally {
-            // Fetch is complete, remove from the in-progress set
-            fetchInProgress.delete(organizationName);
-          }
+          fetch(`https://api.github.com/orgs/${organizationName}`)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data && data.avatar_url) {
+                avatarCache[organizationName] = data.avatar_url;
+                localStorage.setItem("avatarCache", JSON.stringify(avatarCache));
+                image.src = data.avatar_url;
+              }
+            })
+            .catch((error) => {
+              console.error("Error fetching avatar:", error);
+            })
+            .finally(() => {
+              // Fetch is complete, remove from the in-progress set
+              fetchInProgress.delete(organizationName);
+            });
         }
       }
-
       container.appendChild(issueWrapper);
     }
   }
@@ -196,6 +198,6 @@ function previewIssue(issuePreview: GitHubIssueWithNewFlag) {
 }
 
 // Function to find an issue by URL
-function findIssueByUrl(issues: GitHubIssueWithNewFlag[], url: string) {
+function findIssueByUrl(issues: GitHubIssue[], url: string) {
   return issues.find((issue) => issue.html_url === url);
 }
