@@ -1,7 +1,7 @@
 import { getLocalStore } from "./get-local-store";
 
 export function getGitHubAccessToken(): string | null {
-  const oauthToken = getLocalStore("sb-wfzpewmlyiozupulbuur-auth-token") as OAuthToken;
+  const oauthToken = getLocalStore("sb-wfzpewmlyiozupulbuur-auth-token") as OAuthToken | null;
 
   const expiresAt = oauthToken?.expires_at;
   if (expiresAt) {

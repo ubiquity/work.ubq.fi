@@ -13,7 +13,7 @@ export async function getGitHubUser(): Promise<GitHubUser | null> {
 }
 
 async function getSessionToken(): Promise<string | null> {
-  const cachedSessionToken = getLocalStore("sb-wfzpewmlyiozupulbuur-auth-token") as OAuthToken;
+  const cachedSessionToken = getLocalStore("sb-wfzpewmlyiozupulbuur-auth-token") as OAuthToken | null;
   if (cachedSessionToken) {
     return cachedSessionToken.provider_token;
   }

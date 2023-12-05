@@ -1,4 +1,5 @@
-import { fetchAndDisplayIssuesCacheOrRemote } from "../fetch-github/fetch-display-cached-remote-issues";
+import { fetchAndDisplayPreviews } from "../fetch-github/fetch-and-display-previews";
+
 export const SORTING_OPTIONS = ["priority", "time", "price"] as const;
 export type Sorting = (typeof SORTING_OPTIONS)[number];
 
@@ -41,10 +42,10 @@ export function generateSortingButtons() {
       if (input === lastChecked) {
         input.checked = false;
         lastChecked = null;
-        fetchAndDisplayIssuesCacheOrRemote().catch((error) => console.error(error));
+        fetchAndDisplayPreviews().catch((error) => console.error(error));
       } else {
         lastChecked = input;
-        fetchAndDisplayIssuesCacheOrRemote(input.value as Sorting).catch((error) => console.error(error));
+        fetchAndDisplayPreviews(input.value as Sorting).catch((error) => console.error(error));
       }
     });
   });

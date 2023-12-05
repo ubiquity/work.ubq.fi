@@ -114,3 +114,7 @@ export interface GitHubIssue {
   updated_at: string;
   closed_by?: GitHubUser;
 }
+
+export interface AvatarCache {
+  [organization: string]: string;
+}

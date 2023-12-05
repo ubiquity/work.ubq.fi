@@ -1,5 +1,5 @@
 import { GitHubUser } from "../github-types";
-import { getSupabase } from "./github-login-button";
+import { getSupabase } from "./render-github-login-button";
 
 export function displayGitHubUserInformation(gitHubUser: GitHubUser) {
   const toolbar = document.getElementById("toolbar");

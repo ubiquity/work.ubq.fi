@@ -23,6 +23,6 @@ export async function fetchIssuePreviews(): Promise<GitHubIssueWithNewFlag[]> {
     delete issue.isNew;
     return issue;
   });
-  localStorage.setItem("gitHubIssuePreviews", JSON.stringify(issuesToSave));
+  localStorage.setItem("gitHubIssuePreview", JSON.stringify(issuesToSave));
   return freshIssuesWithNewFlag;
 }
