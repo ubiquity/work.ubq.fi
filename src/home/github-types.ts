@@ -116,5 +116,5 @@ export interface GitHubIssue {
 }
 
 export interface AvatarCache {
-  [organization: string]: string;
+  [organization: string]: string | null;
 }

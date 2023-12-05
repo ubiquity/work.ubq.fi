@@ -10,7 +10,7 @@ grid(document.getElementById("grid") as HTMLElement);
 authentication()
   .then(fetchAndDisplayPreviews)
   .then((previews) => {
-    localStorage.setItem("gitHubIssuesPreviews", JSON.stringify(previews));
+    localStorage.setItem("gitHubIssuesPreview", JSON.stringify(previews));
     const toolbar = document.getElementById("toolbar");
     if (!toolbar) throw new Error("toolbar not found");
     toolbar.classList.add("ready");

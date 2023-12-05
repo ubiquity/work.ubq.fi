@@ -11,7 +11,7 @@ export async function fetchAndDisplayPreviews(sorting?: Sorting) {
     throw new Error("Could not find issues container");
   }
   let issues: null | GitHubIssue[] = null;
-  issues = getLocalStore("gitHubIssuePreview") as GitHubIssue[] | null;
+  issues = getLocalStore("gitHubIssuesPreview") as GitHubIssue[] | null;
   if (issues) {
     displayIssues(issues, container, sorting);
     issues = await fetchIssuePreviews();

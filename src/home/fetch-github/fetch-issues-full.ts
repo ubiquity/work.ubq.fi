@@ -12,7 +12,7 @@ export function fetchIssuesFull(previews: GitHubIssue[]) {
   const octokit = new Octokit({ auth: getGitHubAccessToken() });
   const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
 
-  const cachedIssues = previews || (getLocalStore("gitHubIssuePreview") as GitHubIssue[]);
+  const cachedIssues = previews || (getLocalStore("gitHubIssuesPreview") as GitHubIssue[]);
 
   const issueFetchPromises = cachedIssues.map((preview) => {
     const match = preview.body.match(urlPattern);

@@ -101,7 +101,7 @@ export function renderGitHubIssues(container: HTMLDivElement, issues: GitHubIssu
           fetchInProgress.add(organizationName);
 
           // Update the avatarCache synchronously here
-          avatarCache[organizationName] = "fetching"; // Placeholder value to indicate fetch in progress
+          avatarCache[organizationName] = null; // Placeholder value to indicate fetch in progress
           localStorage.setItem("avatarCache", JSON.stringify(avatarCache));
 
           fetch(`https://api.github.com/orgs/${organizationName}`)
@@ -110,7 +110,9 @@ export function renderGitHubIssues(container: HTMLDivElement, issues: GitHubIssu
               if (data && data.avatar_url) {
                 avatarCache[organizationName] = data.avatar_url;
                 localStorage.setItem("avatarCache", JSON.stringify(avatarCache));
-                image.src = data.avatar_url;
+                if (data.avatar_url) {
+                  image.src = data.avatar_url;
+                }
               }
             })
             .catch((error) => {
