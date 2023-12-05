@@ -43,7 +43,6 @@ export class SortingManager {
     const label = document.createElement("label");
     label.htmlFor = option;
     label.textContent = option.charAt(0).toUpperCase() + option.slice(1);
-    // label.
     return label;
   }
 
