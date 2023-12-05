@@ -1,6 +1,6 @@
 import { displayGitHubUserInformation } from "./display-github-user-information";
 import { getGitHubAccessToken } from "./get-github-access-token";
-import {  getGitHubUser } from "./get-github-user";
+import { getGitHubUser } from "./get-github-user";
 import { renderGitHubLoginButton } from "./github-login-button";
 import { GitHubUser } from "./github-types";
 
