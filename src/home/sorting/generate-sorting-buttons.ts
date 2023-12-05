@@ -1,6 +1,9 @@
-import { SORTING_OPTIONS, Sorting, fetchGitHubIssues } from "./fetch-github-issues";
+import { fetchAndDisplayPreviews } from "../fetch-github/fetch-and-display-previews";
 
-export function sortingButtons() {
+export const SORTING_OPTIONS = ["priority", "time", "price"] as const;
+export type Sorting = (typeof SORTING_OPTIONS)[number];
+
+export function generateSortingButtons() {
   const filters = document.getElementById("filters");
   if (!filters) throw new Error("filters not found");
 
@@ -39,10 +42,10 @@ export function sortingButtons() {
       if (input === lastChecked) {
         input.checked = false;
         lastChecked = null;
-        fetchGitHubIssues().catch((error) => console.error(error));
+        fetchAndDisplayPreviews().catch((error) => console.error(error));
       } else {
         lastChecked = input;
-        fetchGitHubIssues(input.value as Sorting).catch((error) => console.error(error));
+        fetchAndDisplayPreviews(input.value as Sorting).catch((error) => console.error(error));
       }
     });
   });

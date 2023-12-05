@@ -1,33 +1,20 @@
 import { grid } from "../the-grid";
 import { authentication } from "./authentication";
-import { fetchCachedPreviews, fetchGitHubIssues, fetchIssuesFull } from "./fetch-github-issues";
-import { sortingButtons } from "./sorting-buttons";
+import { fetchAndDisplayPreviews } from "./fetch-github/fetch-and-display-previews";
+import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
+import { generateSortingButtons } from "./sorting/generate-sorting-buttons";
 
-fetchGitHubIssues().catch((error) => console.error(error));
-authentication();
-sortingButtons();
+generateSortingButtons();
 grid(document.getElementById("grid") as HTMLElement);
 
-const cachedPreviews = fetchCachedPreviews();
-
-if (cachedPreviews) {
-  fetchIssuesFull(cachedPreviews)
-    .then((downloaded) => {
-      localStorage.setItem("gitHubIssuesFull", JSON.stringify(downloaded));
-      return downloaded;
-    })
-    .then((downloaded) => console.log(downloaded))
-    .catch((error) => console.error(error));
-}
-
-export function fetchCachedIssuesFull() {
-  const cachedIssues = localStorage.getItem("gitHubIssuesFull");
-  if (cachedIssues) {
-    try {
-      return JSON.parse(cachedIssues);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  return null;
-}
+authentication()
+  .then(fetchAndDisplayPreviews)
+  .then((previews) => {
+    localStorage.setItem("gitHubIssuesPreviews", JSON.stringify(previews));
+    const toolbar = document.getElementById("toolbar");
+    if (!toolbar) throw new Error("toolbar not found");
+    toolbar.classList.add("ready");
+    return previews;
+  })
+  .then(fetchIssuesFull)
+  .catch((error) => console.error(error));

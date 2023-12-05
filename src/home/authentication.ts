@@ -1,19 +1,18 @@
-import { displayGitHubUserInformation } from "./display-github-user-information";
-import { getGitHubAccessToken } from "./get-github-access-token";
-import { GitHubUser, getGitHubUser } from "./get-github-user";
-import { renderGitHubLoginButton } from "./github-login-button";
+import { getGitHubAccessToken } from "./getters/get-github-access-token";
+import { getGitHubUser } from "./getters/get-github-user";
+import { GitHubUser } from "./github-types";
+import { displayGitHubUserInformation } from "./rendering/display-github-user-information";
+import { renderGitHubLoginButton } from "./rendering/render-github-login-button";
 
-export function authentication() {
+export async function authentication() {
   const accessToken = getGitHubAccessToken();
   if (!accessToken) {
     renderGitHubLoginButton();
   }
 
-  getGitHubUser()
-    .then((gitHubUser: null | GitHubUser) => {
-      if (gitHubUser) {
-        displayGitHubUserInformation(gitHubUser);
-      }
-    })
-    .catch((error) => console.error(error));
+  const gitHubUser: null | GitHubUser = await getGitHubUser();
+  if (gitHubUser) {
+    displayGitHubUserInformation(gitHubUser);
+  }
+  return undefined; // for type error in next function
 }

@@ -56,10 +56,12 @@
   }
 
   #issues-container .issue-element-inner[data-issue-id] .open-new-link > svg {
-    display: unset;
+    opacity: 1;
+    transition: 500ms opacity ease-in-out;
   }
   #issues-container .issue-element-inner[data-issue-id][data-full-id] .open-new-link > svg {
-    display: none;
+    opacity: 0;
+    transition: 500ms opacity ease-in-out;
   }
   #issues-container:hover .issue-element-inner {
     opacity: 0.5;
@@ -348,7 +350,7 @@
     position: absolute;
     height: 100%;
     width: 4px;
-    right: 0;
+    left: 0;
     background-color: #00ffff;
   }
   @media screen and (max-width: 904px) {

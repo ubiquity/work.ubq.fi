@@ -1,22 +1,56 @@
-interface GitHubUser {
-  login: string;
-  id: number;
-  node_id: string;
+export interface GitHubUser {
   avatar_url: string;
-  gravatar_id: string;
-  url: string;
-  html_url: string;
+  bio: string;
+  blog: string;
+  company: string;
+  created_at: string;
+  email: string | null;
+  events_url: string;
   followers_url: string;
+  followers: number;
   following_url: string;
+  following: number;
   gists_url: string;
+  gravatar_id: string;
+  hireable: boolean | null;
+  html_url: string;
+  id: number;
+  location: string;
+  login: string;
+  name: string;
+  node_id: string;
+  organizations_url: string;
+  public_gists: number;
+  public_repos: number;
+  received_events_url: string;
+  repos_url: string;
+  site_admin: boolean;
   starred_url: string;
   subscriptions_url: string;
-  organizations_url: string;
-  repos_url: string;
-  events_url: string;
-  received_events_url: string;
+  twitter_username: string;
   type: string;
-  site_admin: boolean;
+  updated_at: string;
+  url: string;
+}
+export interface GitHubUserResponse {
+  status: number;
+  url: string;
+  headers: {
+    "cache-control": string;
+    "content-type": string;
+    etag: string;
+    "last-modified": string;
+    "x-accepted-oauth-scopes": string;
+    "x-github-media-type": string;
+    "x-github-request-id": string;
+    "x-oauth-scopes": string;
+    "x-ratelimit-limit": string;
+    "x-ratelimit-remaining": string;
+    "x-ratelimit-reset": string;
+    "x-ratelimit-resource": string;
+    "x-ratelimit-used": string;
+  };
+  data: GitHubUser;
 }
 
 interface GitHubLabel {
@@ -79,4 +113,8 @@ export interface GitHubIssue {
   created_at: string;
   updated_at: string;
   closed_by?: GitHubUser;
+}
+
+export interface AvatarCache {
+  [organization: string]: string;
 }
