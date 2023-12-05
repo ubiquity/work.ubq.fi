@@ -13,7 +13,7 @@ const cachedPreviews = fetchCachedPreviews();
 if (cachedPreviews) {
   fetchIssuesFull(cachedPreviews)
     .then((downloaded) => {
-      localStorage.setItem("githubIssuesFull", JSON.stringify(downloaded));
+      localStorage.setItem("gitHubIssuesFull", JSON.stringify(downloaded));
       return downloaded;
     })
     .then((downloaded) => console.log(downloaded))
@@ -21,7 +21,7 @@ if (cachedPreviews) {
 }
 
 export function fetchCachedIssuesFull() {
-  const cachedIssues = localStorage.getItem("githubIssuesFull");
+  const cachedIssues = localStorage.getItem("gitHubIssuesFull");
   if (cachedIssues) {
     try {
       return JSON.parse(cachedIssues);

@@ -2,6 +2,7 @@ import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken } from "./get-github-access-token";
 import { GitHubIssue as GitHubIssuePreview } from "./github-types";
 import { renderGitHubIssues } from "./render-github-issues";
+import { fetchCachedIssuesFull } from "./home";
 
 export type GitHubIssueWithNewFlag = GitHubIssuePreview & { isNew?: boolean };
 
@@ -144,6 +145,8 @@ export function fetchCachedPreviews(): GitHubIssuePreview[] | null {
 }
 
 const map = new Map();
+const cachedIssuesFull = fetchCachedIssuesFull();
+cachedIssuesFull.forEach((issue) => map.set(issue.id, issue));
 
 export function getPreviewToFullMapping() {
   return map;
