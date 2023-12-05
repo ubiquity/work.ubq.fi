@@ -55,14 +55,6 @@
     transition: 125ms opacity ease-out 62.5ms;
   }
 
-  #issues-container .issue-element-inner[data-issue-id] .open-new-link > svg {
-    opacity: 1;
-    transition: 500ms opacity ease-in-out;
-  }
-  #issues-container .issue-element-inner[data-issue-id][data-full-id] .open-new-link > svg {
-    opacity: 0;
-    transition: 500ms opacity ease-in-out;
-  }
   #issues-container:hover .issue-element-inner {
     opacity: 0.5;
   }
@@ -141,19 +133,7 @@
     top: 0;
     right: 0;
   }
-  .issue-element-inner > .open-new-link svg {
-    fill: #ffffff40;
-    position: absolute;
-    height: 12px;
-    width: 12px;
-    top: 10px;
-    right: -12px;
-    /* vertical-align: middle; */
-    transition: 125ms fill ease-in-out;
-  }
-  .issue-element-inner[data-full-id] > .open-new-link svg {
-    fill: #ffffff00;
-  }
+
   .issue-element-inner {
     position: relative;
     text-align: left;
@@ -404,6 +384,7 @@
     justify-content: center;
     width: 24px;
     opacity: 0;
+    transition: 0.25s opacity ease-in-out;
   }
   #issues-container img[src] {
     opacity: 1;
@@ -431,13 +412,7 @@
   .preview hr {
     border-color: #ffffff40;
   }
-  .preview .open-new-link svg {
-    fill: #ffffff80;
-    vertical-align: middle;
-    /* margin-bottom: 6px; */
-    /* margin-left: 8px; */
-    height: 20px;
-  }
+
   .preview p {
     line-height: 1.25;
     word-break: break-word;

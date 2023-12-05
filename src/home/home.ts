@@ -17,4 +17,10 @@ authentication()
     return previews;
   })
   .then(fetchIssuesFull)
+  .then((promises) => {
+    return Promise.allSettled(promises);
+  })
+  .then((results) => {
+    console.trace({ results });
+  })
   .catch((error) => console.error(error));
