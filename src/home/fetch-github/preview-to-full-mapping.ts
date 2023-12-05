@@ -1,4 +1,4 @@
-import { getLocalStore } from "../get-local-store";
+import { getLocalStore } from "../getters/get-local-store";
 import { GitHubIssue } from "../github-types";
 
 export type GitHubIssueWithNewFlag = GitHubIssue & { isNew?: boolean };

@@ -1,6 +1,6 @@
 import { Octokit } from "@octokit/rest";
-import { getGitHubAccessToken } from "../get-github-access-token";
-import { getLocalStore } from "../get-local-store";
+import { getGitHubAccessToken } from "../getters/get-github-access-token";
+import { getLocalStore } from "../getters/get-local-store";
 import { GitHubIssue } from "../github-types";
 import { PreviewToFullMapping } from "./preview-to-full-mapping";
 

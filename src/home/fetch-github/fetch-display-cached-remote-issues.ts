@@ -1,6 +1,6 @@
-import { getLocalStore } from "../get-local-store";
+import { getLocalStore } from "../getters/get-local-store";
 import { GitHubIssue } from "../github-types";
-import { renderGitHubIssues } from "../render-github-issues";
+import { renderGitHubIssues } from "../rendering/render-github-issues";
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
 import { fetchIssuePreviews } from "./fetch-issues-preview";

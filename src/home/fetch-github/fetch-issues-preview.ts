@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest";
-import { getGitHubAccessToken } from "../get-github-access-token";
+import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { GitHubIssue } from "../github-types";
 import { GitHubIssueWithNewFlag } from "./preview-to-full-mapping";
 
