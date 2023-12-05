@@ -172,13 +172,18 @@ export async function renderGitHubIssues(container: HTMLDivElement, issues: GitH
 
 // Function to update and show the preview
 function previewIssue(issuePreview: GitHubIssueWithNewFlag) {
-  const issuesFull = JSON.parse(localStorage.getItem("gitHubIssuesFull") || "[]");
+  const issuesFull = JSON.parse(localStorage.getItem("gitHubIssuesFull") || "{}");
 
   const issuePreviewUrl = issuePreview.body.match(/https:\/\/github\.com\/[^/]+\/[^/]+\/issues\/\d+/)?.[0];
-  if (!issuePreviewUrl) throw new Error("Issue preview URL not found");
+  if (!issuePreviewUrl) {
+    throw new Error("Issue preview URL not found");
+  }
 
   const issueFull = findIssueByUrl(issuesFull, issuePreviewUrl);
-  if (!issueFull) throw new Error("Issue not found");
+  if (!issueFull) {
+    console.trace({ issuePreviewUrl, issuesFull });
+    throw new Error("Issue not found");
+  }
 
   // Update the title and body for the new issue
   titleHeader.textContent = issuePreview.title;
