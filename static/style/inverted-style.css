@@ -45,7 +45,7 @@
     padding: 56px 0;
     transition: 0.25s all cubic-bezier(0, 1, 1, 1);
   }
-  #issues-container.preview-active {
+  body.preview-active {
     transform: translateX(-50%);
   }
   &::-webkit-scrollbar {
@@ -361,7 +361,7 @@
     .preview.active {
       transform: translateX(0) !important;
     }
-    #issues-container.preview-active {
+    body.preview-active {
       transform: translateX(0) !important;
     }
 
