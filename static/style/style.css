@@ -438,6 +438,11 @@
   .preview a {
     word-break: break-all;
   }
+  .preview .open-new-link svg {
+    fill: #ffffff80;
+    vertical-align: middle;
+    height: 20px;
+  }
   .preview-body-inner {
     max-width: 640px;
     overflow: scroll;
