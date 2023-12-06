@@ -42,19 +42,3 @@ function closePreview() {
   preview.classList.remove("active");
   document.body.classList.remove("preview-active");
 }
-
-// preview.addEventListener(
-//   "wheel",
-//   (event) => {
-//     event.preventDefault();
-//   },
-//   { passive: false }
-// );
-// // Touch event listeners for mobile
-// preview.addEventListener(
-//   "touchmove",
-//   (event) => {
-//     event.preventDefault();
-//   },
-//   { passive: false }
-// );

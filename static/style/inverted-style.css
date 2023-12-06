@@ -45,11 +45,6 @@
     padding: 56px 0;
     transition: 0.25s all cubic-bezier(0, 1, 1, 1);
   }
-  body.preview-active {
-    overflow: hidden; /* This will prevent scrolling on the body when the modal is active */
-    position: fixed; /* Optional: to ensure the page stays in place */
-    width: 100%; /* To maintain the width when position is fixed */
-  }
 
   body.preview-active #issues-container {
     transform: translateX(-50%);
@@ -364,6 +359,12 @@
     }
   }
   @media screen and (max-width: 1280px) {
+    body.preview-active {
+      overflow: hidden; /* This will prevent scrolling on the body when the modal is active */
+      position: fixed; /* Optional: to ensure the page stays in place */
+      width: 100%; /* To maintain the width when position is fixed */
+    }
+
     .preview.active {
       transform: translateX(0) !important;
     }
