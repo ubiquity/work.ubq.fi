@@ -92,7 +92,7 @@
     opacity: 1;
   }
   #issues-container.keyboard-selection > div.active {
-    opacity: 0.5;
+    opacity: 0.25;
   }
   #issues-container.keyboard-selection > div.active.selected {
     opacity: 1;

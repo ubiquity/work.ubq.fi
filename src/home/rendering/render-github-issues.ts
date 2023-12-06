@@ -161,6 +161,11 @@ function setupKeyboardNavigation(container: HTMLDivElement) {
       if (newIndex !== indexToUse) {
         issues[indexToUse]?.classList.remove("selected");
         issues[newIndex]?.classList.add("selected");
+        issues[newIndex].scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+
         container.classList.add("keyboard-selection");
 
         const previewId = issues[newIndex].children[0].getAttribute("data-preview-id");
@@ -187,10 +192,14 @@ function setupKeyboardNavigation(container: HTMLDivElement) {
           }
         }
       }
+    } else if (event.key === "Escape") {
+      disableKeyboardNavigation(event)
     }
   });
 
-  container.addEventListener("mouseover", (event) => {
+  container.addEventListener("mouseover", disableKeyboardNavigation);
+
+  function disableKeyboardNavigation(event) {
     const target = event.target as HTMLElement;
     container.classList.remove("keyboard-selection");
     if (target && target.matches("#issues-container > div")) {
@@ -199,5 +208,5 @@ function setupKeyboardNavigation(container: HTMLDivElement) {
         selectedIssue.classList.remove("selected");
       }
     }
-  });
+  }
 }
