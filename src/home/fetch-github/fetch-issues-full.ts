@@ -4,7 +4,7 @@ import { getLocalStore } from "../getters/get-local-store";
 import { GitHubIssue } from "../github-types";
 import { PreviewToFullMapping } from "./preview-to-full-mapping";
 
-export const mapping = new PreviewToFullMapping().getMapping();
+export const previewToFullMapping = new PreviewToFullMapping().getMapping();
 
 export const organizationImageCache = [] as { [organization: string]: string | null }[];
 
@@ -31,12 +31,12 @@ export function fetchIssuesFull(previews: GitHubIssue[]) {
       .then(({ data: response }) => {
         const full = response as GitHubIssue;
 
-        mapping.set(preview.id, full);
-        const issueElement = document.querySelector(`[data-issue-id="${preview.id}"]`);
+        previewToFullMapping.set(preview.id, full);
+        const issueElement = document.querySelector(`[data-preview-id="${preview.id}"]`);
         issueElement?.setAttribute("data-full-id", full.id.toString());
         // const imageElement = issueElement?.querySelector("img");
 
-        localStorage.setItem("gitHubIssuesFull", JSON.stringify(Array.from(mapping.entries())));
+        localStorage.setItem("gitHubIssuesFull", JSON.stringify(Array.from(previewToFullMapping.entries())));
         return { full, issueElement };
       })
       .then(({ full, issueElement }) => {
@@ -52,7 +52,6 @@ export function fetchIssuesFull(previews: GitHubIssue[]) {
           }
 
           return octokit.rest.orgs.get({ org: orgName }).then(({ data }) => {
-
             const avatarUrl = data.avatar_url;
             const orgCacheEntryIndex = organizationImageCache.findIndex((entry) => Object.prototype.hasOwnProperty.call(entry, orgName));
             if (orgCacheEntryIndex !== -1) {
@@ -62,7 +61,7 @@ export function fetchIssuesFull(previews: GitHubIssue[]) {
             }
 
             // now check every issue element for the same org name
-            mapping.forEach((full) => {
+            previewToFullMapping.forEach((full) => {
               const _issueElement = document.querySelector(`[data-full-id="${full.id}"]`);
               const _urlMatch = full.html_url.match(urlPattern);
               const _orgName = _urlMatch?.groups?.org;

@@ -85,6 +85,19 @@
     filter: blur(4px);
     display: block;
   }
+
+  #issues-container > div.selected,
+  #issues-container > div.selected .info,
+  #issues-container > div.selected h3 {
+    opacity: 1;
+  }
+  #issues-container.keyboard-selection > div.active {
+    opacity: 0.5;
+  }
+  #issues-container.keyboard-selection > div.active.selected {
+    opacity: 1;
+    /* background-color: #80808020; */
+  }
   #issues-container > div.active {
     transition: 125ms all ease-in-out;
     opacity: 1;
@@ -466,6 +479,7 @@
     display: flex;
     transform: translateX(0);
     flex-wrap: wrap;
+    width: calc(100vw - 16px);
   }
   .preview {
     pointer-events: none;
