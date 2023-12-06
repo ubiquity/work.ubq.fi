@@ -549,4 +549,36 @@
     font-size: 16px;
     line-height: 1.25;
   }
+
+  #service-message {
+    position: fixed;
+    width: calc(100vw - 8px);
+    height: 48px;
+    bottom: 0;
+    backdrop-filter: blur(8px);
+    padding: 4px;
+    display: flex;
+    border-top: 1px solid #80808020;
+    justify-content: center;
+    -webkit-backdrop-filter: blur(8px);
+    justify-content: space-between;
+    justify-content: space-evenly;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    opacity: 0;
+    transition: 0.5s opacity ease-in-out;
+  }
+  #service-message.ready {
+    opacity: 1;
+    background-color: #00041080;
+  }
+  #service-message > * {
+    align-items: center;
+    display: inline-flex;
+    text-align: left;
+    margin: 0 16px;
+    /* cursor: pointer; */
+  }
 }

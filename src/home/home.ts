@@ -7,6 +7,8 @@ import { generateSortingButtons } from "./sorting/generate-sorting-buttons";
 generateSortingButtons();
 grid(document.getElementById("grid") as HTMLElement);
 
+renderServiceMessage();
+
 authentication()
   .then(fetchAndDisplayPreviews)
   .then((previews) => {
@@ -24,3 +26,15 @@ authentication()
     console.trace({ results });
   })
   .catch((error) => console.error(error));
+
+function renderServiceMessage() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const message = urlParams.get("message");
+  if (message) {
+    const serviceMessageContainer = document.querySelector("#service-message > div");
+    if (serviceMessageContainer) {
+      serviceMessageContainer.textContent = message;
+      serviceMessageContainer.parentElement?.classList.add("ready");
+    }
+  }
+}

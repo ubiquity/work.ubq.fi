@@ -52,7 +52,6 @@ export function fetchIssuesFull(previews: GitHubIssue[]) {
           }
 
           return octokit.rest.orgs.get({ org: orgName }).then(({ data }) => {
-
             const avatarUrl = data.avatar_url;
             const orgCacheEntryIndex = organizationImageCache.findIndex((entry) => Object.prototype.hasOwnProperty.call(entry, orgName));
             if (orgCacheEntryIndex !== -1) {
