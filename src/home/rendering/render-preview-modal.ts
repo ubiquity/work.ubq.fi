@@ -50,3 +50,11 @@ preview.addEventListener(
   },
   { passive: false }
 );
+// Touch event listeners for mobile
+preview.addEventListener(
+  "touchmove",
+  (event) => {
+    event.preventDefault();
+  },
+  { passive: false }
+);

@@ -366,8 +366,7 @@
     }
 
     body.preview-active > background,
-    #issues-container.preview-active > div {
-      opacity: 0.5;
+    body.preview-active > #issues-container > div {
       filter: blur(8px);
     }
   }
