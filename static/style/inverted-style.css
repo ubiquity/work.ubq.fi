@@ -441,8 +441,6 @@
   .preview .open-new-link svg {
     fill: #00000080;
     vertical-align: middle;
-    /* margin-bottom: 6px; */
-    /* margin-left: 8px; */
     height: 20px;
   }
   .preview-body-inner {

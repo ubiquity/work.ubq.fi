@@ -6,7 +6,7 @@ import { PreviewToFullMapping } from "./preview-to-full-mapping";
 
 export const mapping = new PreviewToFullMapping().getMapping();
 
-const orgCache = [] as string[];
+export const organizationImageCache = [] as { [organization: string]: string | null }[];
 
 export function fetchIssuesFull(previews: GitHubIssue[]) {
   const authToken = getGitHubAccessToken();
@@ -44,12 +44,22 @@ export function fetchIssuesFull(previews: GitHubIssue[]) {
         const orgName = urlMatch?.groups?.org;
 
         if (orgName) {
-          if (orgCache.includes(orgName)) return; // no redundant requests
-          else orgCache.push(orgName);
+          const orgCacheEntry = organizationImageCache.find((entry) => entry[orgName] !== undefined);
+          if (orgCacheEntry) {
+            return; // no redundant requests
+          } else {
+            organizationImageCache.push({ [orgName]: null });
+          }
 
           return octokit.rest.orgs.get({ org: orgName }).then(({ data }) => {
-            orgCache.splice(orgCache.indexOf(orgName), 1);
+
             const avatarUrl = data.avatar_url;
+            const orgCacheEntryIndex = organizationImageCache.findIndex((entry) => Object.prototype.hasOwnProperty.call(entry, orgName));
+            if (orgCacheEntryIndex !== -1) {
+              organizationImageCache[orgCacheEntryIndex][orgName] = avatarUrl;
+            } else {
+              organizationImageCache.push({ [orgName]: avatarUrl });
+            }
 
             // now check every issue element for the same org name
             mapping.forEach((full) => {

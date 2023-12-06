@@ -1,5 +1,5 @@
 import { marked } from "marked";
-import { mapping } from "../fetch-github/fetch-issues-full";
+import { mapping, organizationImageCache } from "../fetch-github/fetch-issues-full";
 import { GitHubIssueWithNewFlag } from "../fetch-github/preview-to-full-mapping";
 import { issuesContainer, preview, previewBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
 
@@ -36,7 +36,13 @@ function everyNewIssue({ issue, container }: { issue: GitHubIssueWithNewFlag; co
   const urlPattern = /https:\/\/github\.com\/([^/]+)\/([^/]+)\//;
   const match = issue.body.match(urlPattern);
   const organizationName = match?.[1];
+  if (!organizationName) {
+    throw new Error("No organization name found");
+  }
   const repositoryName = match?.[2];
+  if (!repositoryName) {
+    throw new Error("No repository name found");
+  }
   const labels = parseAndGenerateLabels(issue);
   setUpIssueElement(issueElement, issue, organizationName, repositoryName, labels, match);
   issueWrapper.appendChild(issueElement);
@@ -48,17 +54,25 @@ function everyNewIssue({ issue, container }: { issue: GitHubIssueWithNewFlag; co
 function setUpIssueElement(
   issueElement: HTMLDivElement,
   issue: GitHubIssueWithNewFlag,
-  organizationName: string | undefined,
-  repositoryName: string | undefined,
+  organizationName: string,
+  repositoryName: string,
   labels: string[],
   match: RegExpMatchArray | null
 ) {
+  let image = `<img />`;
+  console.trace({ organizationImageCache });
+  const orgCacheEntry = organizationImageCache.find((entry) => Object.prototype.hasOwnProperty.call(entry, organizationName));
+  const avatarUrl = orgCacheEntry ? orgCacheEntry[organizationName] : null;
+  if (avatarUrl) {
+    image = `<img src="${avatarUrl}" />`;
+  }
+
   issueElement.innerHTML = `
       <div class="info"><div class="title"><h3>${
         issue.title
       }</h3></div><div class="partner"><p class="organization-name">${organizationName}</p><p class="repository-name">${repositoryName}</p></div></div><div class="labels">${labels.join(
         ""
-      )}<img /></div>`;
+      )}${image}</div>`;
 
   issueElement.addEventListener("click", function () {
     const previewId = Number(this.getAttribute("data-issue-id"));
