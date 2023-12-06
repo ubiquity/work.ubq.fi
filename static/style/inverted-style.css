@@ -46,6 +46,12 @@
     transition: 0.25s all cubic-bezier(0, 1, 1, 1);
   }
   body.preview-active {
+    overflow: hidden; /* This will prevent scrolling on the body when the modal is active */
+    position: fixed; /* Optional: to ensure the page stays in place */
+    width: 100%; /* To maintain the width when position is fixed */
+  }
+
+  body.preview-active #issues-container {
     transform: translateX(-50%);
   }
   &::-webkit-scrollbar {
@@ -361,7 +367,7 @@
     .preview.active {
       transform: translateX(0) !important;
     }
-    body.preview-active {
+    body.preview-active #issues-container {
       transform: translateX(0) !important;
     }
 
@@ -466,6 +472,8 @@
     /* margin-top: 8px; */
     border-top: 1px solid #dfdfdf;
     padding-top: 16px;
+
+    overflow-y: auto;
   }
   .preview {
     text-align: left;
@@ -509,7 +517,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 16px 16px;
+    margin: 8px 16px;
   }
   .preview-header > a {
     word-wrap: initial;
@@ -531,7 +539,7 @@
     margin-right: 12px;
     text-align: right;
     font-size: 20px;
-    text-align: justify;
+    text-align: right;
   }
   .preview-body {
     margin: 16px;
