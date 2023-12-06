@@ -192,11 +192,11 @@ function setupKeyboardNavigation(container: HTMLDivElement) {
 
   container.addEventListener("mouseover", (event) => {
     const target = event.target as HTMLElement;
+    container.classList.remove("keyboard-selection");
     if (target && target.matches("#issues-container > div")) {
       const selectedIssue = container.querySelector("#issues-container > div.selected");
       if (selectedIssue) {
         selectedIssue.classList.remove("selected");
-        container.classList.remove("keyboard-selection");
       }
     }
   });
