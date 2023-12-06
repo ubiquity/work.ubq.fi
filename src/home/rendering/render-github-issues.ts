@@ -1,8 +1,9 @@
 import { marked } from "marked";
 import { organizationImageCache, previewToFullMapping } from "../fetch-github/fetch-issues-full";
 import { GitHubIssueWithNewFlag } from "../fetch-github/preview-to-full-mapping";
-import { issuesContainer, preview, previewBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
 import { GitHubIssue } from "../github-types";
+import { issuesContainer, preview, previewBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
+import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
 
 export function renderGitHubIssues(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
   if (container.classList.contains("ready")) {
@@ -77,6 +78,18 @@ function setUpIssueElement(
       )}${image}</div>`;
 
   issueElement.addEventListener("click", function () {
+    const issueWrapper = issueElement.parentElement;
+
+    if (!issueWrapper) {
+      throw new Error("No issue container found");
+    }
+
+    Array.from(issueWrapper.parentElement?.children || []).forEach((sibling) => {
+      sibling.classList.remove("selected");
+    });
+
+    issueWrapper.classList.add("selected");
+
     const previewId = Number(this.getAttribute("data-preview-id"));
     console.trace({ mapping: previewToFullMapping, previewId });
     const full = previewToFullMapping.get(previewId);
@@ -130,7 +143,7 @@ function previewIssue(issuePreview: GitHubIssueWithNewFlag) {
   displayIssue(issueFull);
 }
 
-function displayIssue(issueFull: GitHubIssue) {
+export function displayIssue(issueFull: GitHubIssue) {
   // Update the title and body for the new issue
   titleHeader.textContent = issueFull.title;
   titleAnchor.href = issueFull.html_url;
@@ -139,74 +152,4 @@ function displayIssue(issueFull: GitHubIssue) {
   // Show the preview
   preview.classList.add("active"); //  = 'block';
   issuesContainer?.classList.add("preview-active");
-}
-
-// Add this function to your existing code
-function setupKeyboardNavigation(container: HTMLDivElement) {
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-      const issues = Array.from(container.querySelectorAll("#issues-container > div"));
-      const activeIndex = issues.findIndex((issue) => issue.classList.contains("selected"));
-      const indexToUse = activeIndex === -1 ? -1 : activeIndex;
-      let newIndex = indexToUse;
-
-      if (event.key === "ArrowUp" && indexToUse > 0) {
-        newIndex = indexToUse - 1;
-        event.preventDefault();
-      } else if (event.key === "ArrowDown" && indexToUse < issues.length - 1) {
-        newIndex = indexToUse + 1;
-        event.preventDefault();
-      }
-
-      if (newIndex !== indexToUse) {
-        issues[indexToUse]?.classList.remove("selected");
-        issues[newIndex]?.classList.add("selected");
-        issues[newIndex].scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-
-        container.classList.add("keyboard-selection");
-
-        const previewId = issues[newIndex].children[0].getAttribute("data-preview-id");
-
-        const issueElement = issues.find((issue) => issue.children[0].getAttribute("data-preview-id") === previewId);
-
-        if (issueElement) {
-          const issueFull = previewToFullMapping.get(Number(previewId));
-          console.trace({ mapping: previewToFullMapping, previewId, issueFull });
-          if (issueFull) {
-            displayIssue(issueFull);
-          }
-        }
-      }
-    } else if (event.key === "Enter") {
-      const selectedIssue = container.querySelector("#issues-container > div.selected");
-      if (selectedIssue) {
-        const previewId = selectedIssue.children[0].getAttribute("data-preview-id");
-
-        if (previewId) {
-          const issueFull = previewToFullMapping.get(Number(previewId));
-          if (issueFull) {
-            window.open(issueFull.html_url, "_blank");
-          }
-        }
-      }
-    } else if (event.key === "Escape") {
-      disableKeyboardNavigation(event);
-    }
-  });
-
-  container.addEventListener("mouseover", disableKeyboardNavigation);
-
-  function disableKeyboardNavigation(event) {
-    const target = event.target as HTMLElement;
-    container.classList.remove("keyboard-selection");
-    if (target && target.matches("#issues-container > div")) {
-      const selectedIssue = container.querySelector("#issues-container > div.selected");
-      if (selectedIssue) {
-        selectedIssue.classList.remove("selected");
-      }
-    }
-  }
 }

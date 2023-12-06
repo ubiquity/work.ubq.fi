@@ -530,6 +530,9 @@
     margin-right: 12px;
     /* float: left; */
     text-align: right;
+    /* line-height: 1; */
+    font-size: 20px;
+    text-align: justify;
   }
   .preview-body {
     margin: 16px;

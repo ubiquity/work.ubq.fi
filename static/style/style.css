@@ -528,8 +528,9 @@
     display: inline;
     vertical-align: middle;
     margin-right: 12px;
-    /* float: left; */
     text-align: right;
+    font-size: 20px;
+    text-align: justify;
   }
   .preview-body {
     margin: 16px;
