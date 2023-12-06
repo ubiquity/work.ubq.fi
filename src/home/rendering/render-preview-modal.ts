@@ -40,7 +40,7 @@ document.addEventListener("keydown", (event) => {
 
 function closePreview() {
   preview.classList.remove("active");
-  issuesContainer?.classList.remove("preview-active");
+  document.body.classList.remove("preview-active");
 }
 
 preview.addEventListener(

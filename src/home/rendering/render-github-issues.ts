@@ -2,7 +2,7 @@ import { marked } from "marked";
 import { organizationImageCache, previewToFullMapping } from "../fetch-github/fetch-issues-full";
 import { GitHubIssueWithNewFlag } from "../fetch-github/preview-to-full-mapping";
 import { GitHubIssue } from "../github-types";
-import { issuesContainer, preview, previewBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
+import { preview, previewBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
 
 export function renderGitHubIssues(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
@@ -151,5 +151,5 @@ export function displayIssue(issueFull: GitHubIssue) {
 
   // Show the preview
   preview.classList.add("active"); //  = 'block';
-  issuesContainer?.classList.add("preview-active");
+  document.body.classList.add("preview-active");
 }

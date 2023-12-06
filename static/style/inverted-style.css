@@ -364,6 +364,8 @@
     #issues-container.preview-active {
       transform: translateX(0) !important;
     }
+
+    body.preview-active > background,
     #issues-container.preview-active > div {
       opacity: 0.5;
       filter: blur(8px);
@@ -528,9 +530,7 @@
     display: inline;
     vertical-align: middle;
     margin-right: 12px;
-    /* float: left; */
     text-align: right;
-    /* line-height: 1; */
     font-size: 20px;
     text-align: justify;
   }
