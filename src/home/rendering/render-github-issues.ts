@@ -193,7 +193,7 @@ function setupKeyboardNavigation(container: HTMLDivElement) {
         }
       }
     } else if (event.key === "Escape") {
-      disableKeyboardNavigation(event)
+      disableKeyboardNavigation(event);
     }
   });
 
