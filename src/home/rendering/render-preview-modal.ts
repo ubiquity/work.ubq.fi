@@ -42,3 +42,11 @@ function closePreview() {
   preview.classList.remove("active");
   issuesContainer?.classList.remove("preview-active");
 }
+
+preview.addEventListener(
+  "wheel",
+  (event) => {
+    event.preventDefault();
+  },
+  { passive: false }
+);
