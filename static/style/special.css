@@ -8,9 +8,10 @@
   #issues-container > div {
     background-color: #000410;
   }
-  .preview {
+  .preview-content {
     background-color: #000410;
   }
+
 }
 @media (prefers-color-scheme: light) {
   #toolbar.ready {
@@ -22,7 +23,7 @@
   #issues-container > div {
     background-color: #f0f0f0;
   }
-  .preview {
+  .preview-content {
     background-color: #f0f0f0;
   }
 }

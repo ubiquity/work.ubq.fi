@@ -1,3 +1,6 @@
+import { previewToFullMapping } from "../fetch-github/fetch-issues-full";
+import { displayIssue } from "./render-github-issues";
+
 export const preview = document.createElement("div");
 preview.classList.add("preview");
 const previewContent = document.createElement("div");
@@ -41,4 +44,79 @@ document.addEventListener("keydown", (event) => {
 function closePreview() {
   preview.classList.remove("active");
   document.body.classList.remove("preview-active");
+}
+
+// SWIPER
+
+let startTouchX: number;
+
+previewContent.addEventListener("touchstart", (e) => {
+  startTouchX = e.touches[0].clientX;
+});
+
+previewContent.addEventListener("touchmove", (e) => {
+  // Prevent scrolling the background
+  e.preventDefault();
+
+  const touchX = e.touches[0].clientX;
+  const deltaX = touchX - startTouchX;
+  // Apply the movement to the modal's transform property
+  previewContent.style.transform = `translateX(${deltaX}px)`;
+});
+
+previewContent.addEventListener("touchend", (e) => {
+  const endTouchX = e.changedTouches[0].clientX;
+  const threshold = 50; // Minimum distance of swipe to be recognized
+
+  if (Math.abs(startTouchX - endTouchX) > threshold) {
+    // Determine swipe direction
+    if (startTouchX > endTouchX) {
+      loadModalData({ direction: "left" });
+    } else {
+      loadModalData({ direction: "right" });
+    }
+  }
+
+  // Reset the transform property to animate back to the center
+  previewContent.style.transform = "";
+});
+
+function loadModalData({ direction }: { direction: "left" | "right" }) {
+  const container = document.getElementById("issues-container") as HTMLDivElement;
+
+  const issues = Array.from(container.children);
+  const activeIndex = issues.findIndex((issue) => issue.classList.contains("selected"));
+  const originalIndex = activeIndex === -1 ? -1 : activeIndex;
+
+  let newIndex = originalIndex;
+
+  direction === "left" ? (newIndex = originalIndex + 1) : (newIndex = originalIndex - 1);
+
+  if (newIndex !== originalIndex) {
+    // issues[originalIndex]?.classList.remove("selected");
+
+    issues.forEach((issue) => {
+      issue.classList.remove("selected");
+    });
+
+    issues[newIndex]?.classList.add("selected");
+    issues[newIndex].scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+
+    container.classList.add("keyboard-selection");
+
+    const previewId = issues[newIndex].children[0].getAttribute("data-preview-id");
+
+    const issueElement = issues.find((issue) => issue.children[0].getAttribute("data-preview-id") === previewId);
+
+    if (issueElement) {
+      const issueFull = previewToFullMapping.get(Number(previewId));
+      console.trace({ mapping: previewToFullMapping, previewId, issueFull });
+      if (issueFull) {
+        displayIssue(issueFull);
+      }
+    }
+  }
 }
