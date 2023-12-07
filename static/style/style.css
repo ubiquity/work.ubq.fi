@@ -61,7 +61,7 @@
   #issues-container:hover .issue-element-inner {
     opacity: 0.5;
   }
-  #issues-container.keyboard-selection:hover .issue-element-inner{
+  #issues-container.keyboard-selection:hover .issue-element-inner {
     opacity: 1;
   }
 

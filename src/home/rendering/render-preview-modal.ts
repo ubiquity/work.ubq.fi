@@ -66,40 +66,55 @@ function closePreview() {
 // SWIPER
 
 let startTouchX: number;
+let startTouchY: number;
+let isSwiping: boolean;
 
 previewContent.addEventListener("touchstart", (e) => {
   startTouchX = e.touches[0].clientX;
+  startTouchY = e.touches[0].clientY;
+  isSwiping = false; // Initially assume it's not a swipe
 });
 
 previewContent.addEventListener("touchmove", (e) => {
-  // Prevent scrolling the background
-  e.preventDefault();
-
   const touchX = e.touches[0].clientX;
+  const touchY = e.touches[0].clientY;
   const deltaX = touchX - startTouchX;
-  // Apply the movement to the modal's transform property
-  previewContent.style.transform = `translateX(${deltaX}px)`;
-  previewClonePrevious.style.transform = `translateX(${deltaX}px)`;
-  previewCloneNext.style.transform = `translateX(${deltaX}px)`;
+  const deltaY = touchY - startTouchY;
+
+  // Determine if the touch movement is more horizontal than vertical
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    // It's a swipe - prevent default to stop vertical scrolling
+    e.preventDefault();
+    isSwiping = true; // Set the flag to indicate it's a swipe
+
+    // Apply the movement to the modal's transform property
+    previewContent.style.transform = `translateX(${deltaX}px)`;
+    previewClonePrevious.style.transform = `translateX(${deltaX}px)`;
+    previewCloneNext.style.transform = `translateX(${deltaX}px)`;
+  }
 });
 
 previewContent.addEventListener("touchend", (e) => {
-  const endTouchX = e.changedTouches[0].clientX;
-  const threshold = 50; // Minimum distance of swipe to be recognized
+  if (isSwiping) {
+    const endTouchX = e.changedTouches[0].clientX;
+    const threshold = 50; // Minimum distance of swipe to be recognized
 
-  if (Math.abs(startTouchX - endTouchX) > threshold) {
-    // Determine swipe direction
-    if (startTouchX > endTouchX) {
-      loadModalData("left");
-    } else {
-      loadModalData("right");
+    if (Math.abs(startTouchX - endTouchX) > threshold) {
+      // Determine swipe direction
+      if (startTouchX > endTouchX) {
+        loadModalData("left");
+      } else {
+        loadModalData("right");
+      }
     }
-  }
 
-  // Reset the transform property to animate back to the center
-  previewContent.style.transform = "";
-  previewClonePrevious.style.transform = "";
-  previewCloneNext.style.transform = "";
+    // Reset the transform property to animate back to the center
+    previewContent.style.transform = "";
+    previewClonePrevious.style.transform = "";
+    previewCloneNext.style.transform = "";
+  }
+  // Reset the isSwiping flag
+  isSwiping = false;
 });
 
 function loadModalData(direction: "left" | "right") {
