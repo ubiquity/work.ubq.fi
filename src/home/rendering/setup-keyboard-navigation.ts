@@ -2,7 +2,7 @@ import { previewToFullMapping } from "../fetch-github/fetch-issues-full";
 import { displayIssue } from "./render-github-issues";
 
 const keyDownHandlerCurried = keyDownHandler();
-const disableKeyBoardNavigationCurried = disableKeyboardNavigation();
+const disableKeyBoardNavigationCurried = disableKeyboardNavigationCurry();
 
 let isKeyDownListenerAdded = false;
 let isMouseOverListenerAdded = false;
@@ -13,23 +13,25 @@ export function setupKeyboardNavigation(container: HTMLDivElement) {
     isKeyDownListenerAdded = true;
   }
   if (!isMouseOverListenerAdded) {
-    container.addEventListener("mouseover", disableKeyBoardNavigationCurried);
+    container.addEventListener("mouseover", () => disableKeyBoardNavigationCurried);
     isMouseOverListenerAdded = true;
   }
 }
 
-function disableKeyboardNavigation() {
+function disableKeyboardNavigationCurry() {
   const container = document.getElementById("issues-container") as HTMLDivElement;
-  return function disableKeyboardNavigation() {
-    container.classList.remove("keyboard-selection");
-  };
+  return disableKeyboardNavigation(container);
+}
+
+function disableKeyboardNavigation(container: HTMLDivElement) {
+  container.classList.remove("keyboard-selection");
 }
 
 function keyDownHandler() {
   const container = document.getElementById("issues-container") as HTMLDivElement;
   return function keyDownHandler(event: KeyboardEvent) {
     if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-      const issues = Array.from(container.querySelectorAll("#issues-container > div"));
+      const issues = Array.from(container.children);
       const activeIndex = issues.findIndex((issue) => issue.classList.contains("selected"));
       const originalIndex = activeIndex === -1 ? -1 : activeIndex;
       let newIndex = originalIndex;
@@ -63,7 +65,6 @@ function keyDownHandler() {
 
         if (issueElement) {
           const issueFull = previewToFullMapping.get(Number(previewId));
-          console.trace({ mapping: previewToFullMapping, previewId, issueFull });
           if (issueFull) {
             displayIssue(issueFull);
           }
@@ -82,7 +83,7 @@ function keyDownHandler() {
         }
       }
     } else if (event.key === "Escape") {
-      disableKeyboardNavigation();
+      disableKeyboardNavigation(container);
     }
   };
 }
