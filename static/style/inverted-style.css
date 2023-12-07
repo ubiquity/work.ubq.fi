@@ -362,9 +362,7 @@
   }
   @media screen and (max-width: 1280px) {
     body.preview-active {
-      overflow: hidden; /* This will prevent scrolling on the body when the modal is active */
-      position: fixed; /* Optional: to ensure the page stays in place */
-      width: 100%; /* To maintain the width when position is fixed */
+      overflow: hidden;
     }
 
     .preview.active {
@@ -377,6 +375,7 @@
     body.preview-active > background,
     body.preview-active > #issues-container > div {
       filter: blur(8px);
+      pointer-events: none;
     }
   }
   #toolbar > button {
@@ -466,19 +465,8 @@
     vertical-align: middle;
     height: 20px;
   }
-  .preview-body-inner {
-    /* max-width: 640px; */
-    /* overflow: scroll; */
-    /* max-height: calc(100vh - 153px); */
-    /* max-height: calc(100vh - 170px); */
-    /* pointer-events: all; */
-    /* margin-top: 8px; */
-    /* border-top: 1px solid #dfdfdf; */
-    /* padding-top: 16px; */
-    /* overflow-y: auto; */
-    /* max-height: calc(100vh - (170px)); */
-    /* max-height: calc(100vh - (170px + env(safe-area-inset-bottom))); */
-
+  .preview-body-inner > *:last-child {
+    margin-bottom: 0;
   }
   .preview {
     text-align: left;
@@ -563,8 +551,12 @@
     /* max-height: calc(100vh - (210px + env(safe-area-inset-bottom))); */
     margin: 0;
     border-top: 1px solid #dfdfdf;
-    padding: 8px 16px;
-    max-height: calc(100vh - (144px + env(safe-area-inset-bottom)));
+    padding: 16px;
+    max-height: calc(100vh - (80px));
+    max-height: calc(100vh - (242px));
+    /* max-height: calc(100vh - (80px + (env(safe-area-inset-bottom)) * 8)); */
+    /* max-height: calc(100vh - (160px + env(safe-area-inset-bottom))); */
+    /* max-height: calc(100vh - (241px + env(safe-area-inset-bottom))); */
   }
   .preview-content {
     width: 100%;
