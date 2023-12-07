@@ -61,6 +61,10 @@
   #issues-container:hover .issue-element-inner {
     opacity: 0.5;
   }
+  #issues-container.keyboard-selection:hover .issue-element-inner{
+    opacity: 1;
+  }
+
   #issues-container * {
     -webkit-user-select: none;
     -moz-user-select: none;
