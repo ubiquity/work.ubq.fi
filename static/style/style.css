@@ -22,6 +22,8 @@
   html {
     margin: 0;
     padding: 0;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
   * {
     font-family: "Proxima Nova", "Ubiquity Nova", sans-serif;
@@ -468,13 +470,14 @@
     max-width: 640px;
     overflow: scroll;
     /* max-height: calc(100vh - 153px); */
-    max-height: calc(100vh - 170px);
+    /* max-height: calc(100vh - 170px); */
     pointer-events: all;
     /* margin-top: 8px; */
     border-top: 1px solid #202020;
     padding-top: 16px;
-
     overflow-y: auto;
+    max-height: calc(100vh - (170px));
+    max-height: calc(100vh - (170px + env(safe-area-inset-bottom)));
   }
   .preview {
     text-align: left;
@@ -490,8 +493,8 @@
     transform: translateX(0);
     flex-wrap: wrap;
     width: calc(100vw - 16px);
-  }
-  .preview {
+    max-height: calc(100vh - (158px));
+    max-height: calc(100vh - (158px + env(safe-area-inset-bottom)));
     pointer-events: none;
   }
   .preview * {
