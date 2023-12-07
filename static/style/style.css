@@ -466,18 +466,8 @@
     vertical-align: middle;
     height: 20px;
   }
-  .preview-body-inner {
-    max-width: 640px;
-    overflow: scroll;
-    /* max-height: calc(100vh - 153px); */
-    /* max-height: calc(100vh - 170px); */
-    pointer-events: all;
-    /* margin-top: 8px; */
-    border-top: 1px solid #202020;
-    padding-top: 16px;
-    overflow-y: auto;
-    max-height: calc(100vh - (170px));
-    max-height: calc(100vh - (170px + env(safe-area-inset-bottom)));
+  .preview-body-inner > *:last-child {
+    margin-bottom: 0;
   }
   .preview {
     text-align: left;
@@ -492,10 +482,12 @@
     display: flex;
     transform: translateX(0);
     flex-wrap: wrap;
-    width: calc(100vw - 16px);
-    max-height: calc(100vh - (158px));
-    max-height: calc(100vh - (158px + env(safe-area-inset-bottom)));
+    /* width: calc(100vw - 16px); */
+    /* max-height: calc(100vh - (158px)); */
+    /* max-height: calc(100vh - (158px + env(safe-area-inset-bottom))); */
     pointer-events: none;
+    overflow: hidden;
+    width: calc(100vw - 18px);
   }
   .preview * {
     pointer-events: none;
@@ -521,7 +513,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 8px 16px;
+    padding: 8px 16px;
   }
   .preview-header > a {
     word-wrap: initial;
@@ -529,8 +521,9 @@
     opacity: 0.75;
     /* vertical-align: middle; */
     display: flex;
-    justify-content: center;
+    justify-content: right;
     align-items: center;
+    width: calc(100% - 72px);
   }
   .preview-header > a:hover {
     opacity: 1;
@@ -544,15 +537,23 @@
     text-align: right;
     font-size: 20px;
     text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .preview-body {
-    margin: 16px;
+    /* margin: 16px; */
     overflow: scroll;
-    width: calc(100% - 32px);
-    overflow: hidden;
-    margin-bottom: 0;
-    margin-top: 0;
+    /* width: calc(100% - 32px); */
+    /* overflow: hidden; */
+    /* margin-bottom: 0; */
+    /* margin-top: 0; */
     /* border-top: 1px solid #202020; */
+    /* max-height: calc(100vh - (210px + env(safe-area-inset-bottom))); */
+    margin: 0;
+    border-top: 1px solid #202020;
+    padding: 16px;
+    max-height: calc(100vh - (160px + env(safe-area-inset-bottom)));
   }
   .preview-content {
     width: 100%;
