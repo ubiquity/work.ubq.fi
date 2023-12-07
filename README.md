@@ -1,8 +1,13 @@
-# `@ubiquity/ts-template`
+# DevPool Directory UI
 
-This template repository includes support for the following:
+```sh
+cp .env.example .env
+```
 
-- TypeScript
-- Environment Variables
-- Conventional Commits
-- Automatic publishing of pull requests to Cloudflare Pages
+Ensure that `SUPABASE_URL` and `SUPABASE_KEY` are set. This is for GitHub user registration on login.
+
+```sh
+yarn
+yarn start
+open http://localhost:8080
+```
