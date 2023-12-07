@@ -484,13 +484,16 @@
     flex-direction: row;
     display: flex;
     transform: translateX(0);
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     /* width: calc(100vw - 16px); */
     /* max-height: calc(100vh - (158px)); */
     /* max-height: calc(100vh - (158px + env(safe-area-inset-bottom))); */
     pointer-events: none;
     /* overflow: hidden; */
     /* width: calc(100vw - 18px); */
+    width: 300vw;
+    overflow: hidden;
+    justify-content: space-around;
   }
   .preview * {
     pointer-events: none;
@@ -568,6 +571,8 @@
     box-shadow: 0 12px 48px #00000010;
     border: 1px solid #7f7f7f20;
     border-radius: 4px;
+    flex: 1;
+    margin: 0 8px;
   }
   .preview button.close-preview {
     right: 0;

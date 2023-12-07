@@ -1,10 +1,12 @@
+import { marked } from "marked";
 import { previewToFullMapping } from "../fetch-github/fetch-issues-full";
-import { displayIssue } from "./render-github-issues";
+import { GitHubIssue } from "../github-types";
 
-export const preview = document.createElement("div");
-preview.classList.add("preview");
+export const previewWrapper = document.createElement("div");
+previewWrapper.classList.add("preview");
 const previewContent = document.createElement("div");
 previewContent.classList.add("preview-content");
+
 const previewHeader = document.createElement("div");
 previewHeader.classList.add("preview-header");
 export const titleAnchor = document.createElement("a");
@@ -30,8 +32,23 @@ previewHeader.appendChild(titleAnchor);
 previewBody.appendChild(previewBodyInner);
 previewContent.appendChild(previewHeader);
 previewContent.appendChild(previewBody);
-preview.appendChild(previewContent);
-document.body.appendChild(preview);
+
+// Create three preview elements
+// for (let i = 0; i < 3; i++) {
+const previewClonePrevious = previewContent.cloneNode(true) as HTMLDivElement;
+previewClonePrevious.classList.add("previous");
+// const previewCloneCurrent = previewContent.cloneNode(true) as HTMLDivElement;
+const previewCloneNext = previewContent.cloneNode(true) as HTMLDivElement;
+previewCloneNext.classList.add("next");
+previewContent.classList.add("current");
+// preview.appendChild(previewClonePrevious);
+// }
+
+previewWrapper.appendChild(previewClonePrevious);
+previewWrapper.appendChild(previewContent);
+previewWrapper.appendChild(previewCloneNext);
+
+document.body.appendChild(previewWrapper);
 export const issuesContainer = document.getElementById("issues-container");
 
 closeButton.addEventListener("click", closePreview);
@@ -42,7 +59,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 function closePreview() {
-  preview.classList.remove("active");
+  previewWrapper.classList.remove("active");
   document.body.classList.remove("preview-active");
 }
 
@@ -62,6 +79,8 @@ previewContent.addEventListener("touchmove", (e) => {
   const deltaX = touchX - startTouchX;
   // Apply the movement to the modal's transform property
   previewContent.style.transform = `translateX(${deltaX}px)`;
+  previewClonePrevious.style.transform = `translateX(${deltaX}px)`;
+  previewCloneNext.style.transform = `translateX(${deltaX}px)`;
 });
 
 previewContent.addEventListener("touchend", (e) => {
@@ -71,17 +90,19 @@ previewContent.addEventListener("touchend", (e) => {
   if (Math.abs(startTouchX - endTouchX) > threshold) {
     // Determine swipe direction
     if (startTouchX > endTouchX) {
-      loadModalData({ direction: "left" });
+      loadModalData("left");
     } else {
-      loadModalData({ direction: "right" });
+      loadModalData("right");
     }
   }
 
   // Reset the transform property to animate back to the center
   previewContent.style.transform = "";
+  previewClonePrevious.style.transform = "";
+  previewCloneNext.style.transform = "";
 });
 
-function loadModalData({ direction }: { direction: "left" | "right" }) {
+function loadModalData(direction: "left" | "right") {
   const container = document.getElementById("issues-container") as HTMLDivElement;
 
   const issues = Array.from(container.children);
@@ -92,31 +113,71 @@ function loadModalData({ direction }: { direction: "left" | "right" }) {
 
   direction === "left" ? (newIndex = originalIndex + 1) : (newIndex = originalIndex - 1);
 
-  if (newIndex !== originalIndex) {
-    // issues[originalIndex]?.classList.remove("selected");
+  if (newIndex == originalIndex) return;
 
-    issues.forEach((issue) => {
-      issue.classList.remove("selected");
-    });
+  issues.forEach((issue) => issue.classList.remove("selected"));
+  issues[newIndex]?.classList.add("selected");
+  issues[newIndex].scrollIntoView({ behavior: "smooth", block: "center" });
 
-    issues[newIndex]?.classList.add("selected");
-    issues[newIndex].scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-    });
+  // const previewId = issues[newIndex].children[0].getAttribute("data-preview-id");
+  // const issueElement = issues.find((issue) => issue.children[0].getAttribute("data-preview-id") === previewId);
 
-    container.classList.add("keyboard-selection");
+  const indices = {
+    previous: {
+      preview: issues[newIndex - 1].children[0].getAttribute("data-preview-id"),
+      element: null,
+    },
+    current: {
+      preview: issues[newIndex].children[0].getAttribute("data-preview-id"),
+      element: null,
+    },
+    next: {
+      preview: issues[newIndex + 1].children[0].getAttribute("data-preview-id"),
+      element: null,
+    },
+  } as {
+    previous: {
+      preview: string | null;
+      element: HTMLDivElement | null;
+    };
+    current: {
+      preview: string | null;
+      element: HTMLDivElement | null;
+    };
+    next: {
+      preview: string | null;
+      element: HTMLDivElement | null;
+    };
+  };
 
-    const previewId = issues[newIndex].children[0].getAttribute("data-preview-id");
+  indices.previous.element = issues.find((issue) => issue.children[0].getAttribute("data-preview-id") === indices.previous.preview) as HTMLDivElement;
+  indices.current.element = issues.find((issue) => issue.children[0].getAttribute("data-preview-id") === indices.current.preview) as HTMLDivElement;
+  indices.next.element = issues.find((issue) => issue.children[0].getAttribute("data-preview-id") === indices.next.preview) as HTMLDivElement;
 
-    const issueElement = issues.find((issue) => issue.children[0].getAttribute("data-preview-id") === previewId);
-
-    if (issueElement) {
-      const issueFull = previewToFullMapping.get(Number(previewId));
-      console.trace({ mapping: previewToFullMapping, previewId, issueFull });
-      if (issueFull) {
-        displayIssue(issueFull);
-      }
+  if (indices.current.element) {
+    const issueCurrent = previewToFullMapping.get(Number(indices.current.preview));
+    if (issueCurrent) {
+      const issuePrevious = previewToFullMapping.get(Number(indices.previous.preview));
+      const issueNext = previewToFullMapping.get(Number(indices.next.preview));
+      displayIssueSides(issuePrevious, issueCurrent, issueNext);
     }
   }
+}
+
+export function displayIssueSides(issueLeft?: GitHubIssue, issueCurrent?: GitHubIssue, issueRight?: GitHubIssue) {
+  if (issueLeft) setUpEach(previewClonePrevious, issueLeft);
+  if (issueCurrent) setUpEach(previewContent, issueCurrent);
+  if (issueRight) setUpEach(previewCloneNext, issueRight);
+}
+
+function setUpEach(target: HTMLDivElement, issue: GitHubIssue) {
+  const titleAnchor = target.querySelector("a");
+  const titleHeader = target.querySelector("h1");
+  const previewBodyInner = target.querySelector(".preview-body-inner");
+  if (!titleAnchor) throw new Error("no titleAnchor found");
+  if (!titleHeader) throw new Error("no titleHeader found");
+  if (!previewBodyInner) throw new Error("no previewBodyInner found");
+  titleHeader.textContent = issue.title;
+  titleAnchor.href = issue.html_url;
+  previewBodyInner.innerHTML = marked(issue.body) as string;
 }
