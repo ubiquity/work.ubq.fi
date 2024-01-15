@@ -1,28 +1,30 @@
+:root {
+  --dark-background: #000410;
+  --dark-background-half: #00041080;
+  --light-background: #f0f0f0;
+  --light-background-half: #f0f0f080;
+}
+
 @media (prefers-color-scheme: dark) {
-  html {
-    background-color: #000410;
+  html,
+  #issues-container > div,
+  .preview {
+    background-color: var(--dark-background);
   }
   #toolbar.ready {
-    background-color: #00041080;
-  }
-  #issues-container > div {
-    background-color: #000410;
-  }
-  .preview {
-    background-color: #000410;
+    background-color: var(--dark-background-half);
   }
 }
+
 @media (prefers-color-scheme: light) {
-  #toolbar.ready {
-    background-color: #f0f0f080;
-  }
   #grid {
     opacity: 0.25;
   }
-  #issues-container > div {
-    background-color: #f0f0f0;
-  }
+  #issues-container > div,
   .preview {
-    background-color: #f0f0f0;
+    background-color: var(--light-background);
+  }
+  #toolbar.ready {
+    background-color: var(--light-background-half);
   }
 }
