@@ -16,6 +16,17 @@ export function setupKeyboardNavigation(container: HTMLDivElement) {
     container.addEventListener("mouseover", () => disableKeyBoardNavigationCurried);
     isMouseOverListenerAdded = true;
   }
+
+  const filterTextbox = document.getElementById("filter") as HTMLInputElement;
+  filterTextbox.addEventListener("input", () => {
+    const filterText = filterTextbox.value.toLowerCase();
+    const issues = Array.from(container.children) as HTMLDivElement[];
+    issues.forEach((issue) => {
+      const issueText = issue.textContent?.toLowerCase() || "";
+      const isVisible = issueText.includes(filterText);
+      issue.style.display = isVisible ? "block" : "none";
+    });
+  });
 }
 
 function disableKeyboardNavigationCurry() {
@@ -31,37 +42,36 @@ function keyDownHandler() {
   const container = document.getElementById("issues-container") as HTMLDivElement;
   return function keyDownHandler(event: KeyboardEvent) {
     if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-      const issues = Array.from(container.children);
-      const activeIndex = issues.findIndex((issue) => issue.classList.contains("selected"));
+      const issues = Array.from(container.children) as HTMLElement[];
+      const visibleIssues = issues.filter((issue) => issue.style.display !== "none");
+      const activeIndex = visibleIssues.findIndex((issue) => issue.classList.contains("selected"));
       const originalIndex = activeIndex === -1 ? -1 : activeIndex;
       let newIndex = originalIndex;
 
       if (event.key === "ArrowUp" && originalIndex > 0) {
         newIndex = originalIndex - 1;
         event.preventDefault();
-      } else if (event.key === "ArrowDown" && originalIndex < issues.length - 1) {
+      } else if (event.key === "ArrowDown" && originalIndex < visibleIssues.length - 1) {
         newIndex = originalIndex + 1;
         event.preventDefault();
       }
 
       if (newIndex !== originalIndex) {
-        // issues[originalIndex]?.classList.remove("selected");
-
-        issues.forEach((issue) => {
+        visibleIssues.forEach((issue) => {
           issue.classList.remove("selected");
         });
 
-        issues[newIndex]?.classList.add("selected");
-        issues[newIndex].scrollIntoView({
+        visibleIssues[newIndex]?.classList.add("selected");
+        visibleIssues[newIndex].scrollIntoView({
           behavior: "smooth",
           block: "center",
         });
 
         container.classList.add("keyboard-selection");
 
-        const previewId = issues[newIndex].children[0].getAttribute("data-preview-id");
+        const previewId = visibleIssues[newIndex].children[0].getAttribute("data-preview-id");
 
-        const issueElement = issues.find((issue) => issue.children[0].getAttribute("data-preview-id") === previewId);
+        const issueElement = visibleIssues.find((issue) => issue.children[0].getAttribute("data-preview-id") === previewId);
 
         if (issueElement) {
           const issueFull = previewToFullMapping.get(Number(previewId));
