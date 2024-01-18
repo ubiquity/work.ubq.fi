@@ -41,7 +41,7 @@ jobs:
           OUTPUT_DIRECTORY: "static"
         run: |
           IFS='/' read -ra fields <<< "$REPOSITORY"
-          projectName="${fields[1]}"
+          projectName="${fields[1]//./-}"
           echo $projectName
           yarn wrangler pages project list > project_list.txt
           if grep -q $projectName project_list.txt; then
