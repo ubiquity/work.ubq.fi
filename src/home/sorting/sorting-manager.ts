@@ -9,6 +9,15 @@ export class SortingManager {
     const filters = document.getElementById(filtersId);
     if (!filters) throw new Error(`${filtersId} not found`);
     this._filters = filters;
+    this.generateFilterTextbox();
+  }
+
+  public generateFilterTextbox() {
+    const textbox = document.createElement("input");
+    textbox.type = "text";
+    textbox.id = "filter";
+    textbox.placeholder = "Filter by text";
+    this._filters.insertBefore(textbox, this._filters.firstChild);
   }
 
   public generateSortingButtons(sortingOptions: readonly string[]) {
