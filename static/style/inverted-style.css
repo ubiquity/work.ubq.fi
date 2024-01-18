@@ -340,7 +340,7 @@
     left: 0;
     background-color: #00ffff;
   }
-  @media screen and (max-width: 904px) {
+  @media screen and (max-width: 1139px) {
     .full {
       display: none !important;
     }
