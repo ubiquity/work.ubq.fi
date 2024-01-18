@@ -13,11 +13,11 @@ export class SortingManager {
   }
 
   public generateFilterTextbox() {
-    const textbox = document.createElement("input");
-    textbox.type = "text";
-    textbox.id = "filter";
-    textbox.placeholder = "Filter by text";
-    this._filters.insertBefore(textbox, this._filters.firstChild);
+    const textBox = document.createElement("input");
+    textBox.type = "text";
+    textBox.id = "filter";
+    textBox.placeholder = "Filter by text";
+    this._filters.insertBefore(textBox, this._filters.firstChild);
   }
 
   public generateSortingButtons(sortingOptions: readonly string[]) {
