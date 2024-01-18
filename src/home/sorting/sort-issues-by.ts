@@ -5,7 +5,7 @@ import { sortIssuesByPriority } from "./sort-issues-by-priority";
 import { sortIssuesByTime } from "./sort-issues-by-time";
 import { sortIssuesByLatestActivity } from "./sort-issues-by-updated-time";
 
-export function sortIssuesBy(issues: GitHubIssue[], sortBy: typeof SORTING_OPTIONS[number]) {
+export function sortIssuesBy(issues: GitHubIssue[], sortBy: (typeof SORTING_OPTIONS)[number]) {
   switch (sortBy) {
     case "priority":
       return sortIssuesByPriority(issues);
