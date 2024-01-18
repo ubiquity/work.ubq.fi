@@ -18,8 +18,6 @@ jobs:
         uses: ubiquity/cloudflare-deploy-action@main
         with:
           cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          supabase_url: ${{ secrets.SUPABASE_URL }}
-          supabase_key: ${{ secrets.SUPABASE_KEY }}
           repository: ${{ github.repository }}
-          production_branch: "development"
+          production_branch: ${{ github.event.repository.default_branch }}
           output_directory: "static"
