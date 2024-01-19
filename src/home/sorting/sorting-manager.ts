@@ -16,7 +16,7 @@ export class SortingManager {
     const textBox = document.createElement("input");
     textBox.type = "text";
     textBox.id = "filter";
-    textBox.placeholder = "Filter by text";
+    textBox.placeholder = "Text Filter";
     this._filters.insertBefore(textBox, this._filters.firstChild);
   }
 
