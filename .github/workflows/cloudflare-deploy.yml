@@ -1,19 +1,24 @@
 name: Deploy to Cloudflare Pages
 
 on:
-  workflow_run:
-    workflows: ["Conventional Commits"]
-    types:
-      - completed
+  push:
+  pull_request:
+    types: [closed]
 
 jobs:
   deploy-to-cloudflare:
-    name: Deploy to Cloudflare Pages
+    # Only push and merged pull requests
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-22.04
     permissions:
       contents: read
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}
+          path: "./"
 
       - name: Deploy to Cloudflare
         uses: ubiquity/cloudflare-deploy-action@main
