@@ -20,7 +20,6 @@ jobs:
           repository: ${{ github.repository }}
           path: "./"
 
-
       - name: Deploy to Cloudflare
         uses: ubiquity/cloudflare-deploy-action@main
         with:
