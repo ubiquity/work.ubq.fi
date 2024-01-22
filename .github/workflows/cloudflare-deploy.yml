@@ -14,6 +14,11 @@ jobs:
       contents: read
 
     steps:
+      - name: Set environment variables
+        run: |
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> $GITHUB_ENV
+          echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> $GITHUB_ENV
+
       - name: Deploy to Cloudflare
         uses: ubiquity/cloudflare-deploy-action@main
         with:
@@ -21,4 +26,3 @@ jobs:
           repository: ${{ github.repository }}
           production_branch: ${{ github.event.repository.default_branch }}
           output_directory: "static"
-          extra_secrets: '{"SUPABASE_URL": "${{ secrets.SUPABASE_URL }}", "SUPABASE_KEY": "${{ secrets.SUPABASE_KEY }}"}'
