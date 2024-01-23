@@ -2,14 +2,10 @@ name: Deploy to Cloudflare Pages
 
 on:
   push:
-  pull_request:
-    types: [closed]
 
 jobs:
   deploy-to-cloudflare:
     name: Deploy to Cloudflare Pages
-    # Only push and merged pull request events
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-22.04
     permissions:
       contents: read
