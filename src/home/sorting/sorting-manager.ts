@@ -69,7 +69,7 @@ export class SortingManager {
     input.checked = input !== this._lastChecked;
     input.setAttribute("data-ordering", ordering);
     this._lastChecked = input.checked ? input : null;
-
+    this._filterTextBox.value = "";
     fetchAndDisplayPreviews(option as Sorting, { ordering }).catch((error) => console.error(error));
   }
 }
