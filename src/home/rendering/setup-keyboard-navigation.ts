@@ -16,17 +16,6 @@ export function setupKeyboardNavigation(container: HTMLDivElement) {
     container.addEventListener("mouseover", () => disableKeyBoardNavigationCurried);
     isMouseOverListenerAdded = true;
   }
-
-  const filterTextbox = document.getElementById("filter") as HTMLInputElement;
-  filterTextbox.addEventListener("input", () => {
-    const filterText = filterTextbox.value.toLowerCase();
-    const issues = Array.from(container.children) as HTMLDivElement[];
-    issues.forEach((issue) => {
-      const issueText = issue.textContent?.toLowerCase() || "";
-      const isVisible = issueText.includes(filterText);
-      issue.style.display = isVisible ? "block" : "none";
-    });
-  });
 }
 
 function disableKeyboardNavigationCurry() {

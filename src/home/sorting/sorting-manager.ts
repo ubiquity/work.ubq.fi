@@ -25,6 +25,18 @@ export class SortingManager {
     textBox.type = "text";
     textBox.id = "filter";
     textBox.placeholder = "Text Filter";
+
+    const issuesContainer = document.getElementById("issues-container") as HTMLDivElement;
+    textBox.addEventListener("input", () => {
+      const filterText = textBox.value.toLowerCase();
+      const issues = Array.from(issuesContainer.children) as HTMLDivElement[];
+      issues.forEach((issue) => {
+        const issueText = issue.textContent?.toLowerCase() || "";
+        const isVisible = issueText.includes(filterText);
+        issue.style.display = isVisible ? "block" : "none";
+      });
+    });
+
     return textBox;
   }
 
@@ -43,7 +55,6 @@ export class SortingManager {
     });
 
     return buttons;
-    // this._filters.appendChild(labels);
   }
 
   private _createRadioButton(option: string): HTMLInputElement {
