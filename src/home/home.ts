@@ -2,9 +2,9 @@ import { grid } from "../the-grid";
 import { authentication } from "./authentication";
 import { fetchAndDisplayPreviews } from "./fetch-github/fetch-and-display-previews";
 import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
-import { generateSortingButtons } from "./sorting/generate-sorting-buttons";
+import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 
-generateSortingButtons();
+generateSortingToolbar();
 grid(document.getElementById("grid") as HTMLElement);
 
 authentication()
