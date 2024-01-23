@@ -1,4 +1,5 @@
 import { fetchAndDisplayPreviews } from "../fetch-github/fetch-and-display-previews";
+import { previewToFullMapping } from "../fetch-github/fetch-issues-full";
 import { Sorting } from "./generate-sorting-buttons";
 
 export class SortingManager {
@@ -31,8 +32,12 @@ export class SortingManager {
       const filterText = textBox.value.toLowerCase();
       const issues = Array.from(issuesContainer.children) as HTMLDivElement[];
       issues.forEach((issue) => {
-        const issueText = issue.textContent?.toLowerCase() || "";
-        const isVisible = issueText.includes(filterText);
+        const issuePreviewId = issue.children[0].getAttribute("data-preview-id");
+        const fullIssue = previewToFullMapping.get(Number(issuePreviewId));
+        if (!fullIssue) throw new Error(`No full issue found for preview id ${issuePreviewId}`);
+        const searchableProperties = ["title", "body", "number", "html_url"] as const;
+        const searchableStrings = searchableProperties.map((prop) => fullIssue[prop]?.toString().toLowerCase());
+        const isVisible = searchableStrings.some((str) => str.includes(filterText));
         issue.style.display = isVisible ? "block" : "none";
       });
     });
