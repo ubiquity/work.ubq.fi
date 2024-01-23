@@ -41,7 +41,11 @@ function everyNewIssue({ issue, container }: { issue: GitHubIssueWithNewFlag; co
   const match = issue.body.match(urlPattern);
   const organizationName = match?.[1];
   if (!organizationName) {
-    throw new Error(`No organization name found for issue ${issue.id}`);
+    const storedIssuesJSON = localStorage.getItem("gitHubIssuesPreview");
+    const storedIssues = storedIssuesJSON ? (JSON.parse(storedIssuesJSON) as GitHubIssueWithNewFlag[]) : [];
+    const updatedIssues = storedIssues.filter((storedIssue) => storedIssue.id !== issue.id);
+    localStorage.setItem("gitHubIssuesPreview", JSON.stringify(updatedIssues));
+    throw new Error(`No organization name found for issue ${issue.id}. Assuming its a pull request so removed from cache.`);
   }
   const repositoryName = match?.[2];
   if (!repositoryName) {
