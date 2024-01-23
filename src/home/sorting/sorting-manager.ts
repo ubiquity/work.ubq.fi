@@ -39,9 +39,7 @@ export class SortingManager {
       buttons.appendChild(input);
       buttons.appendChild(label);
 
-      input.addEventListener("click", () => {
-        this._handleSortingClick(input, option);
-      });
+      input.addEventListener("click", () => this._handleSortingClick(input, option));
     });
 
     return buttons;
@@ -70,6 +68,13 @@ export class SortingManager {
     input.setAttribute("data-ordering", ordering);
     this._lastChecked = input.checked ? input : null;
     this._filterTextBox.value = "";
+    input.parentElement?.childNodes.forEach((node) => {
+      if (node instanceof HTMLInputElement) {
+        node.setAttribute("data-ordering", "");
+      }
+    });
+
+    input.setAttribute("data-ordering", ordering);
     fetchAndDisplayPreviews(option as Sorting, { ordering }).catch((error) => console.error(error));
   }
 }

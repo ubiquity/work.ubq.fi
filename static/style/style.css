@@ -591,4 +591,12 @@
   p.organization-name::after {
     content: "/";
   }
+  input[type="radio"][data-ordering="reverse"] + label::after {
+    margin-left: 6px;
+    content: "▲";
+  }
+  input[type="radio"][data-ordering="normal"] + label::after {
+    margin-left: 6px;
+    content: "▼";
+  }
 }
