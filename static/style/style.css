@@ -340,6 +340,16 @@
     left: 0;
     background-color: #0ff;
   }
+
+  @media screen and (max-width: 804px) {
+    .mid {
+      display: none !important;
+    }
+    #branding > span {
+      padding: 0;
+    }
+  }
+
   @media screen and (max-width: 1139px) {
     .full {
       display: none !important;
@@ -354,11 +364,18 @@
       margin: auto;
       margin-left: 12px;
     }
-    #branding > span {
-      padding: 0;
+
+    #toolbar {
+      overflow-x: auto;
+      white-space: nowrap;
+      margin: 0;
+      padding-left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
     }
     #toolbar > * {
-      margin: auto;
+      margin-left: 12px;
     }
     #toolbar > button {
       padding: 12px 16px;
@@ -595,9 +612,13 @@
     width: 100%;
     height: 16px;
     text-align: center;
+    min-width: 80px;
   }
   #filters input[type="text"]::placeholder {
     font-size: 12px;
     letter-spacing: 0.5px;
+  }
+  button#github-login-button {
+    margin-left: 0;
   }
 }
