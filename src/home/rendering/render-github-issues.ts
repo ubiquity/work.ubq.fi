@@ -38,11 +38,10 @@ function everyNewIssue({ issue, container }: { issue: GitHubIssueWithNewFlag; co
   }
 
   const urlPattern = /https:\/\/github\.com\/([^/]+)\/([^/]+)\//;
-  const match = issue.body?.match(urlPattern);
+  const match = issue.body.match(urlPattern);
   const organizationName = match?.[1];
   if (!organizationName) {
-    console.warn("No organization name found for issue", issue.id);
-    return;
+    throw new Error(`No organization name found for issue ${issue.id}`);
   }
   const repositoryName = match?.[2];
   if (!repositoryName) {

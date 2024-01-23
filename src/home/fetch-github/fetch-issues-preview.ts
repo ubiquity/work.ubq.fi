@@ -13,9 +13,11 @@ export async function fetchIssuePreviews(): Promise<GitHubIssueWithNewFlag[]> {
     console.error(error);
   }
   // Fetch fresh issues and mark them as new if they don't exist in local storage
-  const freshIssues: GitHubIssue[] = await octokit.paginate("GET /repos/ubiquity/devpool-directory/issues", {
-    state: "open",
-  });
+  const freshIssues: GitHubIssue[] = (
+    await octokit.paginate<GitHubIssue>("GET /repos/ubiquity/devpool-directory/issues", {
+      state: "open",
+    })
+  ).filter((issue: GitHubIssue) => !issue.pull_request);
 
   // Retrieve existing issues from local storage
   const storedIssuesJSON = localStorage.getItem("gitHubIssuesPreview");
