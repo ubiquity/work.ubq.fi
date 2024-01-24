@@ -48,7 +48,7 @@ function displayIssues(issues: GitHubIssue[], container: HTMLDivElement, sorting
     if (orgName) {
       const avatarUrl = await getImageFromDB({ dbName: "ImageDatabase", storeName: "ImageStore", orgName: `avatarUrl-${orgName}` });
       if (avatarUrl) {
-        organizationImageCache.push({ [orgName]: avatarUrl });
+        organizationImageCache.set(orgName, avatarUrl);
       }
     }
   });
