@@ -110,51 +110,31 @@ function parseAndGenerateLabels(issue: GitHubIssueWithNewFlag) {
 
   const labelOrder: Record<LabelKey, number> = { "Pricing: ": 1, "Time: ": 2, "Priority: ": 3 };
 
-  issue.labels.sort((a, b) => {
-    const matchA = a.name.match(/^(Pricing|Time|Priority): /)?.[0] as LabelKey | undefined;
-    const matchB = b.name.match(/^(Pricing|Time|Priority): /)?.[0] as LabelKey | undefined;
-    const orderA = matchA ? labelOrder[matchA] : 0;
-    const orderB = matchB ? labelOrder[matchB] : 0;
-    return orderA - orderB;
-  });
+  const { labels, otherLabels } = issue.labels.reduce(
+    (acc, label) => {
+      const match = label.name.match(/^(Pricing|Time|Priority): /);
+      if (match) {
+        const name = label.name.replace(match[0], "");
+        const labelStr = `<label class="${match[1].toLowerCase().trim()}">${name}</label>`;
+        acc.labels.push({ order: labelOrder[match[0] as LabelKey], label: labelStr });
+      } else if (!label.name.startsWith("Partner: ") && !label.name.startsWith("id: ") && !label.name.startsWith("Unavailable")) {
+        acc.otherLabels.push(label.name);
+      }
+      return acc;
+    },
+    { labels: [] as { order: number; label: string }[], otherLabels: [] as string[] }
+  );
 
-  // Filter labels that begin with specific prefixes
-  const filteredLabels = issue.labels.filter((label) => {
-    return label.name.startsWith("Time: ") || label.name.startsWith("Pricing: ") || label.name.startsWith("Priority: ");
-  });
-
-  // Map the filtered labels to HTML elements
-  const labels = filteredLabels.map((label) => {
-    // Remove the prefix from the label name
-    const name = label.name.replace(/(Time|Pricing|Priority): /, "");
-    if (label.name.startsWith("Pricing: ")) {
-      return `<label class="pricing">${name}</label>`;
-    } else {
-      return `<label class="label">${name}</label>`;
-    }
-  });
-
-  // Filter labels that do not begin with specific prefixes
-  const otherLabels = issue.labels.filter((label) => {
-    return (
-      !label.name.startsWith("Time: ") &&
-      !label.name.startsWith("Pricing: ") &&
-      !label.name.startsWith("Priority: ") &&
-      !label.name.startsWith("Partner: ") &&
-      !label.name.startsWith("id: ") &&
-      !label.name.startsWith("Unavailable")
-    );
-  });
-
-  const otherLabelNames = otherLabels.map((label) => label.name);
+  // Sort labels
+  labels.sort((a, b) => a.order - b.order);
 
   // Log the other labels
-  if (otherLabelNames.length) {
-    console.log("Other labels: ", otherLabelNames);
-    const otherLabelName = otherLabelNames.shift() as string;
-    labels.unshift(`<label class="label full">${otherLabelName}</label>`);
+  if (otherLabels.length) {
+    const otherLabelName = otherLabels.shift() as string;
+    labels.unshift({ order: 0, label: `<label class="label full">${otherLabelName}</label>` });
   }
-  return labels;
+
+  return labels.map((label) => label.label);
 }
 
 // Function to update and show the preview
