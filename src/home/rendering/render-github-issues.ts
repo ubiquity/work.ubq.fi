@@ -95,8 +95,8 @@ function setUpIssueElement(
     issueWrapper.classList.add("selected");
 
     const previewId = Number(this.getAttribute("data-preview-id"));
-    console.trace({ mapping: previewToFullMapping, previewId });
     const full = previewToFullMapping.get(previewId);
+    console.trace({ full, preview: issuePreview });
     if (!full) {
       window.open(match?.input, "_blank");
     } else {
@@ -133,6 +133,27 @@ function parseAndGenerateLabels(issue: GitHubIssueWithNewFlag) {
       return `<label class="label">${name}</label>`;
     }
   });
+
+  // Filter labels that do not begin with specific prefixes
+  const otherLabels = issue.labels.filter((label) => {
+    return (
+      !label.name.startsWith("Time: ") &&
+      !label.name.startsWith("Pricing: ") &&
+      !label.name.startsWith("Priority: ") &&
+      !label.name.startsWith("Partner: ") &&
+      !label.name.startsWith("id: ") &&
+      !label.name.startsWith("Unavailable")
+    );
+  });
+
+  const otherLabelNames = otherLabels.map((label) => label.name);
+
+  // Log the other labels
+  if (otherLabelNames.length) {
+    console.log("Other labels: ", otherLabelNames);
+    const otherLabelName = otherLabelNames.shift() as string;
+    labels.unshift(`<label class="label full">${otherLabelName}</label>`);
+  }
   return labels;
 }
 
