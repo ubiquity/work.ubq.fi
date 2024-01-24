@@ -39,7 +39,7 @@ export function fetchIssuesFull(previews: GitHubIssue[]) {
         localStorage.setItem("gitHubIssuesFull", JSON.stringify(Array.from(previewToFullMapping.entries())));
         return { full, issueElement };
       })
-      .then(({ full, issueElement }) => {
+      .then(({ full }) => {
         const urlMatch = full.html_url.match(urlPattern);
         const orgName = urlMatch?.groups?.org;
 
@@ -53,32 +53,15 @@ export function fetchIssuesFull(previews: GitHubIssue[]) {
 
           return octokit.rest.orgs.get({ org: orgName }).then(({ data }) => {
             const avatarUrl = data.avatar_url;
-            const orgCacheEntryIndex = organizationImageCache.findIndex((entry) => Object.prototype.hasOwnProperty.call(entry, orgName));
-            if (orgCacheEntryIndex !== -1) {
-              organizationImageCache[orgCacheEntryIndex][orgName] = avatarUrl;
-            } else {
-              organizationImageCache.push({ [orgName]: avatarUrl });
-            }
-
-            // now check every issue element for the same org name
-            previewToFullMapping.forEach((full) => {
-              const _issueElement = document.querySelector(`[data-full-id="${full.id}"]`);
-              const _urlMatch = full.html_url.match(urlPattern);
-              const _orgName = _urlMatch?.groups?.org;
-
-              if (orgName == _orgName) {
-                const imageElement = _issueElement?.querySelector("img");
-                if (imageElement) {
-                  imageElement.src = avatarUrl;
-                }
-              }
+            // Store the avatar URL in the cache
+            localStorage.setItem(`avatarUrl-${orgName}`, avatarUrl);
+            // Return a promise that resolves when the avatar image has been fetched
+            return new Promise((resolve) => {
+              const image = new Image();
+              image.onload = () => resolve(full);
+              image.onerror = () => resolve(full);
+              image.src = avatarUrl;
             });
-
-            const imageElement = issueElement?.querySelector("img");
-            if (imageElement) {
-              imageElement.src = avatarUrl;
-            }
-            return full;
           });
         }
         return full;
