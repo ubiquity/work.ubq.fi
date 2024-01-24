@@ -6,18 +6,17 @@ import { GitHubIssueWithNewFlag } from "./preview-to-full-mapping";
 export async function fetchIssuePreviews(): Promise<GitHubIssueWithNewFlag[]> {
   const octokit = new Octokit({ auth: getGitHubAccessToken() });
 
-  try {
-    const { data: rateLimit } = await octokit.request("GET /rate_limit");
-    console.log("Rate limit remaining: ", rateLimit.rate.remaining);
-  } catch (error) {
-    console.error(error);
-  }
   // Fetch fresh issues and mark them as new if they don't exist in local storage
-  const freshIssues: GitHubIssue[] = (
-    await octokit.paginate<GitHubIssue>("GET /repos/ubiquity/devpool-directory/issues", {
-      state: "open",
-    })
-  ).filter((issue: GitHubIssue) => !issue.pull_request);
+  let freshIssues: GitHubIssue[] = [];
+  try {
+    freshIssues = (
+      await octokit.paginate<GitHubIssue>("GET /repos/ubiquity/devpool-directory/issues", {
+        state: "open",
+      })
+    ).filter((issue: GitHubIssue) => !issue.pull_request);
+  } catch (error) {
+    console.error(`Failed to fetch issue previews: ${error}`);
+  }
 
   // Retrieve existing issues from local storage
   const storedIssuesJSON = localStorage.getItem("gitHubIssuesPreview");

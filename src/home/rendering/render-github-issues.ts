@@ -68,9 +68,15 @@ function setUpIssueElement(
   match: RegExpMatchArray | null
 ) {
   let image = `<img />`;
-  const orgCacheEntry = organizationImageCache.find((entry) => Object.prototype.hasOwnProperty.call(entry, organizationName));
-  const avatarUrl = orgCacheEntry ? orgCacheEntry[organizationName] : null;
+
+  const avatarUrl = organizationImageCache.get(organizationName);
   if (avatarUrl) {
+    image = `<img src="${avatarUrl}" />`;
+  }
+
+  const avatarBlob = organizationImageCache.get(organizationName);
+  if (avatarBlob) {
+    const avatarUrl = URL.createObjectURL(avatarBlob);
     image = `<img src="${avatarUrl}" />`;
   }
 
@@ -95,8 +101,8 @@ function setUpIssueElement(
     issueWrapper.classList.add("selected");
 
     const previewId = Number(this.getAttribute("data-preview-id"));
-    console.trace({ mapping: previewToFullMapping, previewId });
     const full = previewToFullMapping.get(previewId);
+    console.trace({ full, preview: issuePreview });
     if (!full) {
       window.open(match?.input, "_blank");
     } else {
@@ -110,30 +116,31 @@ function parseAndGenerateLabels(issue: GitHubIssueWithNewFlag) {
 
   const labelOrder: Record<LabelKey, number> = { "Pricing: ": 1, "Time: ": 2, "Priority: ": 3 };
 
-  issue.labels.sort((a, b) => {
-    const matchA = a.name.match(/^(Pricing|Time|Priority): /)?.[0] as LabelKey | undefined;
-    const matchB = b.name.match(/^(Pricing|Time|Priority): /)?.[0] as LabelKey | undefined;
-    const orderA = matchA ? labelOrder[matchA] : 0;
-    const orderB = matchB ? labelOrder[matchB] : 0;
-    return orderA - orderB;
-  });
+  const { labels, otherLabels } = issue.labels.reduce(
+    (acc, label) => {
+      const match = label.name.match(/^(Pricing|Time|Priority): /);
+      if (match) {
+        const name = label.name.replace(match[0], "");
+        const labelStr = `<label class="${match[1].toLowerCase().trim()}">${name}</label>`;
+        acc.labels.push({ order: labelOrder[match[0] as LabelKey], label: labelStr });
+      } else if (!label.name.startsWith("Partner: ") && !label.name.startsWith("id: ") && !label.name.startsWith("Unavailable")) {
+        acc.otherLabels.push(label.name);
+      }
+      return acc;
+    },
+    { labels: [] as { order: number; label: string }[], otherLabels: [] as string[] }
+  );
 
-  // Filter labels that begin with specific prefixes
-  const filteredLabels = issue.labels.filter((label) => {
-    return label.name.startsWith("Time: ") || label.name.startsWith("Pricing: ") || label.name.startsWith("Priority: ");
-  });
+  // Sort labels
+  labels.sort((a, b) => a.order - b.order);
 
-  // Map the filtered labels to HTML elements
-  const labels = filteredLabels.map((label) => {
-    // Remove the prefix from the label name
-    const name = label.name.replace(/(Time|Pricing|Priority): /, "");
-    if (label.name.startsWith("Pricing: ")) {
-      return `<label class="pricing">${name}</label>`;
-    } else {
-      return `<label class="label">${name}</label>`;
-    }
-  });
-  return labels;
+  // Log the other labels
+  if (otherLabels.length) {
+    const otherLabelName = otherLabels.shift() as string;
+    labels.unshift({ order: 0, label: `<label class="label full">${otherLabelName}</label>` });
+  }
+
+  return labels.map((label) => label.label);
 }
 
 // Function to update and show the preview

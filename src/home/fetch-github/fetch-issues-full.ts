@@ -2,11 +2,12 @@ import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { getLocalStore } from "../getters/get-local-store";
 import { GitHubIssue } from "../github-types";
+import { fetchAvatar } from "./fetch-avatar";
 import { PreviewToFullMapping } from "./preview-to-full-mapping";
 
 export const previewToFullMapping = new PreviewToFullMapping().getMapping();
 
-export const organizationImageCache = [] as { [organization: string]: string | null }[];
+export const organizationImageCache = new Map<string, Blob | null>();
 
 export function fetchIssuesFull(previews: GitHubIssue[]) {
   const authToken = getGitHubAccessToken();
@@ -39,47 +40,11 @@ export function fetchIssuesFull(previews: GitHubIssue[]) {
         localStorage.setItem("gitHubIssuesFull", JSON.stringify(Array.from(previewToFullMapping.entries())));
         return { full, issueElement };
       })
-      .then(({ full, issueElement }) => {
+      .then(async ({ full }) => {
         const urlMatch = full.html_url.match(urlPattern);
         const orgName = urlMatch?.groups?.org;
-
         if (orgName) {
-          const orgCacheEntry = organizationImageCache.find((entry) => entry[orgName] !== undefined);
-          if (orgCacheEntry) {
-            return; // no redundant requests
-          } else {
-            organizationImageCache.push({ [orgName]: null });
-          }
-
-          return octokit.rest.orgs.get({ org: orgName }).then(({ data }) => {
-            const avatarUrl = data.avatar_url;
-            const orgCacheEntryIndex = organizationImageCache.findIndex((entry) => Object.prototype.hasOwnProperty.call(entry, orgName));
-            if (orgCacheEntryIndex !== -1) {
-              organizationImageCache[orgCacheEntryIndex][orgName] = avatarUrl;
-            } else {
-              organizationImageCache.push({ [orgName]: avatarUrl });
-            }
-
-            // now check every issue element for the same org name
-            previewToFullMapping.forEach((full) => {
-              const _issueElement = document.querySelector(`[data-full-id="${full.id}"]`);
-              const _urlMatch = full.html_url.match(urlPattern);
-              const _orgName = _urlMatch?.groups?.org;
-
-              if (orgName == _orgName) {
-                const imageElement = _issueElement?.querySelector("img");
-                if (imageElement) {
-                  imageElement.src = avatarUrl;
-                }
-              }
-            });
-
-            const imageElement = issueElement?.querySelector("img");
-            if (imageElement) {
-              imageElement.src = avatarUrl;
-            }
-            return full;
-          });
+          await fetchAvatar(orgName);
         }
         return full;
       });
