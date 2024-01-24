@@ -17,3 +17,6 @@ jobs:
         run: yarn install
       - name: Build
         run: yarn build
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
