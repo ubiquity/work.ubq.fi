@@ -5,7 +5,7 @@ import { organizationImageCache } from "./fetch-issues-full";
 
 export async function fetchAvatar(orgName: string) {
   // Check local cache first
-  const cachedAvatar = organizationImageCache.find((entry) => entry[orgName] !== undefined);
+  const cachedAvatar = organizationImageCache.get(orgName);
   if (cachedAvatar) {
     return Promise.resolve();
   }
@@ -14,7 +14,7 @@ export async function fetchAvatar(orgName: string) {
   const avatarBlob = await getImageFromDB({ dbName: "ImageDatabase", storeName: "ImageStore", orgName: `avatarUrl-${orgName}` });
   if (avatarBlob) {
     // If the avatar Blob is found in IndexedDB, add it to the cache
-    organizationImageCache.push({ [orgName]: avatarBlob });
+    organizationImageCache.set(orgName, avatarBlob);
     return Promise.resolve();
   }
 
@@ -35,7 +35,7 @@ export async function fetchAvatar(orgName: string) {
               orgName: `avatarUrl-${orgName}`,
               avatarBlob: blob,
             });
-            organizationImageCache.push({ [orgName]: blob });
+            organizationImageCache.set(orgName, blob);
           });
       }
     })

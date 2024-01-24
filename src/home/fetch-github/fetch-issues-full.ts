@@ -7,7 +7,7 @@ import { PreviewToFullMapping } from "./preview-to-full-mapping";
 
 export const previewToFullMapping = new PreviewToFullMapping().getMapping();
 
-export const organizationImageCache = [] as { [organization: string]: Blob | null }[];
+export const organizationImageCache = new Map<string, Blob | null>();
 
 export function fetchIssuesFull(previews: GitHubIssue[]) {
   const authToken = getGitHubAccessToken();
