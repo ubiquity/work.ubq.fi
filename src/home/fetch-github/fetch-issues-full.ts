@@ -1,8 +1,8 @@
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
-import { saveImageToDB } from "../getters/get-indexed-db";
 import { getLocalStore } from "../getters/get-local-store";
 import { GitHubIssue } from "../github-types";
+import { fetchAvatar } from "./fetch-avatar";
 import { PreviewToFullMapping } from "./preview-to-full-mapping";
 
 export const previewToFullMapping = new PreviewToFullMapping().getMapping();
@@ -40,34 +40,11 @@ export function fetchIssuesFull(previews: GitHubIssue[]) {
         localStorage.setItem("gitHubIssuesFull", JSON.stringify(Array.from(previewToFullMapping.entries())));
         return { full, issueElement };
       })
-      .then(({ full }) => {
+      .then(async ({ full }) => {
         const urlMatch = full.html_url.match(urlPattern);
         const orgName = urlMatch?.groups?.org;
-
         if (orgName) {
-          const orgCacheEntry = organizationImageCache.find((entry) => entry[orgName] !== undefined);
-          if (orgCacheEntry) {
-            return; // no redundant requests
-          } else {
-            organizationImageCache.push({ [orgName]: null });
-          }
-          return octokit.rest.orgs.get({ org: orgName }).then(({ data }) => {
-            const avatarUrl = data.avatar_url;
-            // Fetch the image as a Blob and save it to IndexedDB
-            return fetch(avatarUrl)
-              .then((response) => response.blob())
-              .then(async (blob) => {
-                await saveImageToDB({
-                  dbName: "ImageDatabase",
-                  storeName: "ImageStore",
-                  keyName: "name",
-                  orgName: `avatarUrl-${orgName}`,
-                  avatarBlob: blob,
-                });
-                organizationImageCache.push({ [orgName]: blob });
-                return full;
-              });
-          });
+          await fetchAvatar(orgName);
         }
         return full;
       });
