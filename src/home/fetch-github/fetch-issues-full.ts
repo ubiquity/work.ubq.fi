@@ -32,10 +32,19 @@ export function fetchIssuesFull(previews: GitHubIssue[]) {
       .then(({ data: response }) => {
         const full = response as GitHubIssue;
 
+        // Update the cache with the fetched issue if it's more recent than the cached issue
+        const cachedIssues = (getLocalStore("gitHubIssuesFull") || []) as GitHubIssue[];
+        const cachedIssuesMap = new Map(cachedIssues.map((issue) => [issue.id, issue]));
+        const cachedIssue = cachedIssuesMap.get(full.id);
+        if (!cachedIssue || new Date(full.updated_at) > new Date(cachedIssue.updated_at)) {
+          cachedIssuesMap.set(full.id, full);
+          const updatedCachedIssues = Array.from(cachedIssuesMap.values());
+          localStorage.setItem("gitHubIssuesFull", JSON.stringify(updatedCachedIssues));
+        }
+
         previewToFullMapping.set(preview.id, full);
         const issueElement = document.querySelector(`[data-preview-id="${preview.id}"]`);
         issueElement?.setAttribute("data-full-id", full.id.toString());
-        // const imageElement = issueElement?.querySelector("img");
 
         localStorage.setItem("gitHubIssuesFull", JSON.stringify(Array.from(previewToFullMapping.entries())));
         return { full, issueElement };
