@@ -1,5 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
+import { getImageFromDB, saveImageToDB } from "../getters/get-indexed-db";
 import { getLocalStore } from "../getters/get-local-store";
 import { GitHubIssue } from "../github-types";
 import { renderGitHubIssues } from "../rendering/render-github-issues";
@@ -23,25 +24,40 @@ export async function fetchAndDisplayPreviews(sorting?: Sorting, options = { ord
     localStorage.setItem("gitHubIssuesPreview", JSON.stringify(issues));
   }
   const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
-  const avatarPromises = issues.map((issue) => {
+
+  const avatarPromises = issues.map(async (issue) => {
     const match = issue.body.match(urlPattern);
     const orgName = match?.groups?.org;
     if (orgName) {
-      const avatarUrl = localStorage.getItem(`avatarUrl-${orgName}`);
-      if (!avatarUrl) {
+      const avatarBlob = await getImageFromDB({ dbName: "ImageDatabase", storeName: "ImageStore", orgName: `avatarUrl-${orgName}` });
+      if (!avatarBlob) {
         // Fetch new avatar
         const octokit = new Octokit({ auth: getGitHubAccessToken() });
         return octokit.rest.orgs
           .get({ org: orgName })
-          .then(({ data: { avatar_url: avatarUrl } }) => {
+          .then(async ({ data: { avatar_url: avatarUrl } }) => {
             if (avatarUrl) {
-              localStorage.setItem(`avatarUrl-${orgName}`, avatarUrl);
-              organizationImageCache.push({ [orgName]: avatarUrl });
+              // Fetch the image as a Blob and save it to IndexedDB
+              await fetch(avatarUrl)
+                .then((response) => response.blob())
+                .then(async (blob) => {
+                  await saveImageToDB({
+                    dbName: "ImageDatabase",
+                    storeName: "ImageStore",
+                    keyName: "name",
+                    orgName: `avatarUrl-${orgName}`,
+                    avatarBlob: blob,
+                  });
+                  organizationImageCache.push({ [orgName]: blob });
+                });
             }
           })
           .catch((error) => {
             console.error(`Failed to fetch avatar for organization ${orgName}: ${error}`);
           });
+      } else {
+        // If the avatar Blob is found in IndexedDB, add it to the cache
+        organizationImageCache.push({ [orgName]: avatarBlob });
       }
     }
     return Promise.resolve();
@@ -56,11 +72,11 @@ export async function fetchAndDisplayPreviews(sorting?: Sorting, options = { ord
 function displayIssues(issues: GitHubIssue[], container: HTMLDivElement, sorting?: Sorting, options = { ordering: "normal" }) {
   // Load avatars from cache
   const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
-  issues.forEach((issue) => {
+  issues.forEach(async (issue) => {
     const match = issue.body.match(urlPattern);
     const orgName = match?.groups?.org;
     if (orgName) {
-      const avatarUrl = localStorage.getItem(`avatarUrl-${orgName}`);
+      const avatarUrl = await getImageFromDB({ dbName: "ImageDatabase", storeName: "ImageStore", orgName: `avatarUrl-${orgName}` });
       if (avatarUrl) {
         organizationImageCache.push({ [orgName]: avatarUrl });
       }

@@ -13,7 +13,6 @@ authentication()
   .then((previews) => readyToolbar(previews))
   .then((previews) => fetchIssuesFull(previews))
   .then((promises) => Promise.allSettled(promises))
-  .then((results) => console.trace({ results }))
   .catch((error) => console.error(error));
 
 async function readyToolbar(previews: GitHubIssue[]) {

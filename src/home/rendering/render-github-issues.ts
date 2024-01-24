@@ -68,10 +68,20 @@ function setUpIssueElement(
   match: RegExpMatchArray | null
 ) {
   let image = `<img />`;
+
   const orgCacheEntry = organizationImageCache.find((entry) => Object.prototype.hasOwnProperty.call(entry, organizationName));
   const avatarUrl = orgCacheEntry ? orgCacheEntry[organizationName] : null;
   if (avatarUrl) {
     image = `<img src="${avatarUrl}" />`;
+  }
+
+  const avatarBlob = organizationImageCache.find((entry) => entry[organizationName]);
+  if (avatarBlob) {
+    const blob = avatarBlob[organizationName];
+    if (blob) {
+      const avatarUrl = URL.createObjectURL(blob);
+      image = `<img src="${avatarUrl}" />`;
+    }
   }
 
   issueElement.innerHTML = `
