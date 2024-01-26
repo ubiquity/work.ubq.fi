@@ -1,4 +1,4 @@
-import { fetchAndDisplayPreviews } from "../fetch-github/fetch-and-display-previews";
+import { fetchAndDisplayPreviewsFromNetwork } from "../fetch-github/fetch-and-display-previews";
 import { previewToFullMapping } from "../fetch-github/fetch-issues-full";
 import { Sorting } from "./generate-sorting-buttons";
 
@@ -91,6 +91,6 @@ export class SortingManager {
     });
 
     input.setAttribute("data-ordering", ordering);
-    fetchAndDisplayPreviews(option as Sorting, { ordering }).catch((error) => console.error(error));
+    fetchAndDisplayPreviewsFromNetwork(option as Sorting, { ordering }).catch((error) => console.error(error));
   }
 }

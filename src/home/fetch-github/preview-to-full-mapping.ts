@@ -1,6 +1,7 @@
 import { GitHubIssue } from "../github-types";
 
-export type GitHubIssueWithNewFlag = GitHubIssue & { isNew?: boolean };
+export type GitHubIssueWithNewFlag = GitHubIssue & { isNew: boolean };
+export type GitHubIssueWithModifiedFlag = GitHubIssue & { isModified: boolean };
 
 export class PreviewToFullMapping {
   private _map: Map<number, GitHubIssue>;

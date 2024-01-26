@@ -1,15 +1,15 @@
 import { grid } from "../the-grid";
 import { authentication } from "./authentication";
-import { fetchAndDisplayPreviews } from "./fetch-github/fetch-and-display-previews";
+import { fetchAndDisplayPreviewsFromCache } from "./fetch-github/fetch-and-display-previews";
 import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
-import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { GitHubIssue } from "./github-types";
+import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 
 generateSortingToolbar();
 grid(document.getElementById("grid") as HTMLElement);
 
 authentication()
-  .then(fetchAndDisplayPreviews)
+  .then(fetchAndDisplayPreviewsFromCache)
   .then((previews) => readyToolbar(previews))
   .then((previews) => fetchIssuesFull(previews))
   .then((promises) => Promise.allSettled(promises))

@@ -1,6 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
-import { getImageFromDB, saveImageToDB } from "../getters/get-indexed-db";
+import { getImageFromCache, saveImageToCache } from "../getters/get-indexed-db";
 import { organizationImageCache } from "./fetch-issues-full";
 
 export async function fetchAvatar(orgName: string) {
@@ -11,7 +11,7 @@ export async function fetchAvatar(orgName: string) {
   }
 
   // If not in local cache, check IndexedDB
-  const avatarBlob = await getImageFromDB({ dbName: "ImageDatabase", storeName: "ImageStore", orgName: `avatarUrl-${orgName}` });
+  const avatarBlob = await getImageFromCache({ dbName: "GitHubAvatars", storeName: "ImageStore", orgName: `avatarUrl-${orgName}` });
   if (avatarBlob) {
     // If the avatar Blob is found in IndexedDB, add it to the cache
     organizationImageCache.set(orgName, avatarBlob);
@@ -28,8 +28,8 @@ export async function fetchAvatar(orgName: string) {
         await fetch(avatarUrl)
           .then((response) => response.blob())
           .then(async (blob) => {
-            await saveImageToDB({
-              dbName: "ImageDatabase",
+            await saveImageToCache({
+              dbName: "GitHubAvatars",
               storeName: "ImageStore",
               keyName: "name",
               orgName: `avatarUrl-${orgName}`,

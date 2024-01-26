@@ -18,20 +18,8 @@ export async function fetchIssuePreviews(): Promise<GitHubIssueWithNewFlag[]> {
     console.error(`Failed to fetch issue previews: ${error}`);
   }
 
-  // Retrieve existing issues from local storage
-  const storedIssuesJSON = localStorage.getItem("gitHubIssuesPreview");
-  const storedIssues = storedIssuesJSON ? (JSON.parse(storedIssuesJSON) as GitHubIssue[]) : [];
-
-  // Create a set of existing issue IDs for quick lookup
-  const existingIssueIds = new Set(storedIssues.map((issue) => issue.id));
-
-  // Map fresh issues to GitHubIssueWithNewFlag, setting isNew appropriately
-  const freshIssuesWithNewFlag = freshIssues.map((issue) => ({
+  return freshIssues.map((issue) => ({
     ...issue,
-    isNew: !existingIssueIds.has(issue.id),
-  })) as GitHubIssueWithNewFlag[];
-
-  localStorage.setItem("gitHubIssuesPreview", JSON.stringify(freshIssuesWithNewFlag));
-
-  return freshIssuesWithNewFlag;
+    isNew: true,
+  }));
 }
