@@ -1,5 +1,5 @@
 import { fetchAndDisplayPreviewsFromNetwork } from "../fetch-github/fetch-and-display-previews";
-import { previewToFullMapping } from "../fetch-github/fetch-issues-full";
+import { taskManager } from "../home";
 import { Sorting } from "./generate-sorting-buttons";
 
 export class SortingManager {
@@ -33,7 +33,8 @@ export class SortingManager {
       const issues = Array.from(issuesContainer.children) as HTMLDivElement[];
       issues.forEach((issue) => {
         const issuePreviewId = issue.children[0].getAttribute("data-preview-id");
-        const fullIssue = previewToFullMapping.get(Number(issuePreviewId));
+        if (!issuePreviewId) throw new Error(`No preview id found for issue ${issue}`);
+        const fullIssue = taskManager.getTaskByPreviewId(Number(issuePreviewId)).full;
         if (!fullIssue) throw new Error(`No full issue found for preview id ${issuePreviewId}`);
         const searchableProperties = ["title", "body", "number", "html_url"] as const;
         const searchableStrings = searchableProperties.map((prop) => fullIssue[prop]?.toString().toLowerCase());

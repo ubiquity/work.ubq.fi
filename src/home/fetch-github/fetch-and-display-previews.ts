@@ -1,53 +1,51 @@
 import { getImageFromCache } from "../getters/get-indexed-db";
-import { getLocalStore } from "../getters/get-local-store";
-import { GitHubIssue } from "../github-types";
+import { getLocalStore, setLocalStore } from "../getters/get-local-store";
+import { taskManager } from "../home";
 import { renderGitHubIssues } from "../rendering/render-github-issues";
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
 import { fetchAvatar } from "./fetch-avatar";
 import { organizationImageCache } from "./fetch-issues-full";
 import { fetchIssuePreviews } from "./fetch-issues-preview";
-import { GitHubIssueWithModifiedFlag, GitHubIssueWithNewFlag } from "./preview-to-full-mapping";
+import { TaskMaybeFull, TaskNoFull, TaskNoState, TaskWithFull } from "./preview-to-full-mapping";
 
 export type Options = {
   ordering: "normal" | "reverse";
 };
 
-// display cached issues immediately. If there are no cached issues, display nothing.
-const container = document.getElementById("issues-container") as HTMLDivElement;
-if (!container) {
-  throw new Error("Could not find issues container");
-}
-
 export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, options = { ordering: "normal" }) {
-  const cachedIssues: GitHubIssue[] = (getLocalStore("gitHubIssuesPreview") as GitHubIssue[]) || [];
-
-  if (!cachedIssues.length) {
+  const _cachedTasks = (getLocalStore("gitHubTasks") || []) as TaskNoState[];
+  const cachedTasks = _cachedTasks.map((task) => ({ ...task, isNew: false, isModified: false })) as TaskMaybeFull[];
+  taskManager.addTasks(cachedTasks);
+  if (!cachedTasks.length) {
     // load from network if there are no cached issues
     return await fetchAndDisplayPreviewsFromNetwork(sorting, options);
   } else {
-    displayGitHubIssues(cachedIssues, container, sorting, options);
-    return fetchAvatars(cachedIssues, container, options, sorting);
+    displayGitHubIssues(sorting, options);
+    return fetchAvatars(options, sorting);
   }
 }
 
-export async function fetchAndDisplayPreviewsFromNetwork(sorting?: Sorting, options = { ordering: "normal" }) {
-  const fetchedIssues: GitHubIssueWithNewFlag[] = await fetchIssuePreviews();
-  const cachedIssues: GitHubIssue[] = (getLocalStore("gitHubIssuesPreview") as GitHubIssue[]) || [];
-  const updatedCachedIssues = syncCache(cachedIssues, fetchedIssues);
-  displayGitHubIssues(updatedCachedIssues, container, sorting, options);
+// function issueToStateWrapper({ preview, full }: { preview: GitHubIssue; full: GitHubIssue }): Task {
+//   return { preview, full, isNew: false, isModified: false };
+// }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const issuesWithoutState = updatedCachedIssues.map(({ isNew, isModified, ...issue }) => issue);
-  localStorage.setItem("gitHubIssuesPreview", JSON.stringify(issuesWithoutState));
-  return fetchAvatars(fetchedIssues, container, options, sorting);
+export async function fetchAndDisplayPreviewsFromNetwork(sorting?: Sorting, options = { ordering: "normal" }) {
+  const fetchedPreviews = await fetchIssuePreviews();
+  const cachedTasks = taskManager.getTasks();
+  const updatedCachedIssues = verifyGitHubIssueState(cachedTasks, fetchedPreviews);
+  displayGitHubIssues(sorting, options);
+
+  setLocalStore("gitHubTasks", updatedCachedIssues);
+  return fetchAvatars(options, sorting);
 }
 
-async function fetchAvatars(cachedIssues: GitHubIssue[], container: HTMLDivElement, options: { ordering: string }, sorting?: Sorting) {
+async function fetchAvatars(options: { ordering: string }, sorting?: Sorting) {
+  const cachedTasks = taskManager.getTasks();
   const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
 
-  const avatarPromises = cachedIssues.map(async (issue) => {
-    const match = issue.body.match(urlPattern);
+  const avatarPromises = cachedTasks.map(async (task) => {
+    const match = task.preview.body.match(urlPattern);
     const orgName = match?.groups?.org;
     if (orgName) {
       return fetchAvatar(orgName);
@@ -56,30 +54,36 @@ async function fetchAvatars(cachedIssues: GitHubIssue[], container: HTMLDivEleme
   });
 
   await Promise.allSettled(avatarPromises);
-  displayGitHubIssues(cachedIssues, container, sorting, options);
-  return cachedIssues;
+  displayGitHubIssues(sorting, options);
+  return cachedTasks;
 }
 
-function syncCache(
-  cachedIssues: GitHubIssue[],
-  fetchedIssues: GitHubIssueWithNewFlag[]
-): (GitHubIssue | GitHubIssueWithNewFlag | GitHubIssueWithModifiedFlag)[] {
-  return fetchedIssues.map((newIssue) => {
-    const redundantIssue = cachedIssues.find((cached) => cached.id === newIssue.id);
-    if (redundantIssue) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { isNew, ...issueWithoutIsNew } = newIssue;
-      return { ...issueWithoutIsNew, isModified: true } as GitHubIssueWithModifiedFlag;
+export function taskWithFullTest(task: TaskNoFull | TaskWithFull): task is TaskWithFull {
+  return (task as TaskWithFull).full !== null && (task as TaskWithFull).full !== undefined;
+}
+
+function verifyGitHubIssueState(cached: TaskMaybeFull[], fetchedPreviews: TaskNoFull[]): (TaskNoFull | TaskWithFull)[] {
+  return fetchedPreviews.map((fetched) => {
+    const cachedIssue = cached.find((cached) => cached.full?.id === fetched.preview.id);
+    if (cachedIssue && cachedIssue.full) {
+      const cachedFullIssue = cachedIssue.full;
+      const isModified = new Date(cachedFullIssue.updated_at) < new Date(fetched.preview.updated_at);
+      const task = { ...fetched, full: cachedFullIssue, isNew: false, isModified };
+      return taskWithFullTest(task) ? task : ({ preview: fetched.preview, isNew: true, isModified: false } as TaskNoFull);
     }
-    return newIssue;
+    return { preview: fetched.preview, isNew: true, isModified: false } as TaskNoFull;
   });
 }
 
-function displayGitHubIssues(issues: GitHubIssue[], container: HTMLDivElement, sorting?: Sorting, options = { ordering: "normal" }) {
+export function displayGitHubIssues(sorting?: Sorting, options = { ordering: "normal" }) {
   // Load avatars from cache
   const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
-  issues.forEach(async (issue) => {
-    const match = issue.body.match(urlPattern);
+  const cachedTasks = taskManager.getTasks();
+  cachedTasks.forEach(async ({ preview }) => {
+    if (!preview.body) {
+      throw new Error(`Preview body is undefined for task with id: ${preview.id}`);
+    }
+    const match = preview.body.match(urlPattern);
     const orgName = match?.groups?.org;
     if (orgName) {
       const avatarUrl = await getImageFromCache({ dbName: "GitHubAvatars", storeName: "ImageStore", orgName: `avatarUrl-${orgName}` });
@@ -90,6 +94,6 @@ function displayGitHubIssues(issues: GitHubIssue[], container: HTMLDivElement, s
   });
 
   // Render issues
-  const sortedIssues = sortIssuesController(issues, sorting, options);
-  renderGitHubIssues(container, sortedIssues);
+  const sortedIssues = sortIssuesController(cachedTasks, sorting, options);
+  renderGitHubIssues(sortedIssues);
 }

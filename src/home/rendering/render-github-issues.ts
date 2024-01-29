@@ -1,11 +1,13 @@
 import { marked } from "marked";
-import { organizationImageCache, previewToFullMapping } from "../fetch-github/fetch-issues-full";
-import { GitHubIssueWithNewFlag } from "../fetch-github/preview-to-full-mapping";
+import { organizationImageCache } from "../fetch-github/fetch-issues-full";
+import { TaskMaybeFull } from "../fetch-github/preview-to-full-mapping";
 import { GitHubIssue } from "../github-types";
 import { preview, previewBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
+import { taskManager } from "../home";
 
-export function renderGitHubIssues(container: HTMLDivElement, issues: GitHubIssueWithNewFlag[]) {
+export function renderGitHubIssues(tasks: TaskMaybeFull[]) {
+  const container = taskManager.getContainer();
   if (container.classList.contains("ready")) {
     container.classList.remove("ready");
     container.innerHTML = "";
@@ -15,9 +17,9 @@ export function renderGitHubIssues(container: HTMLDivElement, issues: GitHubIssu
   let delay = 0;
   const baseDelay = 1000 / 15; // Base delay in milliseconds
 
-  for (const issue of issues) {
-    if (!existingIssueIds.has(issue.id.toString())) {
-      const issueWrapper = everyNewIssue({ issue, container });
+  for (const task of tasks) {
+    if (!existingIssueIds.has(task.preview.id.toString())) {
+      const issueWrapper = everyNewIssue({ taskPreview: task, container });
       setTimeout(() => issueWrapper.classList.add("active"), delay);
       delay += baseDelay;
     }
@@ -27,32 +29,37 @@ export function renderGitHubIssues(container: HTMLDivElement, issues: GitHubIssu
   setupKeyboardNavigation(container);
 }
 
-function everyNewIssue({ issue, container }: { issue: GitHubIssueWithNewFlag; container: HTMLDivElement }) {
+function everyNewIssue({ taskPreview, container }: { taskPreview: TaskMaybeFull; container: HTMLDivElement }) {
   const issueWrapper = document.createElement("div");
   const issueElement = document.createElement("div");
-  issueElement.setAttribute("data-preview-id", issue.id.toString());
+  issueElement.setAttribute("data-preview-id", taskPreview.preview.id.toString());
   issueElement.classList.add("issue-element-inner");
 
-  if (issue.isNew) {
+  if (taskPreview.isNew) {
     issueWrapper.classList.add("new-issue");
+  }
+  if (taskPreview.isModified) {
+    issueWrapper.classList.add("modified-issue");
   }
 
   const urlPattern = /https:\/\/github\.com\/([^/]+)\/([^/]+)\//;
-  const match = issue.body.match(urlPattern);
+  const match = taskPreview.preview.body.match(urlPattern);
   const organizationName = match?.[1];
+
   if (!organizationName) {
-    const storedIssuesJSON = localStorage.getItem("gitHubIssuesPreview");
-    const storedIssues = storedIssuesJSON ? (JSON.parse(storedIssuesJSON) as GitHubIssueWithNewFlag[]) : [];
-    const updatedIssues = storedIssues.filter((storedIssue) => storedIssue.id !== issue.id);
-    localStorage.setItem("gitHubIssuesPreview", JSON.stringify(updatedIssues));
-    throw new Error(`No organization name found for issue ${issue.id}. Assuming its a pull request so removed from cache.`);
+    //   const storedIssuesJSON = localStorage.getItem("gitHubTasks");
+    //   const storedIssues = storedIssuesJSON ? (JSON.parse(storedIssuesJSON) as Task[]) : [];
+    //   const updatedIssues = storedIssues.filter((storedIssue) => storedIssue.id !== task.id);
+    //   localStorage.setItem("gitHubTasks", JSON.stringify(updatedIssues));
+    throw new Error(`No organization name found for issue ${taskPreview.preview.id}.`);
   }
+
   const repositoryName = match?.[2];
   if (!repositoryName) {
     throw new Error("No repository name found");
   }
-  const labels = parseAndGenerateLabels(issue);
-  setUpIssueElement(issueElement, issue, organizationName, repositoryName, labels, match);
+  const labels = parseAndGenerateLabels(taskPreview);
+  setUpIssueElement(issueElement, taskPreview, organizationName, repositoryName, labels, match);
   issueWrapper.appendChild(issueElement);
 
   container.appendChild(issueWrapper);
@@ -61,7 +68,7 @@ function everyNewIssue({ issue, container }: { issue: GitHubIssueWithNewFlag; co
 
 function setUpIssueElement(
   issueElement: HTMLDivElement,
-  issuePreview: GitHubIssueWithNewFlag,
+  task: TaskMaybeFull,
   organizationName: string,
   repositoryName: string,
   labels: string[],
@@ -82,12 +89,12 @@ function setUpIssueElement(
 
   issueElement.innerHTML = `
       <div class="info"><div class="title"><h3>${
-        issuePreview.title
+        task.preview.title
       }</h3></div><div class="partner"><p class="organization-name">${organizationName}</p><p class="repository-name">${repositoryName}</p></div></div><div class="labels">${labels.join(
         ""
       )}${image}</div>`;
 
-  issueElement.addEventListener("click", function () {
+  issueElement.addEventListener("click", () => {
     const issueWrapper = issueElement.parentElement;
 
     if (!issueWrapper) {
@@ -100,23 +107,22 @@ function setUpIssueElement(
 
     issueWrapper.classList.add("selected");
 
-    const previewId = Number(this.getAttribute("data-preview-id"));
-    const full = previewToFullMapping.get(previewId);
-    console.trace({ full, preview: issuePreview });
+    // const previewId = Number(this.getAttribute("data-preview-id"));
+    const full = task.full;
     if (!full) {
       window.open(match?.input, "_blank");
     } else {
-      previewIssue(issuePreview);
+      previewIssue(task);
     }
   });
 }
 
-function parseAndGenerateLabels(issue: GitHubIssueWithNewFlag) {
+function parseAndGenerateLabels(task: TaskMaybeFull) {
   type LabelKey = "Pricing: " | "Time: " | "Priority: ";
 
   const labelOrder: Record<LabelKey, number> = { "Pricing: ": 1, "Time: ": 2, "Priority: ": 3 };
 
-  const { labels, otherLabels } = issue.labels.reduce(
+  const { labels, otherLabels } = task.preview.labels.reduce(
     (acc, label) => {
       const match = label.name.match(/^(Pricing|Time|Priority): /);
       if (match) {
@@ -144,21 +150,25 @@ function parseAndGenerateLabels(issue: GitHubIssueWithNewFlag) {
 }
 
 // Function to update and show the preview
-function previewIssue(issuePreview: GitHubIssueWithNewFlag) {
-  const issueFull = previewToFullMapping.get(issuePreview.id);
+function previewIssue(taskPreview: TaskMaybeFull) {
+  const task = taskManager.getTaskByPreviewId(taskPreview.preview.id);
 
-  if (!issueFull) {
+  if (!task) {
     throw new Error("Issue not found");
   }
 
-  displayIssue(issueFull);
+  if (!task.full) {
+    throw new Error("No full issue found");
+  }
+
+  viewIssueDetails(task.full);
 }
 
-export function displayIssue(issueFull: GitHubIssue) {
+export function viewIssueDetails(full: GitHubIssue) {
   // Update the title and body for the new issue
-  titleHeader.textContent = issueFull.title;
-  titleAnchor.href = issueFull.html_url;
-  previewBodyInner.innerHTML = marked(issueFull.body) as string;
+  titleHeader.textContent = full.title;
+  titleAnchor.href = full.html_url;
+  previewBodyInner.innerHTML = marked(full.body) as string;
 
   // Show the preview
   preview.classList.add("active"); //  = 'block';

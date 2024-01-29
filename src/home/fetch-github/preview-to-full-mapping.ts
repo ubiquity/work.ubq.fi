@@ -1,20 +1,27 @@
 import { GitHubIssue } from "../github-types";
 
-export type GitHubIssueWithNewFlag = GitHubIssue & { isNew: boolean };
-export type GitHubIssueWithModifiedFlag = GitHubIssue & { isModified: boolean };
+export type TaskNoState = {
+  preview: GitHubIssue;
+  full: null | GitHubIssue;
+};
 
-export class PreviewToFullMapping {
-  private _map: Map<number, GitHubIssue>;
+export type TaskNoFull = {
+  preview: GitHubIssue;
+  full: null;
+  isNew: boolean;
+  isModified: boolean;
+};
 
-  constructor() {
-    try {
-      this._map = new Map(JSON.parse(localStorage.getItem("gitHubIssuesFull") || "[]")) as Map<number, GitHubIssue>;
-    } catch (e) {
-      this._map = new Map();
-    }
-  }
+export type TaskMaybeFull = {
+  preview: GitHubIssue;
+  full: null | GitHubIssue;
+  isNew: boolean;
+  isModified: boolean;
+};
 
-  getMapping() {
-    return this._map;
-  }
-}
+export type TaskWithFull = {
+  preview: GitHubIssue;
+  full: GitHubIssue;
+  isNew: boolean;
+  isModified: boolean;
+};

@@ -1,12 +1,11 @@
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { GitHubIssue } from "../github-types";
-import { GitHubIssueWithNewFlag } from "./preview-to-full-mapping";
+import { TaskNoFull } from "./preview-to-full-mapping";
 
-export async function fetchIssuePreviews(): Promise<GitHubIssueWithNewFlag[]> {
+export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
   const octokit = new Octokit({ auth: getGitHubAccessToken() });
 
-  // Fetch fresh issues and mark them as new if they don't exist in local storage
   let freshIssues: GitHubIssue[] = [];
   try {
     freshIssues = (
@@ -18,8 +17,12 @@ export async function fetchIssuePreviews(): Promise<GitHubIssueWithNewFlag[]> {
     console.error(`Failed to fetch issue previews: ${error}`);
   }
 
-  return freshIssues.map((issue) => ({
-    ...issue,
+  const tasks = freshIssues.map((preview: GitHubIssue) => ({
+    preview: preview,
+    full: null,
     isNew: true,
-  }));
+    isModified: true,
+  })) as TaskNoFull[];
+
+  return tasks;
 }

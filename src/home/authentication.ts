@@ -14,5 +14,4 @@ export async function authentication() {
   if (gitHubUser) {
     displayGitHubUserInformation(gitHubUser);
   }
-  return undefined; // for type error in next function
 }
