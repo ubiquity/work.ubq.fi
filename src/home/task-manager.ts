@@ -1,7 +1,5 @@
-import { displayGitHubIssues } from "./fetch-github/fetch-and-display-previews";
 import { TaskMaybeFull } from "./fetch-github/preview-to-full-mapping";
 import { setLocalStore } from "./getters/get-local-store";
-import { Sorting } from "./sorting/generate-sorting-buttons";
 
 export class TaskManager {
   private _tasks: TaskMaybeFull[] = [];
@@ -47,9 +45,9 @@ export class TaskManager {
     return this._tasks.find((task) => task.full?.id === id);
   }
 
-  public displayTasks(sorting?: Sorting, options = { ordering: "normal" }) {
-    displayGitHubIssues(sorting, options);
-  }
+  // public displayTasks(sorting?: Sorting, options = { ordering: "normal" }) {
+  //   displayGitHubIssues(sorting, options);
+  // }
 
   public getContainer() {
     return this._container;

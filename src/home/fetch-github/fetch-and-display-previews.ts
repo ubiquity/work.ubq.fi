@@ -21,8 +21,8 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
     // load from network if there are no cached issues
     return await fetchAndDisplayPreviewsFromNetwork(sorting, options);
   } else {
-    displayGitHubIssues(sorting, options);
-    return fetchAvatars(options, sorting);
+    displayGitHubIssues(sorting, options); // FIXME:
+    return fetchAvatars();
   }
 }
 
@@ -34,13 +34,13 @@ export async function fetchAndDisplayPreviewsFromNetwork(sorting?: Sorting, opti
   const fetchedPreviews = await fetchIssuePreviews();
   const cachedTasks = taskManager.getTasks();
   const updatedCachedIssues = verifyGitHubIssueState(cachedTasks, fetchedPreviews);
-  displayGitHubIssues(sorting, options);
+  displayGitHubIssues(sorting, options); // FIXME:
 
   setLocalStore("gitHubTasks", updatedCachedIssues);
-  return fetchAvatars(options, sorting);
+  return fetchAvatars();
 }
 
-async function fetchAvatars(options: { ordering: string }, sorting?: Sorting) {
+async function fetchAvatars() {
   const cachedTasks = taskManager.getTasks();
   const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
 
@@ -54,7 +54,6 @@ async function fetchAvatars(options: { ordering: string }, sorting?: Sorting) {
   });
 
   await Promise.allSettled(avatarPromises);
-  displayGitHubIssues(sorting, options);
   return cachedTasks;
 }
 
