@@ -1,5 +1,5 @@
-import { previewToFullMapping } from "../fetch-github/fetch-issues-full";
-import { displayIssue } from "./render-github-issues";
+import { taskManager } from "../home";
+import { viewIssueDetails } from "./render-github-issues";
 
 const keyDownHandlerCurried = keyDownHandler();
 const disableKeyBoardNavigationCurried = disableKeyboardNavigationCurry();
@@ -63,9 +63,9 @@ function keyDownHandler() {
         const issueElement = visibleIssues.find((issue) => issue.children[0].getAttribute("data-preview-id") === previewId);
 
         if (issueElement) {
-          const issueFull = previewToFullMapping.get(Number(previewId));
+          const issueFull = taskManager.getTaskByPreviewId(Number(issueElement.id)).full;
           if (issueFull) {
-            displayIssue(issueFull);
+            viewIssueDetails(issueFull);
           }
         }
       }
@@ -75,7 +75,7 @@ function keyDownHandler() {
         const previewId = selectedIssue.children[0].getAttribute("data-preview-id");
 
         if (previewId) {
-          const issueFull = previewToFullMapping.get(Number(previewId));
+          const issueFull = taskManager.getTaskByPreviewId(Number(previewId)).full;
           if (issueFull) {
             window.open(issueFull.html_url, "_blank");
           }
