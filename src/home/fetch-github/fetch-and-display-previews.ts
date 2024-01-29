@@ -1,5 +1,5 @@
 import { getImageFromCache } from "../getters/get-indexed-db";
-import { getLocalStore, setLocalStore } from "../getters/get-local-store";
+import { getLocalStore } from "../getters/get-local-store";
 import { taskManager } from "../home";
 import { renderGitHubIssues } from "../rendering/render-github-issues";
 import { Sorting } from "../sorting/generate-sorting-buttons";
@@ -26,17 +26,12 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
   }
 }
 
-// function issueToStateWrapper({ preview, full }: { preview: GitHubIssue; full: GitHubIssue }): Task {
-//   return { preview, full, isNew: false, isModified: false };
-// }
-
 export async function fetchAndDisplayPreviewsFromNetwork(sorting?: Sorting, options = { ordering: "normal" }) {
   const fetchedPreviews = await fetchIssuePreviews();
   const cachedTasks = taskManager.getTasks();
   const updatedCachedIssues = verifyGitHubIssueState(cachedTasks, fetchedPreviews);
   displayGitHubIssues(sorting, options); // FIXME:
-
-  setLocalStore("gitHubTasks", updatedCachedIssues);
+  taskManager.addTasks(updatedCachedIssues);
   return fetchAvatars();
 }
 

@@ -47,10 +47,6 @@ function everyNewIssue({ taskPreview, container }: { taskPreview: TaskMaybeFull;
   const organizationName = match?.[1];
 
   if (!organizationName) {
-    //   const storedIssuesJSON = localStorage.getItem("gitHubTasks");
-    //   const storedIssues = storedIssuesJSON ? (JSON.parse(storedIssuesJSON) as Task[]) : [];
-    //   const updatedIssues = storedIssues.filter((storedIssue) => storedIssue.id !== task.id);
-    //   localStorage.setItem("gitHubTasks", JSON.stringify(updatedIssues));
     throw new Error(`No organization name found for issue ${taskPreview.preview.id}.`);
   }
 
@@ -107,7 +103,6 @@ function setUpIssueElement(
 
     issueWrapper.classList.add("selected");
 
-    // const previewId = Number(this.getAttribute("data-preview-id"));
     const full = task.full;
     if (!full) {
       window.open(match?.input, "_blank");

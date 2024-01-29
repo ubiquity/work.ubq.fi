@@ -39,7 +39,6 @@ export async function fetchIssuesFull(taskPreviews: TaskMaybeFull[]) {
       return task;
     } else {
       throw new Error("Task is not a TaskWithFull");
-      // return null;
     }
   });
 

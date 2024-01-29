@@ -7,15 +7,6 @@ export function getLocalStore(key: string): TaskNoState[] | OAuthToken | null {
     try {
       const value = JSON.parse(cachedIssues);
 
-      // if (key === "gitHubTasks") {
-      //   return value.map((preview: GitHubIssue, full: null | GitHubIssue) => ({
-      //     isNew: false,
-      //     isModified: false,
-      //     preview,
-      //     full,
-      //   })) as TaskMaybeFull[];
-      // }
-
       return value; // as OAuthToken;
     } catch (error) {
       console.error(error);

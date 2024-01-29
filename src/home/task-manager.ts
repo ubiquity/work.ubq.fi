@@ -45,10 +45,6 @@ export class TaskManager {
     return this._tasks.find((task) => task.full?.id === id);
   }
 
-  // public displayTasks(sorting?: Sorting, options = { ordering: "normal" }) {
-  //   displayGitHubIssues(sorting, options);
-  // }
-
   public getContainer() {
     return this._container;
   }
