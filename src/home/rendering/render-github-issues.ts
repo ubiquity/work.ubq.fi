@@ -2,9 +2,9 @@ import { marked } from "marked";
 import { organizationImageCache } from "../fetch-github/fetch-issues-full";
 import { TaskMaybeFull } from "../fetch-github/preview-to-full-mapping";
 import { GitHubIssue } from "../github-types";
+import { taskManager } from "../home";
 import { preview, previewBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
-import { taskManager } from "../home";
 
 export function renderGitHubIssues(tasks: TaskMaybeFull[]) {
   const container = taskManager.getContainer();
@@ -70,18 +70,7 @@ function setUpIssueElement(
   labels: string[],
   match: RegExpMatchArray | null
 ) {
-  let image = `<img />`;
-
-  const avatarUrl = organizationImageCache.get(organizationName);
-  if (avatarUrl) {
-    image = `<img src="${avatarUrl}" />`;
-  }
-
-  const avatarBlob = organizationImageCache.get(organizationName);
-  if (avatarBlob) {
-    const avatarUrl = URL.createObjectURL(avatarBlob);
-    image = `<img src="${avatarUrl}" />`;
-  }
+  const image = `<img />`;
 
   issueElement.innerHTML = `
       <div class="info"><div class="title"><h3>${
@@ -168,4 +157,22 @@ export function viewIssueDetails(full: GitHubIssue) {
   // Show the preview
   preview.classList.add("active"); //  = 'block';
   document.body.classList.add("preview-active");
+}
+
+export function applyAvatarsToIssues() {
+  const container = taskManager.getContainer();
+  const issueElements = Array.from(container.querySelectorAll(".issue-element-inner"));
+
+  issueElements.forEach((issueElement) => {
+    const orgName = issueElement.querySelector(".organization-name")?.textContent;
+    if (orgName) {
+      const avatarUrl = organizationImageCache.get(orgName);
+      if (avatarUrl) {
+        const avatarImg = issueElement.querySelector("img");
+        if (avatarImg) {
+          avatarImg.src = URL.createObjectURL(avatarUrl);
+        }
+      }
+    }
+  });
 }

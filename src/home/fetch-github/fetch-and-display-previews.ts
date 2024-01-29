@@ -1,7 +1,7 @@
 import { getImageFromCache } from "../getters/get-indexed-db";
 import { getLocalStore } from "../getters/get-local-store";
 import { taskManager } from "../home";
-import { renderGitHubIssues } from "../rendering/render-github-issues";
+import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-github-issues";
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
 import { fetchAvatar } from "./fetch-avatar";
@@ -21,7 +21,7 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
     // load from network if there are no cached issues
     return await fetchAndDisplayPreviewsFromNetwork(sorting, options);
   } else {
-    displayGitHubIssues(sorting, options); // FIXME:
+    displayGitHubIssues(sorting, options);
     return fetchAvatars();
   }
 }
@@ -30,7 +30,7 @@ export async function fetchAndDisplayPreviewsFromNetwork(sorting?: Sorting, opti
   const fetchedPreviews = await fetchIssuePreviews();
   const cachedTasks = taskManager.getTasks();
   const updatedCachedIssues = verifyGitHubIssueState(cachedTasks, fetchedPreviews);
-  displayGitHubIssues(sorting, options); // FIXME:
+  displayGitHubIssues(sorting, options);
   taskManager.addTasks(updatedCachedIssues);
   return fetchAvatars();
 }
@@ -49,6 +49,7 @@ async function fetchAvatars() {
   });
 
   await Promise.allSettled(avatarPromises);
+  applyAvatarsToIssues();
   return cachedTasks;
 }
 
