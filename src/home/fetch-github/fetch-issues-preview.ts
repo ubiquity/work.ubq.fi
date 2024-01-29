@@ -8,13 +8,19 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
 
   let freshIssues: GitHubIssue[] = [];
   try {
-    freshIssues = (
-      await octokit.paginate<GitHubIssue>("GET /repos/ubiquity/devpool-directory/issues", {
-        state: "open",
-      })
-    ).filter((issue: GitHubIssue) => !issue.pull_request);
+    const response = await octokit.paginate<GitHubIssue>("GET /repos/ubiquity/devpool-directory/issues", { state: "open" });
+
+    freshIssues = response.filter((issue: GitHubIssue) => !issue.pull_request);
   } catch (error) {
-    console.error(`Failed to fetch issue previews: ${error}`);
+    if (403 === error.status) {
+      console.error(`GitHub API rate limit exceeded.`);
+      const resetTime = error.headers["x-ratelimit-reset"];
+      const resetParsed = new Date(resetTime * 1000).toLocaleTimeString();
+      document.getElementById(`github-login-button`)?.click(); // automatic login
+      alert(`You have been rate limited. You must log in to GitHub to increase your GitHub API limits, otherwise please try again at ${resetParsed}.`);
+    } else {
+      console.error(`Failed to fetch issue previews: ${error}`);
+    }
   }
 
   const tasks = freshIssues.map((preview: GitHubIssue) => ({
