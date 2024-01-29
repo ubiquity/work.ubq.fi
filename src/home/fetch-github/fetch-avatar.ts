@@ -20,26 +20,24 @@ export async function fetchAvatar(orgName: string) {
 
   // If not in IndexedDB, fetch from network
   const octokit = new Octokit({ auth: getGitHubAccessToken() });
-  return octokit.rest.orgs
-    .get({ org: orgName })
-    .then(async ({ data: { avatar_url: avatarUrl } }) => {
-      if (avatarUrl) {
-        // Fetch the image as a Blob and save it to IndexedDB
-        await fetch(avatarUrl)
-          .then((response) => response.blob())
-          .then(async (blob) => {
-            await saveImageToCache({
-              dbName: "GitHubAvatars",
-              storeName: "ImageStore",
-              keyName: "name",
-              orgName: `avatarUrl-${orgName}`,
-              avatarBlob: blob,
-            });
-            organizationImageCache.set(orgName, blob);
-          });
-      }
-    })
-    .catch((error) => {
-      console.error(`Failed to fetch avatar for organization ${orgName}: ${error}`);
-    });
+  try {
+    const {
+      data: { avatar_url: avatarUrl },
+    } = await octokit.rest.orgs.get({ org: orgName });
+    if (avatarUrl) {
+      // Fetch the image as a Blob and save it to IndexedDB
+      const response = await fetch(avatarUrl);
+      const blob = await response.blob();
+      await saveImageToCache({
+        dbName: "GitHubAvatars",
+        storeName: "ImageStore",
+        keyName: "name",
+        orgName: `avatarUrl-${orgName}`,
+        avatarBlob: blob,
+      });
+      organizationImageCache.set(orgName, blob);
+    }
+  } catch (error) {
+    console.error(`Failed to fetch avatar for organization ${orgName}: ${error}`);
+  }
 }
