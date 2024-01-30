@@ -35,7 +35,7 @@ export async function fetchAndDisplayPreviewsFromNetwork(sorting?: Sorting, opti
   return fetchAvatars();
 }
 
-async function fetchAvatars() {
+export async function fetchAvatars() {
   const cachedTasks = taskManager.getTasks();
   const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
 
@@ -57,7 +57,7 @@ export function taskWithFullTest(task: TaskNoFull | TaskWithFull): task is TaskW
   return (task as TaskWithFull).full !== null && (task as TaskWithFull).full !== undefined;
 }
 
-function verifyGitHubIssueState(cachedTasks: TaskMaybeFull[], fetchedPreviews: TaskNoFull[]): (TaskNoFull | TaskWithFull)[] {
+export function verifyGitHubIssueState(cachedTasks: TaskMaybeFull[], fetchedPreviews: TaskNoFull[]): (TaskNoFull | TaskWithFull)[] {
   return fetchedPreviews.map((fetched) => {
     const cachedTask = cachedTasks.find((c) => c.full?.id === fetched.preview.id);
     if (cachedTask) {

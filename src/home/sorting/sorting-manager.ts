@@ -1,4 +1,6 @@
-import { fetchAndDisplayPreviewsFromNetwork } from "../fetch-github/fetch-and-display-previews";
+import {
+  fetchAndDisplayPreviewsFromCache
+} from "../fetch-github/fetch-and-display-previews";
 import { taskManager } from "../home";
 import { Sorting } from "./generate-sorting-buttons";
 
@@ -79,7 +81,7 @@ export class SortingManager {
     return label;
   }
 
-  private _handleSortingClick(input: HTMLInputElement, option: string) {
+  private async _handleSortingClick(input: HTMLInputElement, option: string) {
     const ordering = input === this._lastChecked ? "reverse" : "normal";
     input.checked = input !== this._lastChecked;
     input.setAttribute("data-ordering", ordering);
@@ -92,6 +94,15 @@ export class SortingManager {
     });
 
     input.setAttribute("data-ordering", ordering);
-    fetchAndDisplayPreviewsFromNetwork(option as Sorting, { ordering }).catch((error) => console.error(error));
+    // instantly load from cache
+    fetchAndDisplayPreviewsFromCache(option as Sorting, { ordering }).catch((error) => console.error(error));
+
+    // load from network in the background
+    // const fetchedPreviews = await fetchIssuePreviews();
+    // const cachedTasks = taskManager.getTasks();
+    // const updatedCachedIssues = verifyGitHubIssueState(cachedTasks, fetchedPreviews);
+    // displayGitHubIssues(sorting, options);
+    // taskManager.syncTasks(updatedCachedIssues);
+    // return fetchAvatars();
   }
 }

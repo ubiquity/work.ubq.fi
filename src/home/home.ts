@@ -15,6 +15,7 @@ if (!container) {
 }
 
 export const taskManager = new TaskManager(container);
+// window["taskManager"] = taskManager;
 
 void (async function home() {
   try {
@@ -23,7 +24,7 @@ void (async function home() {
     const previews = await fetchAndDisplayPreviewsFromCache();
     const fullTasks = await fetchIssuesFull(previews);
     taskManager.syncTasks(fullTasks);
-    console.trace({  fullTasks });
+    console.trace({ fullTasks });
     taskManager.writeToStorage();
     return fullTasks;
   } catch (error) {

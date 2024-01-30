@@ -9,20 +9,30 @@ export class TaskManager {
   }
 
   public syncTasks(incoming: TaskMaybeFull[]) {
+    const incomingIds = new Set(incoming.map((task) => task.preview.id));
     const taskMap = new Map<number, TaskMaybeFull>();
-    for (const task of this._tasks.concat(incoming)) {
+
+    for (const task of incoming) {
       const id = task.full?.id || task.preview.id;
-      const existingTask = taskMap.get(id);
-      if (
-        !existingTask ||
-        (!existingTask.full && task.full) ||
-        (existingTask.full && task.full && new Date(existingTask.full.updated_at) < new Date(task.full.updated_at))
-      ) {
+      taskMap.set(id, task);
+    }
+
+    for (const task of this._tasks) {
+      const id = task.full?.id || task.preview.id;
+      if (!incomingIds.has(id)) {
+        continue;
+      }
+      if (!taskMap.has(id)) {
         taskMap.set(id, task);
+      } else {
+        const existingTask = taskMap.get(id);
+        if (existingTask && !existingTask.full && task.full) {
+          taskMap.set(id, task);
+        }
       }
     }
+
     this._tasks = Array.from(taskMap.values());
-    // this._writeToStorage();
   }
 
   public getTasks() {
