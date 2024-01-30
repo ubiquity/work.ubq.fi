@@ -36,10 +36,10 @@ function everyNewIssue({ taskPreview, container }: { taskPreview: TaskMaybeFull;
   issueElement.classList.add("issue-element-inner");
 
   if (taskPreview.isNew) {
-    issueWrapper.classList.add("new-issue");
+    issueWrapper.classList.add("new-task");
   }
   if (taskPreview.isModified) {
-    issueWrapper.classList.add("modified-issue");
+    issueWrapper.classList.add("modified-task");
   }
 
   const urlPattern = /https:\/\/github\.com\/([^/]+)\/([^/]+)\//;

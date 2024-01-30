@@ -16,7 +16,7 @@ export type Options = {
 export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, options = { ordering: "normal" }) {
   const _cachedTasks = (getLocalStore("gitHubTasks") || []) as TaskNoState[];
   const cachedTasks = _cachedTasks.map((task) => ({ ...task, isNew: false, isModified: false })) as TaskMaybeFull[];
-  taskManager.addTasks(cachedTasks);
+  taskManager.syncTasks(cachedTasks);
   if (!cachedTasks.length) {
     // load from network if there are no cached issues
     return await fetchAndDisplayPreviewsFromNetwork(sorting, options);
@@ -31,7 +31,7 @@ export async function fetchAndDisplayPreviewsFromNetwork(sorting?: Sorting, opti
   const cachedTasks = taskManager.getTasks();
   const updatedCachedIssues = verifyGitHubIssueState(cachedTasks, fetchedPreviews);
   displayGitHubIssues(sorting, options);
-  taskManager.addTasks(updatedCachedIssues);
+  taskManager.syncTasks(updatedCachedIssues);
   return fetchAvatars();
 }
 
@@ -57,16 +57,26 @@ export function taskWithFullTest(task: TaskNoFull | TaskWithFull): task is TaskW
   return (task as TaskWithFull).full !== null && (task as TaskWithFull).full !== undefined;
 }
 
-function verifyGitHubIssueState(cached: TaskMaybeFull[], fetchedPreviews: TaskNoFull[]): (TaskNoFull | TaskWithFull)[] {
+function verifyGitHubIssueState(cachedTasks: TaskMaybeFull[], fetchedPreviews: TaskNoFull[]): (TaskNoFull | TaskWithFull)[] {
   return fetchedPreviews.map((fetched) => {
-    const cachedIssue = cached.find((cached) => cached.full?.id === fetched.preview.id);
-    if (cachedIssue && cachedIssue.full) {
-      const cachedFullIssue = cachedIssue.full;
-      const isModified = new Date(cachedFullIssue.updated_at) < new Date(fetched.preview.updated_at);
-      const task = { ...fetched, full: cachedFullIssue, isNew: false, isModified };
-      return taskWithFullTest(task) ? task : ({ preview: fetched.preview, isNew: true, isModified: false } as TaskNoFull);
+    const cachedTask = cachedTasks.find((c) => c.full?.id === fetched.preview.id);
+    if (cachedTask) {
+      if (taskWithFullTest(cachedTask)) {
+        const cachedFullIssue = cachedTask.full;
+        const isModified = new Date(cachedFullIssue.updated_at) < new Date(fetched.preview.updated_at);
+        const task = { ...fetched, full: cachedFullIssue, isNew: false, isModified };
+        return task;
+      } else {
+        // no full issue in task
+      }
+    } else {
+      // no cached task
     }
-    return { preview: fetched.preview, isNew: true, isModified: false } as TaskNoFull;
+    return {
+      preview: fetched.preview,
+      isNew: true,
+      isModified: false,
+    } as TaskNoFull;
   });
 }
 

@@ -8,27 +8,21 @@ export class TaskManager {
     this._container = container;
   }
 
-  public addTasks(tasks: TaskMaybeFull[]) {
-    // Combine old and new tasks
-    const combinedTasks = [...this._tasks, ...tasks];
-
-    // Create a new Map where each task is stored with its 'full.id' or 'preview.id' as the key
+  public syncTasks(incoming: TaskMaybeFull[]) {
     const taskMap = new Map<number, TaskMaybeFull>();
-
-    // Iterate over the sorted tasks
-    for (const task of combinedTasks) {
+    for (const task of this._tasks.concat(incoming)) {
       const id = task.full?.id || task.preview.id;
-
-      // If the taskMap already has the id and the existing task has a 'full' property, skip this task
-      if (taskMap.has(id) && taskMap.get(id)?.full) continue;
-
-      // Otherwise, add or update the task in the taskMap
-      taskMap.set(id, task);
+      const existingTask = taskMap.get(id);
+      if (
+        !existingTask ||
+        (!existingTask.full && task.full) ||
+        (existingTask.full && task.full && new Date(existingTask.full.updated_at) < new Date(task.full.updated_at))
+      ) {
+        taskMap.set(id, task);
+      }
     }
-
-    // Update _tasks with the values from the Map
     this._tasks = Array.from(taskMap.values());
-    this._writeToStorage();
+    // this._writeToStorage();
   }
 
   public getTasks() {
@@ -41,15 +35,11 @@ export class TaskManager {
     return task;
   }
 
-  public getTaskByFullId(id: number) {
-    return this._tasks.find((task) => task.full?.id === id);
-  }
-
   public getContainer() {
     return this._container;
   }
 
-  private _writeToStorage() {
+  public writeToStorage() {
     setLocalStore("gitHubTasks", this._tasks);
   }
 }

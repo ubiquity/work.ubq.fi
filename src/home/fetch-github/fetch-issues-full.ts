@@ -8,12 +8,15 @@ import { TaskMaybeFull, TaskWithFull } from "./preview-to-full-mapping";
 // export const previewToFullMapping = new PreviewToFullMapping().getMapping();
 export const organizationImageCache = new Map<string, Blob | null>();
 
-export async function fetchIssuesFull(taskPreviews: TaskMaybeFull[]) {
+export async function fetchIssuesFull(taskPreviews: TaskMaybeFull[]): Promise<TaskWithFull[]> {
   const authToken = getGitHubAccessToken();
-  if (!authToken) throw new Error("No auth token found");
+  if (!authToken) {
+    console.warn("No authentication token found");
+  }
   const octokit = new Octokit({ auth: getGitHubAccessToken() });
   const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
-  const issueFetchPromises = taskPreviews.map(async (task) => {
+
+  const fullTaskPromises = taskPreviews.map(async (task) => {
     const match = task.preview.body.match(urlPattern);
 
     if (!match || !match.groups) {
@@ -25,7 +28,6 @@ export async function fetchIssuesFull(taskPreviews: TaskMaybeFull[]) {
 
     const { data: response } = await octokit.request("GET /repos/{org}/{repo}/issues/{issue_number}", { issue_number, repo, org });
 
-    // Update the full property in the taskPreview object
     task.full = response as GitHubIssue;
 
     const urlMatch = task.full.html_url.match(urlPattern);
@@ -42,11 +44,11 @@ export async function fetchIssuesFull(taskPreviews: TaskMaybeFull[]) {
     }
   });
 
-  const settled = await Promise.allSettled(issueFetchPromises);
-  const filtered = settled
+  const settled = await Promise.allSettled(fullTaskPromises);
+  const fullTasks = settled
     .filter((result): result is PromiseFulfilledResult<TaskWithFull> => result.status === "fulfilled")
     .map((result) => result.value)
     .filter((issue): issue is TaskWithFull => issue !== null);
 
-  return filtered;
+  return fullTasks;
 }

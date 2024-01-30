@@ -17,10 +17,16 @@ if (!container) {
 export const taskManager = new TaskManager(container);
 
 void (async function home() {
-  void authentication();
-  void readyToolbar();
-  const previews = await fetchAndDisplayPreviewsFromCache();
-  const full = await fetchIssuesFull(previews);
-  taskManager.addTasks(full);
-  return full;
+  try {
+    void authentication();
+    void readyToolbar();
+    const previews = await fetchAndDisplayPreviewsFromCache();
+    const fullTasks = await fetchIssuesFull(previews);
+    taskManager.syncTasks(fullTasks);
+    console.trace({  fullTasks });
+    taskManager.writeToStorage();
+    return fullTasks;
+  } catch (error) {
+    console.error(error);
+  }
 })();

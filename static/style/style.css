@@ -318,10 +318,12 @@
   .full {
     display: unset !important;
   }
-  .new-issue {
+  .new-task,
+  .modified-task {
     position: relative;
   }
-  .new-issue::before {
+  .new-task::before,
+  .modified-task::before {
     content: "";
     display: inline-block;
     position: absolute;
@@ -329,6 +331,9 @@
     width: 4px;
     left: 0;
     background-color: #0ff;
+  }
+  .modified-task::before {
+    background-color: #ff0;
   }
   @media screen and (max-width: 804px) {
     .mid {
