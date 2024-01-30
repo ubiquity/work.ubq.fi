@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { toolbar } from "../ready-toolbar";
 
 const supabaseUrl = process.env.SUPABASE_URL;
 if (!supabaseUrl) throw new Error("SUPABASE_URL not found");
@@ -11,20 +12,20 @@ export function getSupabase() {
   return supabase;
 }
 
-async function gitHubLoginButton() {
+async function gitHubLoginButtonHandler() {
   const { error } = await supabase.auth.signInWithOAuth({ provider: "github" });
   if (error) {
     console.error("Error logging in:", error);
   }
 }
-
+const gitHubLoginButton = document.createElement("button");
 export function renderGitHubLoginButton() {
-  const button = document.createElement("button");
-  button.id = "github-login-button";
-  button.innerHTML = "<span>Login</span><span class='full'>&nbsp;With GitHub</span>";
-  button.addEventListener("click", gitHubLoginButton);
-  const toolbar = document.getElementById("toolbar");
-  if (!toolbar) throw new Error("toolbar not found");
-  toolbar.appendChild(button);
-  toolbar.classList.add("ready");
+  gitHubLoginButton.id = "github-login-button";
+  gitHubLoginButton.innerHTML = "<span>Login</span><span class='full'>&nbsp;With GitHub</span>";
+  gitHubLoginButton.addEventListener("click", gitHubLoginButtonHandler);
+  if (toolbar) {
+    toolbar.appendChild(gitHubLoginButton);
+    toolbar.classList.add("ready");
+  }
 }
+export { gitHubLoginButton };

@@ -475,6 +475,9 @@
     vertical-align: middle;
     height: 20px;
   }
+  .preview-body-inner{
+    line-height: 1.25
+  }
   .preview-body-inner > :last-child {
     margin-bottom: 0;
   }
@@ -593,6 +596,7 @@
   button#github-login-button {
     margin-left: 0;
   }
+
   p.organization-name::after {
     content: "/";
   }
