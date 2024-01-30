@@ -1,0 +1,22 @@
+{
+  "name": "DevPool Directory | Ubiquity DAO",
+  "short_name": "DevPool Directory",
+  "description": "View and sort through all of the available work within the DevPool network.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000410",
+  "theme_color": "#000410",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
