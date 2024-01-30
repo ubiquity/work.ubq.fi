@@ -1,3 +1,5 @@
+import { pwa } from "../progressive-web-app";
+pwa();
 import { grid } from "../the-grid";
 import { authentication } from "./authentication";
 import { fetchAndDisplayPreviewsFromCache } from "./fetch-github/fetch-and-display-previews";

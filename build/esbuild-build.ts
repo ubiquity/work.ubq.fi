@@ -7,7 +7,7 @@ const typescriptEntries = [
   // "src/authenticated/authenticated.ts"
 ];
 const cssEntries = ["static/style/style.css"];
-const entries = [...typescriptEntries, ...cssEntries];
+const entries = [...typescriptEntries, ...cssEntries, "static/manifest.json", "static/favicon.svg"];
 
 export const esBuildContext: esbuild.BuildOptions = {
   define: createEnvDefines(["SUPABASE_URL", "SUPABASE_KEY"]),
