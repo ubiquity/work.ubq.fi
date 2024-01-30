@@ -469,7 +469,8 @@
   .preview a {
     word-break: break-all;
   }
-  .preview .open-new-link svg {
+  .preview a[href*="//"] .open-new-link svg
+  {
     fill: #ffffff80;
     vertical-align: middle;
     height: 20px;

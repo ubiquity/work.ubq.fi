@@ -1,6 +1,4 @@
-import {
-  fetchAndDisplayPreviewsFromCache
-} from "../fetch-github/fetch-and-display-previews";
+import { fetchAndDisplayPreviewsFromCache } from "../fetch-github/fetch-and-display-previews";
 import { taskManager } from "../home";
 import { Sorting } from "./generate-sorting-buttons";
 

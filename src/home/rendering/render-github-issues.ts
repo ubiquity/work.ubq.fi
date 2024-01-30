@@ -155,7 +155,7 @@ export function viewIssueDetails(full: GitHubIssue) {
   previewBodyInner.innerHTML = marked(full.body) as string;
 
   // Show the preview
-  preview.classList.add("active"); //  = 'block';
+  preview.classList.add("active");
   document.body.classList.add("preview-active");
 }
 

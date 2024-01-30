@@ -6,7 +6,7 @@ const previewHeader = document.createElement("div");
 previewHeader.classList.add("preview-header");
 export const titleAnchor = document.createElement("a");
 titleAnchor.setAttribute("target", "_blank");
-titleAnchor.href = "#";
+// titleAnchor.href = "#";
 export const titleHeader = document.createElement("h1");
 const closeButton = document.createElement("button");
 closeButton.classList.add("close-preview");
