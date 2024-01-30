@@ -33,8 +33,6 @@
     background-color: var(--light-background-half);
   }
   body.preview-active button#github-login-button.highlight {
-
-
     animation: highlight-light-mode 1s ease-in-out infinite alternate;
   }
 }
@@ -51,7 +49,6 @@
 @keyframes highlight-light-mode {
   from {
     background-color: #bfbfbf;
-
   }
   to {
     background-color: #fff;
