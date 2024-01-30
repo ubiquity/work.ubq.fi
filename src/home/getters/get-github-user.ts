@@ -21,7 +21,6 @@ async function getSessionToken(): Promise<string | null> {
   if (newSessionToken) {
     return newSessionToken;
   }
-  console.error("No session token found");
   return null;
 }
 

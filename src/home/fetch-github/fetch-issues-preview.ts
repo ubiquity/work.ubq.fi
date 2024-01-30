@@ -1,9 +1,9 @@
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { GitHubIssue } from "../github-types";
-import { TaskNoFull } from "./preview-to-full-mapping";
 import { taskManager } from "../home";
-import { displayPopupMessage } from "../rendering/display-error-modal";
+import { displayPopupMessage } from "../rendering/display-popup-modal";
+import { TaskNoFull } from "./preview-to-full-mapping";
 
 export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
   const octokit = new Octokit({ auth: getGitHubAccessToken() });
@@ -35,18 +35,11 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
   return tasks;
 }
 function automaticLogin(error: unknown) {
-  const resetTime = error.headers["x-ratelimit-reset"];
+  const resetTime = error.response.headers["x-ratelimit-reset"];
   const resetParsed = new Date(resetTime * 1000).toLocaleTimeString();
 
   displayPopupMessage(
     `GitHub API rate limit exceeded.`,
     `You have been rate limited. Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at ${resetParsed}.`
   );
-
-  // const isAuthorized = confirm(
-  //   `You have been rate limited. Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at ${resetParsed}.\n\nDo you want to automatically login?`
-  // );
-  // if (isAuthorized) {
-  //   document.getElementById(`github-login-button`)?.click(); // automatic login
-  // }
 }

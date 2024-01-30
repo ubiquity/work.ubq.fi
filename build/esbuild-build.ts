@@ -1,17 +1,14 @@
 import * as dotenv from "dotenv";
 import esbuild from "esbuild";
 import { invertColors } from "./plugins/invert-colors";
-const typescriptEntries = [
-  "src/home/home.ts",
-  // "src/login/login.ts",
-  // "src/authenticated/authenticated.ts"
-];
+import { pwaManifest } from "./plugins/pwa-manifest";
+const typescriptEntries = ["src/home/home.ts", "src/progressive-web-app.ts"];
 const cssEntries = ["static/style/style.css"];
-const entries = [...typescriptEntries, ...cssEntries, "static/manifest.json", "static/favicon.svg"];
+const entries = [...typescriptEntries, ...cssEntries, "static/manifest.json", "static/favicon.svg", "static/icon-512x512.png"];
 
 export const esBuildContext: esbuild.BuildOptions = {
   define: createEnvDefines(["SUPABASE_URL", "SUPABASE_KEY"]),
-  plugins: [invertColors],
+  plugins: [invertColors, pwaManifest],
   sourcemap: true,
   entryPoints: entries,
   bundle: true,
@@ -30,13 +27,8 @@ export const esBuildContext: esbuild.BuildOptions = {
 
 esbuild
   .build(esBuildContext)
-  .then(() => {
-    console.log("\tesbuild complete");
-  })
-  .catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+  .then(() => console.log("\tesbuild complete"))
+  .catch(console.error);
 
 function createEnvDefines(variableNames: string[]): Record<string, string> {
   const defines: Record<string, string> = {};

@@ -5,14 +5,9 @@ import { taskWithFullTest } from "./fetch-and-display-previews";
 import { fetchAvatar } from "./fetch-avatar";
 import { TaskMaybeFull, TaskWithFull } from "./preview-to-full-mapping";
 
-// export const previewToFullMapping = new PreviewToFullMapping().getMapping();
 export const organizationImageCache = new Map<string, Blob | null>();
 
 export async function fetchIssuesFull(taskPreviews: TaskMaybeFull[]): Promise<TaskWithFull[]> {
-  const authToken = getGitHubAccessToken();
-  if (!authToken) {
-    console.warn("No authentication token found");
-  }
   const octokit = new Octokit({ auth: getGitHubAccessToken() });
   const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
 
