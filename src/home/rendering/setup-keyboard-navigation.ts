@@ -2,7 +2,7 @@ import { taskManager } from "../home";
 import { viewIssueDetails } from "./render-github-issues";
 
 const keyDownHandlerCurried = keyDownHandler();
-const disableKeyBoardNavigationCurried = disableKeyboardNavigationCurry();
+const disableKeyBoardNavigationCurried = disableKeyboardNavigationCurry;
 
 let isKeyDownListenerAdded = false;
 let isMouseOverListenerAdded = false;
@@ -13,7 +13,7 @@ export function setupKeyboardNavigation(container: HTMLDivElement) {
     isKeyDownListenerAdded = true;
   }
   if (!isMouseOverListenerAdded) {
-    container.addEventListener("mouseover", () => disableKeyBoardNavigationCurried);
+    container.addEventListener("mouseover", disableKeyBoardNavigationCurried);
     isMouseOverListenerAdded = true;
   }
 }
@@ -63,7 +63,7 @@ function keyDownHandler() {
         const issueElement = visibleIssues.find((issue) => issue.children[0].getAttribute("data-preview-id") === previewId);
 
         if (issueElement) {
-          const issueFull = taskManager.getTaskByPreviewId(Number(issueElement.id)).full;
+          const issueFull = taskManager.getTaskByPreviewId(Number(previewId)).full;
           if (issueFull) {
             viewIssueDetails(issueFull);
           }
