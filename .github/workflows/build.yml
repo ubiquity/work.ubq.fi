@@ -26,8 +26,15 @@ jobs:
 
       - name: Use Organization Variable
         run: |
-          echo ${{ vars.SUPABASE_URL }}
-          echo ${{ vars.SUPABASE_ANON_KEY }}
+          echo "vars.SUPABASE_URL: ${{ vars.SUPABASE_URL }}"
+          echo "vars.SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}"
+          echo "secrets.SUPABASE_URL2: ${{ secrets.SUPABASE_URL }}"
+          echo "secrets.SUPABASE_ANON_KEY2: ${{ secrets.SUPABASE_ANON_KEY }}"
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+          SUPABASE_URL2: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY2: ${{ secrets.SUPABASE_ANON_KEY }}
 
       - name: Build
         run: |
