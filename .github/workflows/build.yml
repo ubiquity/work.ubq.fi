@@ -27,11 +27,18 @@ jobs:
         run: |
           echo $SUPABASE_URL
           echo $SUPABASE_ANON_KEY
+          echo $APP_ID
+          echo $APP_INSTALLATION_ID
+          echo $APP_PRIVATE_KEY
+
           yarn
           yarn build
         env: # Set environment variables for the build
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          APP_ID: ${{ secrets.APP_ID }}
+          APP_INSTALLATION_ID: ${{ secrets.APP_INSTALLATION_ID }}
+          APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: Deploy to Cloudflare
         if: env.skip != 'true'
