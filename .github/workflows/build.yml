@@ -2,7 +2,7 @@ name: Build & Deploy
 
 on:
   push:
-  pull_request_target: # Changed from pull_request to pull_request_target
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -15,18 +15,19 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.base.ref }} # Check out the base branch, not the PR
-
-      - name: Fetch PR code
-        run: |
-          git fetch origin ${{ github.event.pull_request.head.sha }}
-          git checkout FETCH_HEAD
+        # with:
+        # submodules: "recursive" # Ensures submodules are checked out
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20.10.0
+
+
+      - name: Use Organization Variable
+        run: |
+          echo ${{ vars.SUPABASE_URL }}
+          echo ${{ vars.SUPABASE_ANON_KEY }}
 
       - name: Build
         run: |
@@ -35,20 +36,22 @@ jobs:
           echo $APP_ID
           echo $APP_INSTALLATION_ID
           echo $APP_PRIVATE_KEY
-
           yarn
           yarn build
         env: # Set environment variables for the build
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          APP_ID: ${{ secrets.APP_ID }}
-          APP_INSTALLATION_ID: ${{ secrets.APP_INSTALLATION_ID }}
-          APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+          APP_ID: ${{ vars.APP_ID }}
+          APP_INSTALLATION_ID: ${{ vars.APP_INSTALLATION_ID }}
+          APP_PRIVATE_KEY: ${{ vars.APP_PRIVATE_KEY }}
 
       - name: Deploy to Cloudflare
+        if: env.skip != 'true'
         uses: ubiquity/cloudflare-deploy-action@main
         with:
           repository: ${{ github.repository }}
           production_branch: ${{ github.event.repository.default_branch }}
           output_directory: "static"
           current_branch: ${{ github.ref_name }}
+          pull_request_number: ${{ github.event.pull_request.number }}
+          commit_sha: ${{ github.event.pull_request.head.sha }}
