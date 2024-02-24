@@ -20,8 +20,10 @@ export function renderGitHubIssues(tasks: TaskMaybeFull[]) {
   for (const task of tasks) {
     if (!existingIssueIds.has(task.preview.id.toString())) {
       const issueWrapper = everyNewIssue({ taskPreview: task, container });
-      setTimeout(() => issueWrapper.classList.add("active"), delay);
-      delay += baseDelay;
+      if (issueWrapper) {
+        setTimeout(() => issueWrapper.classList.add("active"), delay);
+        delay += baseDelay;
+      }
     }
   }
   container.classList.add("ready");
@@ -47,12 +49,14 @@ function everyNewIssue({ taskPreview, container }: { taskPreview: TaskMaybeFull;
   const organizationName = match?.[1];
 
   if (!organizationName) {
-    throw new Error(`No organization name found for issue ${taskPreview.preview.id}.`);
+    console.warn(`No organization name found for issue ${taskPreview.preview.id}.`);
+    return;
   }
 
   const repositoryName = match?.[2];
   if (!repositoryName) {
-    throw new Error("No repository name found");
+    console.warn("No repository name found");
+    return;
   }
   const labels = parseAndGenerateLabels(taskPreview);
   setUpIssueElement(issueElement, taskPreview, organizationName, repositoryName, labels, match);
