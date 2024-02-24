@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: read
+      secrets: read
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -23,6 +25,8 @@ jobs:
 
       - name: Build
         run: |
+          echo $SUPABASE_URL
+          echo $SUPABASE_ANON_KEY
           yarn
           yarn build
         env: # Set environment variables for the build
