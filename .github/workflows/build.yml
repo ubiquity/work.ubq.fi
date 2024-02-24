@@ -23,37 +23,15 @@ jobs:
         with:
           node-version: 20.10.0
 
-
-      - name: Use Organization Variable
-        run: |
-          echo "vars.SUPABASE_URL: ${{ vars.SUPABASE_URL }}"
-          echo "vars.SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}"
-          echo "secrets.SUPABASE_URL2: ${{ secrets.SUPABASE_URL }}"
-          echo "secrets.SUPABASE_ANON_KEY2: ${{ secrets.SUPABASE_ANON_KEY }}"
-        env:
-          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
-          SUPABASE_URL2: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY2: ${{ secrets.SUPABASE_ANON_KEY }}
-
       - name: Build
         run: |
-          echo $SUPABASE_URL
-          echo $SUPABASE_ANON_KEY
-          echo $APP_ID
-          echo $APP_INSTALLATION_ID
-          echo $APP_PRIVATE_KEY
           yarn
           yarn build
         env: # Set environment variables for the build
-          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
-          APP_ID: ${{ vars.APP_ID }}
-          APP_INSTALLATION_ID: ${{ vars.APP_INSTALLATION_ID }}
-          APP_PRIVATE_KEY: ${{ vars.APP_PRIVATE_KEY }}
+          SUPABASE_URL: "https://wfzpewmlyiozupulbuur.supabase.co"
+          SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmenBld21seWlvenVwdWxidXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTU2NzQzMzksImV4cCI6MjAxMTI1MDMzOX0.SKIL3Q0NOBaMehH0ekFspwgcu3afp3Dl9EDzPqs1nKs"
 
       - name: Deploy to Cloudflare
-        if: env.skip != 'true'
         uses: ubiquity/cloudflare-deploy-action@main
         with:
           repository: ${{ github.repository }}
