@@ -29,12 +29,6 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
-      # - name: Prepare custom environment variables
-      #   id: env_vars
-      #   run: |
-      #     echo '{"SUPABASE_URL": "'"$SUPABASE_URL"'", "SUPABASE_ANON_KEY": "'"$SUPABASE_ANON_KEY"'"}' > env_vars.json
-      #     echo "::set-output name=env_vars::$(cat env_vars.json)"
-
       - name: Deploy to Cloudflare
         if: env.skip != 'true'
         uses: ubiquity/cloudflare-deploy-action@main
@@ -44,5 +38,4 @@ jobs:
           output_directory: "static"
           current_branch: ${{ github.ref_name }}
           pull_request_number: ${{ github.event.pull_request.number }}
-          commit_sha: ${{ github.sha }}
-          # env_vars: ${{ steps.prepare.outputs.env_vars }}
+          commit_sha: ${{ github.event.pull_request.head.sha }}
