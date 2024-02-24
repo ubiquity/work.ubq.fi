@@ -40,4 +40,9 @@ jobs:
           current_branch: ${{ github.ref_name }}
           pull_request_number: ${{ github.event.pull_request.number }}
           commit_sha: ${{ github.sha }}
+          # pass in environment variables to the remote workflow
           env_vars: '{"SUPABASE_URL": "${{ secrets.SUPABASE_URL }}", "SUPABASE_ANON_KEY": "${{ secrets.SUPABASE_ANON_KEY }}"}'
+
+env: # Set environment variables for all jobs above
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
