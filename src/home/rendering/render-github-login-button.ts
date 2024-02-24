@@ -3,8 +3,8 @@ import { toolbar } from "../ready-toolbar";
 
 const supabaseUrl = process.env.SUPABASE_URL;
 if (!supabaseUrl) throw new Error("SUPABASE_URL not found");
-const supabaseAnonKey = process.env.SUPABASE_KEY;
-if (!supabaseAnonKey) throw new Error("SUPABASE_KEY not found");
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+if (!supabaseAnonKey) throw new Error("SUPABASE_ANON_KEY not found");
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
