@@ -1,5 +1,3 @@
-import { GITHUB_TASKS_STORAGE_KEY } from "../../src/home/github-types";
-
 describe("DevPool", () => {
   let issue1: Record<string, unknown>;
   let issue2: Record<string, unknown>;
@@ -40,7 +38,6 @@ describe("DevPool", () => {
   it.only("Main page displays issues", () => {
     // Should display one new task
     cy.log("Should display one new task");
-    cy.log(window.localStorage.getItem(GITHUB_TASKS_STORAGE_KEY) as string);
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
       req.reply({
         statusCode: 200,
@@ -56,7 +53,6 @@ describe("DevPool", () => {
 
     // Should display still one old task
     cy.log("Should display still one old task");
-    cy.log(window.localStorage.getItem(GITHUB_TASKS_STORAGE_KEY) as string);
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
       req.reply({
         statusCode: 200,
