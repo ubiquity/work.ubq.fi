@@ -1,5 +1,6 @@
 import { TaskMaybeFull } from "./fetch-github/preview-to-full-mapping";
 import { setLocalStore } from "./getters/get-local-store";
+import { GITHUB_TASKS_STORAGE_KEY } from "./github-types";
 
 export class TaskManager {
   private _tasks: TaskMaybeFull[] = [];
@@ -50,7 +51,6 @@ export class TaskManager {
   }
 
   public writeToStorage() {
-    // TODO issue
-    setLocalStore("gitHubTasks", this._tasks);
+    setLocalStore(GITHUB_TASKS_STORAGE_KEY, { timestamp: Date.now(), tasks: this._tasks });
   }
 }

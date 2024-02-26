@@ -1,3 +1,5 @@
+import { GITHUB_TASKS_STORAGE_KEY } from "../../src/home/github-types";
+
 describe("DevPool", () => {
   let issue1: Record<string, unknown>;
   let issue2: Record<string, unknown>;
@@ -35,7 +37,10 @@ describe("DevPool", () => {
     cy.clearLocalStorage();
   });
 
-  it("Main page displays issues", () => {
+  it.only("Main page displays issues", () => {
+    // Should display one new task
+    cy.log("Should display one new task");
+    cy.log(window.localStorage.getItem(GITHUB_TASKS_STORAGE_KEY) as string);
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
       req.reply({
         statusCode: 200,
@@ -44,6 +49,14 @@ describe("DevPool", () => {
     }).as("getIssues");
     cy.visit("/");
     cy.get('div[id="issues-container"]').children().should("have.length", 1);
+    cy.get("#issues-container > :nth-child(1)").should("have.class", "new-task");
+
+    // needed to make sure data is written to the local storage
+    cy.wait(3000);
+
+    // Should display still one old task
+    cy.log("Should display still one old task");
+    cy.log(window.localStorage.getItem(GITHUB_TASKS_STORAGE_KEY) as string);
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
       req.reply({
         statusCode: 200,
@@ -51,6 +64,21 @@ describe("DevPool", () => {
       });
     }).as("getIssues");
     cy.visit("/");
+    cy.get('div[id="issues-container"]').children().should("have.length", 1);
+    cy.get("#issues-container > :nth-child(1)").should("not.have.class", "new-task");
+
+    // needed to make sure data is written to the local storage
+    cy.wait(3000);
+
+    cy.log("Should display two new tasks");
+    cy.clock(Date.now() + 95000000);
+    cy.visit("/");
+    const fakeNow = new Date("2022-04-10");
+    // Needed due to a bug
+    cy.clock(fakeNow).then((clock) => {
+      // @ts-expect-error https://github.com/cypress-io/cypress/issues/7577
+      return clock.bind(window);
+    });
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
   });
 
