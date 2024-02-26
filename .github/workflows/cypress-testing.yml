@@ -13,6 +13,9 @@ jobs:
   cypress-run:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.10.0
       - name: Checkout
         uses: actions/checkout@v4
       - name: Cypress run

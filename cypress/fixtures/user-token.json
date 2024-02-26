@@ -14,9 +14,7 @@
     "last_sign_in_at": "2024-02-26T05:05:04.909151Z",
     "app_metadata": {
       "provider": "github",
-      "providers": [
-        "github"
-      ]
+      "providers": ["github"]
     },
     "user_metadata": {
       "avatar_url": "https://github.com/images/error/octocat_happy.gif",
