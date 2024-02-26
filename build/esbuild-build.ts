@@ -7,7 +7,7 @@ const cssEntries = ["static/style/style.css"];
 const entries = [...typescriptEntries, ...cssEntries, "static/manifest.json", "static/favicon.svg", "static/icon-512x512.png"];
 
 export const esBuildContext: esbuild.BuildOptions = {
-  define: createEnvDefines(["SUPABASE_URL", "SUPABASE_KEY"]),
+  define: createEnvDefines(["SUPABASE_URL", "SUPABASE_ANON_KEY"]),
   plugins: [invertColors, pwaManifest],
   sourcemap: true,
   entryPoints: entries,

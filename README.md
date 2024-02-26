@@ -6,7 +6,7 @@
 cp .env.example .env
 ```
 
-Ensure that `SUPABASE_URL` and `SUPABASE_KEY` are set. This is for GitHub user registration on login.
+Ensure that `SUPABASE_URL` and `SUPABASE_ANON_KEY` are set. This is for GitHub user registration on login.
 
 ```sh
 yarn
