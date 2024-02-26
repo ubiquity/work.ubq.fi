@@ -50,6 +50,7 @@ export class TaskManager {
   }
 
   public writeToStorage() {
+    // TODO issue
     setLocalStore("gitHubTasks", this._tasks);
   }
 }

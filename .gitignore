@@ -8,3 +8,5 @@ node_modules
 .pnp.loader.mjs
 static/dist
 .env
+
+cypress/screenshots

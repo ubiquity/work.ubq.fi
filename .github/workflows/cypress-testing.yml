@@ -1,0 +1,26 @@
+name: Run Cypress testing suite
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - development
+  pull_request:
+
+env:
+  NODE_ENV: 'test'
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Testing
+        run: |
+          yarn
+          yarn cypress:run
