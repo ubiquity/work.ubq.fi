@@ -1,7 +1,7 @@
-import { TaskMaybeFull, TaskNoState } from "../fetch-github/preview-to-full-mapping";
+import { TaskStorageItems } from "../github-types";
 import { OAuthToken } from "./get-github-access-token";
 
-export function getLocalStore(key: string): TaskNoState[] | OAuthToken | null {
+export function getLocalStore(key: string): TaskStorageItems | OAuthToken | null {
   const cachedIssues = localStorage.getItem(key);
   if (cachedIssues) {
     try {
@@ -15,15 +15,17 @@ export function getLocalStore(key: string): TaskNoState[] | OAuthToken | null {
   return null;
 }
 
-export function setLocalStore(key: string, value: TaskMaybeFull[] | OAuthToken) {
+export function setLocalStore(key: string, value: TaskStorageItems | OAuthToken) {
   // remove state from issues before saving to local storage
-  if (Array.isArray(value) && value.length && "isNew" in value[0] && "isModified" in value[0]) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const tasksWithoutState = value.map(({ isNew, isModified, preview, full }) => ({
+  if ("tasks" in value && value.tasks.length && "isNew" in value.tasks[0] && "isModified" in value.tasks[0]) {
+    const tasksWithoutState = value.tasks.map(({ preview, full }) => ({
       preview,
       full,
     }));
-    localStorage[key] = JSON.stringify(tasksWithoutState);
+    localStorage[key] = JSON.stringify({
+      ...value,
+      tasks: tasksWithoutState,
+    });
   } else {
     localStorage[key] = JSON.stringify(value);
   }

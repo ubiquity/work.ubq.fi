@@ -1,5 +1,6 @@
 import { getImageFromCache } from "../getters/get-indexed-db";
 import { getLocalStore } from "../getters/get-local-store";
+import { GITHUB_TASKS_STORAGE_KEY, TaskStorageItems } from "../github-types";
 import { taskManager } from "../home";
 import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-github-issues";
 import { Sorting } from "../sorting/generate-sorting-buttons";
@@ -7,19 +8,26 @@ import { sortIssuesController } from "../sorting/sort-issues-controller";
 import { fetchAvatar } from "./fetch-avatar";
 import { organizationImageCache } from "./fetch-issues-full";
 import { fetchIssuePreviews } from "./fetch-issues-preview";
-import { TaskMaybeFull, TaskNoFull, TaskNoState, TaskWithFull } from "./preview-to-full-mapping";
+import { TaskMaybeFull, TaskNoFull, TaskWithFull } from "./preview-to-full-mapping";
 
 export type Options = {
   ordering: "normal" | "reverse";
 };
 
 export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, options = { ordering: "normal" }) {
-  const _cachedTasks = (getLocalStore("gitHubTasks") || []) as TaskNoState[];
-  const cachedTasks = _cachedTasks.map((task) => ({ ...task, isNew: false, isModified: false })) as TaskMaybeFull[];
+  let _cachedTasks = getLocalStore(GITHUB_TASKS_STORAGE_KEY) as TaskStorageItems;
+  // makes sure tasks have a timestamp to know how old the cache is, or refresh if older than 15 minutes
+  if (!_cachedTasks || !_cachedTasks.timestamp || _cachedTasks.timestamp + 60 * 1000 * 15 <= Date.now()) {
+    _cachedTasks = {
+      timestamp: Date.now(),
+      tasks: [],
+    };
+  }
+  const cachedTasks = _cachedTasks.tasks.map((task) => ({ ...task, isNew: false, isModified: false })) as TaskMaybeFull[];
   taskManager.syncTasks(cachedTasks);
   if (!cachedTasks.length) {
     // load from network if there are no cached issues
-    return await fetchAndDisplayPreviewsFromNetwork(sorting, options);
+    return fetchAndDisplayPreviewsFromNetwork(sorting, options);
   } else {
     displayGitHubIssues(sorting, options);
     return fetchAvatars();

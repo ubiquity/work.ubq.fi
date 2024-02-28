@@ -1,3 +1,5 @@
+import { TaskNoState } from "./fetch-github/preview-to-full-mapping";
+
 export interface GitHubUser {
   avatar_url: string;
   bio: string;
@@ -118,3 +120,10 @@ export interface GitHubIssue {
 export interface AvatarCache {
   [organization: string]: string | null;
 }
+
+export const GITHUB_TASKS_STORAGE_KEY = "gitHubTasks";
+
+export type TaskStorageItems = {
+  timestamp: number;
+  tasks: TaskNoState[];
+};
