@@ -1,8 +1,12 @@
+import { RestEndpointMethodTypes } from "@octokit/rest";
+import { OAuthToken } from "../../src/home/getters/get-github-access-token";
+
 describe("DevPool", () => {
-  let issue1: Record<string, unknown>;
-  let issue2: Record<string, unknown>;
-  let loginToken: Record<string, unknown>;
-  let githubUser: Record<string, unknown>;
+  let issue1: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
+  let issue2: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
+  let loginToken: OAuthToken;
+  let githubUser: RestEndpointMethodTypes["users"]["getByUsername"]["response"]["data"];
+
   before(() => {
     cy.fixture("issue-1.json").then((content) => {
       issue1 = content;
