@@ -6,11 +6,6 @@ on:
       - development
   pull_request:
 
-env:
-  NODE_ENV: "test"
-  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-  SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
@@ -28,6 +23,9 @@ jobs:
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Values are set because the code requires them, but they are not actually used.
+          SUPABASE_URL: "<supabase_url>"
+          SUPABASE_ANON_KEY: "<supabase_anon_key>"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
