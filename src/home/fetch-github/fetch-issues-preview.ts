@@ -82,10 +82,15 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
   } catch (error) {
     if (403 === error.status) {
       console.error(`GitHub API rate limit exceeded.`);
+      const resetTime = error.response.headers["x-ratelimit-reset"];
+      const resetParsed = new Date(resetTime * 1000).toLocaleTimeString();
+
       if (taskManager.getTasks().length == 0) {
         if (!user || user === null) {
           // only show rate limit modal if there are no issues loaded and not logged in
-          rateLimitModal(error);
+          rateLimitModal(
+            `You have been rate limited. Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at ${resetParsed}.`
+          );
         } else {
           // otherwise we have a user and no issues loaded
           // this happens processing the auth token it seems
@@ -96,10 +101,12 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
         }
       } else if (user && user !== null) {
         // Tasks loaded and logged in
-        rateLimitModal(error, `You have been rate limited. Please try again at `);
+        rateLimitModal(`You have been rate limited. Please try again at ${resetParsed}.`);
       } else {
         // tasks loaded but not logged in
-        rateLimitModal(error);
+        rateLimitModal(
+          `You have been rate limited. Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at ${resetParsed}.`
+        );
       }
     } else {
       console.error(`Failed to fetch issue previews: ${error}`);
@@ -116,14 +123,6 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
   return tasks;
 }
 
-function rateLimitModal(error: unknown, message?: string) {
-  const resetTime = error.response.headers["x-ratelimit-reset"];
-  const resetParsed = new Date(resetTime * 1000).toLocaleTimeString();
-
-  displayPopupMessage(
-    `GitHub API rate limit exceeded.`,
-    !message
-      ? `You have been rate limited. Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at ${resetParsed}.`
-      : message + `${resetParsed}.`
-  );
+function rateLimitModal(message: string) {
+  displayPopupMessage(`GitHub API rate limit exceeded.`, message);
 }

@@ -6,11 +6,7 @@ declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time che
 
 export async function getGitHubUser(): Promise<GitHubUser | null> {
   const activeSessionToken = await getSessionToken();
-  if (activeSessionToken) {
-    return getNewGitHubUser(activeSessionToken);
-  } else {
-    return null;
-  }
+  return getNewGitHubUser(activeSessionToken);
 }
 
 async function getSessionToken(): Promise<string | null> {
@@ -30,13 +26,33 @@ async function getNewSessionToken(): Promise<string | null> {
   const params = new URLSearchParams(hash.substr(1)); // remove the '#' and parse
   const providerToken = params.get("provider_token");
   if (!providerToken) {
-    return null;
+    const err = params.get("error");
+    const code = params.get("error_code");
+    const desc = params.get("error_description");
+
+    if (err === "server_error") {
+      if (code === "500") {
+        if (desc === "Error getting user profile from external provider") {
+          displayPopupMessage(`GitHub Login Provider`, `Your access token may have reached it's rate limit, please try again after one hour.`);
+          throw new Error("GitHub login provider");
+        }
+      }
+    }
   }
   return providerToken;
 }
 
-async function getNewGitHubUser(providerToken: string): Promise<GitHubUser> {
+async function getNewGitHubUser(providerToken: string | null): Promise<GitHubUser | null> {
   const octokit = new Octokit({ auth: providerToken });
-  const response = (await octokit.request("GET /user")) as GitHubUserResponse;
-  return response.data;
+  try {
+    const response = (await octokit.request("GET /user")) as GitHubUserResponse;
+    return response.data;
+  } catch (err: unknown) {
+    // API rate limit exceeded for user ID 106.... If you reach out to GitHub Support for help, ...
+    if (err.status === 403 && err.message.includes("API rate limit exceeded")) {
+      displayPopupMessage("GitHub API rate limit exceeded", err.message);
+      throw new Error("GitHub API rate limit exceeded");
+    }
+    return null;
+  }
 }
