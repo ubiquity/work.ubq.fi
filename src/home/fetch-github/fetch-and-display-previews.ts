@@ -14,8 +14,6 @@ export type Options = {
   ordering: "normal" | "reverse";
 };
 
-const NOTIFICATION_EXPIRY_DAYS = 3;
-
 export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, options = { ordering: "normal" }) {
   let _cachedTasks = getLocalStore(GITHUB_TASKS_STORAGE_KEY) as TaskStorageItems;
   // makes sure tasks have a timestamp to know how old the cache is, or refresh if older than 15 minutes
@@ -24,21 +22,17 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
       timestamp: Date.now(),
       tasks: [],
     };
-  } else {
-    const cachedTasks = _cachedTasks.tasks.map((task) => ({
-      ...task,
-      isNew: new Date(task.preview.created_at) > new Date(Date.now() - 1000 * 60 * 60 * 24 * NOTIFICATION_EXPIRY_DAYS),
-      isModified: false,
-    })) as TaskMaybeFull[];
-    taskManager.syncTasks(cachedTasks);
+  }
 
-    if (!cachedTasks.length) {
-      // load from network if there are no cached issues
-      return fetchAndDisplayPreviewsFromNetwork(sorting, options);
-    } else {
-      displayGitHubIssues(sorting, options);
-      return fetchAvatars();
-    }
+  const cachedTasks = _cachedTasks.tasks.map((task) => ({ ...task, isNew: false, isModified: false })) as TaskMaybeFull[];
+  taskManager.syncTasks(cachedTasks);
+
+  if (!cachedTasks.length) {
+    // load from network if there are no cached issues
+    return fetchAndDisplayPreviewsFromNetwork(sorting, options);
+  } else {
+    displayGitHubIssues(sorting, options);
+    return fetchAvatars();
   }
 }
 

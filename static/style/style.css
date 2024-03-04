@@ -180,6 +180,9 @@
     display: flex;
     align-items: center;
     height: 16px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: inline-block;
   }
   input[type="radio"] {
     background-color: unset;
