@@ -54,7 +54,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
       });
 
       // Combine public and private issues
-      freshIssues = [...publicIssues, ...privateIssuesWithFlag];
+      freshIssues = [...privateIssuesWithFlag, ...publicIssues];
     } else {
       // If user doesn't have access, only load issues from the public repository
       freshIssues = publicIssues;
