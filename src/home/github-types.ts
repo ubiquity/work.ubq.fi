@@ -1,4 +1,5 @@
 import { TaskNoState } from "./fetch-github/preview-to-full-mapping";
+import { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 export interface GitHubUser {
   avatar_url: string;
   bio: string;
@@ -54,68 +55,7 @@ export interface GitHubUserResponse {
   data: GitHubUser;
 }
 
-interface GitHubLabel {
-  id: number;
-  node_id: string;
-  url: string;
-  name: string;
-  description: string;
-  color: string;
-  default: boolean;
-}
-
-interface GitHubMilestone {
-  url: string;
-  html_url: string;
-  labels_url: string;
-  id: number;
-  node_id: string;
-  number: number;
-  state: string;
-  title: string;
-  description: string;
-  creator: GitHubUser;
-  open_issues: number;
-  closed_issues: number;
-  created_at: string;
-  updated_at: string;
-  closed_at: string | null;
-  due_on: string | null;
-}
-
-export interface GitHubIssue {
-  id: number;
-  node_id: string;
-  url: string;
-  repository_url: string;
-  labels_url: string;
-  comments_url: string;
-  events_url: string;
-  html_url: string;
-  number: number;
-  state: string;
-  title: string;
-  body: string;
-  user: GitHubUser;
-  labels: GitHubLabel[];
-  assignee: GitHubUser | null;
-  assignees: GitHubUser[];
-  milestone: GitHubMilestone | null;
-  locked: boolean;
-  active_lock_reason: string | null;
-  comments: number;
-  pull_request?: {
-    url: string;
-    html_url: string;
-    diff_url: string;
-    patch_url: string;
-  };
-  closed_at: string | null;
-  created_at: string;
-  updated_at: string;
-  closed_by?: GitHubUser;
-  private?: boolean;
-}
+export type GitHubIssue = RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
 
 export interface AvatarCache {
   [organization: string]: string | null;

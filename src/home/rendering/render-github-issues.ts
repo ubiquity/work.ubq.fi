@@ -45,6 +45,10 @@ function everyNewIssue({ taskPreview, container }: { taskPreview: TaskMaybeFull;
   }
 
   const urlPattern = /https:\/\/github\.com\/([^/]+)\/([^/]+)\//;
+  if (!taskPreview.preview.body) {
+    console.warn(`No body found for issue ${taskPreview.preview.id}.`);
+    return;
+  }
   const match = taskPreview.preview.body.match(urlPattern);
   const organizationName = match?.[1];
 
@@ -112,6 +116,22 @@ function parseAndGenerateLabels(task: TaskMaybeFull) {
 
   const { labels, otherLabels } = task.preview.labels.reduce(
     (acc, label) => {
+      // check if label is a single string
+      if (typeof label === "string") {
+        return {
+          labels: [],
+          otherLabels: [],
+        };
+      }
+
+      // check if label.name exists
+      if (!label.name) {
+        return {
+          labels: [],
+          otherLabels: [],
+        };
+      }
+
       const match = label.name.match(/^(Pricing|Time|Priority): /);
       if (match) {
         const name = label.name.replace(match[0], "");
@@ -156,6 +176,7 @@ export function viewIssueDetails(full: GitHubIssue) {
   // Update the title and body for the new issue
   titleHeader.textContent = full.title;
   titleAnchor.href = full.html_url;
+  if (!full.body) return;
   previewBodyInner.innerHTML = marked(full.body) as string;
 
   // Show the preview

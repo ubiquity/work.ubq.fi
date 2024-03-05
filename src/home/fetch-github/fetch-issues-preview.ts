@@ -11,12 +11,12 @@ async function checkPrivateRepoAccess(): Promise<boolean> {
 
   try {
     const response = await octokit.repos.checkCollaborator({
-      owner: 'ubiquity',
-      repo: 'devpool-directory-private',
+      owner: "ubiquity",
+      repo: "devpool-directory-private",
       username,
-    })
+    });
 
-    if(response.status === 204) {
+    if (response.status === 204) {
       // If the response is successful, it means the user has access to the private repository
       return true;
     }
