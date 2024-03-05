@@ -124,7 +124,8 @@ export interface AvatarCache {
 export const GITHUB_TASKS_STORAGE_KEY = "gitHubTasks";
 
 // supabase key should be dynamic incase of change and testing
-const supabaseUrl = process.env.SUPABASE_URL ? process.env.SUPABASE_URL.split(".")[0] : "";
+if (!process.env.SUPABASE_URL) throw new Error("SUPABASE_URL not found");
+const supabaseUrl = process.env.SUPABASE_URL.split(".")[0];
 export const SUPABASE_STORAGE_KEY = supabaseUrl.substring(supabaseUrl.lastIndexOf("/") + 1);
 
 export type TaskStorageItems = {
