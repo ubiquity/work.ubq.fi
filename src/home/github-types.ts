@@ -1,5 +1,4 @@
 import { TaskNoState } from "./fetch-github/preview-to-full-mapping";
-
 export interface GitHubUser {
   avatar_url: string;
   bio: string;
@@ -122,6 +121,10 @@ export interface AvatarCache {
 }
 
 export const GITHUB_TASKS_STORAGE_KEY = "gitHubTasks";
+
+// supabase key should be dynamic incase of change and testing
+const supabaseUrl = process.env.SUPABASE_URL ? process.env.SUPABASE_URL.split('.')[0] : '';
+export const SUPABASE_STORAGE_KEY = supabaseUrl.substring(supabaseUrl.lastIndexOf('/') + 1);
 
 export type TaskStorageItems = {
   timestamp: number;

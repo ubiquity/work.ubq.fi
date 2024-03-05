@@ -1,12 +1,13 @@
+import { SUPABASE_STORAGE_KEY } from "../github-types";
 import { getLocalStore } from "./get-local-store";
 
 export function getGitHubAccessToken(): string | null {
-  const oauthToken = getLocalStore("sb-wfzpewmlyiozupulbuur-auth-token") as OAuthToken | null;
-
+  const oauthToken = getLocalStore(`sb-${SUPABASE_STORAGE_KEY}-auth-token`) as OAuthToken | null;
+  
   const expiresAt = oauthToken?.expires_at;
   if (expiresAt) {
     if (expiresAt < Date.now() / 1000) {
-      localStorage.removeItem("sb-wfzpewmlyiozupulbuur-auth-token");
+      localStorage.removeItem(`sb-${SUPABASE_STORAGE_KEY}-auth-token`);
       return null;
     }
   }
