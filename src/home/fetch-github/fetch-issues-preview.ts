@@ -10,12 +10,17 @@ async function checkPrivateRepoAccess(): Promise<boolean> {
   const username = getGitHubUserName();
 
   try {
-    await octokit.request("GET /repos/ubiquity/devpool-directory-private/collaborators/{username}", {
+    const response = await octokit.repos.checkCollaborator({
+      owner: 'ubiquity',
+      repo: 'devpool-directory-private',
       username,
-    });
+    })
 
-    // If the response is successful, it means the user has access to the private repository
-    return true;
+    if(response.status === 204) {
+      // If the response is successful, it means the user has access to the private repository
+      return true;
+    }
+    return false;
   } catch (error) {
     if (error.status === 404) {
       // If the status is 404, it means the user is not a collaborator, hence no access
