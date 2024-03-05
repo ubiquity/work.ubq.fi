@@ -20,6 +20,17 @@ export function getGitHubAccessToken(): string | null {
   return null;
 }
 
+export function getGitHubUserName(): string {
+  const oauthToken = getLocalStore(`sb-${SUPABASE_STORAGE_KEY}-auth-token`) as OAuthToken | null;
+
+  const username = oauthToken?.user?.user_metadata?.user_name;
+  if (username) {
+    return username;
+  }
+
+  return "";
+}
+
 export interface OAuthToken {
   provider_token: string;
   access_token: string;

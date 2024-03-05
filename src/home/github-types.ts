@@ -114,6 +114,7 @@ export interface GitHubIssue {
   created_at: string;
   updated_at: string;
   closed_by?: GitHubUser;
+  private?: boolean;
 }
 
 export interface AvatarCache {
