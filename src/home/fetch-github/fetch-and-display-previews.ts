@@ -1,3 +1,4 @@
+import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { getImageFromCache } from "../getters/get-indexed-db";
 import { getLocalStore } from "../getters/get-local-store";
 import { GITHUB_TASKS_STORAGE_KEY, TaskStorageItems } from "../github-types";
@@ -16,11 +17,26 @@ export type Options = {
 
 export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, options = { ordering: "normal" }) {
   let _cachedTasks = getLocalStore(GITHUB_TASKS_STORAGE_KEY) as TaskStorageItems;
+  const _accessToken = await getGitHubAccessToken();
+
+  // Refresh the storage if there is no logged-in object in cachedTasks but there is one now.
+  if (_cachedTasks && !_cachedTasks.loggedIn && _accessToken) {
+    localStorage.removeItem(GITHUB_TASKS_STORAGE_KEY);
+    return fetchAndDisplayPreviewsFromNetwork(sorting, options);
+  }
+
+  // If previously logged in but not anymore, clear cache and fetch from network.
+  if (_cachedTasks && _cachedTasks.loggedIn && !_accessToken) {
+    localStorage.removeItem(GITHUB_TASKS_STORAGE_KEY);
+    return fetchAndDisplayPreviewsFromNetwork(sorting, options);
+  }
+
   // makes sure tasks have a timestamp to know how old the cache is, or refresh if older than 15 minutes
   if (!_cachedTasks || !_cachedTasks.timestamp || _cachedTasks.timestamp + 60 * 1000 * 15 <= Date.now()) {
     _cachedTasks = {
       timestamp: Date.now(),
       tasks: [],
+      loggedIn: _accessToken !== null,
     };
   }
   const cachedTasks = _cachedTasks.tasks.map((task) => ({ ...task, isNew: false, isModified: false })) as TaskMaybeFull[];

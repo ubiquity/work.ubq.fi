@@ -1,8 +1,10 @@
 import { SUPABASE_STORAGE_KEY } from "../github-types";
+import { checkSupabaseSession } from "../rendering/render-github-login-button";
 import { getLocalStore } from "./get-local-store";
 
-export function getGitHubAccessToken(): string | null {
-  const oauthToken = getLocalStore(`sb-${SUPABASE_STORAGE_KEY}-auth-token`) as OAuthToken | null;
+export async function getGitHubAccessToken(): Promise<string | null> {
+  // better to use official function, looking up localstorage has flaws
+  const oauthToken = await checkSupabaseSession();
 
   const expiresAt = oauthToken?.expires_at;
   if (expiresAt) {

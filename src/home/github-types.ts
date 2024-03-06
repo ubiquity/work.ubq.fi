@@ -73,4 +73,5 @@ export const SUPABASE_STORAGE_KEY = supabaseUrl.substring(supabaseUrl.lastIndexO
 export type TaskStorageItems = {
   timestamp: number;
   tasks: TaskNoState[];
+  loggedIn: boolean;
 };

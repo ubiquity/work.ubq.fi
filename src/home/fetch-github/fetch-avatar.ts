@@ -19,7 +19,7 @@ export async function fetchAvatar(orgName: string) {
   }
 
   // If not in IndexedDB, fetch from network
-  const octokit = new Octokit({ auth: getGitHubAccessToken() });
+  const octokit = new Octokit({ auth: await getGitHubAccessToken() });
   try {
     const {
       data: { avatar_url: avatarUrl },

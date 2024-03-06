@@ -1,4 +1,5 @@
 import { TaskMaybeFull } from "./fetch-github/preview-to-full-mapping";
+import { getGitHubAccessToken } from "./getters/get-github-access-token";
 import { setLocalStore } from "./getters/get-local-store";
 import { GITHUB_TASKS_STORAGE_KEY } from "./github-types";
 
@@ -50,7 +51,8 @@ export class TaskManager {
     return this._container;
   }
 
-  public writeToStorage() {
-    setLocalStore(GITHUB_TASKS_STORAGE_KEY, { timestamp: Date.now(), tasks: this._tasks });
+  public async writeToStorage() {
+    const _accessToken = await getGitHubAccessToken();
+    setLocalStore(GITHUB_TASKS_STORAGE_KEY, { timestamp: Date.now(), tasks: this._tasks, loggedIn: _accessToken !== null });
   }
 }

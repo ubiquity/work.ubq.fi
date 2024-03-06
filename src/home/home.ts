@@ -25,7 +25,7 @@ void (async function home() {
     const fullTasks = await fetchIssuesFull(previews);
     taskManager.syncTasks(fullTasks);
     console.trace({ fullTasks });
-    taskManager.writeToStorage();
+    await taskManager.writeToStorage();
     return fullTasks;
   } catch (error) {
     console.error(error);

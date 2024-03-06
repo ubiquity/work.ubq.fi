@@ -6,7 +6,7 @@ import { displayPopupMessage } from "../rendering/display-popup-modal";
 import { TaskNoFull } from "./preview-to-full-mapping";
 
 async function checkPrivateRepoAccess(): Promise<boolean> {
-  const octokit = new Octokit({ auth: getGitHubAccessToken() });
+  const octokit = new Octokit({ auth: await getGitHubAccessToken() });
   const username = getGitHubUserName();
 
   try {
@@ -34,7 +34,7 @@ async function checkPrivateRepoAccess(): Promise<boolean> {
 }
 
 export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
-  const octokit = new Octokit({ auth: getGitHubAccessToken() });
+  const octokit = new Octokit({ auth: await getGitHubAccessToken() });
 
   let freshIssues: GitHubIssue[] = [];
   let hasPrivateRepoAccess = false; // Flag to track access to the private repository

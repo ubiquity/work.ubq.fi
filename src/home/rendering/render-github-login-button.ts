@@ -12,6 +12,14 @@ export function getSupabase() {
   return supabase;
 }
 
+export async function checkSupabaseSession() {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  return session;
+}
+
 async function gitHubLoginButtonHandler() {
   const { error } = await supabase.auth.signInWithOAuth({ provider: "github" });
   if (error) {

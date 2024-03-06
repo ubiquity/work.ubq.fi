@@ -5,7 +5,7 @@ import { displayGitHubUserInformation } from "./rendering/display-github-user-in
 import { renderGitHubLoginButton } from "./rendering/render-github-login-button";
 
 export async function authentication() {
-  const accessToken = getGitHubAccessToken();
+  const accessToken = await getGitHubAccessToken();
   if (!accessToken) {
     renderGitHubLoginButton();
   }
