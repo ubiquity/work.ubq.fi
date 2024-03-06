@@ -28,7 +28,7 @@ describe("DevPool", () => {
     cy.intercept("https://api.github.com/repos/**/**/issues/**", (req) => {
       req.reply({
         statusCode: 200,
-        body: [issue1, issue2].find(o => o.body?.split('/').at(-1) === req.url.split('/').at(-1)),
+        body: [issue1, issue2].find((o) => o.body?.split("/").at(-1) === req.url.split("/").at(-1)),
       });
     }).as("getIssueDetails");
     cy.intercept("https://api.github.com/orgs/*", (req) => {
