@@ -37,13 +37,6 @@ function everyNewIssue({ taskPreview, container }: { taskPreview: TaskMaybeFull;
   issueElement.setAttribute("data-preview-id", taskPreview.preview.id.toString());
   issueElement.classList.add("issue-element-inner");
 
-  if (taskPreview.isNew) {
-    issueWrapper.classList.add("new-task");
-  }
-  if (taskPreview.isModified) {
-    issueWrapper.classList.add("modified-task");
-  }
-
   const urlPattern = /https:\/\/github\.com\/([^/]+)\/([^/]+)\//;
   const match = taskPreview.preview.body.match(urlPattern);
   const organizationName = match?.[1];

@@ -39,5 +39,21 @@ export async function fetchAvatar(orgName: string) {
     }
   } catch (error) {
     console.error(`Failed to fetch avatar for organization ${orgName}: ${error}`);
+    const {
+      data: { avatar_url: avatarUrl },
+    } = await octokit.rest.users.getByUsername({ username: orgName });
+    if (avatarUrl) {
+      // Fetch the image as a Blob and save it to IndexedDB
+      const response = await fetch(avatarUrl);
+      const blob = await response.blob();
+      await saveImageToCache({
+        dbName: "GitHubAvatars",
+        storeName: "ImageStore",
+        keyName: "name",
+        orgName: `avatarUrl-${orgName}`,
+        avatarBlob: blob,
+      });
+      organizationImageCache.set(orgName, blob);
+    }
   }
 }

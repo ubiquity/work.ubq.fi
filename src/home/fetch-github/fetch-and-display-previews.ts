@@ -23,8 +23,10 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
       tasks: [],
     };
   }
-  const cachedTasks = _cachedTasks.tasks.map((task) => ({ ...task, isNew: false, isModified: false })) as TaskMaybeFull[];
+
+  const cachedTasks = _cachedTasks.tasks as TaskMaybeFull[];
   taskManager.syncTasks(cachedTasks);
+
   if (!cachedTasks.length) {
     // load from network if there are no cached issues
     return fetchAndDisplayPreviewsFromNetwork(sorting, options);
@@ -71,8 +73,7 @@ export function verifyGitHubIssueState(cachedTasks: TaskMaybeFull[], fetchedPrev
     if (cachedTask) {
       if (taskWithFullTest(cachedTask)) {
         const cachedFullIssue = cachedTask.full;
-        const isModified = new Date(cachedFullIssue.updated_at) < new Date(fetched.preview.updated_at);
-        const task = { ...fetched, full: cachedFullIssue, isNew: false, isModified };
+        const task = { ...fetched, full: cachedFullIssue };
         return task;
       } else {
         // no full issue in task
@@ -82,8 +83,6 @@ export function verifyGitHubIssueState(cachedTasks: TaskMaybeFull[], fetchedPrev
     }
     return {
       preview: fetched.preview,
-      isNew: true,
-      isModified: false,
     } as TaskNoFull;
   });
 }

@@ -180,6 +180,9 @@
     display: flex;
     align-items: center;
     height: 16px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: inline-block;
   }
   input[type="radio"] {
     background-color: unset;
@@ -317,23 +320,6 @@
   }
   .full {
     display: unset !important;
-  }
-  .new-task,
-  .modified-task {
-    position: relative;
-  }
-  .new-task::before,
-  .modified-task::before {
-    content: "";
-    display: inline-block;
-    position: absolute;
-    height: 100%;
-    width: 4px;
-    left: 0;
-    background-color: #00ffff;
-  }
-  .modified-task::before {
-    background-color: #ffff00;
   }
   @media screen and (max-width: 804px) {
     .mid {
