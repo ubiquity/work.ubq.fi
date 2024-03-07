@@ -1,27 +1,26 @@
 import { Octokit } from "@octokit/rest";
-import { getGitHubAccessToken } from "../getters/get-github-access-token";
+import { getGitHubAccessToken, getGitHubUserName } from "../getters/get-github-access-token";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { displayPopupMessage } from "../rendering/display-popup-modal";
 import { TaskNoFull } from "./preview-to-full-mapping";
 
 async function checkPrivateRepoAccess(): Promise<boolean> {
-  //const octokit = new Octokit({ auth: await getGitHubAccessToken() });
-  // const username = getGitHubUserName();
+  const octokit = new Octokit({ auth: await getGitHubAccessToken() });
+  const username = getGitHubUserName();
 
   try {
-    //   const response = await octokit.repos.checkCollaborator({
-    //     owner: "ubiquity",
-    //     repo: "devpool-directory-private",
-    //     username,
-    //   });
+    const response = await octokit.repos.checkCollaborator({
+      owner: "ubiquity",
+      repo: "devpool-directory-private",
+      username,
+    });
 
-    //   if (response.status === 204) {
-    //     // If the response is successful, it means the user has access to the private repository
-    //     return true;
-    //   }
-    //   return false;
-    return true;
+    if (response.status === 204) {
+      // If the response is successful, it means the user has access to the private repository
+      return true;
+    }
+    return false;
   } catch (error) {
     if (error.status === 404) {
       // If the status is 404, it means the user is not a collaborator, hence no access
