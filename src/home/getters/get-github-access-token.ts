@@ -22,7 +22,7 @@ export async function getGitHubAccessToken(): Promise<string | null> {
   return null;
 }
 
-export function getGitHubUserName(): string {
+export function getGitHubUserName(): string | null {
   const oauthToken = getLocalStore(`sb-${SUPABASE_STORAGE_KEY}-auth-token`) as OAuthToken | null;
 
   const username = oauthToken?.user?.user_metadata?.user_name;
@@ -30,7 +30,7 @@ export function getGitHubUserName(): string {
     return username;
   }
 
-  return "";
+  return null;
 }
 
 export interface OAuthToken {

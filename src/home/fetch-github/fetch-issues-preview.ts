@@ -9,28 +9,32 @@ async function checkPrivateRepoAccess(): Promise<boolean> {
   const octokit = new Octokit({ auth: await getGitHubAccessToken() });
   const username = getGitHubUserName();
 
-  try {
-    const response = await octokit.repos.checkCollaborator({
-      owner: "ubiquity",
-      repo: "devpool-directory-private",
-      username,
-    });
+  if (username) {
+    try {
+      const response = await octokit.repos.checkCollaborator({
+        owner: "ubiquity",
+        repo: "devpool-directory-private",
+        username,
+      });
 
-    if (response.status === 204) {
-      // If the response is successful, it means the user has access to the private repository
-      return true;
-    }
-    return false;
-  } catch (error) {
-    if (error.status === 404) {
-      // If the status is 404, it means the user is not a collaborator, hence no access
+      if (response.status === 204) {
+        // If the response is successful, it means the user has access to the private repository
+        return true;
+      }
       return false;
-    } else {
-      // Handle other errors if needed
-      console.error("Error checking repository access:", error);
-      throw error;
+    } catch (error) {
+      if (error.status === 404) {
+        // If the status is 404, it means the user is not a collaborator, hence no access
+        return false;
+      } else {
+        // Handle other errors if needed
+        console.error("Error checking repository access:", error);
+        throw error;
+      }
     }
   }
+
+  return false;
 }
 
 export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
@@ -44,17 +48,25 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
     hasPrivateRepoAccess = await checkPrivateRepoAccess();
 
     // Fetch issues from public repository
-    const publicResponse = await octokit.paginate<GitHubIssue>("GET /repos/ubiquity/devpool-directory/issues", { state: "open" });
+    const { data: publicResponse } = await octokit.issues.listForRepo({
+      owner: "ubiquity",
+      repo: "devpool-directory",
+      state: "open",
+    });
+
     const publicIssues = publicResponse.filter((issue: GitHubIssue) => !issue.pull_request);
 
     // Fetch issues from the private repository only if the user has access
     if (hasPrivateRepoAccess) {
-      const privateResponse = await octokit.paginate<GitHubIssue>("GET /repos/ubiquity/devpool-directory-private/issues", { state: "open" });
+      const { data: privateResponse } = await octokit.issues.listForRepo({
+        owner: "ubiquity",
+        repo: "devpool-directory-private",
+        state: "open",
+      });
       const privateIssues = privateResponse.filter((issue: GitHubIssue) => !issue.pull_request);
 
       // Mark private issues
       const privateIssuesWithFlag = privateIssues.map((issue) => {
-        issue.private = true;
         return issue;
       });
 
