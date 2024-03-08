@@ -2,6 +2,7 @@ import { Octokit } from "@octokit/rest";
 import { GitHubUser, GitHubUserResponse } from "../github-types";
 import { OAuthToken } from "./get-github-access-token";
 import { getLocalStore } from "./get-local-store";
+declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
 
 export async function getGitHubUser(): Promise<GitHubUser | null> {
   const activeSessionToken = await getSessionToken();
@@ -13,7 +14,7 @@ export async function getGitHubUser(): Promise<GitHubUser | null> {
 }
 
 async function getSessionToken(): Promise<string | null> {
-  const cachedSessionToken = getLocalStore("sb-wfzpewmlyiozupulbuur-auth-token") as OAuthToken | null;
+  const cachedSessionToken = getLocalStore(`sb-${SUPABASE_STORAGE_KEY}-auth-token`) as OAuthToken | null;
   if (cachedSessionToken) {
     return cachedSessionToken.provider_token;
   }

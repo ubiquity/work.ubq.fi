@@ -1,13 +1,15 @@
-import * as dotenv from "dotenv";
+import { config } from "dotenv";
 import esbuild from "esbuild";
 import { invertColors } from "./plugins/invert-colors";
 import { pwaManifest } from "./plugins/pwa-manifest";
+import { execSync } from "child_process";
+config();
+
 const typescriptEntries = ["src/home/home.ts", "src/progressive-web-app.ts"];
 const cssEntries = ["static/style/style.css"];
 const entries = [...typescriptEntries, ...cssEntries, "static/manifest.json", "static/favicon.svg", "static/icon-512x512.png"];
 
 export const esBuildContext: esbuild.BuildOptions = {
-  define: createEnvDefines(["SUPABASE_URL", "SUPABASE_ANON_KEY"]),
   plugins: [invertColors, pwaManifest],
   sourcemap: true,
   entryPoints: entries,
@@ -23,6 +25,10 @@ export const esBuildContext: esbuild.BuildOptions = {
     ".json": "file",
   },
   outdir: "static/dist",
+  define: createEnvDefines(["SUPABASE_URL", "SUPABASE_ANON_KEY"], {
+    SUPABASE_STORAGE_KEY: generateSupabaseStorageKey(),
+    commitHash: execSync(`git rev-parse --short HEAD`).toString().trim(),
+  }),
 };
 
 esbuild
@@ -30,16 +36,43 @@ esbuild
   .then(() => console.log("\tesbuild complete"))
   .catch(console.error);
 
-function createEnvDefines(variableNames: string[]): Record<string, string> {
+function createEnvDefines(environmentVariables: string[], generatedAtBuild: Record<string, unknown>): Record<string, string> {
   const defines: Record<string, string> = {};
-  dotenv.config();
-  for (const name of variableNames) {
+  for (const name of environmentVariables) {
     const envVar = process.env[name];
     if (envVar !== undefined) {
-      defines[`process.env.${name}`] = JSON.stringify(envVar);
+      defines[name] = JSON.stringify(envVar);
     } else {
       throw new Error(`Missing environment variable: ${name}`);
     }
   }
+  for (const key in generatedAtBuild) {
+    if (Object.prototype.hasOwnProperty.call(generatedAtBuild, key)) {
+      defines[key] = JSON.stringify(generatedAtBuild[key]);
+    }
+  }
   return defines;
+}
+
+export function generateSupabaseStorageKey(): string | null {
+  const SUPABASE_URL = process.env.SUPABASE_URL;
+  if (!SUPABASE_URL) {
+    console.error("SUPABASE_URL environment variable is not set");
+    return null;
+  }
+
+  const urlParts = SUPABASE_URL.split(".");
+  if (urlParts.length === 0) {
+    console.error("Invalid SUPABASE_URL environment variable");
+    return null;
+  }
+
+  const domain = urlParts[0];
+  const lastSlashIndex = domain.lastIndexOf("/");
+  if (lastSlashIndex === -1) {
+    console.error("Invalid SUPABASE_URL format");
+    return null;
+  }
+
+  return domain.substring(lastSlashIndex + 1);
 }

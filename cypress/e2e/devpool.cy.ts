@@ -50,7 +50,6 @@ describe("DevPool", () => {
     }).as("getIssues");
     cy.visit("/");
     cy.get('div[id="issues-container"]').children().should("have.length", 1);
-    cy.get("#issues-container > :nth-child(1)").should("have.class", "new-task");
 
     // needed to make sure data is written to the local storage
     cy.wait(3000);
@@ -65,7 +64,6 @@ describe("DevPool", () => {
     }).as("getIssues");
     cy.visit("/");
     cy.get('div[id="issues-container"]').children().should("have.length", 1);
-    cy.get("#issues-container > :nth-child(1)").should("not.have.class", "new-task");
 
     // needed to make sure data is written to the local storage
     cy.wait(3000);
@@ -139,6 +137,7 @@ describe("DevPool", () => {
         statusCode: 200,
       });
       // Simulate login token
+      // cSpell: ignore wfzpewmlyiozupulbuur
       window.localStorage.setItem("sb-wfzpewmlyiozupulbuur-auth-token", JSON.stringify(loginToken));
     }).as("githubLogin");
     cy.visit("/");

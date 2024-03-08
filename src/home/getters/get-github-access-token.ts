@@ -1,12 +1,15 @@
+declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
+import { checkSupabaseSession } from "../rendering/render-github-login-button";
 import { getLocalStore } from "./get-local-store";
 
-export function getGitHubAccessToken(): string | null {
-  const oauthToken = getLocalStore("sb-wfzpewmlyiozupulbuur-auth-token") as OAuthToken | null;
+export async function getGitHubAccessToken(): Promise<string | null> {
+  // better to use official function, looking up localstorage has flaws
+  const oauthToken = await checkSupabaseSession();
 
   const expiresAt = oauthToken?.expires_at;
   if (expiresAt) {
     if (expiresAt < Date.now() / 1000) {
-      localStorage.removeItem("sb-wfzpewmlyiozupulbuur-auth-token");
+      localStorage.removeItem(`sb-${SUPABASE_STORAGE_KEY}-auth-token`);
       return null;
     }
   }
@@ -14,6 +17,17 @@ export function getGitHubAccessToken(): string | null {
   const accessToken = oauthToken?.provider_token;
   if (accessToken) {
     return accessToken;
+  }
+
+  return null;
+}
+
+export function getGitHubUserName(): string | null {
+  const oauthToken = getLocalStore(`sb-${SUPABASE_STORAGE_KEY}-auth-token`) as OAuthToken | null;
+
+  const username = oauthToken?.user?.user_metadata?.user_name;
+  if (username) {
+    return username;
   }
 
   return null;
