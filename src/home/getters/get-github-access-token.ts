@@ -1,4 +1,4 @@
-import { SUPABASE_STORAGE_KEY } from "../github-types";
+declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
 import { checkSupabaseSession } from "../rendering/render-github-login-button";
 import { getLocalStore } from "./get-local-store";
 

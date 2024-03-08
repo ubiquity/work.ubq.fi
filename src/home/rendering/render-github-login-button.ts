@@ -1,12 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 import { toolbar } from "../ready-toolbar";
 
-const supabaseUrl = process.env.SUPABASE_URL;
-if (!supabaseUrl) throw new Error("SUPABASE_URL not found");
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
-if (!supabaseAnonKey) throw new Error("SUPABASE_ANON_KEY not found");
+declare const SUPABASE_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
+declare const SUPABASE_ANON_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export function getSupabase() {
   return supabase;

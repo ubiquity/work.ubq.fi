@@ -1,6 +1,6 @@
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import { OAuthToken } from "../../src/home/getters/get-github-access-token";
-import { SUPABASE_STORAGE_KEY } from "../../src/home/github-types";
+import { generateSupabaseStorageKey } from "../../build/esbuild-build";
 
 describe("DevPool", () => {
   let issue1: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
@@ -140,7 +140,7 @@ describe("DevPool", () => {
         statusCode: 200,
       });
       // Simulate login token
-      window.localStorage.setItem(`sb-${SUPABASE_STORAGE_KEY}-auth-token`, JSON.stringify(loginToken));
+      window.localStorage.setItem(`sb-${generateSupabaseStorageKey()}-auth-token`, JSON.stringify(loginToken));
     }).as("githubLogin");
     cy.visit("/");
     cy.get("#github-login-button").click();

@@ -1,7 +1,8 @@
 import { Octokit } from "@octokit/rest";
-import { GitHubUser, GitHubUserResponse, SUPABASE_STORAGE_KEY } from "../github-types";
+import { GitHubUser, GitHubUserResponse } from "../github-types";
 import { OAuthToken } from "./get-github-access-token";
 import { getLocalStore } from "./get-local-store";
+declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
 
 export async function getGitHubUser(): Promise<GitHubUser | null> {
   const activeSessionToken = await getSessionToken();
