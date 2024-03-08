@@ -20,10 +20,15 @@ describe("DevPool", () => {
     cy.fixture("user-github.json").then((content) => {
       githubUser = content;
     });
-    cy.intercept("https://api.github.com/repos/*/*/issues/**", (req) => {
+  });
+
+  beforeEach(() => {
+    // Very important to make sure we don't store data between tests
+    cy.clearLocalStorage();
+    cy.intercept("https://api.github.com/repos/**/**/issues/**", (req) => {
       req.reply({
         statusCode: 200,
-        body: issue1,
+        body: [issue1, issue2].find((o) => o.body?.split("/").at(-1) === req.url.split("/").at(-1)),
       });
     }).as("getIssueDetails");
     cy.intercept("https://api.github.com/orgs/*", (req) => {
@@ -34,12 +39,7 @@ describe("DevPool", () => {
     }).as("orgs");
   });
 
-  beforeEach(() => {
-    // Very important to make sure we don't store data between tests
-    cy.clearLocalStorage();
-  });
-
-  it.only("Main page displays issues", () => {
+  it("Main page displays issues", () => {
     // Should display one new task
     cy.log("Should display one new task");
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
@@ -132,7 +132,7 @@ describe("DevPool", () => {
         body: githubUser,
       });
     }).as("getUser");
-    cy.intercept("https://iyybhhiflwbsjopsgaow.supabase.co/auth/v1/authorize?provider=github", (req) => {
+    cy.intercept("https://github.com/login/oauth/authorize**", (req) => {
       req.reply({
         statusCode: 200,
       });
