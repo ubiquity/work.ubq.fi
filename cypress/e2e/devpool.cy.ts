@@ -1,6 +1,5 @@
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import { OAuthToken } from "../../src/home/getters/get-github-access-token";
-import { generateSupabaseStorageKey } from "../../build/esbuild-build";
 
 describe("DevPool", () => {
   let issue1: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
@@ -140,7 +139,8 @@ describe("DevPool", () => {
         statusCode: 200,
       });
       // Simulate login token
-      window.localStorage.setItem(`sb-${generateSupabaseStorageKey()}-auth-token`, JSON.stringify(loginToken));
+      // cSpell: ignore wfzpewmlyiozupulbuur
+      window.localStorage.setItem("sb-wfzpewmlyiozupulbuur-auth-token", JSON.stringify(loginToken));
     }).as("githubLogin");
     cy.visit("/");
     cy.get("#github-login-button").click();
