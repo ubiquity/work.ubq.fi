@@ -132,7 +132,7 @@ describe("DevPool", () => {
         body: githubUser,
       });
     }).as("getUser");
-    cy.intercept("https://iyybhhiflwbsjopsgaow.supabase.co/auth/v1/authorize?provider=github", (req) => {
+    cy.intercept("https://github.com/login/oauth/authorize**", (req) => {
       req.reply({
         statusCode: 200,
       });
