@@ -41,7 +41,7 @@ async function getNewSessionToken(): Promise<string | null> {
       }
     }
   }
-  return providerToken;
+  return providerToken || null;
 }
 
 async function getNewGitHubUser(providerToken: string | null): Promise<GitHubUser | null> {

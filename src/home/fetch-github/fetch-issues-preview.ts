@@ -1,7 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken, getGitHubUserName } from "../getters/get-github-access-token";
 import { GitHubIssue } from "../github-types";
-import { taskManager } from "../home";
 import { displayPopupMessage } from "../rendering/display-popup-modal";
 import { TaskNoFull } from "./preview-to-full-mapping";
 import { getGitHubUser } from "../getters/get-github-user";
@@ -84,15 +83,12 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
       const resetTime = error.response.headers["x-ratelimit-reset"];
       const resetParsed = new Date(resetTime * 1000).toLocaleTimeString();
 
-      if (taskManager.getTasks().length == 0) {
-        if (!user || user === null) {
-          // only show rate limit modal if there are no issues loaded and not logged in
-          rateLimitModal(
-            `You have been rate limited. Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at ${resetParsed}.`
-          );
-        } else {
-          rateLimitModal(`You have been rate limited. Please try again at ${resetParsed}.`);
-        }
+      if (!user || user === null) {
+        rateLimitModal(
+          `You have been rate limited. Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at ${resetParsed}.`
+        );
+      } else {
+        rateLimitModal(`You have been rate limited. Please try again at ${resetParsed}.`);
       }
     }
   }
