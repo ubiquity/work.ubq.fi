@@ -66,6 +66,10 @@ export async function fetchAvatars() {
   const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
 
   const avatarPromises = cachedTasks.map(async (task) => {
+    if (!task.preview.body) {
+      return Promise.resolve();
+    }
+
     const match = task.preview.body.match(urlPattern);
     const orgName = match?.groups?.org;
     if (orgName) {

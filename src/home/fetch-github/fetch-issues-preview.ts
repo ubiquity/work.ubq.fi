@@ -5,7 +5,6 @@ import { taskManager } from "../home";
 import { displayPopupMessage } from "../rendering/display-popup-modal";
 import { TaskNoFull } from "./preview-to-full-mapping";
 import { getGitHubUser } from "../getters/get-github-user";
-import { gitHubLoginButtonHandler } from "../rendering/render-github-login-button";
 
 async function checkPrivateRepoAccess(): Promise<boolean> {
   const octokit = new Octokit({ auth: await getGitHubAccessToken() });
@@ -40,7 +39,7 @@ async function checkPrivateRepoAccess(): Promise<boolean> {
 }
 
 export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
-  const octokit = new Octokit({ auth: getGitHubAccessToken() });
+  const octokit = new Octokit({ auth: await getGitHubAccessToken() });
   const user = await getGitHubUser();
 
   let freshIssues: GitHubIssue[] = [];
@@ -92,24 +91,9 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
             `You have been rate limited. Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at ${resetParsed}.`
           );
         } else {
-          // otherwise we have a user and no issues loaded
-          // this happens processing the auth token it seems
-          // as it happens on auth callback and local auth token
-          await gitHubLoginButtonHandler().catch((error) => {
-            console.error(error);
-          });
+          rateLimitModal(`You have been rate limited. Please try again at ${resetParsed}.`);
         }
-      } else if (user && user !== null) {
-        // Tasks loaded and logged in
-        rateLimitModal(`You have been rate limited. Please try again at ${resetParsed}.`);
-      } else {
-        // tasks loaded but not logged in
-        rateLimitModal(
-          `You have been rate limited. Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at ${resetParsed}.`
-        );
       }
-    } else {
-      console.error(`Failed to fetch issue previews: ${error}`);
     }
   }
 

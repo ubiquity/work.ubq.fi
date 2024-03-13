@@ -71,14 +71,69 @@ describe("DevPool", () => {
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
   });
 
-  it("Display a message on rate limited", () => {
-    cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
-      req.reply({
-        statusCode: 403,
+  describe("Display message on rate limited", () => {
+    it("Should display retry timeframe and login request with no tasks and no user", () => {
+      cy.intercept("https://api.github.com/user", (req) => {
+        req.reply({
+          statusCode: 403,
+          body: {},
+        });
+      }).as("getUser");
+      cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
+        req.reply({
+          statusCode: 403,
+        });
+      }).as("getIssues");
+
+      cy.visit("/");
+      cy.get(".preview-header").should("exist");
+      cy.get(".preview-body-inner").should("include.text", "Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at");
+    });
+
+    it("Should display retry timeframe with no tasks loaded and a logged in user", () => {
+      cy.intercept("https://api.github.com/user", (req) => {
+        req.reply({
+          statusCode: 200,
+          body: githubUser,
+        });
+      }).as("getUser");
+      cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
+        req.reply({
+          statusCode: 403,
+        });
+      }).as("getIssues");
+
+      cy.visit("/");
+      cy.get(".preview-header").should("exist");
+      cy.get(".preview-body-inner").should("include.text", "You have been rate limited. Please try again at");
+    });
+
+    it("Should display a hard one-hour retry timeframe with no auth token available", () => {
+      const urlParams = `#error=server_error&error_code=500&error_description=Error getting user profile from external provider`;
+
+      cy.on("uncaught:exception", () => {
+        // it's not uncaught as we deliberately throw it but
+        // returning false here prevents Cypress from failing the test
+        return false;
       });
-    }).as("getIssues");
-    cy.visit("/");
-    cy.get(".preview-header").should("exist");
+
+      cy.intercept("https://api.github.com/user", (req) => {
+        req.reply({
+          statusCode: 403,
+          body: {},
+        });
+      }).as("getUser");
+      cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
+        req.reply({
+          statusCode: 403,
+        });
+      }).as("getIssues");
+
+      cy.visit(`/${urlParams}`);
+      cy.get(".preview-header").should("exist");
+      cy.get(".preview-body-inner").should("include.text", "Your access token may have reached it's rate limit, please try again after one hour.");
+      // expect an error to be thrown
+    });
   });
 
   it("Items can be sorted", () => {
