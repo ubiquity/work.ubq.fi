@@ -1,11 +1,8 @@
 import { RestEndpointMethodTypes } from "@octokit/rest";
-import { OAuthToken } from "../../src/home/getters/get-github-access-token";
 
 describe("DevPool", () => {
   let issue1: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
   let issue2: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
-  let loginToken: OAuthToken;
-  let githubUser: RestEndpointMethodTypes["users"]["getByUsername"]["response"]["data"];
 
   before(() => {
     cy.fixture("issue-1.json").then((content) => {
@@ -13,12 +10,6 @@ describe("DevPool", () => {
     });
     cy.fixture("issue-2.json").then((content) => {
       issue2 = content;
-    });
-    cy.fixture("user-token.json").then((content) => {
-      loginToken = content;
-    });
-    cy.fixture("user-github.json").then((content) => {
-      githubUser = content;
     });
   });
 
@@ -115,8 +106,6 @@ describe("DevPool", () => {
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
     cy.get('[for="activity"]').click();
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get("#filter").type("draft");
-    cy.get('div[id="issues-container"]').children().should("have.length", 2);
   });
 
   it("User can log in", () => {
@@ -126,24 +115,24 @@ describe("DevPool", () => {
         body: [issue1, issue2],
       });
     }).as("getIssues");
-    cy.intercept("https://api.github.com/user", (req) => {
-      req.reply({
-        statusCode: 200,
-        body: githubUser,
-      });
-    }).as("getUser");
-    cy.intercept("https://github.com/login/oauth/authorize**", (req) => {
-      req.reply({
-        statusCode: 200,
-      });
-      // Simulate login token
-      // cSpell: ignore wfzpewmlyiozupulbuur
-      window.localStorage.setItem("sb-wfzpewmlyiozupulbuur-auth-token", JSON.stringify(loginToken));
-    }).as("githubLogin");
     cy.visit("/");
+    // Check that there is no text field visible for sorting
+    cy.get("#filter").should("not.be.visible");
     cy.get("#github-login-button").click();
-    // Manually come back to home page after "login"
-    cy.visit("/");
+    cy.origin("https://github.com/login", () => {
+      cy.get("#login_field").type(Cypress.env("GITHUB_USERNAME"));
+      cy.get("#password").type(Cypress.env("GITHUB_PASSWORD"));
+      cy.get(".position-relative > .btn").click();
+      cy.get('button[data-octo-click="oauth_application_authorization"]').then(($button) => {
+        // This happens when too many requests are done to log in, it asks again for verification.
+        if ($button.is(":visible")) {
+          cy.wrap($button).click();
+        } else {
+          cy.log('"Authorize" button is not visible');
+        }
+      });
+    });
     cy.get("#authenticated").should("exist");
+    cy.get("#filter").should("be.visible");
   });
 });
