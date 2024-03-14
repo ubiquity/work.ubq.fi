@@ -1,4 +1,5 @@
 import { fetchAndDisplayPreviewsFromCache } from "../fetch-github/fetch-and-display-previews";
+import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { taskManager } from "../home";
 import { Sorting } from "./generate-sorting-buttons";
 
@@ -26,6 +27,15 @@ export class SortingManager {
     textBox.type = "text";
     textBox.id = "filter";
     textBox.placeholder = "Text Filter";
+    getGitHubAccessToken()
+      .then((token) => {
+        if (!token) {
+          textBox.classList.add("hidden");
+        } else {
+          textBox.classList.remove("hidden");
+        }
+      })
+      .catch((e) => console.error(`[_generateFilterTextBox] Failed to retrieve token: ${e}`));
 
     const issuesContainer = document.getElementById("issues-container") as HTMLDivElement;
     textBox.addEventListener("input", () => {
@@ -38,7 +48,7 @@ export class SortingManager {
         if (!fullIssue) throw new Error(`No full issue found for preview id ${issuePreviewId}`);
         const searchableProperties = ["title", "body", "number", "html_url"] as const;
         const searchableStrings = searchableProperties.map((prop) => fullIssue[prop]?.toString().toLowerCase());
-        const isVisible = searchableStrings.some((str) => str.includes(filterText));
+        const isVisible = searchableStrings.some((str) => str?.includes(filterText));
         issue.style.display = isVisible ? "block" : "none";
       });
     });
