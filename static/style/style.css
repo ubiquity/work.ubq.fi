@@ -580,7 +580,7 @@
     letter-spacing: 0.5px;
   }
   #filters input[type="text"].hidden {
-    visibility: hidden;
+    display: none;
   }
   button#github-login-button {
     margin-left: 0;
