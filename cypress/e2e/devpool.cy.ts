@@ -111,9 +111,12 @@ describe("DevPool", () => {
     it("Should display a hard one-hour retry timeframe with no auth token available", () => {
       const urlParams = `#error=server_error&error_code=500&error_description=Error getting user profile from external provider`;
 
-      cy.on("uncaught:exception", () => {
-        // it's not uncaught as we deliberately throw it but
-        // returning false here prevents Cypress from failing the test
+      /*
+       * https://docs.cypress.io/api/cypress-api/catalog-of-events#To-catch-a-single-uncaught-exception
+       * `once`: Adds a one-time listener function for the event named eventName.
+       * The next time eventName is triggered, this listener is removed and then invoked.
+       */
+      cy.once("uncaught:exception", () => {
         return false;
       });
 
@@ -132,7 +135,6 @@ describe("DevPool", () => {
       cy.visit(`/${urlParams}`);
       cy.get(".preview-header").should("exist");
       cy.get(".preview-body-inner").should("include.text", "Your access token may have reached it's rate limit, please try again after one hour.");
-      // expect an error to be thrown
     });
   });
 
