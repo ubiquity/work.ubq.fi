@@ -35,6 +35,11 @@
   body.preview-active button#github-login-button.highlight {
     animation: highlight-light-mode 1s ease-in-out infinite alternate;
   }
+  .grid-loaded background .gradient {
+    opacity: 0;
+    animation: none;
+    background-image: none;
+  }
 }
 
 @keyframes highlight-dark-mode {
