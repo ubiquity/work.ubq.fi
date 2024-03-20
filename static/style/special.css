@@ -9,9 +9,9 @@
   html,
   #issues-container > div,
   .preview {
-    /* background-color: var(--dark-background); */
-    background-color: var(--background-color-default);
+    background-color: var(--dark-background);
     border-color: var(--border-color);
+    border-color: #80808020;
   }
   .preview > .preview-content {
     box-shadow: inset 0 0 24px #00bfff18;
