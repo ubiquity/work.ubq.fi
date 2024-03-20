@@ -345,7 +345,6 @@
     }
     .toolbar {
       overflow-x: auto;
-      white-space: nowrap;
       margin: 0;
       padding-left: 0;
       display: flex;
@@ -355,7 +354,7 @@
     .toolbar > * {
       margin-left: 12px;
     }
-    .toolbar > button {
+    .toolbar button {
       padding: 12px 16px;
     }
   }
@@ -609,5 +608,8 @@
   }
   #bottom-bar a button {
     height: 30px;
+  }
+  .toolbar button {
+    white-space: nowrap;
   }
 }
