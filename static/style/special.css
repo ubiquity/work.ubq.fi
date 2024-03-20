@@ -11,7 +11,7 @@
   .preview {
     background-color: var(--dark-background);
   }
-  #toolbar.ready {
+  .toolbar.ready {
     background-color: var(--dark-background-half);
   }
   body.preview-active button#github-login-button.highlight {
@@ -29,7 +29,7 @@
   .preview {
     background-color: var(--light-background);
   }
-  #toolbar.ready {
+  .toolbar.ready {
     background-color: var(--light-background-half);
   }
   body.preview-active button#github-login-button.highlight {
