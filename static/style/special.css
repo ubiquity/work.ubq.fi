@@ -9,7 +9,8 @@
   html,
   #issues-container > div,
   .preview {
-    background-color: var(--dark-background);
+    /* background-color: var(--dark-background); */
+    background-color: var(--background-color-default);
   }
   .toolbar.ready {
     background-color: var(--dark-background-half);
