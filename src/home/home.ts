@@ -7,6 +7,7 @@ import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { TaskManager } from "./task-manager";
 
 generateSortingToolbar();
+renderServiceMessage();
 grid(document.getElementById("grid") as HTMLElement);
 const container = document.getElementById("issues-container") as HTMLDivElement;
 
@@ -44,3 +45,16 @@ void (async function home() {
     });
   }
 })();
+
+
+function renderServiceMessage() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const message = urlParams.get("message");
+  // if (message) {
+    const serviceMessageContainer = document.querySelector("#bottom-bar > div");
+    if (serviceMessageContainer) {
+      serviceMessageContainer.textContent = message;
+      serviceMessageContainer.parentElement?.classList.add("ready");
+    }
+  // }
+}

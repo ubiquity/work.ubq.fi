@@ -600,14 +600,45 @@
   #bottom-bar {
     top: unset;
     bottom: 0;
-    opacity: 1;
+    /* opacity: 1; */
     border-top: 1px solid #80808020;
     border-bottom: unset;
   }
   #bottom-bar a {
     text-decoration: none;
   }
-  #bottom-bar a button{
+  #bottom-bar a button {
     height: 30px;
+  }
+  #bottom-bar {
+    position: fixed;
+    width: calc(100vw - 8px);
+    height: 48px;
+    bottom: 0;
+    backdrop-filter: blur(8px);
+    padding: 4px;
+    display: flex;
+    border-top: 1px solid #80808020;
+    justify-content: center;
+    -webkit-backdrop-filter: blur(8px);
+    justify-content: space-between;
+    justify-content: space-evenly;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    opacity: 0;
+    transition: 0.5s opacity ease-in-out;
+  }
+  #bottom-bar.ready {
+    opacity: 1;
+    background-color: #00041080;
+  }
+  #bottom-bar > * {
+    align-items: center;
+    display: inline-flex;
+    text-align: left;
+    margin: 0 16px;
+    /* cursor: pointer; */
   }
 }
