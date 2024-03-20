@@ -30,12 +30,15 @@ async function gitHubLoginButtonHandler() {
   }
 }
 const gitHubLoginButton = document.createElement("button");
+const buttonTarget = document.getElementById("github-login-button-target");
 export function renderGitHubLoginButton() {
   gitHubLoginButton.id = "github-login-button";
   gitHubLoginButton.innerHTML = "<span>Login</span><span class='full'>&nbsp;With GitHub</span>";
   gitHubLoginButton.addEventListener("click", gitHubLoginButtonHandler);
+  if (buttonTarget) {
+    buttonTarget.appendChild(gitHubLoginButton);
+  }
   if (toolbar) {
-    toolbar.appendChild(gitHubLoginButton);
     toolbar.classList.add("ready");
   }
 }
