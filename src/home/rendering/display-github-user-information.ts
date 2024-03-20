@@ -1,5 +1,5 @@
 import { GitHubUser } from "../github-types";
-import { getSupabase } from "./render-github-login-button";
+import { getSupabase, buttonTarget } from "./render-github-login-button";
 
 export function displayGitHubUserInformation(gitHubUser: GitHubUser) {
   const toolbar = document.getElementById("toolbar");
@@ -28,7 +28,9 @@ export function displayGitHubUserInformation(gitHubUser: GitHubUser) {
     window.location.reload();
   });
 
-  toolbar.appendChild(authenticated);
+  if (buttonTarget) {
+    buttonTarget.appendChild(authenticated);
+  }
   toolbar.setAttribute("data-authenticated", "true");
   toolbar.classList.add("ready");
 }

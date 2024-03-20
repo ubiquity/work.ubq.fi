@@ -30,7 +30,7 @@ async function gitHubLoginButtonHandler() {
   }
 }
 const gitHubLoginButton = document.createElement("button");
-const buttonTarget = document.getElementById("github-login-button-target");
+export const buttonTarget = document.getElementById("github-login-button-target");
 export function renderGitHubLoginButton() {
   gitHubLoginButton.id = "github-login-button";
   gitHubLoginButton.innerHTML = "<span>Login</span><span class='full'>&nbsp;With GitHub</span>";
