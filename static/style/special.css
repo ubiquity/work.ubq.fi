@@ -10,7 +10,13 @@
   #issues-container > div,
   .preview {
     background-color: var(--dark-background);
+    border-color: var(--border-color);
+    border-color: #80808020;
   }
+  .preview > .preview-content {
+    box-shadow: inset 0 0 24px #00bfff18;
+  }
+
   .toolbar.ready {
     background-color: var(--dark-background-half);
   }
@@ -34,6 +40,11 @@
   }
   body.preview-active button#github-login-button.highlight {
     animation: highlight-light-mode 1s ease-in-out infinite alternate;
+  }
+  .grid-loaded background .gradient {
+    opacity: 0;
+    animation: none;
+    background-image: none;
   }
 }
 

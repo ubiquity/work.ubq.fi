@@ -1,10 +1,16 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --grid-background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABYWlDQ1BrQ0dDb2xvclNwYWNlRGlzcGxheVAzAAAokWNgYFJJLCjIYWFgYMjNKykKcndSiIiMUmB/yMAOhLwMYgwKicnFBY4BAT5AJQwwGhV8u8bACKIv64LMOiU1tUm1XsDXYqbw1YuvRJsw1aMArpTU4mQg/QeIU5MLikoYGBhTgGzl8pICELsDyBYpAjoKyJ4DYqdD2BtA7CQI+whYTUiQM5B9A8hWSM5IBJrB+API1klCEk9HYkPtBQFul8zigpzESoUAYwKuJQOUpFaUgGjn/ILKosz0jBIFR2AopSp45iXr6SgYGRiaMzCAwhyi+nMgOCwZxc4gxJrvMzDY7v////9uhJjXfgaGjUCdXDsRYhoWDAyC3AwMJ3YWJBYlgoWYgZgpLY2B4dNyBgbeSAYG4QtAPdHFacZGYHlGHicGBtZ7//9/VmNgYJ/MwPB3wv//vxf9//93MVDzHQaGA3kAFSFl7jXH0fsAAAA4ZVhJZk1NACoAAAAIAAGHaQAEAAAAAQAAABoAAAAAAAKgAgAEAAAAAQAAABigAwAEAAAAAQAAABgAAAAAwf1XlwAAACNJREFUSA3t0IEAAAAMBKFHm7/UTaQQWnXDgAEDBgwYMGDgAXaJAz4RVVHYAAAAAElFTkSuQmCC");
+    --background-color-default-brightness: 2%;
+    --background-color-light-brightness: 6%;
+    --border-brightness: 5%;
+    --background-color-default: hsl(225 50% var(--background-color-default-brightness) / 1);
+    --background-color-light: hsl(225 50% var(--background-color-light-brightness) / 1);
+    --border-color: hsl(225 25% var(--border-brightness) / 1);
   }
   #logo {
     height: 28px;
-    margin-right: 2px;
+    margin-right: 4px;
   }
   #authenticated,
   #branding {
@@ -28,7 +34,7 @@
   * {
     font-family: "Proxima Nova", "Ubiquity Nova", sans-serif;
     color: #fff;
-    font-weight: 400;
+    font-weight: 500;
   }
   @font-face {
     font-family: "Ubiquity Nova";
@@ -80,14 +86,16 @@
     background-size: 56px;
     background-position: 0;
     background-repeat: no-repeat;
-    opacity: 0.25;
+    opacity: 0.125;
     margin: 3px auto;
     border: 1px solid #80808020;
     border-radius: 4px;
     cursor: pointer;
-    margin: 8px;
+    margin: 4px;
     filter: blur(4px);
     display: block;
+    border-color: var(--border-color);
+    box-shadow: inset 0 0 24px #00bfff10;
   }
   #issues-container > div.selected,
   #issues-container > div.selected .info,
@@ -355,7 +363,10 @@
       margin-left: 12px;
     }
     .toolbar button {
-      padding: 12px 16px;
+      /* padding: 12px 16px; */
+      height: 24px !important;
+      padding: 4px 16px;
+      line-height: 1;
     }
   }
   @media screen and (max-width: 1280px) {
@@ -394,6 +405,9 @@
   #issues-container img[src] {
     opacity: 1;
   }
+  background {
+    background-color: var(--dark-background);
+  }
   background,
   background #grid {
     width: 100%;
@@ -403,8 +417,8 @@
     left: 0;
   }
   background #grid {
-    -webkit-mask-image: radial-gradient(#00000020 0, #00000080 100%);
-    mask-image: radial-gradient(#00000020 0, #00000080 100%);
+    /* -webkit-mask-image: radial-gradient(#00000020 0, #00000080 100%); */
+    /* mask-image: radial-gradient(#00000020 0, #00000080 100%); */
     pointer-events: none;
   }
   .preview blockquote {
@@ -474,14 +488,14 @@
     border: 1px solid #80808020;
     border-radius: 4px;
     opacity: 0;
-    top: 64px;
-    flex-direction: row;
-    display: flex;
-    transform: translateX(0);
-    flex-wrap: wrap;
+    top: 60px;
+    /* flex-direction: row; */
+    /* display: flex; */
+    /* transform: translateX(0); */
+    /* flex-wrap: wrap; */
     pointer-events: none;
-    overflow: hidden;
-    width: calc(100vw - 18px);
+    /* overflow: hidden; */
+    /* width: calc(100vw - 14px); */
   }
   .preview * {
     pointer-events: none;
@@ -501,7 +515,7 @@
     opacity: 1;
     pointer-events: all;
     transform: translateX(50%);
-    box-shadow: 0 12px 48px #ffffff10;
+    /* box-shadow: 0 0px 16px #ffffff10; */
   }
   .preview-header {
     display: flex;
@@ -541,6 +555,7 @@
     padding: 16px;
     max-height: calc(100vh - (80px));
     max-height: calc(100vh - (242px));
+    border-color: var(--border-color);
   }
   .preview-content {
     width: 100%;
@@ -611,5 +626,44 @@
   }
   .toolbar button {
     white-space: nowrap;
+  }
+
+  background #grid {
+    pointer-events: none;
+  }
+
+  background #grid canvas {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    animation: background-grid-fade-in 3s ease-in-out forwards;
+  }
+
+  background .gradient {
+    width: 200vw;
+    height: 200vh;
+    position: absolute;
+    opacity: 0;
+  }
+  .grid-loaded background .gradient {
+    background-image: radial-gradient(#00bfff00 0%, #00bfffff 15%, #00bfff00 34%, #00bfffff 58%, #00bfff00 75%, #00bfffff 100%);
+    animation: background-gradients-fade-in 3s ease-in-out forwards;
+  }
+  background > :nth-child(1) {
+    transform: translateX(-100vw);
+  }
+  background > :nth-child(2) {
+    transform: translateY(-50vh);
+  }
+
+  @keyframes background-gradients-fade-in {
+    to {
+      opacity: 0.125;
+    }
+  }
+  @keyframes background-grid-fade-in {
+    to {
+      opacity: 0.5;
+    }
   }
 }

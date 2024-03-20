@@ -8,7 +8,7 @@ import { TaskManager } from "./task-manager";
 
 generateSortingToolbar();
 renderServiceMessage();
-grid(document.getElementById("grid") as HTMLElement);
+grid(document.getElementById("grid") as HTMLElement, () => document.body.classList.add("grid-loaded")); // @DEV: display grid background
 const container = document.getElementById("issues-container") as HTMLDivElement;
 
 if (!container) {
