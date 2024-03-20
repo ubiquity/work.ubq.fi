@@ -10,7 +10,7 @@
   }
   #logo {
     height: 28px;
-    margin-right: 2px;
+    margin-right: 4px;
   }
   #authenticated,
   #branding {
@@ -34,7 +34,7 @@
   * {
     font-family: "Proxima Nova", "Ubiquity Nova", sans-serif;
     color: #000000;
-    font-weight: 400;
+    font-weight: 500;
   }
   @font-face {
     font-family: "Ubiquity Nova";
@@ -402,6 +402,9 @@
   #issues-container img[src] {
     opacity: 1;
   }
+  background {
+    background-color: var(--dark-background);
+  }
   background,
   background #grid {
     width: 100%;
@@ -490,7 +493,6 @@
     pointer-events: none;
     /* overflow: hidden; */
     /* width: calc(100vw - 14px); */
-
   }
   .preview * {
     pointer-events: none;
@@ -510,7 +512,7 @@
     opacity: 1;
     pointer-events: all;
     transform: translateX(50%);
-    box-shadow: 0 0px 16px #00000010;
+    /* box-shadow: 0 0px 16px #00000010; */
   }
   .preview-header {
     display: flex;
@@ -631,7 +633,7 @@
     width: 100%;
     height: 100%;
     opacity: 0;
-    animation: background-grid-fade-in 2s ease-in-out forwards;
+    animation: background-grid-fade-in 3s ease-in-out forwards;
   }
 
   background .gradient {
@@ -642,7 +644,7 @@
   }
   .grid-loaded background .gradient {
     background-image: radial-gradient(#00bfff00 0%, #00bfffff 15%, #00bfff00 34%, #00bfffff 58%, #00bfff00 75%, #00bfffff 100%);
-    animation: background-gradients-fade-in 2s ease-in-out forwards;
+    animation: background-gradients-fade-in 3s ease-in-out forwards;
   }
   background > :nth-child(1) {
     transform: translateX(-100vw);
