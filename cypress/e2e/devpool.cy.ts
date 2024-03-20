@@ -123,14 +123,18 @@ describe("DevPool", () => {
       cy.get("#login_field").type(Cypress.env("GITHUB_USERNAME"));
       cy.get("#password").type(Cypress.env("GITHUB_PASSWORD"));
       cy.get(".position-relative > .btn").click();
-      cy.get('button[data-octo-click="oauth_application_authorization"]').then(($button) => {
-        // This happens when too many requests are done to log in, it asks again for verification.
-        if ($button.is(":visible")) {
-          cy.wrap($button).click();
-        } else {
-          cy.log('"Authorize" button is not visible');
-        }
-      });
+      // This part of the test can sometimes fail if the endpoint for OAuth is hit too many times, asking the user to
+      // authorize the app again. It should not happen in a normal testing scenario since it's only hit once, but more
+      // commonly happens in local testing where the test can be run many times in a row. Uncomment this part to add
+      // the authorization of the app again.
+
+      // cy.get('button[data-octo-click="oauth_application_authorization"]').then(($button) => {
+      //   if ($button.is(":visible")) {
+      //     cy.wrap($button).click();
+      //   } else {
+      //     cy.log('"Authorize" button is not visible');
+      //   }
+      // });
     });
     cy.get("#authenticated").should("exist");
     cy.get("#filter").should("be.visible");

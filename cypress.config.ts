@@ -16,4 +16,5 @@ export default defineConfig({
     GITHUB_PASSWORD: process.env.UBIQUIBOT_GITHUB_PASSWORD,
   },
   watchForFileChanges: false,
+  video: true,
 });
