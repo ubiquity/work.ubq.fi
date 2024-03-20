@@ -266,7 +266,7 @@
   button:active {
     background-color: #7f7f7f40;
   }
-  #toolbar {
+  .toolbar {
     position: fixed;
     width: calc(100vw - 8px);
     height: 48px;
@@ -280,7 +280,7 @@
     justify-content: space-between;
     justify-content: space-evenly;
   }
-  #toolbar > * {
+  .toolbar > * {
     align-items: center;
     display: inline-flex;
     text-align: left;
@@ -298,10 +298,10 @@
     height: 40px;
     padding: 4px 0;
   }
-  #toolbar[data-authenticated="true"] > #github-login-button {
+  .toolbar[data-authenticated="true"] > #github-login-button {
     display: none;
   }
-  #toolbar {
+  .toolbar {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -309,7 +309,7 @@
     opacity: 0;
     transition: 0.5s opacity ease-in-out;
   }
-  #toolbar.ready {
+  .toolbar.ready {
     opacity: 1;
   }
   #branding {
@@ -343,7 +343,7 @@
       margin: auto;
       margin-left: 12px;
     }
-    #toolbar {
+    .toolbar {
       overflow-x: auto;
       white-space: nowrap;
       margin: 0;
@@ -352,10 +352,10 @@
       align-items: center;
       justify-content: flex-start;
     }
-    #toolbar > * {
+    .toolbar > * {
       margin-left: 12px;
     }
-    #toolbar > button {
+    .toolbar > button {
       padding: 12px 16px;
     }
   }
@@ -375,7 +375,7 @@
       pointer-events: none;
     }
   }
-  #toolbar > button {
+  .toolbar > button {
     text-align: center;
   }
   #filters button {
@@ -580,7 +580,7 @@
     letter-spacing: 0.5px;
   }
   #filters input[type="text"].hidden {
-    visibility: hidden;
+    display: none;
   }
   button#github-login-button {
     margin-left: 0;
@@ -596,5 +596,18 @@
   input[type="radio"][data-ordering="normal"] + label::after {
     margin-left: 6px;
     content: "▼";
+  }
+  #bottom-bar {
+    top: unset;
+    bottom: 0;
+    opacity: 1;
+    border-top: 1px solid #7f7f7f20;
+    border-bottom: unset;
+  }
+  #bottom-bar a {
+    text-decoration: none;
+  }
+  #bottom-bar a button{
+    height: 30px;
   }
 }
