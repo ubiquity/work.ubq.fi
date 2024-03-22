@@ -10,3 +10,4 @@ static/dist
 .env
 
 cypress/screenshots
+cypress/videos
