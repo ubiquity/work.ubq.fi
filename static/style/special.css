@@ -29,6 +29,9 @@
     /* border-width: 0; */
     animation: highlight-dark-mode 1s ease-in-out infinite alternate;
   }
+  .grid-loaded #bottom-bar {
+    background-color: var(--dark-background-half);
+  }
 }
 
 @media (prefers-color-scheme: light) {
@@ -48,6 +51,9 @@
     background-color: var(--light-background);
   }
   .toolbar.ready {
+    background-color: var(--light-background-half);
+  }
+  .grid-loaded #bottom-bar {
     background-color: var(--light-background-half);
   }
   body.preview-active button#github-login-button.highlight {
