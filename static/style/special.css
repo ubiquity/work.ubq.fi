@@ -1,11 +1,14 @@
 :root {
   --dark-background: #000410;
   --dark-background-half: #00041080;
-  --light-background: #f0f0f0;
-  --light-background-half: #f0f0f080;
+  --light-background: #f8f8f8;
+  --light-background-half: #f8f8f880;
 }
 
 @media (prefers-color-scheme: dark) {
+  background {
+    background-color: var(--dark-background);
+  }
   html,
   #issues-container > div,
   .preview {
@@ -13,6 +16,7 @@
     border-color: var(--border-color);
     border-color: #80808020;
   }
+  #issues-container > div,
   .preview > .preview-content {
     box-shadow: inset 0 0 24px #00bfff18;
   }
@@ -28,8 +32,16 @@
 }
 
 @media (prefers-color-scheme: light) {
+  #issues-container > div,
+  .preview > .preview-content {
+    box-shadow: inset 0 0 24px #00000008;
+  }
+  background {
+    /* background-color: var(--light-background); */
+  }
   #grid {
-    opacity: 0.25;
+    /* opacity: 0.25; */
+    filter: invert(1);
   }
   #issues-container > div,
   .preview {
