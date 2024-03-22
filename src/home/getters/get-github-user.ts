@@ -27,20 +27,15 @@ async function getNewSessionToken(): Promise<string | null> {
   const params = new URLSearchParams(hash.substr(1)); // remove the '#' and parse
   const providerToken = params.get("provider_token");
   if (!providerToken) {
-    const err = params.get("error");
-    const code = params.get("error_code");
     const desc = params.get("error_description");
 
-    if (err === "server_error") {
-      if (code === "500") {
-        if (desc === "Error getting user profile from external provider") {
-          // without a token we can't get a dynamic retry timeframe
-          displayPopupMessage(`GitHub Login Provider`, `Your access token may have reached it's rate limit, please try again after one hour.`);
-          console.error("GitHub login provider");
-        }
-      }
+    if (desc === "Error getting user profile from external provider") {
+      // without a token we can't get a dynamic retry timeframe
+      displayPopupMessage(`GitHub Login Provider`, `Your access token may have reached it's rate limit, please try again after one hour.`);
+      console.error("GitHub login provider");
     }
   }
+
   return providerToken || null;
 }
 
