@@ -36,7 +36,7 @@ async function getNewSessionToken(): Promise<string | null> {
         if (desc === "Error getting user profile from external provider") {
           // without a token we can't get a dynamic retry timeframe
           displayPopupMessage(`GitHub Login Provider`, `Your access token may have reached it's rate limit, please try again after one hour.`);
-          throw new Error("GitHub login provider");
+          console.error("GitHub login provider");
         }
       }
     }

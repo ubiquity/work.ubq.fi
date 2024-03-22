@@ -111,15 +111,6 @@ describe("DevPool", () => {
     it("Should display a hard one-hour retry timeframe with no auth token available", () => {
       const urlParams = `#error=server_error&error_code=500&error_description=Error getting user profile from external provider`;
 
-      /*
-       * https://docs.cypress.io/api/cypress-api/catalog-of-events#To-catch-a-single-uncaught-exception
-       * `once`: Adds a one-time listener function for the event named eventName.
-       * The next time eventName is triggered, this listener is removed and then invoked.
-       */
-      cy.once("uncaught:exception", () => {
-        return false;
-      });
-
       cy.intercept("https://api.github.com/user", (req) => {
         req.reply({
           statusCode: 403,
