@@ -1,6 +1,6 @@
 :root {
-  --dark-background: #000410;
-  --dark-background-half: #00041080;
+  --dark-background: #000210;
+  --dark-background-half: #00021080;
   --light-background: #f8f8f8;
   --light-background-half: #f8f8f880;
 }
@@ -18,7 +18,7 @@
   }
   #issues-container > div,
   .preview > .preview-content {
-    box-shadow: inset 0 0 24px #00bfff18;
+    box-shadow: inset 0 0 24px #0080ff18;
   }
 
   .toolbar.ready {
