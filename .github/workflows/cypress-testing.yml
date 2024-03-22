@@ -2,8 +2,6 @@ name: Run Cypress testing suite
 on:
   workflow_dispatch:
   push:
-    branches:
-      - development
 
 jobs:
   cypress-run:
