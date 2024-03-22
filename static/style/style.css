@@ -94,8 +94,8 @@
     margin: 4px;
     filter: blur(4px);
     display: block;
-    border-color: var(--border-color);
-    box-shadow: inset 0 0 24px #00bfff10;
+    /* border-color: var(--border-color); */
+    /* box-shadow: inset 0 0 24px #00bfff10; */
   }
   #issues-container > div.selected,
   #issues-container > div.selected .info,
@@ -405,9 +405,7 @@
   #issues-container img[src] {
     opacity: 1;
   }
-  background {
-    background-color: var(--dark-background);
-  }
+
   background,
   background #grid {
     width: 100%;
@@ -495,7 +493,7 @@
     /* flex-wrap: wrap; */
     pointer-events: none;
     /* overflow: hidden; */
-    /* width: calc(100vw - 14px); */
+    width: calc(100vw - 14px);
   }
   .preview * {
     pointer-events: none;
@@ -555,7 +553,7 @@
     padding: 16px;
     max-height: calc(100vh - (80px));
     max-height: calc(100vh - (242px));
-    border-color: var(--border-color);
+    /* border-color: var(--border-color); */
   }
   .preview-content {
     width: 100%;
