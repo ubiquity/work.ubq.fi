@@ -94,7 +94,7 @@ describe("DevPool", () => {
       cy.intercept("https://api.github.com/user", (req) => {
         req.reply({
           statusCode: 200,
-          body: githubUser,
+          body: {},
         });
       }).as("getUser");
       cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
