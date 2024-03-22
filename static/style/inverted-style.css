@@ -493,7 +493,7 @@
     /* flex-wrap: wrap; */
     pointer-events: none;
     /* overflow: hidden; */
-    /* width: calc(100vw - 14px); */
+    width: calc(100vw - 14px);
   }
   .preview * {
     pointer-events: none;
