@@ -31,7 +31,7 @@ async function getNewSessionToken(): Promise<string | null> {
 
     // supabase auth provider has failed for some reason
     if (code === "500") {
-      displayPopupMessage(`GitHub Login Provider`, `Your access token may have reached it's rate limit, please try again after one hour.`);
+      displayPopupMessage(`GitHub Login Provider`, `Your access token may have reached its rate limit, please try again after one hour.`);
       console.error("GitHub login provider");
     }
   }
