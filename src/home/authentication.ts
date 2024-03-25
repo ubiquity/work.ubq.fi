@@ -1,3 +1,4 @@
+import { trackDevRelReferral } from "./devrel-tracker";
 import { getGitHubAccessToken } from "./getters/get-github-access-token";
 import { getGitHubUser } from "./getters/get-github-user";
 import { GitHubUser } from "./github-types";
@@ -12,6 +13,7 @@ export async function authentication() {
 
   const gitHubUser: null | GitHubUser = await getGitHubUser();
   if (gitHubUser) {
+    trackDevRelReferral(gitHubUser.name as string);
     displayGitHubUserInformation(gitHubUser);
   }
 }
