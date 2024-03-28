@@ -1,9 +1,9 @@
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken, getGitHubUserName } from "../getters/get-github-access-token";
 import { GitHubIssue } from "../github-types";
-import { taskManager } from "../home";
 import { displayPopupMessage } from "../rendering/display-popup-modal";
 import { TaskNoFull } from "./preview-to-full-mapping";
+import { getGitHubUser } from "../getters/get-github-user";
 
 async function checkPrivateRepoAccess(): Promise<boolean> {
   const octokit = new Octokit({ auth: await getGitHubAccessToken() });
@@ -39,6 +39,7 @@ async function checkPrivateRepoAccess(): Promise<boolean> {
 
 export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
   const octokit = new Octokit({ auth: await getGitHubAccessToken() });
+  const user = await getGitHubUser();
 
   let freshIssues: GitHubIssue[] = [];
   let hasPrivateRepoAccess = false; // Flag to track access to the private repository
@@ -79,12 +80,16 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
   } catch (error) {
     if (403 === error.status) {
       console.error(`GitHub API rate limit exceeded.`);
-      if (taskManager.getTasks().length == 0) {
-        // automatically login if there are no issues loaded
-        automaticLogin(error);
+      const resetTime = error.response.headers["x-ratelimit-reset"];
+      const resetParsed = new Date(resetTime * 1000).toLocaleTimeString();
+
+      if (!user || user === null) {
+        rateLimitModal(
+          `You have been rate limited. Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at ${resetParsed}.`
+        );
+      } else {
+        rateLimitModal(`You have been rate limited. Please try again at ${resetParsed}.`);
       }
-    } else {
-      console.error(`Failed to fetch issue previews: ${error}`);
     }
   }
 
@@ -97,12 +102,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
 
   return tasks;
 }
-function automaticLogin(error: unknown) {
-  const resetTime = error.response.headers["x-ratelimit-reset"];
-  const resetParsed = new Date(resetTime * 1000).toLocaleTimeString();
 
-  displayPopupMessage(
-    `GitHub API rate limit exceeded.`,
-    `You have been rate limited. Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at ${resetParsed}.`
-  );
+function rateLimitModal(message: string) {
+  displayPopupMessage(`GitHub API rate limit exceeded.`, message);
 }
