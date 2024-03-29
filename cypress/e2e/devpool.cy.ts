@@ -72,60 +72,78 @@ describe("DevPool", () => {
   });
 
   describe("Display message on rate limited", () => {
-    it("Should display retry timeframe and login request with no tasks and no user", () => {
+    const HHMMSS_REGEX = /([01]?[0-9]|2[0-3]):([0-5]?[0-9]):([0-5]?[0-9])/;
+    const PLEASE_LOG_IN = "Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at";
+    const RATE_LIMITED = "You have been rate limited. Please try again at";
+
+    beforeEach(() => {
+      cy.intercept("https://api.github.com/rate_limit", {
+        statusCode: 200,
+        body: {
+          resources: {
+            core: {
+              limit: 5000,
+              used: 5000,
+              remaining: 0,
+              reset: 1617700000,
+            },
+          },
+        },
+      });
       cy.intercept("https://api.github.com/user", (req) => {
         req.reply({
           statusCode: 403,
           body: {},
+          headers: { "x-ratelimit-reset": "1617700000" },
         });
       }).as("getUser");
       cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
         req.reply({
           statusCode: 403,
+          headers: { "x-ratelimit-reset": "1617700000" },
         });
       }).as("getIssues");
+    });
 
+    it("Should display retry timeframe and login request with no tasks and no user", () => {
       cy.visit("/");
       cy.get(".preview-header").should("exist");
-      cy.get(".preview-body-inner").should("include.text", "Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at");
+      cy.get(".preview-body-inner").should(($body) => {
+        const text = $body.text();
+        expect(text).to.include(PLEASE_LOG_IN);
+        expect(HHMMSS_REGEX.test(text)).to.be.true;
+      });
     });
 
     it("Should display retry timeframe with no tasks loaded and a logged in user", () => {
-      cy.intercept("https://api.github.com/user", (req) => {
-        req.reply({
-          statusCode: 200,
-          body: {},
-        });
+      cy.intercept("https://api.github.com/user", {
+        statusCode: 200,
+        body: { login: "mockUser" },
       }).as("getUser");
-      cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
-        req.reply({
-          statusCode: 403,
-        });
-      }).as("getIssues");
 
       cy.visit("/");
       cy.get(".preview-header").should("exist");
-      cy.get(".preview-body-inner").should("include.text", "You have been rate limited. Please try again at");
+      cy.get(".preview-body-inner").should(($body) => {
+        const text = $body.text();
+        expect(text).to.include(RATE_LIMITED);
+        expect(HHMMSS_REGEX.test(text)).to.be.true;
+      });
     });
 
-    it("Should display a hard one-hour retry timeframe with no auth token available", () => {
+    it("Should log an error if the auth provider fails", () => {
+      cy.on("window:before:load", (win) => {
+        cy.stub(win.console, "error").as("consoleError");
+      });
+
       const urlParams = `#error=server_error&error_code=500&error_description=Error getting user profile from external provider`;
-
-      cy.intercept("https://api.github.com/user", (req) => {
-        req.reply({
-          statusCode: 403,
-          body: {},
-        });
-      }).as("getUser");
-      cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
-        req.reply({
-          statusCode: 403,
-        });
-      }).as("getIssues");
-
       cy.visit(`/${urlParams}`);
       cy.get(".preview-header").should("exist");
-      cy.get(".preview-body-inner").should("include.text", "Your access token may have reached it's rate limit, please try again after one hour.");
+      cy.get(".preview-body-inner").should(($body) => {
+        const text = $body.text();
+        expect(text).to.include(PLEASE_LOG_IN);
+        expect(HHMMSS_REGEX.test(text)).to.be.true;
+      });
+      cy.get("@consoleError").should("be.calledWith", "GitHub login provider: Error getting user profile from external provider");
     });
   });
 

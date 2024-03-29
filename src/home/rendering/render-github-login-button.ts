@@ -18,7 +18,7 @@ export async function checkSupabaseSession() {
   return session;
 }
 
-export async function gitHubLoginButtonHandler() {
+async function gitHubLoginButtonHandler() {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
