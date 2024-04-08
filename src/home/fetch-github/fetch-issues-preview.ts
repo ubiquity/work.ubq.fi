@@ -1,9 +1,11 @@
-import { Octokit } from "@octokit/rest";
+import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 import { getGitHubAccessToken, getGitHubUserName } from "../getters/get-github-access-token";
 import { GitHubIssue } from "../github-types";
 import { displayPopupMessage } from "../rendering/display-popup-modal";
 import { TaskNoFull } from "./preview-to-full-mapping";
 import { getGitHubUser } from "../getters/get-github-user";
+
+type GitHubApiResponse = RestEndpointMethodTypes["issues"]["listForRepo"];
 
 async function checkPrivateRepoAccess(): Promise<boolean> {
   const octokit = new Octokit({ auth: await getGitHubAccessToken() });
@@ -102,14 +104,14 @@ type RateLimit = {
   user: boolean;
 };
 
-export async function handleRateLimit(octokit?: Octokit, error?: unknown) {
+export async function handleRateLimit(octokit?: Octokit, error?: GitHubApiResponse) {
   const rate: RateLimit = {
     reset: null,
     user: false,
   };
 
-  if (error) {
-    rate.reset = error.response.headers["x-ratelimit-reset"];
+  if (error && error.response.headers["x-ratelimit-reset"]) {
+    rate.reset = parseInt(error.response.headers["x-ratelimit-reset"]);
   }
 
   if (octokit) {

@@ -36,11 +36,10 @@ async function getNewSessionToken(): Promise<string | null> {
 
 async function getNewGitHubUser(providerToken: string | null): Promise<GitHubUser | null> {
   const octokit = new Octokit({ auth: providerToken });
-
   try {
     const response = (await octokit.request("GET /user")) as GitHubUserResponse;
     return response.data;
-  } catch (error: unknown) {
+  } catch (error) {
     if (error.status === 403) {
       await handleRateLimit(providerToken ? octokit : undefined, error);
     } else {
