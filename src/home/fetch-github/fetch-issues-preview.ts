@@ -1,11 +1,10 @@
-import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
+import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken, getGitHubUserName } from "../getters/get-github-access-token";
 import { GitHubIssue } from "../github-types";
 import { displayPopupMessage } from "../rendering/display-popup-modal";
 import { TaskNoFull } from "./preview-to-full-mapping";
 import { getGitHubUser } from "../getters/get-github-user";
-
-type GitHubApiResponse = RestEndpointMethodTypes["issues"]["listForRepo"];
+import { RequestError } from "@octokit/request-error";
 
 async function checkPrivateRepoAccess(): Promise<boolean> {
   const octokit = new Octokit({ auth: await getGitHubAccessToken() });
@@ -78,7 +77,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
       freshIssues = publicIssues;
     }
   } catch (error) {
-    if (error.status === 403) {
+    if (error instanceof RequestError && error.status === 403) {
       await handleRateLimit(octokit, error);
     } else {
       console.error("Error fetching issue previews:", error);
@@ -104,13 +103,13 @@ type RateLimit = {
   user: boolean;
 };
 
-export async function handleRateLimit(octokit?: Octokit, error?: GitHubApiResponse) {
+export async function handleRateLimit(octokit?: Octokit, error?: RequestError) {
   const rate: RateLimit = {
     reset: null,
     user: false,
   };
 
-  if (error && error.response.headers["x-ratelimit-reset"]) {
+  if (error?.response?.headers["x-ratelimit-reset"]) {
     rate.reset = parseInt(error.response.headers["x-ratelimit-reset"]);
   }
 
