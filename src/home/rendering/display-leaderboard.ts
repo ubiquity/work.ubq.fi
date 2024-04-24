@@ -3,7 +3,10 @@ import { preview, previewBodyInner, titleAnchor, titleHeader } from "./render-pr
 import { getSupabase } from "./render-github-login-button";
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { Octokit } from "@octokit/rest";
-type LeaderboardEntry = { address: string; balance: number; username?: string; role?: string; created_at?: string };
+
+type SupabaseUser = { id: string; created: string; wallet_id: string };
+type LeaderboardData = { address: string; balance: number };
+type LeaderboardEntry = { address: string; username?: string; balance: number; created_at?: string };
 
 export async function renderLeaderboard() {
   const container = taskManager.getContainer();
@@ -13,37 +16,62 @@ export async function renderLeaderboard() {
   }
   const existingAddresses = new Set(Array.from(container.querySelectorAll(".issue-element-inner")).map((element) => element.getAttribute("data-preview-id")));
 
-  let delay = 0;
+  const delay = 0;
   const baseDelay = 500 / 15;
 
-  const cachedEntries = localStorage.getItem("ubq-leaderboard");
-  let entries: LeaderboardEntry[] = [];
+  const cachedEntries = localStorage.getItem("ubq-leaderboard") || "[]";
+  const lastUpdate = localStorage.getItem("ubq-leaderboard-last-update") || "0";
+  const parsedEntries = JSON.parse(cachedEntries) as LeaderboardEntry[];
 
-  if (!cachedEntries) {
+  let entries: LeaderboardEntry[] | undefined = [];
+  let addrAndBalances: LeaderboardData[] = [];
+
+  if (!cachedEntries || Date.now() - parseInt(lastUpdate) > 1000 * 60 * 60 * 24 * 7) {
     // fetches the most up to date leaderboard data from the repo
-    const addrAndBalances = await fetchLeaderboardDataFromRepo();
-    entries = await matchUsernamesToLeaderboardEntries(addrAndBalances);
-  } else {
-    const parsedEntries = JSON.parse(cachedEntries);
-    const addrAndBalances = await fetchLeaderboardDataFromRepo();
+    entries = await fetchAllLeaderboardDatas();
 
-    // new contributors have joined since last time
-    if (addrAndBalances.length > parsedEntries.length) {
-      entries = await matchUsernamesToLeaderboardEntries(addrAndBalances);
+    if (!entries) {
+      return;
     }
 
-    const mergedEntries = addrAndBalances.map((addrAndBalance) => {
-      const parsedEntry = parsedEntries.find((entry) => entry.address === addrAndBalance.address);
-      if (parsedEntry) {
-        return { ...parsedEntry, ...addrAndBalance };
-      }
-      return addrAndBalance;
-    });
+    return launchLeaderboard(
+      entries.sort((a, b) => b.balance - a.balance),
+      container,
+      existingAddresses,
+      delay,
+      baseDelay
+    );
+  } else {
+    if (lastUpdate && Date.now() - parseInt(lastUpdate) < 1000 * 60 * 60 * 24) {
+      entries = parsedEntries.sort((a, b) => b.balance - a.balance);
 
-    entries = mergedEntries;
+      return launchLeaderboard(entries, container, existingAddresses, delay, baseDelay);
+    }
+
+    addrAndBalances = await fetchLeaderboardDataFromRepo();
+
+    const { walletMap, users } = (await pullFromSupabase()) || { walletMap: new Map(), users: { data: [] } };
+    const userIDS = users.data.map((user) => user.id);
+    const githubUsers = await fetchUsernames(userIDS, new Octokit({ auth: await getGitHubAccessToken() }));
+
+    entries = (await makeLeaderboardEntries(walletMap, users, addrAndBalances, githubUsers)).sort((a, b) => b.balance - a.balance);
+
+    if (!entries) {
+      return;
+    }
+
+    return launchLeaderboard(entries, container, existingAddresses, delay, baseDelay);
   }
+}
 
-  for (const entry of Object.values(entries)) {
+async function launchLeaderboard(
+  entries: LeaderboardEntry[],
+  container: HTMLDivElement,
+  existingAddresses: Set<string | null>,
+  delay: number,
+  baseDelay: number
+) {
+  for (const entry of entries) {
     if (!existingAddresses.has(entry.address)) {
       const entryWrapper = await everyNewEntry({ entry, container });
       if (entryWrapper) {
@@ -53,8 +81,99 @@ export async function renderLeaderboard() {
     }
   }
   container.classList.add("ready");
-  // just so we aren't re-rendering the leaderboard if the same filter is applied
   container.setAttribute("data-leaderboard", "true");
+  localStorage.setItem("ubq-leaderboard-last-update", Date.now().toString());
+}
+
+async function pullFromSupabase() {
+  const supabase = getSupabase();
+
+  // pull all wallets from the database
+  const { data, error } = await supabase.from("wallets").select("address, id");
+
+  if (error || !data?.length) {
+    console.error(error);
+    return;
+  }
+
+  const walletMap = new Map<number, string>();
+
+  for (const wallet of data) {
+    walletMap.set(wallet.id, wallet.address);
+  }
+
+  // pull all users with wallets that are in the walletMap
+  const users = (await supabase.from("users").select("id, created, wallet_id").in("wallet_id", Array.from(walletMap.keys()))) as { data: SupabaseUser[] };
+
+  if (!users.data) {
+    return;
+  }
+
+  return { walletMap, users };
+}
+
+async function makeLeaderboardEntries(
+  walletMap: Map<number, string>,
+  users: { data: SupabaseUser[] },
+  addrAndBalances: LeaderboardData[],
+  githubUsers: { id: string; username: string }[]
+): Promise<LeaderboardEntry[]> {
+  const wallets = users.data.map((user) => {
+    const wId = Number(user.wallet_id);
+    const uId = user.id;
+
+    const username = githubUsers.find((user) => user.id === uId)?.username;
+
+    const address = walletMap.get(wId);
+
+    if (!address) {
+      console.warn(`No address found for wallet ID ${wId}`);
+      return { address: "", username: "", balance: 0, created_at: "" };
+    }
+
+    const balance = addrAndBalances.find((entry) => entry.address.toLowerCase() === address?.toLowerCase())?.balance || 0;
+
+    return { address, username, balance, created_at: user.created };
+  });
+
+  localStorage.setItem("ubq-leaderboard", JSON.stringify(wallets));
+
+  return wallets;
+}
+
+async function fetchAllLeaderboardDatas() {
+  const octokit = new Octokit({ auth: await getGitHubAccessToken() });
+  const addrAndBalances = await fetchLeaderboardDataFromRepo();
+
+  const { walletMap, users } = (await pullFromSupabase()) || { walletMap: new Map(), users: { data: [] } };
+
+  const userIDS = users.data.map((user) => user.id);
+  const githubUsers = await fetchUsernames(userIDS, octokit);
+  const wallets = await makeLeaderboardEntries(walletMap, users, addrAndBalances, githubUsers);
+
+  return wallets.sort((a, b) => b.balance - a.balance);
+}
+
+async function fetchUsernames(userIds: string[], octokit: Octokit) {
+  const usernames = [];
+
+  for (const userID of userIds) {
+    const { data, status } = await octokit.request(`GET /user/${userID}`);
+
+    if (status !== 200) {
+      console.error(`Failed to fetch user data for ${userID}`);
+      continue;
+    }
+
+    usernames.push({
+      id: data.id,
+      username: data.login,
+      avatar: data.avatar_url,
+      name: data.name,
+    });
+  }
+
+  return usernames;
 }
 
 async function everyNewEntry({ entry, container }: { entry: LeaderboardEntry; container: HTMLDivElement }) {
@@ -83,7 +202,7 @@ function setUpIssueElement(entryElement: HTMLDivElement, entry: LeaderboardEntry
                 <p>$${entry.balance.toLocaleString()}</p>
             </div>
             <div class="entry-body">
-                <p>${entry.address}</p>
+                <p>${entry.address.toUpperCase()}</p>
             </div>
         </div>
     `;
@@ -112,16 +231,10 @@ function previewEntryAdditionalDetails(entry: LeaderboardEntry) {
           <div class="entry">
               <div class="title">
                   <h3>${entry.username ?? "Contributor"}</h3>
-                  <h4>Role: ${entry.role ?? "Contributor"}</h4>
-
               </div>
               <div class="body">
                     ${entry.created_at ? `<p>Joined: ${new Date(entry.created_at).toLocaleDateString()}</p>` : ""}
                   <p>Earnings To Date: $${entry.balance.toLocaleString()}</p>
-
-                  <hr/>
-  
-                  <h4> Other infos like dev karma, Ubiquity XP, commit count/additions/deletions, etc. </h4>
                   </div>
           </div>
       `;
@@ -131,7 +244,7 @@ function previewEntryAdditionalDetails(entry: LeaderboardEntry) {
   document.body.classList.add("preview-active");
 }
 
-async function fetchLeaderboardDataFromRepo() {
+async function fetchLeaderboardDataFromRepo(): Promise<LeaderboardData[]> {
   try {
     const token = await getGitHubAccessToken();
     const octokit = new Octokit({ auth: token });
@@ -164,74 +277,6 @@ async function fetchLeaderboardDataFromRepo() {
     console.log(err);
     return [];
   }
-}
-
-async function matchUsernamesToLeaderboardEntries(entries: LeaderboardEntry[]) {
-  const wallets = await fetchAllWalletsToUsername();
-
-  if (!wallets) {
-    throw new Error("No wallets found");
-  }
-
-  for (const entry of entries) {
-    const wallet = wallets.find((wallet) => wallet.address.toLowerCase() === entry.address.toLowerCase());
-    if (wallet) {
-      entry.username = wallet.username;
-      entry.created_at = wallet.created_at;
-    } else {
-      entry.username = "Contributor";
-    }
-  }
-
-  localStorage.setItem("ubq-leaderboard", JSON.stringify(entries));
-
-  return entries;
-}
-
-async function fetchAllWalletsToUsername() {
-  const supabase = getSupabase();
-
-  const { data, error } = await supabase.from("wallets").select("address, user_id");
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-
-  if (!data || data.length === 0) {
-    return;
-  }
-
-  const walletMap = new Map<string, string>();
-
-  for (const wallet of data) {
-    walletMap.set(wallet.address, wallet.user_id);
-  }
-
-  const users = await supabase.from("users").select("id, username, created_at");
-
-  if (!users.data || users.data.length === 0) {
-    return;
-  }
-
-  const userMap = new Map<string, { username: string; created_at: string }>();
-
-  for (const user of users.data) {
-    userMap.set(user.id, { username: user.username, created_at: user.created_at });
-  }
-
-  const wallets: { address: string; username: string; created_at: string }[] = [];
-
-  for (const [address, userID] of walletMap) {
-    const user = userMap.get(userID);
-    if (!user) {
-      continue;
-    }
-
-    wallets.push({ address, ...user });
-  }
-
-  return wallets;
 }
 
 function cvsToLeaderboardData(cvsData: string): { address: string; balance: number }[] {
