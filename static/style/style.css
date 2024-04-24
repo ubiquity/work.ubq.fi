@@ -204,6 +204,7 @@
   }
   #filters label {
     cursor: pointer;
+    min-width: fit-content;
   }
   #filters label:hover {
     background-color: #80808040;
@@ -601,14 +602,17 @@
   p.organization-name::after {
     content: "/";
   }
-  input[type="radio"][data-ordering="reverse"] + label::after {
+
+  input[type="radio"][data-ordering="reverse"]:not(#leaderboard) + label::after {
     margin-left: 6px;
     content: "▲";
   }
-  input[type="radio"][data-ordering="normal"] + label::after {
+
+  input[type="radio"][data-ordering="normal"]:not(#leaderboard) + label::after {
     margin-left: 6px;
     content: "▼";
   }
+
   #bottom-bar {
     top: unset;
     bottom: 0;
@@ -624,6 +628,25 @@
   }
   .toolbar button {
     white-space: nowrap;
+  }
+
+  .info .entry-title {
+    font-size: 16px;
+    line-height: 1.25;
+    margin: 0;
+    margin-bottom: 4px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .info .entry-body {
+    width: 100%;
+    font-size: 12px;
+    line-height: 1.25;
+    margin: 0;
+    margin-bottom: 4px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   background #grid {

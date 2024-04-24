@@ -1,6 +1,7 @@
 import { fetchAndDisplayPreviewsFromCache } from "../fetch-github/fetch-and-display-previews";
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { taskManager } from "../home";
+import { renderLeaderboard } from "../rendering/display-leaderboard";
 import { Sorting } from "./generate-sorting-buttons";
 
 export class SortingManager {
@@ -90,11 +91,30 @@ export class SortingManager {
   }
 
   private async _handleSortingClick(input: HTMLInputElement, option: string) {
+    // check if it's the leaderboard they've clicked
+
+    function isLeaderboard() {
+      return option === "leaderboard";
+    }
+    const container = taskManager.getContainer();
+
+    if (isLeaderboard()) {
+      // if it's already rendered, don't re-render
+      if (container.getAttribute("data-leaderboard") !== "true") {
+        await renderLeaderboard();
+      }
+    } else {
+      container.setAttribute("data-leaderboard", "false");
+    }
+
     const ordering = input === this._lastChecked ? "reverse" : "normal";
+
     input.checked = input !== this._lastChecked;
     input.setAttribute("data-ordering", ordering);
+
     this._lastChecked = input.checked ? input : null;
     this._filterTextBox.value = "";
+
     input.parentElement?.childNodes.forEach((node) => {
       if (node instanceof HTMLInputElement) {
         node.setAttribute("data-ordering", "");
@@ -102,6 +122,9 @@ export class SortingManager {
     });
 
     input.setAttribute("data-ordering", ordering);
+
+    if (option === "leaderboard") return;
+
     // instantly load from cache
     fetchAndDisplayPreviewsFromCache(option as Sorting, { ordering }).catch((error) => console.error(error));
 
