@@ -14,7 +14,7 @@ export async function renderLeaderboard() {
   const existingAddresses = new Set(Array.from(container.querySelectorAll(".issue-element-inner")).map((element) => element.getAttribute("data-preview-id")));
 
   let delay = 0;
-  const baseDelay = 500 / 15; // Base delay in milliseconds
+  const baseDelay = 500 / 15;
 
   const cachedEntries = localStorage.getItem("ubq-leaderboard");
   let entries: LeaderboardEntry[] = [];
@@ -53,8 +53,8 @@ export async function renderLeaderboard() {
     }
   }
   container.classList.add("ready");
+  // just so we aren't re-rendering the leaderboard if the same filter is applied
   container.setAttribute("data-leaderboard", "true");
-  // Call this function after the issues have been rendered
 }
 
 async function everyNewEntry({ entry, container }: { entry: LeaderboardEntry; container: HTMLDivElement }) {
@@ -118,15 +118,10 @@ function previewEntryAdditionalDetails(entry: LeaderboardEntry) {
               <div class="body">
                     ${entry.created_at ? `<p>Joined: ${new Date(entry.created_at).toLocaleDateString()}</p>` : ""}
                   <p>Earnings To Date: $${entry.balance.toLocaleString()}</p>
-              
 
                   <hr/>
-
   
                   <h4> Other infos like dev karma, Ubiquity XP, commit count/additions/deletions, etc. </h4>
-  
-  
-              
                   </div>
           </div>
       `;

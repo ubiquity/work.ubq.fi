@@ -91,14 +91,9 @@ export class SortingManager {
   }
 
   private async _handleSortingClick(input: HTMLInputElement, option: string) {
-    // check if it's the leaderboard they've clicked
-
-    function isLeaderboard() {
-      return option === "leaderboard";
-    }
     const container = taskManager.getContainer();
 
-    if (isLeaderboard()) {
+    if (option === "leaderboard") {
       // if it's already rendered, don't re-render
       if (container.getAttribute("data-leaderboard") !== "true") {
         await renderLeaderboard();
