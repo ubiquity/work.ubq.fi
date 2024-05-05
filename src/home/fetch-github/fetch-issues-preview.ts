@@ -1,9 +1,10 @@
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken, getGitHubUserName } from "../getters/get-github-access-token";
 import { GitHubIssue } from "../github-types";
-import { taskManager } from "../home";
 import { displayPopupMessage } from "../rendering/display-popup-modal";
 import { TaskNoFull } from "./preview-to-full-mapping";
+import { getGitHubUser } from "../getters/get-github-user";
+import { RequestError } from "@octokit/request-error";
 
 async function checkPrivateRepoAccess(): Promise<boolean> {
   const octokit = new Octokit({ auth: await getGitHubAccessToken() });
@@ -23,7 +24,7 @@ async function checkPrivateRepoAccess(): Promise<boolean> {
       }
       return false;
     } catch (error) {
-      if (error.status === 404) {
+      if (error instanceof RequestError && error.status === 404) {
         // If the status is 404, it means the user is not a collaborator, hence no access
         return false;
       } else {
@@ -39,7 +40,6 @@ async function checkPrivateRepoAccess(): Promise<boolean> {
 
 export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
   const octokit = new Octokit({ auth: await getGitHubAccessToken() });
-
   let freshIssues: GitHubIssue[] = [];
   let hasPrivateRepoAccess = false; // Flag to track access to the private repository
 
@@ -77,14 +77,10 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
       freshIssues = publicIssues;
     }
   } catch (error) {
-    if (403 === error.status) {
-      console.error(`GitHub API rate limit exceeded.`);
-      if (taskManager.getTasks().length == 0) {
-        // automatically login if there are no issues loaded
-        automaticLogin(error);
-      }
+    if (error instanceof RequestError && error.status === 403) {
+      await handleRateLimit(octokit, error);
     } else {
-      console.error(`Failed to fetch issue previews: ${error}`);
+      console.error("Error fetching issue previews:", error);
     }
   }
 
@@ -97,12 +93,44 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
 
   return tasks;
 }
-function automaticLogin(error: unknown) {
-  const resetTime = error.response.headers["x-ratelimit-reset"];
-  const resetParsed = new Date(resetTime * 1000).toLocaleTimeString();
 
-  displayPopupMessage(
-    `GitHub API rate limit exceeded.`,
-    `You have been rate limited. Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at ${resetParsed}.`
-  );
+function rateLimitModal(message: string) {
+  displayPopupMessage(`GitHub API rate limit exceeded.`, message);
+}
+
+type RateLimit = {
+  reset: number | null;
+  user: boolean;
+};
+
+export async function handleRateLimit(octokit?: Octokit, error?: RequestError) {
+  const rate: RateLimit = {
+    reset: null,
+    user: false,
+  };
+
+  if (error?.response?.headers["x-ratelimit-reset"]) {
+    rate.reset = parseInt(error.response.headers["x-ratelimit-reset"]);
+  }
+
+  if (octokit) {
+    try {
+      const core = await octokit.rest.rateLimit.get();
+      const remaining = core.data.resources.core.remaining;
+      const reset = core.data.resources.core.reset;
+
+      rate.reset = !rate.reset && remaining === 0 ? reset : rate.reset;
+      rate.user = (await getGitHubUser()) ? true : false;
+    } catch (err) {
+      console.error("Error handling GitHub rate limit", err);
+    }
+  }
+
+  const resetParsed = rate.reset && new Date(rate.reset * 1000).toLocaleTimeString();
+
+  if (!rate.user) {
+    rateLimitModal(`You have been rate limited. Please log in to GitHub to increase your GitHub API limits, otherwise you can try again at ${resetParsed}.`);
+  } else {
+    rateLimitModal(`You have been rate limited. Please try again at ${resetParsed}.`);
+  }
 }
