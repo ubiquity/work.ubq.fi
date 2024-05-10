@@ -664,4 +664,9 @@
       opacity: 0.5;
     }
   }
+  .svg-icon {
+    fill: #f8f8f8;
+    width: 24px;
+    height: 24px;
+  }
 }
