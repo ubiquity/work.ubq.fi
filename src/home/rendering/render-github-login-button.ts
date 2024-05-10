@@ -1,4 +1,6 @@
+import { Octokit } from "@octokit/rest";
 import { createClient } from "@supabase/supabase-js";
+import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { toolbar } from "../ready-toolbar";
 
 declare const SUPABASE_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
@@ -19,10 +21,22 @@ export async function checkSupabaseSession() {
 }
 
 async function gitHubLoginButtonHandler() {
+  const scopes = "public_repo";
+  // TODO check user member?
+  try {
+    console.log("1. gitHubLoginButtonHandler");
+    const octokit = new Octokit({ auth: await getGitHubAccessToken() });
+    console.log("2. gitHubLoginButtonHandler");
+    const data = await octokit.rest.orgs.get();
+    console.log("3. gitHubLoginButtonHandler");
+    console.log(data);
+  } catch (e) {
+    console.error(e);
+  }
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      scopes: "repo",
+      scopes,
     },
   });
   if (error) {
