@@ -30,7 +30,6 @@ async function checkPrivateRepoAccess(): Promise<boolean> {
       } else {
         // Handle other errors if needed
         console.error("Error checking repository access:", error);
-        throw error;
       }
     }
   }

@@ -58,7 +58,7 @@ export async function fetchAndDisplayPreviewsFromNetwork(sorting?: Sorting, opti
   const updatedCachedIssues = verifyGitHubIssueState(cachedTasks, fetchedPreviews);
   taskManager.syncTasks(updatedCachedIssues);
   displayGitHubIssues(sorting, options);
-  await taskManager.writeToStorage()
+  await taskManager.writeToStorage();
   return fetchAvatars();
 }
 
