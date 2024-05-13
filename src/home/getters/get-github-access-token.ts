@@ -1,6 +1,30 @@
 declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
+import { Octokit } from "@octokit/rest";
 import { checkSupabaseSession } from "../rendering/render-github-login-button";
 import { getLocalStore } from "./get-local-store";
+
+/**
+ * Checks if the logged-in user is part of Ubiquity's Org, and didn't grant the 'repo' scope
+ */
+export async function isOrgMemberWithoutScope() {
+  const octokit = new Octokit({ auth: await getGitHubAccessToken() });
+  try {
+    await octokit.orgs.getMembershipForAuthenticatedUser({
+      org: "ubiquity",
+    });
+  } catch (e) {
+    if (e && typeof e === "object" && "status" in e && e.status === 404) {
+      return false;
+    }
+    throw e;
+  }
+  const { headers } = await octokit.request("HEAD /");
+  if (headers) {
+    const scopes = headers["x-oauth-scopes"]?.split(", ");
+    return !scopes?.includes("repo");
+  }
+  return false;
+}
 
 export async function getGitHubAccessToken(): Promise<string | null> {
   // better to use official function, looking up localstorage has flaws

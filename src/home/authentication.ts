@@ -14,6 +14,6 @@ export async function authentication() {
   const gitHubUser: null | GitHubUser = await getGitHubUser();
   if (gitHubUser) {
     trackDevRelReferral(gitHubUser.login + "|" + gitHubUser.id);
-    displayGitHubUserInformation(gitHubUser);
+    await displayGitHubUserInformation(gitHubUser);
   }
 }
