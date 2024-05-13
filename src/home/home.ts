@@ -27,8 +27,6 @@ void (async function home() {
     const previews = await fetchAndDisplayPreviewsFromCache();
     const fullTasks = await fetchIssuesFull(previews);
     taskManager.syncTasks(fullTasks);
-    console.trace({ fullTasks });
-    await taskManager.writeToStorage();
     return fullTasks;
   } catch (error) {
     console.error(error);

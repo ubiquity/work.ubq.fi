@@ -36,7 +36,7 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
     _cachedTasks = {
       timestamp: Date.now(),
       tasks: [],
-      loggedIn: _accessToken !== null,
+      loggedIn: !!_accessToken,
     };
   }
 
@@ -58,6 +58,7 @@ export async function fetchAndDisplayPreviewsFromNetwork(sorting?: Sorting, opti
   const updatedCachedIssues = verifyGitHubIssueState(cachedTasks, fetchedPreviews);
   taskManager.syncTasks(updatedCachedIssues);
   displayGitHubIssues(sorting, options);
+  await taskManager.writeToStorage()
   return fetchAvatars();
 }
 
