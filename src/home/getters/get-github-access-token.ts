@@ -8,6 +8,16 @@ import { getLocalStore } from "./get-local-store";
  */
 export async function isOrgMemberWithoutScope() {
   const octokit = new Octokit({ auth: await getGitHubAccessToken() });
+  try {
+    await octokit.orgs.getMembershipForAuthenticatedUser({
+      org: "ubiquity",
+    });
+  } catch (e) {
+    if (e && typeof e === "object" && "status" in e && e.status === 404) {
+      return false;
+    }
+    throw e;
+  }
   const { headers } = await octokit.request("HEAD /");
   if (headers) {
     const scopes = headers["x-oauth-scopes"]?.split(", ");
