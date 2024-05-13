@@ -24,7 +24,7 @@ async function checkPrivateRepoAccess(): Promise<boolean> {
       }
       return false;
     } catch (error) {
-      if (!!error && typeof error === "object" && "status" in error && error.status === 404) {
+      if (!!error && typeof error === "object" && "status" in error && (error.status === 404 || error.status === 401)) {
         // If the status is 404, it means the user is not a collaborator, hence no access
         return false;
       } else {
