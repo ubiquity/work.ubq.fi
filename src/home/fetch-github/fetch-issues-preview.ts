@@ -77,7 +77,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
       freshIssues = publicIssues;
     }
   } catch (error) {
-    if (!!error && typeof error === "object" && "status" in error  && error.status === 403) {
+    if (!!error && typeof error === "object" && "status" in error && error.status === 403) {
       await handleRateLimit(octokit, error as RequestError);
     } else {
       console.error("Error fetching issue previews:", error);
