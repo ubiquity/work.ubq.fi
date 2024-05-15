@@ -21,6 +21,12 @@
     box-shadow: inset 0 0 24px #0080ff08;
   }
 
+  .popup{
+    background-color: var(--dark-background);
+    border-color: var(--border-color);
+    border-color: #80808020;
+  }
+
   .toolbar.ready {
     background-color: var(--dark-background-half);
   }

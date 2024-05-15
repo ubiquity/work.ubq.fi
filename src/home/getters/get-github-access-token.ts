@@ -2,6 +2,7 @@ declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time che
 import { Octokit } from "@octokit/rest";
 import { checkSupabaseSession } from "../rendering/render-github-login-button";
 import { getLocalStore } from "./get-local-store";
+import { Popup } from "../rendering/display-popup-modal";
 
 /**
  * Checks if the logged-in user is part of Ubiquity's Org, and didn't grant the 'repo' scope
@@ -16,6 +17,8 @@ export async function isOrgMemberWithoutScope() {
     if (e && typeof e === "object" && "status" in e && e.status === 404) {
       return false;
     }
+    const popup = new Popup
+    popup.show("Third-party sharing on this org is disabled!")
     throw e;
   }
   const { headers } = await octokit.request("HEAD /");

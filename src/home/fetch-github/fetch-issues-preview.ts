@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken, getGitHubUserName } from "../getters/get-github-access-token";
 import { GitHubIssue } from "../github-types";
-import { displayPopupMessage } from "../rendering/display-popup-modal";
+import { Popup, displayPopupMessage } from "../rendering/display-popup-modal";
 import { TaskNoFull } from "./preview-to-full-mapping";
 import { getGitHubUser } from "../getters/get-github-user";
 import { RequestError } from "@octokit/request-error";
@@ -77,9 +77,11 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
       freshIssues = publicIssues;
     }
   } catch (error) {
-    if (!!error && typeof error === "object" && "status" in error  && error.status === 403) {
+    if (!!error && typeof error === "object" && "status" in error && error.status === 403) {
       await handleRateLimit(octokit, error as RequestError);
     } else {
+      const popup = new Popup
+      popup.show("Error fetching issue previews!")
       console.error("Error fetching issue previews:", error);
     }
   }

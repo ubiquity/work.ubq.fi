@@ -2,6 +2,7 @@ import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { getImageFromCache, saveImageToCache } from "../getters/get-indexed-db";
 import { organizationImageCache } from "./fetch-issues-full";
+import { Popup } from "../rendering/display-popup-modal";
 
 export async function fetchAvatar(orgName: string) {
   // Check local cache first
@@ -38,6 +39,8 @@ export async function fetchAvatar(orgName: string) {
       organizationImageCache.set(orgName, blob);
     }
   } catch (error) {
+    const popup = new Popup
+    popup.show(`Failed to fetch avatar for organization ${orgName}: ${error}`)
     console.error(`Failed to fetch avatar for organization ${orgName}: ${error}`);
     const {
       data: { avatar_url: avatarUrl },
