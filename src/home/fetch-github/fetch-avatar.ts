@@ -39,8 +39,8 @@ export async function fetchAvatar(orgName: string) {
       organizationImageCache.set(orgName, blob);
     }
   } catch (error) {
-    const popup = new Popup
-    popup.show(`Failed to fetch avatar for organization ${orgName}: ${error}`)
+    const popup = new Popup();
+    popup.show(`Failed to fetch avatar for organization ${orgName}: ${error}`);
     console.error(`Failed to fetch avatar for organization ${orgName}: ${error}`);
     const {
       data: { avatar_url: avatarUrl },

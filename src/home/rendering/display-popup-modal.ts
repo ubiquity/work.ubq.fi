@@ -26,14 +26,14 @@ export class Popup {
   private _popupElement: HTMLElement;
 
   constructor() {
-    this._popupElement = document.createElement('div');
-    this._popupElement.classList.add('popup');
+    this._popupElement = document.createElement("div");
+    this._popupElement.classList.add("popup");
     document.body.appendChild(this._popupElement);
   }
 
   public show(message: string): void {
     this._popupElement.textContent = message;
-    this._popupElement.classList.add('active');
+    this._popupElement.classList.add("active");
 
     // Clear any existing timeouts
     if (this._timeoutId) {
@@ -47,6 +47,6 @@ export class Popup {
   }
 
   private _hide(): void {
-    this._popupElement.classList.remove('active');
+    this._popupElement.classList.remove("active");
   }
 }

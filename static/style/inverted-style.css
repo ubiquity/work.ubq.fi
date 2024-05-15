@@ -675,17 +675,17 @@
     margin-right: 8px;
   }
 
-.popup {
-  position: fixed;
-  bottom: 7%;
-  left: 82%;
-  transform: translateX(-50%);
-  color: white;
-  padding: 20px;
-  display: none;
-}
+  .popup {
+    position: fixed;
+    bottom: 7%;
+    left: 82%;
+    transform: translateX(-50%);
+    color: white;
+    padding: 20px;
+    display: none;
+  }
 
-.popup.active {
-  display: block;
-}
+  .popup.active {
+    display: block;
+  }
 }

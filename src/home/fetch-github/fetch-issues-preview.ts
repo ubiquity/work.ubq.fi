@@ -80,8 +80,8 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
     if (!!error && typeof error === "object" && "status" in error && error.status === 403) {
       await handleRateLimit(octokit, error as RequestError);
     } else {
-      const popup = new Popup
-      popup.show("Error fetching issue previews!")
+      const popup = new Popup();
+      popup.show("Error fetching issue previews!");
       console.error("Error fetching issue previews:", error);
     }
   }

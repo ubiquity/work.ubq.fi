@@ -17,8 +17,8 @@ export async function isOrgMemberWithoutScope() {
     if (e && typeof e === "object" && "status" in e && e.status === 404) {
       return false;
     }
-    const popup = new Popup
-    popup.show("Third-party sharing on this org is disabled!")
+    const popup = new Popup();
+    popup.show("Third-party sharing on this org is disabled!");
     throw e;
   }
   const { headers } = await octokit.request("HEAD /");
