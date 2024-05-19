@@ -205,4 +205,32 @@ describe("DevPool", () => {
     cy.get("#authenticated").should("exist");
     cy.get("#filter").should("be.visible");
   });
+
+  describe("Assert that generic error modal displays", () => {
+    beforeEach(() => {
+      cy.origin("https://github.com/login", () => {
+        cy.get("#login_field").type(Cypress.env("GITHUB_USERNAME"));
+        cy.get("#password").type(Cypress.env("GITHUB_PASSWORD"));
+        cy.get(".position-relative > .btn").click();
+      });
+    });
+
+    it("should display the generic error modal if the user is not an org member with the required scope", () => {
+      cy.visit("/");
+
+      cy.intercept("GET", "/orgs/ubiquity/memberships", {
+        statusCode: 404,
+        body: {},
+      }).as("getMembership");
+
+      cy.intercept("HEAD", "/", {
+        headers: {
+          "x-oauth-scopes": "user, notifications",
+        },
+      }).as("headRequest");
+
+      cy.get(".preview-header").should("exist");
+      cy.get(".preview-header").contains("Something went wrong");
+    });
+  });
 });
