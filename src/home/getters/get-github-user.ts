@@ -42,7 +42,7 @@ async function getNewGitHubUser(providerToken: string | null): Promise<GitHubUse
     const response = (await octokit.request("GET /user")) as GitHubUserResponse;
     return response.data;
   } catch (error) {
-    genericErrorModal(`${error}`)
+    genericErrorModal(`${error}`);
     if (error instanceof RequestError && error.status === 403) {
       await handleRateLimit(providerToken ? octokit : undefined, error);
     }
