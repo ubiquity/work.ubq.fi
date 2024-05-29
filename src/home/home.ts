@@ -4,6 +4,7 @@ import { initiateDevRelTracking } from "./devrel-tracker";
 import { fetchAndDisplayPreviewsFromCache } from "./fetch-github/fetch-and-display-previews";
 import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
+import { showError } from "./rendering/display-popup-modal";
 import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { TaskManager } from "./task-manager";
 
@@ -31,7 +32,7 @@ void (async function home() {
     await taskManager.writeToStorage();
     return fullTasks;
   } catch (error) {
-    console.error(error);
+    showError(`${error}`, false)
   }
 
   if ("serviceWorker" in navigator) {
@@ -41,7 +42,7 @@ void (async function home() {
           console.log("ServiceWorker registration successful with scope: ", registration.scope);
         },
         (err) => {
-          console.log("ServiceWorker registration failed: ", err);
+          showError(`${err}`, false, "ServiceWorker registration failed: ")
         }
       );
     });

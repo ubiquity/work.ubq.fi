@@ -1,6 +1,7 @@
 import { fetchAndDisplayPreviewsFromCache } from "../fetch-github/fetch-and-display-previews";
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { taskManager } from "../home";
+import { showError } from "../rendering/display-popup-modal";
 import { Sorting } from "./generate-sorting-buttons";
 
 export class SortingManager {
@@ -35,7 +36,7 @@ export class SortingManager {
           textBox.classList.remove("hidden");
         }
       })
-      .catch((e) => console.error(`[_generateFilterTextBox] Failed to retrieve token: ${e}`));
+      .catch((e) => showError(`${e}`, false, "[_generateFilterTextBox] Failed to retrieve token:"));
 
     const issuesContainer = document.getElementById("issues-container") as HTMLDivElement;
     textBox.addEventListener("input", () => {
@@ -103,7 +104,7 @@ export class SortingManager {
 
     input.setAttribute("data-ordering", ordering);
     // instantly load from cache
-    fetchAndDisplayPreviewsFromCache(option as Sorting, { ordering }).catch((error) => console.error(error));
+    fetchAndDisplayPreviewsFromCache(option as Sorting, { ordering }).catch((error) => showError(`${error}`, false));
 
     // load from network in the background
     // const fetchedPreviews = await fetchIssuePreviews();

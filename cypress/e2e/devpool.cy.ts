@@ -206,8 +206,8 @@ describe("DevPool", () => {
     cy.get("#filter").should("be.visible");
   });
 
-  describe("Display generic error modal", () => {
-    it("should display a generic error modal when fetching issue previews fails on page load", () => {
+  describe("Display error modal", () => {
+    it("should display an error modal when fetching issue previews fails on page load", () => {
       cy.intercept("GET", "https://api.github.com/repos/ubiquity/devpool-directory/issues*", {
         statusCode: 500,
         body: "Internal Server Error",

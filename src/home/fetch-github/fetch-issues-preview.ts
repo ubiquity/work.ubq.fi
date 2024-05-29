@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken, getGitHubUserName } from "../getters/get-github-access-token";
 import { GitHubIssue } from "../github-types";
-import { displayPopupMessage, genericErrorModal } from "../rendering/display-popup-modal";
+import { displayPopupMessage, showError } from "../rendering/display-popup-modal";
 import { TaskNoFull } from "./preview-to-full-mapping";
 import { getGitHubUser } from "../getters/get-github-user";
 import { RequestError } from "@octokit/request-error";
@@ -29,7 +29,7 @@ async function checkPrivateRepoAccess(): Promise<boolean> {
         return false;
       } else {
         // Handle other errors if needed
-        console.error("Error checking repository access:", error);
+        showError(`${error}`, false, "Error checking repository access:")
         throw error;
       }
     }
@@ -80,8 +80,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
     if (!!error && typeof error === "object" && "status" in error && error.status === 403) {
       await handleRateLimit(octokit, error as RequestError);
     } else {
-      genericErrorModal(`${error}`);
-      console.error("Error fetching issue previews:", error);
+      showError(`${error}`, true, "Error fetching issue previews:")
     }
   }
 
@@ -123,7 +122,7 @@ export async function handleRateLimit(octokit?: Octokit, error?: RequestError) {
       rate.reset = !rate.reset && remaining === 0 ? reset : rate.reset;
       rate.user = (await getGitHubUser()) ? true : false;
     } catch (err) {
-      console.error("Error handling GitHub rate limit", err);
+      showError(`${err}`, false, "Error handling Github rate limit")
     }
   }
 

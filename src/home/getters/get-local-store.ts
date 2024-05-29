@@ -1,4 +1,5 @@
 import { TaskStorageItems } from "../github-types";
+import { showError } from "../rendering/display-popup-modal";
 import { OAuthToken } from "./get-github-access-token";
 
 export function getLocalStore(key: string): TaskStorageItems | OAuthToken | null {
@@ -9,7 +10,7 @@ export function getLocalStore(key: string): TaskStorageItems | OAuthToken | null
 
       return value; // as OAuthToken;
     } catch (error) {
-      console.error(error);
+      showError(`${error}`, false)
     }
   }
   return null;

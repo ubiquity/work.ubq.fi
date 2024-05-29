@@ -21,6 +21,11 @@ export function displayPopupMessage(header: string, message: string, url?: strin
   }
 }
 
-export function genericErrorModal(message: string) {
-  displayPopupMessage(`Something went wrong`, message);
+export function showError(error: string, showToast = false, description?: string) {
+  console.error(description, error);
+
+  if (showToast) {
+      displayPopupMessage('Something went wrong', error);
+  }
 }
+
