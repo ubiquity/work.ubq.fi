@@ -11,7 +11,13 @@ export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
   if (!toolbar) throw new Error("toolbar not found");
 
   const img = document.createElement("img");
-  img.src = gitHubUser.avatar_url;
+  if (gitHubUser.avatar_url) {
+    img.src = gitHubUser.avatar_url;
+  } else {
+    img.style.width = "50px";
+    img.style.height = "50px";
+    img.style.backgroundColor = "#808080";
+  }
   img.alt = gitHubUser.login;
   authenticatedDivElement.appendChild(img);
 
