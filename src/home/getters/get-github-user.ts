@@ -4,6 +4,7 @@ import { OAuthToken } from "./get-github-access-token";
 import { getLocalStore } from "./get-local-store";
 import { handleRateLimit } from "../fetch-github/fetch-issues-preview";
 import { RequestError } from "@octokit/request-error";
+import { showError } from "../rendering/display-popup-modal";
 declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
 
 export async function getGitHubUser(): Promise<GitHubUser | null> {
@@ -30,7 +31,7 @@ async function getNewSessionToken(): Promise<string | null> {
   if (!providerToken) {
     const error = params.get("error_description");
     // supabase auth provider has failed for some reason
-    console.error(`GitHub login provider: ${error}`);
+    showError(`${error}`, false, "GitHub login provider")
   }
   return providerToken || null;
 }

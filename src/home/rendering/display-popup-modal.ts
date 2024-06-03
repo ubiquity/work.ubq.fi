@@ -22,7 +22,7 @@ export function displayPopupMessage(header: string, message: string, url?: strin
 }
 
 export function showError(error: string, showToast = false, description?: string) {
-  console.error(description, error);
+  console.error(error, description);
 
   if (showToast) {
       displayPopupMessage('Something went wrong', error);

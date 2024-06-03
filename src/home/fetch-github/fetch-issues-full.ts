@@ -4,6 +4,7 @@ import { GitHubIssue } from "../github-types";
 import { taskWithFullTest } from "./fetch-and-display-previews";
 import { fetchAvatar } from "./fetch-avatar";
 import { TaskMaybeFull, TaskWithFull } from "./preview-to-full-mapping";
+import { showError } from "../rendering/display-popup-modal";
 
 export const organizationImageCache = new Map<string, Blob | null>();
 
@@ -15,7 +16,7 @@ export async function fetchIssuesFull(taskPreviews: TaskMaybeFull[]): Promise<Ta
     const match = task.preview.body.match(urlPattern);
 
     if (!match || !match.groups) {
-      console.error("Invalid issue body URL format");
+      showError("Invalid issue body URL format", false)
       return Promise.resolve(null);
     }
 
