@@ -95,7 +95,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
 }
 
 function rateLimitModal(message: string) {
-  displayPopupMessage(`GitHub API rate limit exceeded.`, message);
+  displayPopupMessage(`GitHub API rate limit exceeded.`, message, false);
 }
 
 type RateLimit = {
