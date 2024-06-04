@@ -1,7 +1,7 @@
 name: Run Cypress testing suite
 on:
   workflow_dispatch:
-  push:
+  pull_request:
 
 jobs:
   cypress-run:
