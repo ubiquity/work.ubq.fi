@@ -33,6 +33,11 @@ describe("DevPool", () => {
         body: issue1,
       });
     }).as("orgs");
+    cy.intercept("https://api.github.com/user/memberships/orgs/*", (req) => {
+      req.reply({
+        statusCode: 404,
+      });
+    }).as("membership");
   });
 
   it("Main page displays issues", () => {
@@ -123,7 +128,7 @@ describe("DevPool", () => {
     it("Should display retry timeframe with no tasks loaded and a logged in user", () => {
       cy.intercept("https://api.github.com/user", {
         statusCode: 200,
-        body: { login: "mockUser" },
+        body: githubUser,
       }).as("getUser");
 
       cy.visit("/");
@@ -182,7 +187,7 @@ describe("DevPool", () => {
   it("User can log in", () => {
     cy.intercept("https://api.github.com/user**", (req) => {
       req.reply({
-        statusCode: 200,
+        statusCode: 404,
         body: githubUser,
       });
     }).as("getUser");
@@ -211,6 +216,13 @@ describe("DevPool", () => {
     // Check that there is no text field visible for sorting
     cy.get("#filter").should("not.be.visible");
     cy.get("#github-login-button").click();
+    // Change the interception because now we are supposed to be logged in
+    cy.intercept("https://api.github.com/user**", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: githubUser,
+      });
+    }).as("getUser");
     // Simulates the redirection after a successful login
     cy.visit("/");
     cy.get("#authenticated").should("exist");
