@@ -26,7 +26,12 @@ export function displayPopupMessage({ modalHeader, modalBody, isError, url }: { 
   }
 }
 
-export function showError(error: string, description: string) {
-  console.error(error, description);
-  displayPopupMessage({ modalHeader: error, modalBody: description, isError: true });
+export function renderErrorInModal(error: Error) {
+  console.error(error);
+  displayPopupMessage({
+    modalHeader: error.name,
+    modalBody: error.message,
+    isError: true,
+  });
+  return false;
 }
