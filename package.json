@@ -16,7 +16,8 @@
     "format:prettier": "prettier --write .",
     "prepare": "husky install",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "cypress:headed": "cypress run --headed"
   },
   "keywords": [
     "typescript",
