@@ -466,11 +466,17 @@
   .preview a {
     word-break: break-all;
   }
-  .preview a[href*="//"] .open-new-link svg
+  .preview .preview-header a[href*="//"] svg
   {
     fill: #ffffff80;
     vertical-align: middle;
     height: 20px;
+  }
+  .preview.active.error > div > div.preview-header > a > span.error {
+    display: unset;
+  }
+  .preview.active > div > div.preview-header > a > span.error {
+    display: none;
   }
   .preview-body-inner {
     line-height: 1.25;

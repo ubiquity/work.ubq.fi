@@ -174,6 +174,7 @@ export function viewIssueDetails(full: GitHubIssue) {
 
   // Show the preview
   preview.classList.add("active");
+  preview.classList.remove("error");
   document.body.classList.add("preview-active");
 }
 
