@@ -20,6 +20,14 @@ if (!container) {
 export const taskManager = new TaskManager(container);
 // window["taskManager"] = taskManager;
 
+window.onerror = function renderErrorsInModal(event: Event | string, url?: string, line?: number, col?: number, errorObj?: Error) {
+  if (typeof event === "string") {
+    showError(`${event}`, true, `Error: ${errorObj?.name}`);
+  } else {
+    showError(`Error: ${event.type}`, true);
+  }
+};
+
 void (async function home() {
   try {
     void authentication();
