@@ -16,13 +16,13 @@ export function displayPopupMessage({ modalHeader, modalBody, isError, url }: { 
       left: toolbar.scrollWidth,
       behavior: "smooth",
     });
+  }
 
-    if (isError) {
-      preview.classList.add("error");
-    } else {
-      preview.classList.remove("error");
-      gitHubLoginButton?.classList.add("highlight");
-    }
+  if (isError) {
+    preview.classList.add("error");
+  } else {
+    preview.classList.remove("error");
+    gitHubLoginButton?.classList.add("highlight");
   }
 }
 
