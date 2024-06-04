@@ -13,7 +13,7 @@ export async function fetchIssuesFull(taskPreviews: TaskMaybeFull[]): Promise<Ta
   const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
 
   const fullTaskPromises = taskPreviews.map(async (task) => {
-    const match = task.preview.body.match(urlPattern);
+    const match = task.preview.body?.match(urlPattern);
 
     if (!match || !match.groups) {
       showError("Invalid issue body URL format", false);
