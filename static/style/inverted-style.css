@@ -472,6 +472,14 @@
     vertical-align: middle;
     height: 20px;
   }
+
+  .preview.active.error .preview-header > a {
+    pointer-events: none;
+  }
+  .preview.active.error .preview-header > a .open-new-link {
+    display: none;
+  }
+
   .preview.active.error > div > div.preview-header > a > span.error {
     display: unset;
   }

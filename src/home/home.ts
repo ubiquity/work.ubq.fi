@@ -6,7 +6,7 @@ import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
 import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { TaskManager } from "./task-manager";
-import { showError } from './rendering/display-popup-modal';
+import { showError } from "./rendering/display-popup-modal";
 
 initiateDevRelTracking();
 generateSortingToolbar();
