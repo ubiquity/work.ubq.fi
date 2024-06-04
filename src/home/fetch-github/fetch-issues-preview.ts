@@ -1,10 +1,10 @@
+import { RequestError } from "@octokit/request-error";
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken, getGitHubUserName } from "../getters/get-github-access-token";
+import { getGitHubUser } from "../getters/get-github-user";
 import { GitHubIssue } from "../github-types";
 import { displayPopupMessage } from "../rendering/display-popup-modal";
 import { TaskNoFull } from "./preview-to-full-mapping";
-import { getGitHubUser } from "../getters/get-github-user";
-import { RequestError } from "@octokit/request-error";
 
 async function checkPrivateRepoAccess(): Promise<boolean> {
   const octokit = new Octokit({ auth: await getGitHubAccessToken() });
@@ -95,7 +95,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
 }
 
 function rateLimitModal(message: string) {
-  displayPopupMessage(`GitHub API rate limit exceeded.`, message, false);
+  displayPopupMessage({ modalHeader: `GitHub API rate limit exceeded.`, modalBody: message, isError: false });
 }
 
 type RateLimit = {

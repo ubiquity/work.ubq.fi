@@ -4,9 +4,9 @@ import { initiateDevRelTracking } from "./devrel-tracker";
 import { fetchAndDisplayPreviewsFromCache } from "./fetch-github/fetch-and-display-previews";
 import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
+import { showError } from "./rendering/display-popup-modal";
 import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { TaskManager } from "./task-manager";
-import { showError } from "./rendering/display-popup-modal";
 
 initiateDevRelTracking();
 generateSortingToolbar();
@@ -20,14 +20,6 @@ if (!container) {
 
 export const taskManager = new TaskManager(container);
 // window["taskManager"] = taskManager;
-
-window.onerror = function renderErrorsInModal(event: Event | string, url?: string, line?: number, col?: number, errorObj?: Error) {
-  if (typeof event === "string") {
-    showError(`${event}`, true, `Error: ${errorObj?.name}`);
-  } else {
-    showError(`Error: ${event.type}`, true);
-  }
-};
 
 void (async function home() {
   try {
@@ -70,6 +62,18 @@ function renderServiceMessage() {
 }
 
 // @ts-expect-error this is for testing purposes only
-window["injectErrorTester"] = function injectErrorTester(error: string = "Test error", description: string = "Test description") {
-  showError(`${error}`, true, description);
+window["showErrorTester"] = function showErrorTester(error: string = "Test error", description: string = "Test description") {
+  showError(error, description);
+};
+
+// @ts-expect-error this is for testing purposes only
+window["throwUncaughtError"] = function throwUncaughtError() {
+  throw new Error("Test error");
+};
+
+window.onerror = function renderErrorsInModal(event: Event | string, url?: string, line?: number, col?: number, errorObj?: Error) {
+  const error = errorObj || new Error(event as string);
+  const description = `URL: ${url}, Line: ${line}, Col: ${col}, Error: ${error.message}`;
+  showError("Uncaught Error", description);
+  return false;
 };

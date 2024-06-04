@@ -1,7 +1,7 @@
 import { toolbar } from "../ready-toolbar";
 import { gitHubLoginButton } from "./render-github-login-button";
 import { preview, previewBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
-export function displayPopupMessage(modalHeader: string, modalBody: string, isError: boolean, url?: string) {
+export function displayPopupMessage({ modalHeader, modalBody, isError, url }: { modalHeader: string; modalBody: string; isError: boolean; url?: string }) {
   titleHeader.textContent = modalHeader;
   if (url) {
     titleAnchor.href = url;
@@ -26,10 +26,7 @@ export function displayPopupMessage(modalHeader: string, modalBody: string, isEr
   }
 }
 
-export function showError(error: string, showToast = false, description?: string) {
+export function showError(error: string, description: string) {
   console.error(error, description);
-
-  if (showToast) {
-    displayPopupMessage("Something went wrong", error, true);
-  }
+  displayPopupMessage({ modalHeader: error, modalBody: description, isError: true });
 }
