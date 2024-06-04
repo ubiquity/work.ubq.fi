@@ -32,7 +32,7 @@ void (async function home() {
     await taskManager.writeToStorage();
     return fullTasks;
   } catch (error) {
-    showError(`${error}`, false)
+    showError(`${error}`, false);
   }
 
   if ("serviceWorker" in navigator) {
@@ -42,7 +42,7 @@ void (async function home() {
           console.log("ServiceWorker registration successful with scope: ", registration.scope);
         },
         (err) => {
-          showError(`${err}`, false, "ServiceWorker registration failed: ")
+          showError(`${err}`, false, "ServiceWorker registration failed: ");
         }
       );
     });
@@ -60,3 +60,8 @@ function renderServiceMessage() {
     }
   }
 }
+
+// @ts-expect-error this is for testing purposes only
+window["injectErrorTester"] = function injectErrorTester(error: string = "Test error", description: string = "Test description") {
+  showError(`${error}`, true, description);
+};
