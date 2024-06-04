@@ -664,4 +664,14 @@
       opacity: 0.5;
     }
   }
+  .svg-icon {
+    fill: #070707;
+    width: 24px;
+    height: 24px;
+  }
+  .user-container {
+    display: flex;
+    align-items: center;
+    margin-right: 8px;
+  }
 }

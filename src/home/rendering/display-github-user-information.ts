@@ -1,24 +1,27 @@
+import { isOrgMemberWithoutScope } from "../getters/get-github-access-token";
 import { GitHubUser } from "../github-types";
-import { getSupabase } from "./render-github-login-button";
+import { getSupabase, renderAugmentAccessButton } from "./render-github-login-button";
 
-export function displayGitHubUserInformation(gitHubUser: GitHubUser) {
+export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
   const toolbar = document.getElementById("toolbar");
-  const authenticated = document.createElement("div");
-  authenticated.id = "authenticated";
+  const authenticatedDivElement = document.createElement("div");
+  const containerDivElement = document.createElement("div");
+  authenticatedDivElement.id = "authenticated";
+  authenticatedDivElement.classList.add("user-container");
   if (!toolbar) throw new Error("toolbar not found");
 
   const img = document.createElement("img");
   img.src = gitHubUser.avatar_url;
   img.alt = gitHubUser.login;
-  authenticated.appendChild(img);
+  authenticatedDivElement.appendChild(img);
 
-  const div = document.createElement("div");
+  const divNameElement = document.createElement("div");
 
-  div.textContent = gitHubUser.name;
-  div.classList.add("full");
-  authenticated.appendChild(div);
+  divNameElement.textContent = gitHubUser.name;
+  divNameElement.classList.add("full");
+  authenticatedDivElement.appendChild(divNameElement);
 
-  authenticated.addEventListener("click", async function signOut() {
+  authenticatedDivElement.addEventListener("click", async function signOut() {
     const supabase = getSupabase();
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -28,7 +31,14 @@ export function displayGitHubUserInformation(gitHubUser: GitHubUser) {
     window.location.reload();
   });
 
-  toolbar.appendChild(authenticated);
+  containerDivElement.appendChild(authenticatedDivElement);
+
+  if (await isOrgMemberWithoutScope()) {
+    const accessButton = renderAugmentAccessButton();
+    containerDivElement.appendChild(accessButton);
+  }
+
+  toolbar.appendChild(containerDivElement);
   toolbar.setAttribute("data-authenticated", "true");
   toolbar.classList.add("ready");
 }
