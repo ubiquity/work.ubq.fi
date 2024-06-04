@@ -27,7 +27,7 @@ async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
     },
   });
   if (error) {
-    showError(`${error}`, true, "Error logging in:")
+    showError(`${error}`, true, "Error logging in:");
   }
 }
 

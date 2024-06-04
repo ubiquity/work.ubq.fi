@@ -29,7 +29,7 @@ async function checkPrivateRepoAccess(): Promise<boolean> {
         return false;
       } else {
         // Handle other errors if needed
-        showError(`${error}`, false, "Error checking repository access:")
+        showError(`${error}`, false, "Error checking repository access:");
         throw error;
       }
     }
@@ -80,7 +80,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
     if (!!error && typeof error === "object" && "status" in error && error.status === 403) {
       await handleRateLimit(octokit, error as RequestError);
     } else {
-      showError(`${error}`, true, "Error fetching issue previews:")
+      showError(`${error}`, true, "Error fetching issue previews:");
     }
   }
 
@@ -122,7 +122,7 @@ export async function handleRateLimit(octokit?: Octokit, error?: RequestError) {
       rate.reset = !rate.reset && remaining === 0 ? reset : rate.reset;
       rate.user = (await getGitHubUser()) ? true : false;
     } catch (err) {
-      showError(`${err}`, false, "Error handling Github rate limit")
+      showError(`${err}`, false, "Error handling Github rate limit");
     }
   }
 

@@ -16,7 +16,7 @@ export async function fetchIssuesFull(taskPreviews: TaskMaybeFull[]): Promise<Ta
     const match = task.preview.body.match(urlPattern);
 
     if (!match || !match.groups) {
-      showError("Invalid issue body URL format", false)
+      showError("Invalid issue body URL format", false);
       return Promise.resolve(null);
     }
 

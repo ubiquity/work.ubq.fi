@@ -17,7 +17,7 @@ export async function isOrgMemberWithoutScope() {
     if (e && typeof e === "object" && "status" in e && e.status === 404) {
       return false;
     }
-    showError(`${e}`, true)
+    showError(`${e}`, true);
     throw e;
   }
   const { headers } = await octokit.request("HEAD /");

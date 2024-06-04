@@ -39,7 +39,7 @@ export async function fetchAvatar(orgName: string) {
       organizationImageCache.set(orgName, blob);
     }
   } catch (error) {
-    showError(`${error}`, true, `Failed to fetch avatar for organization ${orgName}:`)
+    showError(`${error}`, true, `Failed to fetch avatar for organization ${orgName}:`);
     const {
       data: { avatar_url: avatarUrl },
     } = await octokit.rest.users.getByUsername({ username: orgName });

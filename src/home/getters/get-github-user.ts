@@ -31,7 +31,7 @@ async function getNewSessionToken(): Promise<string | null> {
   if (!providerToken) {
     const error = params.get("error_description");
     // supabase auth provider has failed for some reason
-    showError(`${error}`, false, "GitHub login provider")
+    showError(`${error}`, false, "GitHub login provider");
   }
   return providerToken || null;
 }

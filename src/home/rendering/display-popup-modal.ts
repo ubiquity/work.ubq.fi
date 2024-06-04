@@ -25,7 +25,6 @@ export function showError(error: string, showToast = false, description?: string
   console.error(error, description);
 
   if (showToast) {
-      displayPopupMessage('Something went wrong', error);
+    displayPopupMessage("Something went wrong", error);
   }
 }
-

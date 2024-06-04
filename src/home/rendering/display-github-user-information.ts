@@ -26,7 +26,7 @@ export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
     const supabase = getSupabase();
     const { error } = await supabase.auth.signOut();
     if (error) {
-      showError(`${error}`, true, "Error logging out:")
+      showError(`${error}`, true, "Error logging out:");
       alert(error);
     }
     window.location.reload();

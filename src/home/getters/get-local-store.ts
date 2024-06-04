@@ -10,7 +10,7 @@ export function getLocalStore(key: string): TaskStorageItems | OAuthToken | null
 
       return value; // as OAuthToken;
     } catch (error) {
-      showError(`${error}`, false)
+      showError(`${error}`, false);
     }
   }
   return null;
