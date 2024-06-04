@@ -51,7 +51,6 @@ void (async function home() {
       );
     });
   }
-
   return fullTasks;
 })();
 
