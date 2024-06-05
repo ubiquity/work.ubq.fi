@@ -36,7 +36,6 @@ void (async function home() {
   const previews = await fetchAndDisplayPreviewsFromCache();
   const fullTasks = await fetchIssuesFull(previews);
   taskManager.syncTasks(fullTasks);
-  console.trace({ fullTasks });
   await taskManager.writeToStorage();
 
   if ("serviceWorker" in navigator) {

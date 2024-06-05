@@ -72,7 +72,13 @@ export class SortingManager {
       buttons.appendChild(input);
       buttons.appendChild(label);
 
-      input.addEventListener("click", () => this._handleSortingClick(input, option).catch(renderErrorCatch)); // @DEV: need to test if this async catch works as expected
+      input.addEventListener("click", () => {
+        try {
+          void this._handleSortingClick(input, option);
+        } catch (error) {
+          renderErrorCatch(error as ErrorEvent);
+        }
+      });
     });
 
     return buttons;
@@ -108,8 +114,11 @@ export class SortingManager {
 
     input.setAttribute("data-ordering", ordering);
     // instantly load from cache
-    fetchAndDisplayPreviewsFromCache(option as Sorting, { ordering }).catch(renderErrorCatch); // @DEV: need to test if this async catch works as expected
-
+    try {
+      void fetchAndDisplayPreviewsFromCache(option as Sorting, { ordering });
+    } catch (error) {
+      renderErrorCatch(error as ErrorEvent);
+    }
     // load from network in the background
     // const fetchedPreviews = await fetchIssuePreviews();
     // const cachedTasks = taskManager.getTasks();

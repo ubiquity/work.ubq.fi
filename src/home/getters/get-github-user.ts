@@ -1,8 +1,7 @@
 import { RequestError } from "@octokit/request-error";
 import { Octokit } from "@octokit/rest";
-import { handleRateLimit } from "../fetch-github/fetch-issues-preview";
+import { handleRateLimit } from "../fetch-github/handle-rate-limit";
 import { GitHubUser, GitHubUserResponse } from "../github-types";
-import { renderErrorInModal } from "../rendering/display-popup-modal";
 import { OAuthToken } from "./get-github-access-token";
 import { getLocalStore } from "./get-local-store";
 declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
@@ -45,7 +44,10 @@ async function getNewGitHubUser(providerToken: string | null): Promise<GitHubUse
     if (error instanceof RequestError && error.status === 403) {
       await handleRateLimit(providerToken ? octokit : undefined, error);
     }
-    renderErrorInModal(error as Error, "Failed to fetch GitHub user details.");
+    // renderErrorInModal(error as Error, "You have been logged out. Please login again."); // @DEV: user another method to render the modal not as an error
+    // gitHubLoginButton?.classList.add("highlight");
+    // throw error;
+    console.warn("You have been logged out. Please login again.", error);
   }
   return null;
 }

@@ -1,5 +1,4 @@
 import { toolbar } from "../ready-toolbar";
-import { gitHubLoginButton } from "./render-github-login-button";
 import { preview, previewBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
 export function displayPopupMessage({ modalHeader, modalBody, isError, url }: { modalHeader: string; modalBody: string; isError: boolean; url?: string }) {
   titleHeader.textContent = modalHeader;
@@ -22,19 +21,24 @@ export function displayPopupMessage({ modalHeader, modalBody, isError, url }: { 
     preview.classList.add("error");
   } else {
     preview.classList.remove("error");
-    gitHubLoginButton?.classList.add("highlight");
   }
+  console.trace({
+    modalHeader,
+    modalBody,
+    isError,
+    url,
+  });
 }
 
 export function renderErrorInModal(error: Error, info?: string) {
   if (info) {
-    console.error(info);
-  } else {
     console.error(error);
+  } else {
+    console.error(info ?? error.message);
   }
   displayPopupMessage({
     modalHeader: error.name,
-    modalBody: error.message,
+    modalBody: info ?? error.message,
     isError: true,
   });
   return false;
