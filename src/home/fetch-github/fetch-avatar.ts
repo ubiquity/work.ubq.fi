@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { getImageFromCache, saveImageToCache } from "../getters/get-indexed-db";
-import { renderErrorInModal } from '../rendering/display-popup-modal';
+import { renderErrorInModal } from "../rendering/display-popup-modal";
 import { organizationImageCache } from "./fetch-issues-full";
 
 export async function fetchAvatar(orgName: string) {
