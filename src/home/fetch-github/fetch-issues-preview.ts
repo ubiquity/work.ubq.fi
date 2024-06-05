@@ -3,7 +3,7 @@ import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken, getGitHubUserName } from "../getters/get-github-access-token";
 import { getGitHubUser } from "../getters/get-github-user";
 import { GitHubIssue } from "../github-types";
-import { displayPopupMessage } from "../rendering/display-popup-modal";
+import { displayPopupMessage, renderErrorInModal } from "../rendering/display-popup-modal";
 import { TaskNoFull } from "./preview-to-full-mapping";
 
 async function checkPrivateRepoAccess(): Promise<boolean> {
@@ -80,7 +80,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
     if (error instanceof RequestError && error.status === 403) {
       await handleRateLimit(octokit, error);
     } else {
-      console.error("Error fetching issue previews:", error);
+      renderErrorInModal(error as Error, "Error fetching issue previews");
     }
   }
 
@@ -122,7 +122,7 @@ export async function handleRateLimit(octokit?: Octokit, error?: RequestError) {
       rate.reset = !rate.reset && remaining === 0 ? reset : rate.reset;
       rate.user = (await getGitHubUser()) ? true : false;
     } catch (err) {
-      console.error("Error handling GitHub rate limit", err);
+      renderErrorInModal(err as Error, "Error handling GitHub rate limit");
     }
   }
 
