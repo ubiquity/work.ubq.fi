@@ -69,7 +69,11 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
       await handleRateLimit(octokit, error);
     } else {
       // renderErrorInModal(error as Error, "You have been rate limited. Please login to increase your limits."); // @DEV: user another method to render the modal not as an error
-      displayPopupMessage({ modalHeader: "GitHub API rate limit exceeded.", modalBody: "You have been rate limited. Please login to increase your limits.", isError: false });
+      displayPopupMessage({
+        modalHeader: "GitHub API rate limit exceeded.",
+        modalBody: "You have been rate limited. Please login to increase your limits.",
+        isError: false,
+      });
       gitHubLoginButton?.classList.add("highlight");
       // throw error;
       // console.error("You have been rate limited. Please login to increase your limits. ", error);

@@ -1,9 +1,4 @@
 {
   "version": "0.2",
-  "words": [
-    "devpool",
-    "ratelimit",
-    "supabase",
-    "UBIQUIBOT"
-  ]
+  "words": ["devpool", "ratelimit", "supabase", "UBIQUIBOT"]
 }
