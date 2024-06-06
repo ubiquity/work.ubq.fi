@@ -44,9 +44,6 @@ async function getNewGitHubUser(providerToken: string | null): Promise<GitHubUse
     if (error instanceof RequestError && error.status === 403) {
       await handleRateLimit(providerToken ? octokit : undefined, error);
     }
-    // renderErrorInModal(error as Error, "You have been logged out. Please login again."); // @DEV: user another method to render the modal not as an error
-    // gitHubLoginButton?.classList.add("highlight");
-    // throw error;
     console.warn("You have been logged out. Please login again.", error);
   }
   return null;

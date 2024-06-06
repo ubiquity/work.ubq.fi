@@ -75,8 +75,6 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
         isError: false,
       });
       gitHubLoginButton?.classList.add("highlight");
-      // throw error;
-      // console.error("You have been rate limited. Please login to increase your limits. ", error);
     }
   }
 
@@ -98,12 +96,14 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
     const privateIssues = privateResponse.filter((issue: GitHubIssue) => !issue.pull_request);
 
     // Mark private issues
-    const privateIssuesWithFlag = privateIssues.map((issue) => {
-      return issue;
-    });
+    // TODO: indicate private issues in the UI
+
+    // const privateIssuesWithFlag = privateIssues.map((issue) => {
+    //   return issue;
+    // });
 
     // Combine public and private issues
-    freshIssues = [...privateIssuesWithFlag, ...publicIssues];
+    freshIssues = [...privateIssues, ...publicIssues];
   }
 }
 
