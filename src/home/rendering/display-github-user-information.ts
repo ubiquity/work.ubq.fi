@@ -1,5 +1,6 @@
 import { isOrgMemberWithoutScope } from "../getters/get-github-access-token";
 import { GitHubUser } from "../github-types";
+import { renderErrorInModal } from "./display-popup-modal";
 import { getSupabase, renderAugmentAccessButton } from "./render-github-login-button";
 
 export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
@@ -29,8 +30,8 @@ export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
     const supabase = getSupabase();
     const { error } = await supabase.auth.signOut();
     if (error) {
-      console.error("Error logging out:", error);
-      alert(error);
+      renderErrorInModal(error, "Error logging out");
+      alert("Error logging out");
     }
     window.location.reload();
   });

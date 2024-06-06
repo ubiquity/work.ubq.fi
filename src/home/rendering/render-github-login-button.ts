@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { toolbar } from "../ready-toolbar";
+import { renderErrorInModal } from "./display-popup-modal";
 
 declare const SUPABASE_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
 declare const SUPABASE_ANON_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
@@ -26,7 +27,7 @@ async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
     },
   });
   if (error) {
-    console.error("Error logging in:", error);
+    renderErrorInModal(error, "Error logging in");
   }
 }
 

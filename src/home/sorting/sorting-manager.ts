@@ -1,6 +1,7 @@
 import { fetchAndDisplayPreviewsFromCache } from "../fetch-github/fetch-and-display-previews";
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { taskManager } from "../home";
+import { renderErrorInModal } from "../rendering/display-popup-modal";
 import { Sorting } from "./generate-sorting-buttons";
 
 export class SortingManager {
@@ -39,18 +40,22 @@ export class SortingManager {
 
     const issuesContainer = document.getElementById("issues-container") as HTMLDivElement;
     textBox.addEventListener("input", () => {
-      const filterText = textBox.value.toLowerCase();
-      const issues = Array.from(issuesContainer.children) as HTMLDivElement[];
-      issues.forEach((issue) => {
-        const issuePreviewId = issue.children[0].getAttribute("data-preview-id");
-        if (!issuePreviewId) throw new Error(`No preview id found for issue ${issue}`);
-        const fullIssue = taskManager.getTaskByPreviewId(Number(issuePreviewId)).full;
-        if (!fullIssue) throw new Error(`No full issue found for preview id ${issuePreviewId}`);
-        const searchableProperties = ["title", "body", "number", "html_url"] as const;
-        const searchableStrings = searchableProperties.map((prop) => fullIssue[prop]?.toString().toLowerCase());
-        const isVisible = searchableStrings.some((str) => str?.includes(filterText));
-        issue.style.display = isVisible ? "block" : "none";
-      });
+      try {
+        const filterText = textBox.value.toLowerCase();
+        const issues = Array.from(issuesContainer.children) as HTMLDivElement[];
+        issues.forEach((issue) => {
+          const issuePreviewId = issue.children[0].getAttribute("data-preview-id");
+          if (!issuePreviewId) throw new Error(`No preview id found for issue ${issue}`);
+          const fullIssue = taskManager.getTaskByPreviewId(Number(issuePreviewId)).full;
+          if (!fullIssue) throw new Error(`No full issue found for preview id ${issuePreviewId}`);
+          const searchableProperties = ["title", "body", "number", "html_url"] as const;
+          const searchableStrings = searchableProperties.map((prop) => fullIssue[prop]?.toString().toLowerCase());
+          const isVisible = searchableStrings.some((str) => str?.includes(filterText));
+          issue.style.display = isVisible ? "block" : "none";
+        });
+      } catch (error) {
+        return renderErrorInModal(error as Error);
+      }
     });
 
     return textBox;
@@ -67,7 +72,13 @@ export class SortingManager {
       buttons.appendChild(input);
       buttons.appendChild(label);
 
-      input.addEventListener("click", () => this._handleSortingClick(input, option));
+      input.addEventListener("click", () => {
+        try {
+          void this._handleSortingClick(input, option);
+        } catch (error) {
+          renderErrorCatch(error as ErrorEvent);
+        }
+      });
     });
 
     return buttons;
@@ -103,8 +114,11 @@ export class SortingManager {
 
     input.setAttribute("data-ordering", ordering);
     // instantly load from cache
-    fetchAndDisplayPreviewsFromCache(option as Sorting, { ordering }).catch((error) => console.error(error));
-
+    try {
+      void fetchAndDisplayPreviewsFromCache(option as Sorting, { ordering });
+    } catch (error) {
+      renderErrorCatch(error as ErrorEvent);
+    }
     // load from network in the background
     // const fetchedPreviews = await fetchIssuePreviews();
     // const cachedTasks = taskManager.getTasks();
@@ -113,4 +127,8 @@ export class SortingManager {
     // taskManager.syncTasks(updatedCachedIssues);
     // return fetchAvatars();
   }
+}
+
+function renderErrorCatch(event: ErrorEvent) {
+  return renderErrorInModal(event.error);
 }

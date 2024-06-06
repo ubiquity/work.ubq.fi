@@ -3,6 +3,7 @@ import { organizationImageCache } from "../fetch-github/fetch-issues-full";
 import { TaskMaybeFull } from "../fetch-github/preview-to-full-mapping";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
+import { renderErrorInModal } from "./display-popup-modal";
 import { preview, previewBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
 
@@ -81,23 +82,27 @@ function setUpIssueElement(
       )}${image}</div>`;
 
   issueElement.addEventListener("click", () => {
-    const issueWrapper = issueElement.parentElement;
+    try {
+      const issueWrapper = issueElement.parentElement;
 
-    if (!issueWrapper) {
-      throw new Error("No issue container found");
-    }
+      if (!issueWrapper) {
+        throw new Error("No issue container found");
+      }
 
-    Array.from(issueWrapper.parentElement?.children || []).forEach((sibling) => {
-      sibling.classList.remove("selected");
-    });
+      Array.from(issueWrapper.parentElement?.children || []).forEach((sibling) => {
+        sibling.classList.remove("selected");
+      });
 
-    issueWrapper.classList.add("selected");
+      issueWrapper.classList.add("selected");
 
-    const full = task.full;
-    if (!full) {
-      window.open(match?.input, "_blank");
-    } else {
-      previewIssue(task);
+      const full = task.full;
+      if (!full) {
+        window.open(match?.input, "_blank");
+      } else {
+        previewIssue(task);
+      }
+    } catch (error) {
+      return renderErrorInModal(error as Error);
     }
   });
 }
@@ -174,6 +179,7 @@ export function viewIssueDetails(full: GitHubIssue) {
 
   // Show the preview
   preview.classList.add("active");
+  preview.classList.remove("error");
   document.body.classList.add("preview-active");
 }
 

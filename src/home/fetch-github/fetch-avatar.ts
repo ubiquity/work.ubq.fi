@@ -1,6 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { getImageFromCache, saveImageToCache } from "../getters/get-indexed-db";
+import { renderErrorInModal } from "../rendering/display-popup-modal";
 import { organizationImageCache } from "./fetch-issues-full";
 
 export async function fetchAvatar(orgName: string) {
@@ -38,7 +39,7 @@ export async function fetchAvatar(orgName: string) {
       organizationImageCache.set(orgName, blob);
     }
   } catch (error) {
-    console.error(`Failed to fetch avatar for organization ${orgName}: ${error}`);
+    renderErrorInModal(error as Error, `Failed to fetch avatar for organization ${orgName}: ${error}`);
     const {
       data: { avatar_url: avatarUrl },
     } = await octokit.rest.users.getByUsername({ username: orgName });
