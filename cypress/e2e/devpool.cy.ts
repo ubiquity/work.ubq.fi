@@ -234,14 +234,22 @@ describe("DevPool", () => {
         statusCode: 500,
         body: "Internal Server Error",
       }).as("getPublicIssues");
+      // Expect the error to be thrown
+      cy.once("uncaught:exception", () => false);
+      cy.intercept("https://api.github.com/user**", (req) => {
+        req.reply({
+          statusCode: 200,
+          body: githubUser,
+        });
+      }).as("getUser");
 
       cy.visit("/");
 
       cy.wait("@getPublicIssues");
 
       cy.get(".preview-header").should("be.visible");
-      cy.get(".preview-header").should("contain", "Something went wrong");
-      cy.get(".preview-body-inner").should("contain", "HttpError: Internal Server Error");
+      cy.get(".preview-header").should("contain", "HttpError");
+      cy.get(".preview-body-inner").should("contain", "Internal Server Error");
     });
   });
 });

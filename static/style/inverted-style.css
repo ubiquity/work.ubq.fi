@@ -688,4 +688,9 @@
     align-items: center;
     margin-right: 8px;
   }
+  .github-avatar-default {
+    width: 48px;
+    height: 48px;
+    background-color: #7f7f7f;
+  }
 }

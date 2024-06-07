@@ -3,7 +3,6 @@ import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken, getGitHubUserName } from "../getters/get-github-access-token";
 import { GitHubIssue } from "../github-types";
 import { displayPopupMessage } from "../rendering/display-popup-modal";
-import { gitHubLoginButton } from "../rendering/render-github-login-button";
 import { handleRateLimit } from "./handle-rate-limit";
 import { TaskNoFull } from "./preview-to-full-mapping";
 
@@ -68,13 +67,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
     if (!!error && typeof error === "object" && "status" in error && error.status === 403) {
       await handleRateLimit(octokit, error as RequestError);
     } else {
-      // renderErrorInModal(error as Error, "You have been rate limited. Please login to increase your limits."); // @DEV: user another method to render the modal not as an error
-      displayPopupMessage({
-        modalHeader: "GitHub API rate limit exceeded.",
-        modalBody: "You have been rate limited. Please login to increase your limits.",
-        isError: false,
-      });
-      gitHubLoginButton?.classList.add("highlight");
+      throw error;
     }
   }
 
