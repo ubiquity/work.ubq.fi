@@ -466,11 +466,25 @@
   .preview a {
     word-break: break-all;
   }
-  .preview a[href*="//"] .open-new-link svg
+  .preview .preview-header a[href*="//"] svg
   {
     fill: #ffffff80;
     vertical-align: middle;
     height: 20px;
+  }
+
+  .preview.active.error .preview-header > a {
+    pointer-events: none;
+  }
+  .preview.active.error .preview-header > a .open-new-link {
+    display: none;
+  }
+
+  .preview.active.error > div > div.preview-header > a > span.error {
+    display: unset;
+  }
+  .preview.active > div > div.preview-header > a > span.error {
+    display: none;
   }
   .preview-body-inner {
     line-height: 1.25;
@@ -673,5 +687,10 @@
     display: flex;
     align-items: center;
     margin-right: 8px;
+  }
+  .github-avatar-default {
+    width: 48px;
+    height: 48px;
+    background-color: #808080;
   }
 }

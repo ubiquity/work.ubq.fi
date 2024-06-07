@@ -4,12 +4,23 @@ import { initiateDevRelTracking } from "./devrel-tracker";
 import { fetchAndDisplayPreviewsFromCache } from "./fetch-github/fetch-and-display-previews";
 import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
+import { renderErrorInModal } from "./rendering/display-popup-modal";
 import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { TaskManager } from "./task-manager";
+
+// All unhandled errors are caught and displayed in a modal
+window.addEventListener("error", (event: ErrorEvent) => renderErrorInModal(event.error));
+
+// All unhandled promise rejections are caught and displayed in a modal
+window.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
+  renderErrorInModal(event.reason as Error);
+  event.preventDefault();
+});
 
 initiateDevRelTracking();
 generateSortingToolbar();
 renderServiceMessage();
+
 grid(document.getElementById("grid") as HTMLElement, () => document.body.classList.add("grid-loaded")); // @DEV: display grid background
 const container = document.getElementById("issues-container") as HTMLDivElement;
 
@@ -18,21 +29,14 @@ if (!container) {
 }
 
 export const taskManager = new TaskManager(container);
-// window["taskManager"] = taskManager;
 
 void (async function home() {
-  try {
-    void authentication();
-    void readyToolbar();
-    const previews = await fetchAndDisplayPreviewsFromCache();
-    const fullTasks = await fetchIssuesFull(previews);
-    taskManager.syncTasks(fullTasks);
-    console.trace({ fullTasks });
-    await taskManager.writeToStorage();
-    return fullTasks;
-  } catch (error) {
-    console.error(error);
-  }
+  void authentication();
+  void readyToolbar();
+  const previews = await fetchAndDisplayPreviewsFromCache();
+  const fullTasks = await fetchIssuesFull(previews);
+  taskManager.syncTasks(fullTasks);
+  await taskManager.writeToStorage();
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
@@ -46,6 +50,7 @@ void (async function home() {
       );
     });
   }
+  return fullTasks;
 })();
 
 function renderServiceMessage() {

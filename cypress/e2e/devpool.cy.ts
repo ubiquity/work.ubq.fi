@@ -227,4 +227,21 @@ describe("DevPool", () => {
     cy.get("#authenticated").should("exist");
     cy.get("#filter").should("be.visible");
   });
+
+  describe("Display error modal", () => {
+    it("should display an error modal when fetching issue previews fails on page load", () => {
+      cy.intercept("GET", "https://api.github.com/repos/ubiquity/devpool-directory/issues*", {
+        statusCode: 500,
+        body: "Internal Server Error",
+      }).as("getPublicIssues");
+
+      cy.visit("/");
+
+      cy.wait("@getPublicIssues");
+
+      cy.get(".preview-header").should("be.visible");
+      cy.get(".preview-header").should("contain", "Something went wrong");
+      cy.get(".preview-body-inner").should("contain", "HttpError: Internal Server Error");
+    });
+  });
 });

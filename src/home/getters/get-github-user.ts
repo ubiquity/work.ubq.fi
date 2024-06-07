@@ -1,9 +1,9 @@
+import { RequestError } from "@octokit/request-error";
 import { Octokit } from "@octokit/rest";
+import { handleRateLimit } from "../fetch-github/handle-rate-limit";
 import { GitHubUser, GitHubUserResponse } from "../github-types";
 import { OAuthToken } from "./get-github-access-token";
 import { getLocalStore } from "./get-local-store";
-import { handleRateLimit } from "../fetch-github/fetch-issues-preview";
-import { RequestError } from "@octokit/request-error";
 declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
 
 export async function getGitHubUser(): Promise<GitHubUser | null> {
@@ -44,6 +44,7 @@ async function getNewGitHubUser(providerToken: string | null): Promise<GitHubUse
     if (!!error && typeof error === "object" && "status" in error && error.status === 403) {
       await handleRateLimit(providerToken ? octokit : undefined, error as RequestError);
     }
+    console.warn("You have been logged out. Please login again.", error);
   }
   return null;
 }
