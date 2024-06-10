@@ -1,8 +1,10 @@
 import { RestEndpointMethodTypes } from "@octokit/rest";
+import { Session } from "@supabase/supabase-js";
 
 describe("DevPool", () => {
   let issue1: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
   let issue2: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
+  let githubUser: Session["user"];
 
   before(() => {
     cy.fixture("issue-1.json").then((content) => {
@@ -10,6 +12,9 @@ describe("DevPool", () => {
     });
     cy.fixture("issue-2.json").then((content) => {
       issue2 = content;
+    });
+    cy.fixture("user-github.json").then((content) => {
+      githubUser = content;
     });
   });
 
@@ -28,6 +33,11 @@ describe("DevPool", () => {
         body: issue1,
       });
     }).as("orgs");
+    cy.intercept("https://api.github.com/user/memberships/orgs/*", (req) => {
+      req.reply({
+        statusCode: 404,
+      });
+    }).as("membership");
   });
 
   it("Main page displays issues", () => {
@@ -118,7 +128,7 @@ describe("DevPool", () => {
     it("Should display retry timeframe with no tasks loaded and a logged in user", () => {
       cy.intercept("https://api.github.com/user", {
         statusCode: 200,
-        body: { login: "mockUser" },
+        body: githubUser,
       }).as("getUser");
 
       cy.visit("/");
@@ -175,36 +185,45 @@ describe("DevPool", () => {
   });
 
   it("User can log in", () => {
+    cy.intercept("https://api.github.com/user**", (req) => {
+      req.reply({
+        statusCode: 404,
+      });
+    }).as("getUser");
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
       req.reply({
         statusCode: 200,
         body: [issue1, issue2],
       });
     }).as("getIssues");
+    cy.intercept("https://github.com/login**", (req) => {
+      req.reply({
+        statusCode: 200,
+      });
+      // Simulates the token set in the storage
+      window.localStorage.setItem(
+        "sb-wfzpewmlyiozupulbuur-auth-token",
+        JSON.stringify({
+          provider_token: "token",
+          access_token: "token",
+          token_type: "bearer",
+          user: githubUser,
+        })
+      );
+    }).as("githubPage");
     cy.visit("/");
     // Check that there is no text field visible for sorting
     cy.get("#filter").should("not.be.visible");
     cy.get("#github-login-button").click();
-    cy.origin("https://github.com/login", () => {
-      const username = Cypress.env("UBIQUIBOT_GITHUB_USERNAME");
-      const password = Cypress.env("UBIQUIBOT_GITHUB_PASSWORD");
-
-      cy.get("#login_field").type(username);
-      cy.get("#password").type(password, { parseSpecialCharSequences: false });
-      cy.get(".position-relative > .btn").click();
-      // This part of the test can sometimes fail if the endpoint for OAuth is hit too many times, asking the user to
-      // authorize the app again. It should not happen in a normal testing scenario since it's only hit once, but more
-      // commonly happens in local testing where the test can be run many times in a row. Uncomment this part to add
-      // the authorization of the app again.
-
-      // cy.get('button[data-octo-click="oauth_application_authorization"]').then(($button) => {
-      //   if ($button.is(":visible")) {
-      //     cy.wrap($button).click();
-      //   } else {
-      //     cy.log('"Authorize" button is not visible');
-      //   }
-      // });
-    });
+    // Change the interception because now we are supposed to be logged in
+    cy.intercept("https://api.github.com/user**", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: githubUser,
+      });
+    }).as("getUser");
+    // Simulates the redirection after a successful login
+    cy.visit("/");
     cy.get("#authenticated").should("exist");
     cy.get("#filter").should("be.visible");
   });
@@ -215,14 +234,22 @@ describe("DevPool", () => {
         statusCode: 500,
         body: "Internal Server Error",
       }).as("getPublicIssues");
+      // Expect the error to be thrown
+      cy.once("uncaught:exception", () => false);
+      cy.intercept("https://api.github.com/user**", (req) => {
+        req.reply({
+          statusCode: 200,
+          body: githubUser,
+        });
+      }).as("getUser");
 
       cy.visit("/");
 
       cy.wait("@getPublicIssues");
 
       cy.get(".preview-header").should("be.visible");
-      cy.get(".preview-header").should("contain", "Something went wrong");
-      cy.get(".preview-body-inner").should("contain", "HttpError: Internal Server Error");
+      cy.get(".preview-header").should("contain", "HttpError");
+      cy.get(".preview-body-inner").should("contain", "Internal Server Error");
     });
   });
 });
