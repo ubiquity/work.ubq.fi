@@ -252,4 +252,34 @@ describe("DevPool", () => {
       cy.get(".preview-body-inner").should("contain", "Internal Server Error");
     });
   });
+
+  it("Displayed user name should fall back to login when its name is empty", () => {
+    const userWithoutName = {
+      ...githubUser,
+      name: undefined,
+    };
+    window.localStorage.setItem(
+      "sb-wfzpewmlyiozupulbuur-auth-token",
+      JSON.stringify({
+        provider_token: "token",
+        access_token: "token",
+        token_type: "bearer",
+        user: userWithoutName,
+      })
+    );
+    cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: [issue1, issue2],
+      });
+    }).as("getIssues");
+    cy.intercept("https://api.github.com/user**", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: userWithoutName,
+      });
+    }).as("getUser");
+    cy.visit("/");
+    cy.get("#authenticated > .full").should("have.text", "octocat");
+  });
 });
