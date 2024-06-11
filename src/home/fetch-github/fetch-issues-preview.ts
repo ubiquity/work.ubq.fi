@@ -49,8 +49,8 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
 
     // Fetch issues from public repository
     const { data: publicResponse } = await octokit.issues.listForRepo({
-      owner: "ubiquity",
-      repo: "devpool-directory",
+      owner: "xno-miner",
+      repo: "devpool-rfc",
       state: "open",
     });
 
