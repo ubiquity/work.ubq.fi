@@ -1,11 +1,20 @@
 import { defineConfig } from "cypress";
 import { config } from "dotenv";
+import { generateSupabaseStorageKey } from "./build/esbuild-build";
 
 config();
 
 export default defineConfig({
   e2e: {
-    setupNodeEvents() {},
+    setupNodeEvents(on, config) {
+      const SUPABASE_STORAGE_KEY = generateSupabaseStorageKey();
+      config.env = {
+        ...process.env,
+        ...config.env,
+        SUPABASE_STORAGE_KEY,
+      };
+      return config;
+    },
     baseUrl: "http://localhost:8080",
     experimentalStudio: true,
   },
