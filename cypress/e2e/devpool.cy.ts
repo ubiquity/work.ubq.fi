@@ -202,7 +202,7 @@ describe("DevPool", () => {
       });
       // Simulates the token set in the storage
       window.localStorage.setItem(
-        "sb-wfzpewmlyiozupulbuur-auth-token",
+        `sb-${Cypress.env("SUPABASE_STORAGE_KEY")}-auth-token`,
         JSON.stringify({
           provider_token: "token",
           access_token: "token",
