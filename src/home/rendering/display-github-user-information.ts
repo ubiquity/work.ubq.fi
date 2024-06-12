@@ -22,7 +22,8 @@ export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
 
   const divNameElement = document.createElement("div");
 
-  divNameElement.textContent = gitHubUser.name;
+  // Falls back to login because the name is not required for a GitHub user
+  divNameElement.textContent = gitHubUser.name || gitHubUser.login;
   divNameElement.classList.add("full");
   authenticatedDivElement.appendChild(divNameElement);
 

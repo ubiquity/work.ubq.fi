@@ -202,7 +202,7 @@ describe("DevPool", () => {
       });
       // Simulates the token set in the storage
       window.localStorage.setItem(
-        "sb-wfzpewmlyiozupulbuur-auth-token",
+        `sb-${Cypress.env("SUPABASE_STORAGE_KEY")}-auth-token`,
         JSON.stringify({
           provider_token: "token",
           access_token: "token",
@@ -251,5 +251,35 @@ describe("DevPool", () => {
       cy.get(".preview-header").should("contain", "HttpError");
       cy.get(".preview-body-inner").should("contain", "Internal Server Error");
     });
+  });
+
+  it("Displayed user name should fall back to login when its name is empty", () => {
+    const userWithoutName = {
+      ...githubUser,
+      name: undefined,
+    };
+    window.localStorage.setItem(
+      `sb-${Cypress.env("SUPABASE_STORAGE_KEY")}-auth-token`,
+      JSON.stringify({
+        provider_token: "token",
+        access_token: "token",
+        token_type: "bearer",
+        user: userWithoutName,
+      })
+    );
+    cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: [issue1, issue2],
+      });
+    }).as("getIssues");
+    cy.intercept("https://api.github.com/user**", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: userWithoutName,
+      });
+    }).as("getUser");
+    cy.visit("/");
+    cy.get("#authenticated > .full").should("have.text", "octocat");
   });
 });
