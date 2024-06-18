@@ -33,6 +33,12 @@ export class SortingManager {
           textBox.classList.add("hidden");
         } else {
           textBox.classList.remove("hidden");
+          document.addEventListener("keydown", (event) => {
+            if ((event.metaKey || event.ctrlKey) && event.key === "f") {
+              event.preventDefault();
+              textBox.focus();
+            }
+          });
         }
       })
       .catch((e) => console.error(`[_generateFilterTextBox] Failed to retrieve token: ${e}`));
