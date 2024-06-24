@@ -5,9 +5,6 @@ describe("DevPool", () => {
   let issue1: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
   let issue2: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
   let githubUser: Session["user"];
-  let issuesPayload: { statusCode: 200; body: RestEndpointMethodTypes["issues"]["get"]["response"]["data"][] };
-  let gitHubUserPayload: { statusCode: 200; body: Session["user"] };
-  let okPayload: { statusCode: 200 };
 
   before(() => {
     cy.fixture("issue-1.json").then((content) => (issue1 = content));
@@ -16,8 +13,6 @@ describe("DevPool", () => {
   });
 
   beforeEach(() => {
-    issuesPayload = { statusCode: 200, body: [issue1, issue2] };
-    gitHubUserPayload = { statusCode: 200, body: githubUser };
     // Very important to make sure we don't store data between tests
     cy.clearLocalStorage();
     cy.intercept("https://api.github.com/repos/**/**/issues/**", (req) => {
@@ -57,7 +52,10 @@ describe("DevPool", () => {
     // Should display still one old task
     cy.log("Should display still one old task");
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
-      req.reply(issuesPayload);
+      req.reply({
+        statusCode: 200,
+        body: [issue1, issue2],
+      });
     }).as("getIssues");
     cy.visit("/");
     cy.get('div[id="issues-container"]').children().should("have.length", 1);
@@ -154,7 +152,10 @@ describe("DevPool", () => {
 
   it("Items can be sorted - top row - landscape/desktop", () => {
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
-      req.reply(issuesPayload);
+      req.reply({
+        statusCode: 200,
+        body: [issue1, issue2],
+      });
     }).as("getIssues");
     cy.visit("/");
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
@@ -179,7 +180,10 @@ describe("DevPool", () => {
   it("Items can be sorted - bottom row - portrait/mobile", () => {
     cy.viewport("iphone-x"); // iPhone X portrait
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
-      req.reply(issuesPayload);
+      req.reply({
+        statusCode: 200,
+        body: [issue1, issue2],
+      });
     }).as("getIssues");
     cy.visit("/");
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
@@ -203,16 +207,16 @@ describe("DevPool", () => {
   });
 
   it("User can log in", () => {
-    cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
-      req.reply(issuesPayload);
-    }).as("getIssues");
     cy.intercept("https://api.github.com/user**", (req) => {
       req.reply({
         statusCode: 404,
       });
     }).as("getUser");
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
-      req.reply(issuesPayload);
+      req.reply({
+        statusCode: 200,
+        body: [issue1, issue2],
+      });
     }).as("getIssues");
     cy.intercept("https://github.com/login**", (req) => {
       req.reply({
@@ -242,10 +246,10 @@ describe("DevPool", () => {
     }).as("getUser");
     // Simulates the redirection after a successful login
     cy.visit("/");
-
     cy.get("#authenticated").should("exist");
     cy.get("#filter-top").should("be.visible");
   });
+
   describe("Display error modal", () => {
     it("should display an error modal when fetching issue previews fails on page load", () => {
       cy.intercept("GET", "https://api.github.com/repos/ubiquity/devpool-directory/issues*", {
@@ -286,7 +290,10 @@ describe("DevPool", () => {
       })
     );
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
-      req.reply(issuesPayload);
+      req.reply({
+        statusCode: 200,
+        body: [issue1, issue2],
+      });
     }).as("getIssues");
     cy.intercept("https://api.github.com/user**", (req) => {
       req.reply({
@@ -300,12 +307,12 @@ describe("DevPool", () => {
 
   it("Should display filters on small devices", () => {
     cy.viewport("iphone-x");
-    cy.intercept("https://api.github.com/user", gitHubUserPayload).as("getUser");
-    cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => req.reply(issuesPayload)).as("getIssues");
-    cy.intercept("https://api.github.com/user/memberships/orgs/*", (req) => req.reply(okPayload)).as("membership");
+    cy.intercept("https://api.github.com/user", { statusCode: 200, body: githubUser }).as("getUser");
+    cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => req.reply({ statusCode: 200, body: [issue1, issue2] })).as("getIssues");
+    cy.intercept("https://api.github.com/user/memberships/orgs/*", (req) => req.reply({ statusCode: 200 })).as("membership");
     cy.intercept("https://api.github.com/", (req) => {
       req.headers["x-oauth-scopes"] = "repo";
-      req.reply(okPayload);
+      req.reply({ statusCode: 200 });
     }).as("head");
     cy.visit("/");
     cy.get("#authenticated").should("be.visible");
