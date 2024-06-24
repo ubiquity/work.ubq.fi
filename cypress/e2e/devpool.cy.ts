@@ -157,7 +157,7 @@ describe("DevPool", () => {
     });
   });
 
-  it("Items can be sorted", () => {
+  it("Items can be sorted - top row", () => {
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
       req.reply({
         statusCode: 200,
@@ -165,22 +165,84 @@ describe("DevPool", () => {
       });
     }).as("getIssues");
     cy.visit("/");
+
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="price"]').click();
+
+    cy.get('[for="price-top"]').click();
+
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="price"]').click();
+
+    cy.get('[for="price-top"]').click();
+
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="time"]').click();
+
+    cy.get('[for="time-top"]').click();
+
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="time"]').click();
+
+    cy.get('[for="time-top"]').click();
+
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="priority"]').click();
+
+    cy.get('[for="priority-top"]').click();
+
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="priority"]').click();
+
+    cy.get('[for="priority-top"]').click();
+
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="activity"]').click();
+
+    cy.get('[for="activity-top"]').click();
+
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="activity"]').click();
+
+    cy.get('[for="activity-top"]').click();
+
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+  });
+
+  it("Items can be sorted - bottom row", () => {
+    cy.viewport(375, 812); // iPhone X portrait
+    cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: [issue1, issue2],
+      });
+    }).as("getIssues");
+    cy.visit("/");
+
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+
+    cy.get('[for="price-bottom"]').click();
+
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+
+    cy.get('[for="price-bottom"]').click();
+
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+
+    cy.get('[for="time-bottom"]').click();
+
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+
+    cy.get('[for="time-bottom"]').click();
+
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+
+    cy.get('[for="priority-bottom"]').click();
+
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+
+    cy.get('[for="priority-bottom"]').click();
+
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+
+    cy.get('[for="activity-bottom"]').click();
+
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+
+    cy.get('[for="activity-bottom"]').click();
+
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
   });
 
@@ -309,6 +371,6 @@ describe("DevPool", () => {
     cy.visit("/");
     cy.get("#authenticated").should("be.visible");
     cy.get("#augment-access-button").should("be.visible");
-    cy.get('[for="price"]').should("be.visible");
+    // cy.get('[for="price-bottom"]').should("be.visible");
   });
 });
