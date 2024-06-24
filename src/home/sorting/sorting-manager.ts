@@ -9,11 +9,13 @@ export class SortingManager {
   private _toolBarFilters: HTMLElement;
   private _filterTextBox: HTMLInputElement;
   private _sortingButtons: HTMLElement;
+  private _instanceId: string;
 
-  constructor(filtersId: string, sortingOptions: readonly string[]) {
+  constructor(filtersId: string, sortingOptions: readonly string[], instanceId: string) {
     const filters = document.getElementById(filtersId);
     if (!filters) throw new Error(`${filtersId} not found`);
     this._toolBarFilters = filters;
+    this._instanceId = instanceId;
     this._filterTextBox = this._generateFilterTextBox();
     this._sortingButtons = this._generateSortingButtons(sortingOptions);
   }
@@ -26,7 +28,7 @@ export class SortingManager {
   private _generateFilterTextBox() {
     const textBox = document.createElement("input");
     textBox.type = "text";
-    textBox.id = "filter";
+    textBox.id = `filter-${this._instanceId}`;
     textBox.placeholder = "Text Filter";
     getGitHubAccessToken()
       .then((token) => {
@@ -94,14 +96,14 @@ export class SortingManager {
     const input = document.createElement("input");
     input.type = "radio";
     input.value = option;
-    input.id = option;
-    input.name = "sort";
+    input.id = `${option}-${this._instanceId}`;
+    input.name = `sort-${this._instanceId}`;
     return input;
   }
 
   private _createLabel(option: string): HTMLLabelElement {
     const label = document.createElement("label");
-    label.htmlFor = option;
+    label.htmlFor = `${option}-${this._instanceId}`;
     label.textContent = option.charAt(0).toUpperCase() + option.slice(1);
     return label;
   }
