@@ -282,4 +282,33 @@ describe("DevPool", () => {
     cy.visit("/");
     cy.get("#authenticated > .full").should("have.text", "octocat");
   });
+
+  it.only("Should display filters on small devices", () => {
+    cy.viewport("iphone-x");
+    cy.intercept("https://api.github.com/user", {
+      statusCode: 200,
+      body: githubUser,
+    }).as("getUser");
+    cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: [issue1, issue2],
+      });
+    }).as("getIssues");
+    cy.intercept("https://api.github.com/user/memberships/orgs/*", (req) => {
+      req.reply({
+        statusCode: 200,
+      });
+    }).as("membership");
+    cy.intercept("https://api.github.com/", (req) => {
+      req.headers["x-oauth-scopes"] = "repo";
+      req.reply({
+        statusCode: 200,
+      });
+    }).as("head");
+    cy.visit("/");
+    cy.get("#authenticated").should("be.visible");
+    cy.get("#augment-access-button").should("be.visible");
+    cy.get('[for="price"]').should("be.visible");
+  });
 });
