@@ -345,7 +345,7 @@ describe("DevPool", () => {
     cy.get("#authenticated > .full").should("have.text", "octocat");
   });
 
-  it.only("Should display filters on small devices", () => {
+  it("Should display filters on small devices", () => {
     cy.viewport("iphone-x");
     cy.intercept("https://api.github.com/user", {
       statusCode: 200,
