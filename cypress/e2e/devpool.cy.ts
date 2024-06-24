@@ -150,7 +150,7 @@ describe("DevPool", () => {
     });
   });
 
-  it("Items can be sorted - top row", () => {
+  it("Items can be sorted - top row - landscape/desktop", () => {
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
       req.reply({
         statusCode: 200,
@@ -177,7 +177,7 @@ describe("DevPool", () => {
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
   });
 
-  it("Items can be sorted - bottom row", () => {
+  it("Items can be sorted - bottom row - portrait/mobile", () => {
     cy.viewport("iphone-x"); // iPhone X portrait
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
       req.reply({
