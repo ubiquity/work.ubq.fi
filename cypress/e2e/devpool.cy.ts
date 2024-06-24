@@ -108,7 +108,7 @@ describe("DevPool", () => {
       }).as("getIssues");
     });
 
-    it("Should display retry timeframe and login request with no tasks and no user", () => {
+    it("Should display retry time frame and login request with no tasks and no user", () => {
       cy.visit("/");
       cy.get(".preview-header").should("exist");
       cy.get(".preview-body-inner").should(($body) => {
@@ -118,7 +118,7 @@ describe("DevPool", () => {
       });
     });
 
-    it("Should display retry timeframe with no tasks loaded and a logged in user", () => {
+    it("Should display retry time frame with no tasks loaded and a logged in user", () => {
       cy.intercept("https://api.github.com/user", {
         statusCode: 200,
         body: githubUser,
@@ -235,7 +235,7 @@ describe("DevPool", () => {
     }).as("githubPage");
     cy.visit("/");
     // Check that there is no text field visible for sorting
-    cy.get("#filter").should("not.be.visible");
+    cy.get("#filter-top").should("not.be.visible");
     cy.get("#github-login-button").click();
     // Change the interception because now we are supposed to be logged in
     cy.intercept("https://api.github.com/user**", (req) => {
@@ -247,7 +247,7 @@ describe("DevPool", () => {
     // Simulates the redirection after a successful login
     cy.visit("/");
     cy.get("#authenticated").should("exist");
-    cy.get("#filter").should("be.visible");
+    cy.get("#filter-top").should("be.visible");
   });
 
   describe("Display error modal", () => {
