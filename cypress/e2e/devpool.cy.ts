@@ -7,15 +7,9 @@ describe("DevPool", () => {
   let githubUser: Session["user"];
 
   before(() => {
-    cy.fixture("issue-1.json").then((content) => {
-      issue1 = content;
-    });
-    cy.fixture("issue-2.json").then((content) => {
-      issue2 = content;
-    });
-    cy.fixture("user-github.json").then((content) => {
-      githubUser = content;
-    });
+    cy.fixture("issue-1.json").then((content) => (issue1 = content));
+    cy.fixture("issue-2.json").then((content) => (issue2 = content));
+    cy.fixture("user-github.json").then((content) => (githubUser = content));
   });
 
   beforeEach(() => {
@@ -68,7 +62,6 @@ describe("DevPool", () => {
 
     // needed to make sure data is written to the local storage
     cy.wait(3000);
-
     cy.log("Should display two new tasks");
     cy.clock(Date.now() + 95000000);
     cy.visit("/");
@@ -115,7 +108,7 @@ describe("DevPool", () => {
       }).as("getIssues");
     });
 
-    it("Should display retry timeframe and login request with no tasks and no user", () => {
+    it("Should display retry time frame and login request with no tasks and no user", () => {
       cy.visit("/");
       cy.get(".preview-header").should("exist");
       cy.get(".preview-body-inner").should(($body) => {
@@ -125,7 +118,7 @@ describe("DevPool", () => {
       });
     });
 
-    it("Should display retry timeframe with no tasks loaded and a logged in user", () => {
+    it("Should display retry time frame with no tasks loaded and a logged in user", () => {
       cy.intercept("https://api.github.com/user", {
         statusCode: 200,
         body: githubUser,
@@ -157,7 +150,7 @@ describe("DevPool", () => {
     });
   });
 
-  it("Items can be sorted", () => {
+  it("Items can be sorted - top row - landscape/desktop", () => {
     cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
       req.reply({
         statusCode: 200,
@@ -166,21 +159,50 @@ describe("DevPool", () => {
     }).as("getIssues");
     cy.visit("/");
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="price"]').click();
+    cy.get('[for="price-top"]').click();
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="price"]').click();
+    cy.get('[for="price-top"]').click();
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="time"]').click();
+    cy.get('[for="time-top"]').click();
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="time"]').click();
+    cy.get('[for="time-top"]').click();
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="priority"]').click();
+    cy.get('[for="priority-top"]').click();
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="priority"]').click();
+    cy.get('[for="priority-top"]').click();
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="activity"]').click();
+    cy.get('[for="activity-top"]').click();
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="activity"]').click();
+    cy.get('[for="activity-top"]').click();
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+  });
+
+  it("Items can be sorted - bottom row - portrait/mobile", () => {
+    cy.viewport("iphone-x"); // iPhone X portrait
+    cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: [issue1, issue2],
+      });
+    }).as("getIssues");
+    cy.visit("/");
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+    cy.get('[for="price-bottom"]').click();
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+    cy.get('[for="price-bottom"]').click();
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+    cy.get('[for="time-bottom"]').click();
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+    cy.get('[for="time-bottom"]').click();
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+    cy.get('[for="priority-bottom"]').click();
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+    cy.get('[for="priority-bottom"]').click();
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+    cy.get("#filters-bottom").scrollTo("right");
+    cy.get('[for="activity-bottom"]').should("be.visible").click();
+    cy.get('div[id="issues-container"]').children().should("have.length", 2);
+    cy.get('[for="activity-bottom"]').click();
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
   });
 
@@ -213,7 +235,7 @@ describe("DevPool", () => {
     }).as("githubPage");
     cy.visit("/");
     // Check that there is no text field visible for sorting
-    cy.get("#filter").should("not.be.visible");
+    cy.get("#filter-top").should("not.be.visible");
     cy.get("#github-login-button").click();
     // Change the interception because now we are supposed to be logged in
     cy.intercept("https://api.github.com/user**", (req) => {
@@ -225,7 +247,7 @@ describe("DevPool", () => {
     // Simulates the redirection after a successful login
     cy.visit("/");
     cy.get("#authenticated").should("exist");
-    cy.get("#filter").should("be.visible");
+    cy.get("#filter-top").should("be.visible");
   });
 
   describe("Display error modal", () => {
@@ -283,32 +305,18 @@ describe("DevPool", () => {
     cy.get("#authenticated > .full").should("have.text", "octocat");
   });
 
-  it.only("Should display filters on small devices", () => {
+  it("Should display filters on small devices", () => {
     cy.viewport("iphone-x");
-    cy.intercept("https://api.github.com/user", {
-      statusCode: 200,
-      body: githubUser,
-    }).as("getUser");
-    cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => {
-      req.reply({
-        statusCode: 200,
-        body: [issue1, issue2],
-      });
-    }).as("getIssues");
-    cy.intercept("https://api.github.com/user/memberships/orgs/*", (req) => {
-      req.reply({
-        statusCode: 200,
-      });
-    }).as("membership");
+    cy.intercept("https://api.github.com/user", { statusCode: 200, body: githubUser }).as("getUser");
+    cy.intercept("https://api.github.com/repos/*/*/issues**", (req) => req.reply({ statusCode: 200, body: [issue1, issue2] })).as("getIssues");
+    cy.intercept("https://api.github.com/user/memberships/orgs/*", (req) => req.reply({ statusCode: 200 })).as("membership");
     cy.intercept("https://api.github.com/", (req) => {
       req.headers["x-oauth-scopes"] = "repo";
-      req.reply({
-        statusCode: 200,
-      });
+      req.reply({ statusCode: 200 });
     }).as("head");
     cy.visit("/");
     cy.get("#authenticated").should("be.visible");
     cy.get("#augment-access-button").should("be.visible");
-    cy.get('[for="price"]').should("be.visible");
+    cy.get('[for="price-bottom"]').should("be.visible");
   });
 });
