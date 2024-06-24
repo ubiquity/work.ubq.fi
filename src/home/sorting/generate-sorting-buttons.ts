@@ -4,6 +4,9 @@ export const SORTING_OPTIONS = ["price", "time", "priority", "activity"] as cons
 export type Sorting = (typeof SORTING_OPTIONS)[number];
 
 export function generateSortingToolbar() {
-  const sortingManager = new SortingManager("filters", SORTING_OPTIONS);
-  sortingManager.render();
+  const sortingManagerTop = new SortingManager("filters", SORTING_OPTIONS, "top");
+  sortingManagerTop.render();
+
+  const sortingManagerBottom = new SortingManager("filters-bottom", SORTING_OPTIONS, "bottom");
+  sortingManagerBottom.render();
 }
