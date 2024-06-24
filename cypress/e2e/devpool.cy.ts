@@ -199,7 +199,8 @@ describe("DevPool", () => {
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
     cy.get('[for="priority-bottom"]').click();
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
-    cy.get('[for="activity-bottom"]').click();
+    cy.get("#filters-bottom").scrollTo("right");
+    cy.get('[for="activity-bottom"]').should("be.visible").click();
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
     cy.get('[for="activity-bottom"]').click();
     cy.get('div[id="issues-container"]').children().should("have.length", 2);
