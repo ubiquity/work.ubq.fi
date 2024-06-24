@@ -590,6 +590,9 @@
     font-size: 16px;
     line-height: 1.25;
   }
+  #filters {
+    overflow-x: auto;
+  }
   #filters input[type="text"] {
     margin: 0 4px;
     padding: 4px;
