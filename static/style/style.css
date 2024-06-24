@@ -344,7 +344,6 @@
   }
   @media screen and (max-width: 804px) {
     .mid {
-      /* display: none !important; */
       padding-left: 8px;
       display: inline-block;
     }
