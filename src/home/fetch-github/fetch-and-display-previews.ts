@@ -52,8 +52,8 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
     }
   } catch (cacheError) {
     return fetchAndDisplayPreviewsFromNetwork(sorting, options);
-  } 
-} 
+  }
+}
 
 export async function fetchAndDisplayPreviewsFromNetwork(sorting?: Sorting, options = { ordering: "normal" }) {
   const fetchedPreviews = await fetchIssuePreviews();
