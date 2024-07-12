@@ -31,15 +31,15 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
     return fetchAndDisplayPreviewsFromNetwork(sorting, options);
   }
 
-  // makes sure tasks have a timestamp to know how old the cache is, or refresh if older than 15 minutes
-  if (!_cachedTasks || !_cachedTasks.timestamp || _cachedTasks.timestamp + 60 * 1000 * 15 <= Date.now()) {
-    _cachedTasks = {
-      timestamp: Date.now(),
-      tasks: [],
-      loggedIn: _accessToken !== null,
-    };
-  }
   try {
+    // makes sure tasks have a timestamp to know how old the cache is, or refresh if older than 15 minutes
+    if (!_cachedTasks || !_cachedTasks.timestamp || _cachedTasks.timestamp + 60 * 1000 * 15 <= Date.now()) {
+      _cachedTasks = {
+        timestamp: Date.now(),
+        tasks: [],
+        loggedIn: _accessToken !== null,
+      };
+    }
     const cachedTasks = _cachedTasks.tasks as TaskMaybeFull[];
     taskManager.syncTasks(cachedTasks);
 
