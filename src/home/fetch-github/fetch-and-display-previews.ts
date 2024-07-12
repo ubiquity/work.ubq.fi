@@ -50,7 +50,7 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
     } else {
       displayGitHubIssues(sorting, options);
       return fetchAvatars();
-    } 
+    }
   } catch (cacheError) {
     return fetchAndDisplayPreviewsFromNetwork(sorting, options);
   }
