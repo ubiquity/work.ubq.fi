@@ -1,22 +1,18 @@
-export function initiateDevRelTracking() {
-  const oldDevRelCode = localStorage.getItem("devRel");
-  if (!oldDevRelCode) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const devRelCode = urlParams.get("devRel");
-    if (devRelCode) {
-      localStorage.setItem("devRel", devRelCode);
-    }
-  }
-}
+import { db } from "../../supabase";
 
-export function trackDevRelReferral(devGithub: string) {
-  const devRelCode = localStorage.getItem("devRel");
-  if (devRelCode && devRelCode != "done") {
-    // @ts-expect-error : using global gtag
-    gtag("event", "ethSeoul_registration", {
-      devRel: devRelCode,
-      devGithub: devGithub,
-    });
-    localStorage.setItem("devRel", "done");
+export async function trackDevRelReferral(developerGithub: string): Promise<void> {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const referralCode = urlParams.get("ref");
+
+    if (referralCode) {
+      const isReferralExisting = await db.referrals.doesReferralExist(referralCode);
+
+      if (!isReferralExisting) {
+        await db.referrals.addReferall(referralCode, developerGithub);
+      }
+    }
+  } catch (error) {
+    console.error(`Error tracking referral: ${error}`);
   }
 }

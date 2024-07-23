@@ -1,13 +1,14 @@
 import { createClient } from "@supabase/supabase-js";
 import { toolbar } from "../ready-toolbar";
 import { renderErrorInModal } from "./display-popup-modal";
+import { Database } from "../../../supabase/types";
 
 declare const SUPABASE_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
 declare const SUPABASE_ANON_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
 declare const NODE_ENV: string; // @DEV: passed in at build time check build/esbuild-build.ts
 declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export function getSupabase() {
   return supabase;

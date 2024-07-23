@@ -26,5 +26,13 @@
       { "selector": "variable", "format": ["camelCase"], "leadingUnderscore": "allow", "trailingUnderscore": "allow" },
       { "selector": "variable", "types": ["boolean"], "format": ["PascalCase"], "prefix": ["is", "has", "should", "can", "did", "will"] }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["supabase/types.ts"], 
+      "rules": {
+        "@typescript-eslint/naming-convention": "off" 
+      }
+    }
+  ]
 }
