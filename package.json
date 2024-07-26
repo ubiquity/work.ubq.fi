@@ -18,7 +18,8 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "cypress:headed": "cypress run --headed",
-    "update-types": "npx supabase gen types --lang=typescript --project-id $(grep -oP '(?<=^PROJECT_ID=).+' .env) > supabase/types.ts"  },
+    "update-types": "npx supabase gen types --lang=typescript --project-id $(grep -oP '(?<=^PROJECT_ID=).+' .env) > supabase/types.ts"
+  },
   "keywords": [
     "typescript",
     "template",
