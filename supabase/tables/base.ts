@@ -1,7 +1,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Logs } from "ubiquibot-logger";
 
-export class SuperBase {
+export class SupaBase {
   protected supabase: SupabaseClient;
   public logger: Logs;
 
