@@ -291,6 +291,49 @@ describe("DevPool", () => {
     cy.get("#filter-top").should("be.visible");
   });
 
+  it("Should save referral code to Supabase referral table upon login", () => {
+    const referralCode = "test-referral-code";
+
+    cy.intercept("https://api.github.com/user**", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: githubUser,
+      });
+    }).as("getUser");
+
+    cy.intercept("POST", "https://lelwqeowubwpkhjlzsiu.supabase.co/rest/v1/referrals", (req) => {
+      expect(req.body).to.have.property("referral_code", referralCode);
+      expect(req.body).to.have.property("dev_github", `${githubUser.login}|${githubUser.id}`);
+      req.reply({
+        statusCode: 201
+      });
+    }).as("saveReferral");
+
+    const loginUrl = `?ref=${referralCode}`;
+    cy.visit(loginUrl);
+    cy.get("#github-login-button").click();
+
+    cy.intercept("https://github.com/login**", (req) => {
+      req.reply({
+        statusCode: 200,
+      });
+
+      window.localStorage.setItem(
+        `sb-${Cypress.env("SUPABASE_STORAGE_KEY")}-auth-token`,
+        JSON.stringify({
+          provider_token: "token",
+          access_token: "token",
+          token_type: "bearer",
+          user: githubUser,
+        })
+      );
+    }).as("githubLogin");
+
+    cy.visit("/");
+
+    cy.wait("@saveReferral");
+  });
+
   describe("Display error modal", () => {
     it("should display an error modal when fetching issue previews fails on page load", () => {
       cy.intercept("GET", "https://api.github.com/repos/ubiquity/devpool-directory/issues*", {
