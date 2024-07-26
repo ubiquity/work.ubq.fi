@@ -2,6 +2,8 @@ name: Update database types
 
 on:
   push:
+    branches:
+      - main
 
 jobs:
   update:
@@ -9,13 +11,14 @@ jobs:
     permissions:
       contents: write
     env:
-      PROJECT_ID: "lelwqeowubwpkhjlzsiu"
+      PROJECT_ID: ${{ secrets.PROJECT_ID }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
-      - uses: actions/setup-node@v2.1.5
+
+      - uses: actions/setup-node@v4
         with:
           node-version: 20.10.0
 
@@ -23,24 +26,23 @@ jobs:
         run: yarn install
 
       - name: Generate Supabase types
-        run: npm run update-types
+        run: yarn run update-types
 
-      - name: check for file changes
+      - name: Check for file changes
         id: git_status
         run: |
           echo "status=$(git status -s)" >> $GITHUB_OUTPUT
 
       - name: Commit files
-        if: ${{contains(steps.git_status.outputs.status, ' ')}}
+        if: ${{ contains(steps.git_status.outputs.status, ' ') }}
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add supabase/types.ts
           git commit -m 'chore: update Supabase types'
-          git push
 
       - name: Push changes
-        if: ${{contains(steps.git_status.outputs.status, ' ')}}
+        if: ${{ contains(steps.git_status.outputs.status, ' ') }}
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
