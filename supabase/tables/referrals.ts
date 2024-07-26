@@ -1,8 +1,8 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { SuperBase } from "./base";
-import { Database } from "../types";
+import { Tables } from "../types";
 
-export type ReferralRow = Database["public"]["Tables"]["referrals"]["Row"];
+export type ReferralRow = Tables<"referrals">;
 
 export class Referral extends SuperBase {
   constructor(client: SupabaseClient) {
@@ -15,7 +15,7 @@ export class Referral extends SuperBase {
 
       if (error) throw new Error(`Error saving referral: ${error.message}`);
     } catch (error) {
-      console.error(error);
+      this.logger.error(`${error}`);
       throw error;
     }
   }
@@ -27,7 +27,7 @@ export class Referral extends SuperBase {
       if (error) throw new Error(`Error finding referral: ${error.message}`);
       return data ?? null;
     } catch (error) {
-      console.error(error);
+      this.logger.error(`${error}`);
       throw error;
     }
   }
@@ -37,7 +37,7 @@ export class Referral extends SuperBase {
       const referral = await this.getReferral(referralCode);
       return referral !== null && referral.referral_code === referralCode;
     } catch (error) {
-      console.error(error);
+      this.logger.error(`${error}`);
       return false;
     }
   }
