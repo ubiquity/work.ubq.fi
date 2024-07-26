@@ -33,11 +33,11 @@ jobs:
       - name: Commit files
         if: ${{contains(steps.git_status.outputs.status, ' ')}}
         run: |
-            git config --global user.name 'github-actions'
-            git config --global user.email 'github-actions@github.com'
-            git add supabase/types.ts
-            git commit -m 'chore: update Supabase types'
-            git push
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add supabase/types.ts
+          git commit -m 'chore: update Supabase types'
+          git push
 
       - name: Push changes
         if: ${{contains(steps.git_status.outputs.status, ' ')}}
