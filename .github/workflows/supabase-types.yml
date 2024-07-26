@@ -9,7 +9,7 @@ jobs:
     permissions:
       contents: write
     env:
-      PROJECT_REF: "lelwqeowubwpkhjlzsiu"
+      PROJECT_ID: "lelwqeowubwpkhjlzsiu"
     steps:
       - uses: actions/checkout@v2
         with:
