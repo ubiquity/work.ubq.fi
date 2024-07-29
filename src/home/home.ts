@@ -1,5 +1,6 @@
 import { grid } from "../the-grid";
 import { authentication } from "./authentication";
+import { initiateDevRelTracking } from "./devrel-tracker";
 import { fetchAndDisplayPreviewsFromCache } from "./fetch-github/fetch-and-display-previews";
 import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
@@ -16,6 +17,7 @@ window.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => 
   event.preventDefault();
 });
 
+initiateDevRelTracking();
 generateSortingToolbar();
 renderServiceMessage();
 

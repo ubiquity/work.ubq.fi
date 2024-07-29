@@ -15,19 +15,23 @@ export class Referral extends SupaBase {
 
       if (error) throw new Error(`Error saving referral: ${error.message}`);
     } catch (error) {
-      this.logger.error(`${error}`);
+      if (error instanceof Error) {
+        this.logger.error(error.message);
+      }
       throw error;
     }
   }
 
   public async getReferral(referralCode: string): Promise<ReferralRow | null> {
     try {
-      const { data, error } = await this.supabase.from("referrals").select("*").eq("referral_code", referralCode).single();
+      const { data, error } = await this.supabase.from("referrals").select("*").eq("referral_code", referralCode).maybeSingle();
 
       if (error) throw new Error(`Error finding referral: ${error.message}`);
       return data ?? null;
     } catch (error) {
-      this.logger.error(`${error}`);
+      if (error instanceof Error) {
+        this.logger.error(error.message);
+      }
       throw error;
     }
   }
@@ -37,8 +41,10 @@ export class Referral extends SupaBase {
       const referral = await this.getReferral(referralCode);
       return referral !== null && referral.referral_code === referralCode;
     } catch (error) {
-      this.logger.error(`${error}`);
-      return false;
+      if (error instanceof Error) {
+        this.logger.error(error.message);
+      }
+      throw error;
     }
   }
 }

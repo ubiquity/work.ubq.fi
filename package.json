@@ -17,8 +17,7 @@
     "prepare": "husky install",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "cypress:headed": "cypress run --headed",
-    "update-types": "npx supabase gen types --lang=typescript --project-id $(grep -oP '(?<=^PROJECT_ID=).+' .env) > supabase/types.ts"
+    "update-types": "dotenv -e .env -- bash -c 'npx supabase gen types --lang=typescript --project-id $PROJECT_ID --schema public > supabase/types.ts'"
   },
   "keywords": [
     "typescript",
@@ -33,6 +32,7 @@
     "@supabase/supabase-js": "^2.39.0",
     "@ubiquity-dao/ubiquibot-logger": "^1.3.0",
     "dotenv": "^16.3.1",
+    "dotenv-cli": "^7.4.2",
     "esbuild-plugin-env": "^1.0.8",
     "marked": "^11.0.0"
   },
@@ -43,7 +43,7 @@
     "@types/node": "^20.10.0",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
     "@typescript-eslint/parser": "^6.13.1",
-    "cypress": "13.11.0",
+    "cypress": "^13.11.0",
     "esbuild": "^0.19.8",
     "eslint": "^8.54.0",
     "eslint-config-prettier": "^9.0.0",
@@ -53,6 +53,7 @@
     "lint-staged": "^15.1.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.1.0",
+    "supabase": "^1.187.8",
     "tsx": "^4.6.0",
     "typescript": "^5.3.2"
   },
