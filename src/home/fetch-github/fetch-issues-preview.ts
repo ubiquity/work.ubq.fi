@@ -48,14 +48,27 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
     hasPrivateRepoAccess = await checkPrivateRepoAccess();
 
     // Fetch issues from public repository
-    const { data: publicResponse } = await octokit.issues.listForRepo({
-      owner: "ubiquity",
-      repo: "devpool-directory",
-      state: "open",
-      per_page: 100,
-    });
+    let data: GitHubIssue[] = [];
+    let page = 1;
+    while (true) {
+      const {data: pageData} = await octokit.issues.listForRepo({
+        owner: "ubiquity",
+        repo: "devpool-directory",
+        state: "open",
+        per_page: 100,
+        page: page,
+      });
 
-    const publicIssues = publicResponse.filter((issue: GitHubIssue) => !issue.pull_request);
+      data = [...data, ...pageData];
+
+      if (pageData.length < 100 ) {
+        break;
+      }
+
+      page++;
+    }
+
+    const publicIssues = data.filter((issue: GitHubIssue) => !issue.pull_request);
 
     // Fetch issues from the private repository only if the user has access
     if (hasPrivateRepoAccess) {
