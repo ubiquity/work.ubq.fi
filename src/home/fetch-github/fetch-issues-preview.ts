@@ -1,7 +1,7 @@
 import { RequestError } from "@octokit/request-error";
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken, getGitHubUserName } from "../getters/get-github-access-token";
-import { GitHubIssue } from "../github-types";
+import { GitHubIssue, GitHubLabel } from "../github-types";
 import { displayPopupMessage } from "../rendering/display-popup-modal";
 import { handleRateLimit } from "./handle-rate-limit";
 import { TaskNoFull } from "./preview-to-full-mapping";
@@ -52,6 +52,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
       owner: "ubiquity",
       repo: "devpool-directory",
       state: "open",
+      per_page: 100,
     });
 
     const publicIssues = publicResponse.filter((issue: GitHubIssue) => !issue.pull_request);
@@ -71,7 +72,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
     }
   }
 
-  const tasks = freshIssues.map((preview: GitHubIssue) => ({
+  const tasks = freshIssues.filter((issue: GitHubIssue) => (issue.labels as GitHubLabel[]).some((label) => label.name.includes("Pricing"))).map((preview: GitHubIssue) => ({
     preview: preview,
     full: null,
     isNew: true,

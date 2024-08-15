@@ -16,3 +16,4 @@ export type TaskStorageItems = {
 export type GitHubUserResponse = RestEndpointMethodTypes["users"]["getByUsername"]["response"];
 export type GitHubUser = GitHubUserResponse["data"];
 export type GitHubIssue = RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
+export type GitHubLabel = RestEndpointMethodTypes["issues"]["listLabelsOnIssue"]["response"]["data"][0];
