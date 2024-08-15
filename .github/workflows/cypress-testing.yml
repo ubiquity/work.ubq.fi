@@ -20,10 +20,10 @@ jobs:
         env:
           NODE_ENV: "test"
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Values are set because the code requires them, but they are not actually used.
-          SUPABASE_URL: "https://smsvjscodeuqtsdrgngf.supabase.co"
-          SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtc3Zqc2NvZGV1cXRzZHJnbmdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTgxMTU1MzksImV4cCI6MjAzMzY5MTUzOX0.tKtCSqn31NjDN6pD_URaBBWyjsepleC5cnegm89Uw60"
+          SUPABASE_URL: "https://wfzpewmlyiozupulbuur.supabase.co"
+          SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmenBld21seWlvenVwdWxidXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTU2NzQzMzksImV4cCI6MjAxMTI1MDMzOX0.SKIL3Q0NOBaMehH0ekFspwgcu3afp3Dl9EDzPqs1nKs"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
