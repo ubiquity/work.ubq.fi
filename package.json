@@ -64,5 +64,5 @@
     "extends": [
       "@commitlint/config-conventional"
     ]
-  },
+  }
 }
