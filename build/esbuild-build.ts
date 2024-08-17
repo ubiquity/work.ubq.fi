@@ -29,6 +29,7 @@ export const esBuildContext: esbuild.BuildOptions = {
     SUPABASE_STORAGE_KEY: generateSupabaseStorageKey(),
     commitHash: execSync(`git rev-parse --short HEAD`).toString().trim(),
     NODE_ENV: process.env.NODE_ENV || "development",
+    IS_RFC: JSON.parse(process.env.RFC!)
   }),
 };
 

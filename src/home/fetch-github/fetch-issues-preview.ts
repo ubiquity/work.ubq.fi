@@ -1,3 +1,4 @@
+declare const IS_RFC: boolean;
 import { RequestError } from "@octokit/request-error";
 import { Octokit } from "@octokit/rest";
 import { getGitHubAccessToken, getGitHubUserName } from "../getters/get-github-access-token";
@@ -85,7 +86,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
     }
   }
 
-  const tasks = freshIssues.filter((issue: GitHubIssue) => (issue.labels as GitHubLabel[]).some((label) => label.name.includes("Pricing"))).map((preview: GitHubIssue) => ({
+  const tasks = freshIssues.filter((issue: GitHubIssue) => (issue.labels as GitHubLabel[]).some((label) => label.name.includes("Pricing")) == !IS_RFC).map((preview: GitHubIssue) => ({
     preview: preview,
     full: null,
     isNew: true,
