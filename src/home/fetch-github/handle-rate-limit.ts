@@ -3,6 +3,9 @@ import { Octokit } from "@octokit/rest";
 import { getGitHubUser } from "../getters/get-github-user";
 import { renderErrorInModal } from "../rendering/display-popup-modal";
 import { rateLimitModal } from "./fetch-issues-preview";
+import { gitHubLoginButton } from "../rendering/render-github-login-button";
+import { preview } from "../rendering/render-preview-modal";
+import { toolbar } from "../ready-toolbar";
 
 type RateLimit = {
   reset: number | null;
@@ -14,6 +17,18 @@ export async function handleRateLimit(octokit?: Octokit, error?: RequestError) {
     reset: null,
     user: false,
   };
+
+  preview.classList.add("active");
+  document.body.classList.add("preview-active");
+
+  if (toolbar) {
+    toolbar.scrollTo({
+      left: toolbar.scrollWidth,
+      behavior: "smooth",
+    });
+
+    gitHubLoginButton?.classList.add("highlight");
+  }
 
   if (error?.response?.headers["x-ratelimit-reset"]) {
     rate.reset = parseInt(error.response.headers["x-ratelimit-reset"]);
