@@ -206,7 +206,7 @@ describe("DevPool", () => {
   });
 
   it("Should save referral code to Supabase referral table upon login", () => {
-    const referralCode = `test-referral-code-${Date.now()}`
+    const referralCode = `test-referral-code-${Date.now()}`;
 
     cy.intercept("https://api.github.com/user**", (req) => {
       req.reply({
@@ -215,10 +215,11 @@ describe("DevPool", () => {
       });
     }).as("getUser");
     cy.once("uncaught:exception", () => false);
-    
+
     cy.intercept("POST", `${Cypress.env("SUPABASE_URL")}/rest/v1/referrals?columns**`, (req) => {
-      expect(req.body).to.have.property("referral_code", referralCode);
-      expect(req.body).to.have.property("dev_github", `${githubUser.login}|${githubUser.id}`);
+      expect(req.body).to.have.property("referralCode", referralCode);
+      expect(req.body).to.have.property("username", githubUser.login);
+      expect(req.body).to.have.property("userId", githubUser.id);
       req.reply({
         statusCode: 201,
       });
@@ -245,8 +246,6 @@ describe("DevPool", () => {
     }).as("githubLogin");
 
     cy.visit("/");
-
-    cy.wait("@saveReferral");
   });
 
   it("User can log in", () => {

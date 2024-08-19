@@ -1,3 +1,4 @@
+import { ReferralInsert } from "../../supabase/tables/referrals";
 import { trackDevRelReferral } from "./devrel-tracker";
 import { getGitHubAccessToken } from "./getters/get-github-access-token";
 import { getGitHubUser } from "./getters/get-github-user";
@@ -13,7 +14,12 @@ export async function authentication() {
 
   const gitHubUser: null | GitHubUser = await getGitHubUser();
   if (gitHubUser) {
-    await trackDevRelReferral(gitHubUser.login + "|" + gitHubUser.id);
+    const referral: ReferralInsert = {
+      referralCode: localStorage.getItem("ref") ?? "",
+      username: gitHubUser.login,
+      userId: gitHubUser.id,
+    };
+    await trackDevRelReferral(referral);
     await displayGitHubUserInformation(gitHubUser);
   }
 }
