@@ -245,11 +245,8 @@ describe("DevPool", () => {
     }).as("githubLogin");
 
     cy.visit("/");
-<<<<<<< HEAD
-=======
 
     cy.wait("@saveReferral");
->>>>>>> 4ae0f18 (chore: removed hardcoded values in test)
   });
 
   it("User can log in", () => {
