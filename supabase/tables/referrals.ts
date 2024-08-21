@@ -1,10 +1,10 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { SupaBase } from "./base";
+import { Supabase } from "./base";
 import { Database } from "../types";
 
 export type ReferralInsert = Database["public"]["Tables"]["referrals"]["Insert"];
 
-export class Referral extends SupaBase {
+export class Referral extends Supabase {
   constructor(client: SupabaseClient) {
     super(client);
   }
