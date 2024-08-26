@@ -48,7 +48,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
     hasPrivateRepoAccess = await checkPrivateRepoAccess();
 
     // Fetch issues from public repository
-    const { data: publicResponse } = await octokit.issues.listForRepo({
+    const publicResponse = await octokit.paginate(octokit.issues.listForRepo, {
       owner: "ubiquity",
       repo: "devpool-directory",
       state: "open",
@@ -81,7 +81,7 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
   return tasks;
 
   async function fetchPrivateIssues(publicIssues: GitHubIssue[]) {
-    const { data: privateResponse } = await octokit.issues.listForRepo({
+    const privateResponse = await octokit.paginate(octokit.issues.listForRepo, {
       owner: "ubiquity",
       repo: "devpool-directory-private",
       state: "open",
