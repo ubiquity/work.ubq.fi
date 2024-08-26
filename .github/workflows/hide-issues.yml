@@ -1,0 +1,35 @@
+name: Hide Issues Not Created by Authorized Bots
+
+on:
+  issues:
+    types: [opened, edited]  # Trigger when an issue is opened or edited
+
+jobs:
+  hide_issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check issue creator and hide issue if necessary
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          issue_creator_id="${{ github.event.issue.user.id }}"
+          issue_number="${{ github.event.issue.number }}"
+          repo="${{ github.repository }}"
+
+          echo "Issue creator ID: $issue_creator_id"
+          echo "Issue number: $issue_number"
+          echo "Repository: $repo"
+
+          # List of allowed bot IDs
+          allowed_bots=("76412717" "133917611" "165700353")
+
+          # Check if the issue creator ID is in the allowed list
+          if [[ ! " ${allowed_bots[@]} " =~ " ${issue_creator_id} " ]]; then
+            echo "Hiding issue #$issue_number (creator ID: $issue_creator_id)"
+            curl -X PATCH -H "Authorization: token $GITHUB_TOKEN" \
+                 -H "Accept: application/vnd.github.v3+json" \
+                 -d '{"state":"closed"}' \
+                 https://api.github.com/repos/$repo/issues/$issue_number
+          else
+            echo "Issue #$issue_number was created by an allowed bot. No action taken."
+          fi
