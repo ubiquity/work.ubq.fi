@@ -25,6 +25,11 @@ export async function fetchIssuesFull(taskPreviews: TaskMaybeFull[]): Promise<Ta
 
     task.full = response as GitHubIssue;
 
+    const allowedCreatorIds = new Set([76412717, 133917611, 165700353]);
+    const creatorId = task.full.user?.id;
+    if (!creatorId || !allowedCreatorIds.has(creatorId)) {
+      return null;
+    }
     const urlMatch = task.full.html_url.match(urlPattern);
     const orgName = urlMatch?.groups?.org;
     if (orgName) {
