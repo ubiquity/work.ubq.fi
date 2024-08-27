@@ -14,12 +14,12 @@ export function renderGitHubIssues(tasks: TaskMaybeFull[]) {
     container.innerHTML = "";
   }
   const existingIssueIds = new Set(Array.from(container.querySelectorAll(".issue-element-inner")).map((element) => element.getAttribute("data-preview-id")));
-
+  const validCreaters = new Set(["ubiquity-os[bot]"]);
   let delay = 0;
   const baseDelay = 1000 / 15; // Base delay in milliseconds
 
   for (const task of tasks) {
-    if (!existingIssueIds.has(task.preview.id.toString())) {
+    if (task.preview.user && validCreaters.has(task.preview.user.login) && !existingIssueIds.has(task.preview.id.toString())) {
       const issueWrapper = everyNewIssue({ taskPreview: task, container });
       if (issueWrapper) {
         setTimeout(() => issueWrapper.classList.add("active"), delay);
