@@ -38,20 +38,20 @@ function everyNewIssue({ taskPreview, container }: { taskPreview: TaskMaybeFull;
   issueElement.setAttribute("data-preview-id", taskPreview.preview.id.toString());
   issueElement.classList.add("issue-element-inner");
 
-  const urlPattern = /https:\/\/github\.com\/([^/]+)\/([^/]+)\//;
+  const urlPattern = /https:\/\/(www\.)?github\.com\/([^/]+)\/([^/]+)\//;
   if (!taskPreview.preview.body) {
     console.warn(`No body found for issue ${taskPreview.preview.id}.`);
     return;
   }
   const match = taskPreview.preview.body.match(urlPattern);
-  const organizationName = match?.[1];
+  const organizationName = match?.[2];
+  const repositoryName = match?.[3];
 
   if (!organizationName) {
     console.warn(`No organization name found for issue ${taskPreview.preview.id}.`);
     return;
   }
 
-  const repositoryName = match?.[2];
   if (!repositoryName) {
     console.warn("No repository name found");
     return;

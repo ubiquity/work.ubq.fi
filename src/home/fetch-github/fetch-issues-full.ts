@@ -9,7 +9,7 @@ export const organizationImageCache = new Map<string, Blob | null>();
 
 export async function fetchIssuesFull(taskPreviews: TaskMaybeFull[]): Promise<TaskWithFull[]> {
   const octokit = new Octokit({ auth: await getGitHubAccessToken() });
-  const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
+  const urlPattern = /https:\/\/(www\.)?github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
 
   const fullTaskPromises = taskPreviews.map(async (task) => {
     const match = task.preview.body.match(urlPattern);
