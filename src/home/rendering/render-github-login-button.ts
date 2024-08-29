@@ -29,12 +29,18 @@ export async function checkSupabaseSession() {
 }
 
 async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
+  const redirectTo = window.location.hostname.includes('preview')
+      ? `https://${window.location.hostname}`
+      : 'https://work.ubq.fi';
+
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
       scopes,
+      redirectTo,
     },
   });
+
   if (error) {
     renderErrorInModal(error, "Error logging in");
   }
