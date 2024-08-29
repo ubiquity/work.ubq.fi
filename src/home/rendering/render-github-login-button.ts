@@ -29,7 +29,7 @@ export async function checkSupabaseSession() {
 }
 
 async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
-  const redirectTo = window.location.hostname.includes('preview')
+  const redirectTo = window.location.hostname.includes('devpool-directory-ui.pages.dev')
       ? `https://${window.location.hostname}`
       : 'https://work.ubq.fi';
 
