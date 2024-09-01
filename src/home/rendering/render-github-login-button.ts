@@ -30,19 +30,23 @@ export async function checkSupabaseSession() {
 
 async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
   const redirectTo = window.location.hostname.includes('devpool-directory-ui.pages.dev')
-      ? `https://${window.location.hostname}`
-      : 'https://work.ubq.fi';
-
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "github",
-    options: {
-      scopes,
-      redirectTo,
-    },
-  });
-
-  if (error) {
-    renderErrorInModal(error, "Error logging in");
+    ? `https://${window.location.hostname}`
+    : 'https://work.ubq.fi';
+  
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "github",
+      options: {
+        scopes,
+        redirectTo,
+      },
+    });
+    
+    if (error) {
+      console.error("OAuth Error:", error);
+    }
+  } catch (err) {
+    console.error("Unexpected error:", err);
   }
 }
 
