@@ -33,10 +33,8 @@ export async function checkSupabaseSession() {
 
   if (currentUrl.startsWith('https://work.ubq.fi')) {
     return 'https://work.ubq.fi';
-  } else if (currentUrl.match(/https:\/\/[a-zA-Z0-9]+\.devpool-directory-ui\.pages\.dev/)) {
+  } else{
     return currentUrl;
-  } else {
-    return 'https://work.ubq.fi';
   }
 };
 
