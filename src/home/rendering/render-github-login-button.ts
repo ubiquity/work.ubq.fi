@@ -28,17 +28,26 @@ export async function checkSupabaseSession() {
   return session;
 }
 
+ function getRedirectTo () {
+  const currentUrl = window.location.href;
+
+  if (currentUrl.startsWith('https://work.ubq.fi')) {
+    return 'https://work.ubq.fi';
+  } else if (currentUrl.match(/https:\/\/[a-zA-Z0-9]+\.devpool-directory-ui\.pages\.dev/)) {
+    return currentUrl;
+  } else {
+    return 'https://work.ubq.fi';
+  }
+};
+
 async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
-  const redirectTo = window.location.hostname.includes('devpool-directory-ui.pages.dev')
-    ? `https://${window.location.hostname}`
-    : 'https://work.ubq.fi';
-  
+
   try {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
         scopes,
-        redirectTo,
+        redirectTo: getRedirectTo(),
       },
     });
     
