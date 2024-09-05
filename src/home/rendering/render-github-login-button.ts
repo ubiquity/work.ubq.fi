@@ -28,15 +28,19 @@ export async function checkSupabaseSession() {
   return session;
 }
 
- function getRedirectTo () {
-  const currentUrl = window.location.href;
+//  function getRedirectTo () {
+//     const currentUrl = window.location.href;
+    
+//     console.log("Current URL:", currentUrl); // Log the current URL
 
-  if (currentUrl.startsWith('https://work.ubq.fi')) {
-    return 'https://work.ubq.fi';
-  } else{
-    return currentUrl;
-  }
-};
+//     if (currentUrl.startsWith('https://work.ubq.fi')) {
+//       console.log("Redirecting to:", 'https://work.ubq.fi');
+//       return 'https://work.ubq.fi';
+//     } else {
+//       console.log("Redirecting to current URL:", currentUrl);
+//       return currentUrl;
+//     }
+// };
 
 async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
 
@@ -45,7 +49,7 @@ async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
       provider: "github",
       options: {
         scopes,
-        redirectTo: getRedirectTo(),
+        redirectTo: "work.ubq.fi",
       },
     });
     
