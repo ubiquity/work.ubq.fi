@@ -43,21 +43,15 @@ export async function checkSupabaseSession() {
 // };
 
 async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
-
-  try {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "github",
-      options: {
-        scopes,
-        redirectTo: "github.com",
-      },
-    });
-    
-    if (error) {
-      console.error("OAuth Error:", error);
-    }
-  } catch (err) {
-    console.error("Unexpected error:", err);
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "github",
+    options: {
+      scopes,
+      redirectTo: 'github.com'
+    },
+  });
+  if (error) {
+    renderErrorInModal(error, "Error logging in");
   }
 }
 
