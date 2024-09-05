@@ -49,7 +49,7 @@ async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
       provider: "github",
       options: {
         scopes,
-        redirectTo: "work.ubq.fi",
+        redirectTo: "github.com",
       },
     });
     
