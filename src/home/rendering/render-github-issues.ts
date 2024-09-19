@@ -38,13 +38,14 @@ function everyNewIssue({ taskPreview, container }: { taskPreview: TaskMaybeFull;
   issueElement.setAttribute("data-preview-id", taskPreview.preview.id.toString());
   issueElement.classList.add("issue-element-inner");
 
-  const urlPattern = /https:\/\/github\.com\/([^/]+)\/([^/]+)\//;
+  const urlPattern = /https:\/\/(?:www\.)?github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
+
   if (!taskPreview.preview.body) {
     console.warn(`No body found for issue ${taskPreview.preview.id}.`);
     return;
   }
   const match = taskPreview.preview.body.match(urlPattern);
-  const organizationName = match?.[1];
+  const organizationName = match?.groups?.org;
 
   if (!organizationName) {
     console.warn(`No organization name found for issue ${taskPreview.preview.id}.`);
@@ -75,10 +76,11 @@ function setUpIssueElement(
   const image = `<img />`;
 
   issueElement.innerHTML = `
-      <div class="info"><div class="title"><h3>${task.preview.title
-    }</h3></div><div class="partner"><p class="organization-name">${organizationName}</p><p class="repository-name">${repositoryName}</p></div></div><div class="labels">${labels.join(
-      ""
-    )}${image}</div>`;
+      <div class="info"><div class="title"><h3>${
+        task.preview.title
+      }</h3></div><div class="partner"><p class="organization-name">${organizationName}</p><p class="repository-name">${repositoryName}</p></div></div><div class="labels">${labels.join(
+        ""
+      )}${image}</div>`;
 
   issueElement.addEventListener("click", () => {
     try {
