@@ -75,11 +75,10 @@ function setUpIssueElement(
   const image = `<img />`;
 
   issueElement.innerHTML = `
-      <div class="info"><div class="title"><h3>${
-        task.preview.title
-      }</h3></div><div class="partner"><p class="organization-name">${organizationName}</p><p class="repository-name">${repositoryName}</p></div></div><div class="labels">${labels.join(
-        ""
-      )}${image}</div>`;
+      <div class="info"><div class="title"><h3>${task.preview.title
+    }</h3></div><div class="partner"><p class="organization-name">${organizationName}</p><p class="repository-name">${repositoryName}</p></div></div><div class="labels">${labels.join(
+      ""
+    )}${image}</div>`;
 
   issueElement.addEventListener("click", () => {
     try {
