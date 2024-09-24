@@ -4,7 +4,7 @@ import { initiateDevRelTracking } from "./devrel-tracker";
 import { fetchAndDisplayPreviewsFromCache } from "./fetch-github/fetch-and-display-previews";
 import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
-import { renderErrorInModal } from "./rendering/display-popup-modal";
+import { renderErrorInModal, displayPopupMessage } from "./rendering/display-popup-modal";
 import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { TaskManager } from "./task-manager";
 
@@ -30,13 +30,44 @@ if (!container) {
 
 export const taskManager = new TaskManager(container);
 
+async function loadIssues() {
+  try {
+    // First, try to get issues from cache
+    const cache = await caches.open("devpool-directory-cache-v1");
+    const cachedResponse = await cache.match("/api/issues");
+
+    if (cachedResponse) {
+      const cachedIssues = await cachedResponse.json();
+      taskManager.syncTasks(cachedIssues);
+      displayPopupMessage({ modalHeader: "Loaded cached issues", modalBody: "Fetching latest updates...", isError: false });
+    }
+
+    // Then, fetch fresh issues
+    const previews = await fetchAndDisplayPreviewsFromCache();
+    const freshIssues = await fetchIssuesFull(previews);
+    taskManager.syncTasks(freshIssues);
+    await taskManager.writeToStorage();
+
+    // Update the cache with fresh issues
+    await cache.put("/api/issues", new Response(JSON.stringify(freshIssues)));
+
+    // Request a background sync
+    if ("serviceWorker" in navigator && "SyncManager" in window) {
+      const registration = await navigator.serviceWorker.ready;
+      await registration.sync.register("sync-issues");
+    }
+
+    displayPopupMessage({ modalHeader: "Issues updated", modalBody: "Latest issues have been loaded and cached.", isError: false });
+  } catch (error) {
+    console.error("Failed to fetch fresh issues:", error);
+    renderErrorInModal(error as Error);
+  }
+}
+
 void (async function home() {
   void authentication();
   void readyToolbar();
-  const previews = await fetchAndDisplayPreviewsFromCache();
-  const fullTasks = await fetchIssuesFull(previews);
-  taskManager.syncTasks(fullTasks);
-  await taskManager.writeToStorage();
+  await loadIssues();
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
@@ -50,7 +81,6 @@ void (async function home() {
       );
     });
   }
-  return fullTasks;
 })();
 
 function renderServiceMessage() {

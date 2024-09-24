@@ -56,9 +56,23 @@
         ><span><span class="full">Ubiquity DAO | </span><span class="mid">DevPool Directory</span></span></div
       ><div id="filters" class="filters-container"></div
     ></div>
-    <div id="bottom-bar" class="toolbar"
-      ><div id="filters-bottom" class="filters-container"></div><a href="https://dao.ubq.fi/devpool-flow" target="_blank"><button>FAQ</button></a></div
-    >
+    <div id="bottom-bar" class="toolbar">
+      <div id="filters-bottom" class="filters-container"></div>
+      <a href="https://dao.ubq.fi/devpool-flow" target="_blank"><button>FAQ</button></a>
+    </div>
+
     <script type="module" src="dist/src/home/home.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {          
+          <!-- navigator.serviceWorker.register('static/dist/src/progressive-web-app.js').then(registration => { -->
+          navigator.serviceWorker.register('dist/src/progressive-web-app.js').then(registration => {
+            console.log('Service Worker registered with scope:', registration.scope);
+          }).catch(error => {
+            console.error('Service Worker registration failed:', error);
+          });
+        });
+      }
+</script>
   </body>
 </html>

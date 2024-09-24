@@ -305,7 +305,6 @@
     align-items: center;
     display: inline-flex;
     text-align: left;
-    margin: 0 16px;
   }
   #authenticated > * {
     display: inline-flex;
