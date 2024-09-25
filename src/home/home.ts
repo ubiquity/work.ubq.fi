@@ -4,7 +4,7 @@ import { initiateDevRelTracking } from "./devrel-tracker";
 import { fetchAndDisplayPreviewsFromCache } from "./fetch-github/fetch-and-display-previews";
 import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
-import { renderErrorInModal, displayPopupMessage } from "./rendering/display-popup-modal";
+import { renderErrorInModal } from "./rendering/display-popup-modal";
 import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { TaskManager } from "./task-manager";
 
@@ -39,7 +39,6 @@ async function loadIssues() {
     if (cachedResponse) {
       const cachedIssues = await cachedResponse.json();
       taskManager.syncTasks(cachedIssues);
-      displayPopupMessage({ modalHeader: "Loaded cached issues", modalBody: "Fetching latest updates...", isError: false });
     }
 
     // Then, fetch fresh issues
@@ -57,7 +56,6 @@ async function loadIssues() {
       await registration.sync.register("sync-issues");
     }
 
-    displayPopupMessage({ modalHeader: "Issues updated", modalBody: "Latest issues have been loaded and cached.", isError: false });
   } catch (error) {
     console.error("Failed to fetch fresh issues:", error);
     renderErrorInModal(error as Error);
