@@ -65,7 +65,6 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {          
-          <!-- navigator.serviceWorker.register('static/dist/src/progressive-web-app.js').then(registration => { -->
           navigator.serviceWorker.register('dist/src/progressive-web-app.js').then(registration => {
             console.log('Service Worker registered with scope:', registration.scope);
           }).catch(error => {
@@ -73,6 +72,6 @@
           });
         });
       }
-</script>
+    </script>
   </body>
 </html>
