@@ -1,4 +1,5 @@
-const CACHE_NAME = "devpool-directory-cache-v1";
+import { CACHE_NAME } from "./home/github-types";
+
 const URLS_TO_CACHE = ["/", "/dist/src/home/home.js", "/style/style.css", "/style/inverted-style.css", "/favicon.svg", "/api/issues"];
 
 self.addEventListener("install", (event: ExtendableEvent) => {
