@@ -23,20 +23,23 @@
   }
   #logo {
     height: 28px;
-    margin-right: 4px;
+    margin-right: 8px; /* Add some space between logo and text */
     vertical-align: middle;
   }
   #authenticated,
   #branding {
     opacity: 0.5;
     transition: 125ms opacity ease-in-out;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
   }
   #authenticated:hover,
   #branding:hover {
     opacity: 1;
   }
   #branding > span {
-    padding: 8px;
+    padding: 4px;
     vertical-align: middle;
   }
   body,
@@ -301,7 +304,7 @@
     border-bottom: 1px solid #7f7f7f20;
     justify-content: center;
     -webkit-backdrop-filter: blur(8px);
-    justify-content: space-between;
+    /* justify-content: space-between; */
     justify-content: space-evenly;
   }
   .toolbar > * {
@@ -344,13 +347,19 @@
   .full {
     display: unset !important;
   }
+
   @media screen and (max-width: 804px) {
     .mid {
-      padding-left: 8px;
+      padding: 0 4px;
       display: inline-block;
     }
     #branding > span {
       padding: 0;
+    }
+  }
+  @media screen and (max-width: 400px) {
+    .mid {
+      display: none;
     }
   }
   @media screen and (max-width: 1139px) {
@@ -365,7 +374,7 @@
     }
     #branding {
       margin: auto;
-      margin-left: 12px;
+      /* margin-left: 12px; */
     }
     .toolbar {
       overflow-x: auto;
@@ -376,7 +385,7 @@
       justify-content: center;
     }
     .toolbar > * {
-      margin-left: 12px;
+      /* margin-right: 4px; */
     }
     .toolbar button {
       /* padding: 12px 16px; */
@@ -628,7 +637,7 @@
     display: none;
   }
   button#github-login-button {
-    margin-left: 0;
+    margin-left: auto; /* This pushes the button to the right */
   }
 
   p.organization-name::after {
@@ -727,4 +736,8 @@
 
 #view-toggle {
   appearance: none;
+}
+
+label[for="view-toggle"] {
+  margin-left: 8px;
 }
