@@ -726,7 +726,7 @@
   .spinner.hidden {
     display: none; /* Hides spinner completely */
   }
-  
+
   @keyframes spin {
     0% {
       transform: rotate(0deg);
@@ -739,7 +739,7 @@
   .spinner.fade-out {
     opacity: 0; /* Smooth fade-out */
   }
-  
+
   .hidden {
     display: none;
     opacity: 0;
@@ -749,11 +749,11 @@
     opacity: 1;
     transition: opacity 0.5s ease-out;
   }
-  
+
   .fade-out {
     animation: fadeOut 0.5s forwards;
   }
-  
+
   @keyframes fadeOut {
     from {
       opacity: 1;
