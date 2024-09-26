@@ -2,7 +2,7 @@
   #filters {
     display: none;
   }
-  .filters-container label {
+  .filters-container label:not([for="view-toggle"]) {
     width: 48px;
   }
 }
@@ -24,6 +24,7 @@
   #logo {
     height: 28px;
     margin-right: 4px;
+    vertical-align: middle;
   }
   #authenticated,
   #branding {
@@ -36,6 +37,7 @@
   }
   #branding > span {
     padding: 8px;
+    vertical-align: middle;
   }
   body,
   html {
@@ -183,10 +185,10 @@
   p.repository-name {
     display: inline-block;
   }
-  label:first-child {
+  label:not([for="view-toggle"]):first-child {
     margin-left: 0;
   }
-  label {
+  label:not([for="view-toggle"]) {
     padding: 4px 6px;
     border-radius: 4px;
     margin: 0 4px 0;
@@ -215,16 +217,17 @@
     padding: 0;
     border: none;
   }
-  .filters-container label {
+
+  label {
     cursor: pointer;
   }
-  .filters-container label:hover {
+  .filters-container label:not([for="view-toggle"]):hover {
     background-color: #80808040;
   }
-  .filters-container label:active {
+  .filters-container label:not([for="view-toggle"]):active {
     background-color: #80808080;
   }
-  input[type="radio"]:checked + label {
+  input[type="radio"]:checked + label:not([for="view-toggle"]) {
     background-color: #80808080 !important;
   }
   .labels {
@@ -631,11 +634,11 @@
   p.organization-name::after {
     content: "/";
   }
-  input[type="radio"][data-ordering="reverse"] + label::after {
+  input[type="radio"][data-ordering="reverse"] + label:not([for="view-toggle"])::after {
     margin-left: 6px;
     content: "▲";
   }
-  input[type="radio"][data-ordering="normal"] + label::after {
+  input[type="radio"][data-ordering="normal"] + label:not([for="view-toggle"])::after {
     margin-left: 6px;
     content: "▼";
   }
@@ -709,4 +712,19 @@
     height: 48px;
     background-color: #808080;
   }
+}
+
+#view-toggle:checked::after {
+  content: "Proposals";
+}
+#view-toggle::after {
+  content: "Directory";
+  letter-spacing: 1.5px;
+  text-rendering: geometricprecision;
+  text-transform: uppercase;
+  font-size: 16px;
+}
+
+#view-toggle {
+  appearance: none;
 }
