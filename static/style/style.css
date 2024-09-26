@@ -709,4 +709,57 @@
     height: 48px;
     background-color: #808080;
   }
+  .spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -40px 0 0 -40px;
+    border: 8px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 8px solid white;
+    animation: spin 1s linear infinite;
+    z-index: 9999; /* Ensure it stays on top */
+  }
+
+  .spinner.hidden {
+    display: none;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .spinner.fade-out {
+    opacity: 0; /* Smooth fade-out */
+  }
+  
+  .hidden {
+    display: none;
+    opacity: 0;
+  }
+
+  #loading-spinner {
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+  }
+  
+  .fade-out {
+    animation: fadeOut 0.5s forwards;
+  }
+  
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
 }

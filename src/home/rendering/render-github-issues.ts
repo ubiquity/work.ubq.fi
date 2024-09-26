@@ -9,6 +9,12 @@ import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
 
 export function renderGitHubIssues(tasks: TaskMaybeFull[]) {
   const container = taskManager.getContainer();
+  const spinner = document.getElementById("loading-spinner");
+
+  if (spinner) {
+    spinner.classList.remove("hidden");
+  }
+
   if (container.classList.contains("ready")) {
     container.classList.remove("ready");
     container.innerHTML = "";
@@ -28,9 +34,31 @@ export function renderGitHubIssues(tasks: TaskMaybeFull[]) {
     }
   }
   container.classList.add("ready");
+  // Fade out spinner once the issues are rendered
+  // if (spinner) {
+  //   setTimeout(() => {
+  //     spinner.classList.add("fade-out");
+  //     setTimeout(() => {
+  //       spinner.classList.add("hidden");
+  //     }, 500)
+  //   }, 500);
+  // }
+
   // Call this function after the issues have been rendered
   setupKeyboardNavigation(container);
 }
+
+setTimeout(() => {
+  const spinner = document.getElementById("loading-spinner");
+  const issues = document.querySelectorAll(".issue-element-inner");
+
+  if (spinner && issues.length === 0) {
+    spinner.innerHTML = "<p>Failed to load issues. Please try again.</p>";
+    spinner.classList.remove("hidden");
+  } else if (spinner) {
+    spinner.classList.add("hidden");
+  }
+}, 10000);
 
 function everyNewIssue({ taskPreview, container }: { taskPreview: TaskMaybeFull; container: HTMLDivElement }) {
   const issueWrapper = document.createElement("div");
