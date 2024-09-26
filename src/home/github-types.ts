@@ -16,3 +16,5 @@ export type TaskStorageItems = {
 export type GitHubUserResponse = RestEndpointMethodTypes["users"]["getByUsername"]["response"];
 export type GitHubUser = GitHubUserResponse["data"];
 export type GitHubIssue = RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
+
+export const CACHE_NAME = "devpool-directory-cache-v1";
