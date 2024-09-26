@@ -23,7 +23,7 @@
   }
   #logo {
     height: 28px;
-    margin-right: 8px; /* Add some space between logo and text */
+    margin-right: 8px;
     vertical-align: middle;
   }
   #authenticated,
@@ -374,7 +374,6 @@
     }
     #branding {
       margin: auto;
-      /* margin-left: 12px; */
     }
     .toolbar {
       overflow-x: auto;
@@ -384,11 +383,7 @@
       align-items: center;
       justify-content: center;
     }
-    .toolbar > * {
-      /* margin-right: 4px; */
-    }
     .toolbar button {
-      /* padding: 12px 16px; */
       height: 24px !important;
       padding: 4px 16px;
       line-height: 1;
@@ -637,7 +632,7 @@
     display: none;
   }
   button#github-login-button {
-    margin-left: auto; /* This pushes the button to the right */
+    margin-left: auto;
   }
 
   p.organization-name::after {
