@@ -17,7 +17,7 @@ export type Options = {
 
 let isProposalOnlyViewer = false; // or proposal viewer
 
-const viewToggle = document.getElementById("view-toggle");
+export const viewToggle = document.getElementById("view-toggle") as HTMLInputElement;
 if (!viewToggle) {
   throw new Error("Could not find view toggle");
 }
@@ -26,7 +26,6 @@ viewToggle.addEventListener("click", () => {
   displayGitHubIssues();
   applyAvatarsToIssues();
 });
-
 
 export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, options = { ordering: "normal" }) {
   let _cachedTasks = getLocalStore(GITHUB_TASKS_STORAGE_KEY) as TaskStorageItems;
