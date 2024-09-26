@@ -15,6 +15,18 @@ export type Options = {
   ordering: "normal" | "reverse";
 };
 
+let isProposalOnlyViewer = false; // or proposal viewer
+
+export const viewToggle = document.getElementById("view-toggle") as HTMLInputElement;
+if (!viewToggle) {
+  throw new Error("Could not find view toggle");
+}
+viewToggle.addEventListener("click", () => {
+  isProposalOnlyViewer = !isProposalOnlyViewer;
+  displayGitHubIssues();
+  applyAvatarsToIssues();
+});
+
 export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, options = { ordering: "normal" }) {
   let _cachedTasks = getLocalStore(GITHUB_TASKS_STORAGE_KEY) as TaskStorageItems;
   const _accessToken = await getGitHubAccessToken();
@@ -123,5 +135,21 @@ export function displayGitHubIssues(sorting?: Sorting, options = { ordering: "no
 
   // Render issues
   const sortedIssues = sortIssuesController(cachedTasks, sorting, options);
-  renderGitHubIssues(sortedIssues);
+  const sortedAndFiltered = sortedIssues.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
+  renderGitHubIssues(sortedAndFiltered);
+}
+
+function getProposalsOnlyFilter(getProposals: boolean) {
+  return (task: TaskMaybeFull) => {
+    if (!task.full?.labels) return false;
+
+    const hasPriceLabel = task.full.labels.some((label) => {
+      if (typeof label === "string") return false;
+      return label.name?.startsWith("Price: ") || label.name?.startsWith("Pricing: ");
+    });
+
+    // If getProposals is true, we want tasks WITHOUT price labels
+    // If getProposals is false, we want tasks WITH price labels
+    return getProposals ? !hasPriceLabel : hasPriceLabel;
+  };
 }
