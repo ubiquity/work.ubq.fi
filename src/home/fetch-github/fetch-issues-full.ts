@@ -7,12 +7,15 @@ import { TaskMaybeFull, TaskWithFull } from "./preview-to-full-mapping";
 
 export const organizationImageCache = new Map<string, Blob | null>();
 
+const issuesJsonUrl = "https://raw.githubusercontent.com/ubiquity/devpool-directory/development/devpool-issues.json";
+
 export async function fetchIssuesFull(taskPreviews: TaskMaybeFull[]): Promise<TaskWithFull[]> {
   const octokit = new Octokit({ auth: await getGitHubAccessToken() });
-  const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
+  const urlPattern = /https:\/\/api\.github\.com\/repos\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
+  const allIssues = await fetch(issuesJsonUrl).then((res) => res.json()) as unknown as GitHubIssue[];
 
   const fullTaskPromises = taskPreviews.map(async (task) => {
-    const match = task.preview.body.match(urlPattern);
+    const match = task.preview.url.match(urlPattern);
 
     if (!match || !match.groups) {
       console.error("Invalid issue body URL format");
@@ -21,7 +24,7 @@ export async function fetchIssuesFull(taskPreviews: TaskMaybeFull[]): Promise<Ta
 
     const { org, repo, issue_number } = match.groups;
 
-    const { data: response } = await octokit.request("GET /repos/{org}/{repo}/issues/{issue_number}", { issue_number, repo, org });
+    const response = allIssues.find((issue) => issue.number.toString() == issue_number)
 
     task.full = response as GitHubIssue;
 

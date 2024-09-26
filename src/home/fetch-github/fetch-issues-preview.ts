@@ -5,7 +5,6 @@ import { GitHubIssue } from "../github-types";
 import { displayPopupMessage } from "../rendering/display-popup-modal";
 import { handleRateLimit } from "./handle-rate-limit";
 import { TaskNoFull } from "./preview-to-full-mapping";
-import axios from "axios";
 
 async function checkPrivateRepoAccess(): Promise<boolean> {
   const octokit = new Octokit({ auth: await getGitHubAccessToken() });
@@ -40,6 +39,7 @@ async function checkPrivateRepoAccess(): Promise<boolean> {
 }
 
 export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
+  const octokit = new Octokit({ auth: await getGitHubAccessToken() });
   let freshIssues: GitHubIssue[] = [];
   let hasPrivateRepoAccess = false; // Flag to track access to the private repository
 
@@ -51,9 +51,9 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
 
     const issuesJsonUrl = "https://raw.githubusercontent.com/ubiquity/devpool-directory/development/devpool-issues.json";
 
-    const publicResponse = await axios.get(issuesJsonUrl);
+    const publicResponse = await fetch(issuesJsonUrl).then((res) => res.json()).then((res) => res as GitHubIssue[]);
 
-    const publicIssues = publicResponse.data.filter((issue: GitHubIssue) => !issue.pull_request)
+    const publicIssues = publicResponse.filter((issue: GitHubIssue) => !issue.pull_request)
 
     // Fetch issues from the private repository only if the user has access
     if (hasPrivateRepoAccess) {
@@ -80,11 +80,13 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
   return tasks;
 
   async function fetchPrivateIssues(publicIssues: GitHubIssue[]) {
-    const issuesJsonUrl = "https://raw.githubusercontent.com/ubiquity/devpool-directory/development/devpool-issues.json";
+    const privateResponse = await octokit.paginate(octokit.issues.listForRepo, {
+      owner: "ubiquity",
+      repo: "devpool-directory-private",
+      state: "open",
+    });
+    const privateIssues = privateResponse.filter((issue: GitHubIssue) => !issue.pull_request);
 
-    const privateResponse = await axios.get(issuesJsonUrl);
-
-    const privateIssues = privateResponse.data.filter((issue: GitHubIssue) => !issue.pull_request)
     // Mark private issues
     // TODO: indicate private issues in the UI
 
@@ -100,4 +102,4 @@ export async function fetchIssuePreviews(): Promise<TaskNoFull[]> {
 export function rateLimitModal(message: string) {
   displayPopupMessage({ modalHeader: `GitHub API rate limit exceeded.`, modalBody: message, isError: false });
 }
-  
+
