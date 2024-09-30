@@ -24,6 +24,12 @@ renderServiceMessage();
 grid(document.getElementById("grid") as HTMLElement, () => document.body.classList.add("grid-loaded")); // @DEV: display grid background
 const container = document.getElementById("issues-container") as HTMLDivElement;
 
+const spinner = document.getElementById("loading-spinner");
+
+if (spinner) {
+  spinner.classList.remove("hidden");
+}
+
 if (!container) {
   throw new Error("Could not find issues container");
 }

@@ -11,10 +11,6 @@ export function renderGitHubIssues(tasks: TaskMaybeFull[]) {
   const container = taskManager.getContainer();
   const spinner = document.getElementById("loading-spinner");
 
-  if (spinner) {
-    spinner.classList.remove("hidden");
-  }
-
   if (container.classList.contains("ready")) {
     container.classList.remove("ready");
     container.innerHTML = "";
@@ -35,14 +31,14 @@ export function renderGitHubIssues(tasks: TaskMaybeFull[]) {
   }
   container.classList.add("ready");
   // Fade out spinner once the issues are rendered
-  // if (spinner) {
-  //   setTimeout(() => {
-  //     spinner.classList.add("fade-out");
-  //     setTimeout(() => {
-  //       spinner.classList.add("hidden");
-  //     }, 500)
-  //   }, 500);
-  // }
+  if (spinner) {
+    setTimeout(() => {
+      spinner.classList.add("fade-out");
+      setTimeout(() => {
+        spinner.classList.add("hidden");
+      }, 100)
+    }, 100);
+  }
 
   // Call this function after the issues have been rendered
   setupKeyboardNavigation(container);
