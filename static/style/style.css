@@ -236,6 +236,7 @@
   .labels {
     display: flex;
     margin-left: auto;
+    justify-content: flex-end;
   }
   .partner {
     bottom: 0;
