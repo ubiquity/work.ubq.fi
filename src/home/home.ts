@@ -6,6 +6,7 @@ import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
 import { renderErrorInModal } from "./rendering/display-popup-modal";
 import { applyAvatarsToIssues } from "./rendering/render-github-issues";
+import { renderGitRevision } from "./rendering/render-github-login-button";
 import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { TaskManager } from "./task-manager";
 
@@ -18,6 +19,7 @@ window.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => 
   event.preventDefault();
 });
 
+renderGitRevision();
 initiateDevRelTracking();
 generateSortingToolbar();
 renderServiceMessage();

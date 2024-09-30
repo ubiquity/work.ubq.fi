@@ -4,6 +4,7 @@ import { renderErrorInModal } from "./display-popup-modal";
 declare const SUPABASE_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
 declare const SUPABASE_ANON_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
 declare const NODE_ENV: string; // @DEV: passed in at build time check build/esbuild-build.ts
+declare const GIT_REVISION: string; // @DEV: passed in at build time check build/esbuild-build.ts
 declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -57,6 +58,13 @@ export function renderGitHubLoginButton() {
     authentication.appendChild(gitHubLoginButton);
     authentication.classList.add("ready");
   }
+}
+
+export function renderGitRevision() {
+  const gitRevision = document.getElementById("git-revision") as HTMLAnchorElement;
+  if (!gitRevision) throw new Error("Could not find element with id 'git-revision'");
+  gitRevision.href = `https://github.com/ubiquity/pay.ubq.fi/commit/${GIT_REVISION}`;
+  gitRevision.textContent = GIT_REVISION;
 }
 
 export { gitHubLoginButton };
