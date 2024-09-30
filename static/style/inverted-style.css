@@ -7,6 +7,7 @@
   }
 }
 @media (orientation: landscape) {
+  #bottom-bar,
   #filters-bottom {
     display: none;
   }
@@ -112,8 +113,6 @@
     margin: 4px;
     filter: blur(4px);
     display: block;
-    /* border-color: var(--border-color); */
-    /* box-shadow: inset 0 0 24px #00bfff10; */
   }
   #issues-container > div.selected,
   #issues-container > div.selected .info,
@@ -192,6 +191,7 @@
     margin-left: 0;
   }
   label:not([for="view-toggle"]) {
+    line-height: 1.25;
     padding: 4px 6px;
     border-radius: 4px;
     margin: 0 4px 0;
@@ -220,7 +220,6 @@
     padding: 0;
     border: none;
   }
-
   label {
     cursor: pointer;
   }
@@ -303,15 +302,20 @@
     padding: 4px;
     display: flex;
     border-bottom: 1px solid #7f7f7f20;
-    justify-content: center;
     -webkit-backdrop-filter: blur(8px);
-    /* justify-content: space-between; */
-    justify-content: space-evenly;
+    justify-content: left;
+    align-items: center;
+  }
+  #authentication {
+    position: absolute;
+    right: 8px;
+    cursor: pointer;
   }
   .toolbar > * {
-    align-items: center;
     display: inline-flex;
-    text-align: left;
+  }
+  .toolbar a {
+    text-decoration: none;
   }
   #authenticated > * {
     display: inline-flex;
@@ -348,7 +352,11 @@
   .full {
     display: unset !important;
   }
-
+  @media screen and (max-width: 560px) {
+    #bottom-right {
+      display: none;
+    }
+  }
   @media screen and (max-width: 804px) {
     .mid {
       padding: 0 4px;
@@ -378,13 +386,9 @@
     }
     .toolbar {
       overflow-x: auto;
-      margin: 0;
-      padding-left: 0;
-      display: flex;
-      align-items: center;
     }
     .toolbar button {
-      height: 24px !important;
+      height: 24px;
       padding: 4px 16px;
       line-height: 1;
     }
@@ -425,7 +429,6 @@
   #issues-container img[src] {
     opacity: 1;
   }
-
   background,
   background #grid {
     width: 100%;
@@ -435,8 +438,6 @@
     left: 0;
   }
   background #grid {
-    /* -webkit-mask-image: radial-gradient(#ffffff20 0, #ffffff80 100%); */
-    /* mask-image: radial-gradient(#ffffff20 0, #ffffff80 100%); */
     pointer-events: none;
   }
   .preview blockquote {
@@ -492,14 +493,12 @@
     vertical-align: middle;
     height: 20px;
   }
-
   .preview.active.error .preview-header > a {
     pointer-events: none;
   }
   .preview.active.error .preview-header > a .open-new-link {
     display: none;
   }
-
   .preview.active.error > div > div.preview-header > a > span.error {
     display: unset;
   }
@@ -521,19 +520,11 @@
     border-radius: 4px;
     opacity: 0;
     top: 60px;
-    /* flex-direction: row; */
-    /* display: flex; */
-    /* transform: translateX(0); */
-    /* flex-wrap: wrap; */
     pointer-events: none;
-    /* overflow: hidden; */
     width: calc(100vw - 14px);
   }
   .preview * {
     pointer-events: none;
-  }
-  .preview.active {
-    pointer-events: all;
   }
   .preview.active * {
     pointer-events: all;
@@ -547,7 +538,6 @@
     opacity: 1;
     pointer-events: all;
     transform: translateX(50%);
-    /* box-shadow: 0 0px 16px #00000010; */
   }
   .preview-header {
     display: flex;
@@ -587,7 +577,6 @@
     padding: 16px;
     max-height: calc(100vh - (80px));
     max-height: calc(100vh - (242px));
-    /* border-color: var(--border-color); */
   }
   .preview-content {
     width: 100%;
@@ -634,7 +623,6 @@
   button#github-login-button {
     margin-left: auto;
   }
-
   p.organization-name::after {
     content: "/";
   }
@@ -662,18 +650,15 @@
   .toolbar button {
     white-space: nowrap;
   }
-
   background #grid {
     pointer-events: none;
   }
-
   background #grid canvas {
     width: 100%;
     height: 100%;
     opacity: 0;
     animation: background-grid-fade-in 3s ease-in-out forwards;
   }
-
   background .gradient {
     width: 200vw;
     height: 200vh;
@@ -681,7 +666,7 @@
     opacity: 0;
   }
   .grid-loaded background .gradient {
-    background-image: radial-gradient(#00bfff00 0%, #00bfffff 15%, #00bfff00 34%, #00bfffff 58%, #00bfff00 75%, #00bfffff 100%);
+    background-image: radial-gradient(#00bfff00 0, #00bfffff 15%, #00bfff00 34%, #00bfffff 58%, #00bfff00 75%, #00bfffff 100%);
     animation: background-gradients-fade-in 3s ease-in-out forwards;
   }
   background > :nth-child(1) {
@@ -690,7 +675,6 @@
   background > :nth-child(2) {
     transform: translateY(-50vh);
   }
-
   @keyframes background-gradients-fade-in {
     to {
       opacity: 0.125;
@@ -716,9 +700,9 @@
     height: 48px;
     background-color: #7f7f7f;
   }
-
   #view-toggle:checked::after {
     content: "Proposals";
+    cursor: pointer;
   }
   #view-toggle::after {
     content: "Directory";
@@ -727,16 +711,18 @@
     text-transform: uppercase;
     font-size: 16px;
   }
-
   #view-toggle {
     appearance: none;
   }
-
   label[for="view-toggle"] {
     margin-left: 8px;
   }
-
-  #git-revision {
+  #bottom-right {
+    position: fixed;
+    bottom: 4px;
+    right: 4px;
+  }
+  #bottom-right a {
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -745,9 +731,15 @@
     opacity: 0.25;
     font-size: 12px;
     color: #000000;
+    text-decoration: none;
   }
-
-  #git-revision:hover {
+  #bottom-right a:hover {
     opacity: 1;
+  }
+  #bottom-right svg {
+    fill: #00000080;
+  }
+  #bottom-right:hover svg {
+    fill: #000000;
   }
 }

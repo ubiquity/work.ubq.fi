@@ -49,14 +49,14 @@ export function renderAugmentAccessButton() {
 }
 
 const gitHubLoginButton = document.createElement("button");
+export const authenticationElement = document.getElementById("authentication") as HTMLDivElement;
 export function renderGitHubLoginButton() {
-  const authentication = document.getElementById("authentication");
   gitHubLoginButton.id = "github-login-button";
   gitHubLoginButton.innerHTML = "<span>Login</span><span class='full'>&nbsp;With GitHub</span>";
   gitHubLoginButton.addEventListener("click", () => gitHubLoginButtonHandler());
-  if (authentication) {
-    authentication.appendChild(gitHubLoginButton);
-    authentication.classList.add("ready");
+  if (authenticationElement) {
+    authenticationElement.appendChild(gitHubLoginButton);
+    authenticationElement.classList.add("ready");
   }
 }
 

@@ -53,8 +53,11 @@ void (async function home() {
       );
     });
   }
-  displayGitHubIssues();
-  applyAvatarsToIssues();
+
+  if (!container.classList.contains("ready")) {
+    displayGitHubIssues();
+    applyAvatarsToIssues();
+  }
   return fullTasks;
 })();
 
