@@ -191,6 +191,7 @@
     margin-left: 0;
   }
   label:not([for="view-toggle"]) {
+    line-height: 1.25;
     padding: 4px 6px;
     border-radius: 4px;
     margin: 0 4px 0;
@@ -308,6 +309,7 @@
   #authentication {
     position: absolute;
     right: 8px;
+    cursor: pointer;
   }
   .toolbar > * {
     display: inline-flex;
@@ -349,6 +351,11 @@
   }
   .full {
     display: unset !important;
+  }
+  @media screen and (max-width: 560px) {
+    #bottom-right {
+      display: none;
+    }
   }
   @media screen and (max-width: 804px) {
     .mid {
@@ -695,6 +702,7 @@
   }
   #view-toggle:checked::after {
     content: "Proposals";
+    cursor: pointer;
   }
   #view-toggle::after {
     content: "Directory";
@@ -709,7 +717,12 @@
   label[for="view-toggle"] {
     margin-left: 8px;
   }
-  #git-revision {
+  #bottom-right {
+    position: fixed;
+    bottom: 4px;
+    right: 4px;
+  }
+  #bottom-right a {
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -718,12 +731,15 @@
     opacity: 0.25;
     font-size: 12px;
     color: #fff;
-    position: fixed;
-    bottom: 22px;
-    right: 22px;
     text-decoration: none;
   }
-  #git-revision:hover {
+  #bottom-right a:hover {
     opacity: 1;
+  }
+  #bottom-right svg {
+    fill: #ffffff80;
+  }
+  #bottom-right:hover svg {
+    fill: #ffffff;
   }
 }
