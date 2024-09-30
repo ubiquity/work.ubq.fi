@@ -753,7 +753,7 @@
     opacity: 0.25;
     font-size: 12px;
     color: #fff;
-    position: absolute;
+    position: fixed;
     bottom: 22px;
     right: 22px;
     text-decoration: none;
