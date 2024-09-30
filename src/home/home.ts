@@ -54,7 +54,7 @@ void (async function home() {
     });
   }
 
-  if (!container.classList.contains("ready")) {
+  if (!container.childElementCount) {
     displayGitHubIssues();
     applyAvatarsToIssues();
   }
