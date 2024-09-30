@@ -27,7 +27,7 @@ export const esBuildContext: esbuild.BuildOptions = {
   outdir: "static/dist",
   define: createEnvDefines(["SUPABASE_URL", "SUPABASE_ANON_KEY"], {
     SUPABASE_STORAGE_KEY: generateSupabaseStorageKey(),
-    commitHash: execSync(`git rev-parse --short HEAD`).toString().trim(),
+    GIT_REVISION: execSync(`git rev-parse --short HEAD`).toString().trim(),
     NODE_ENV: process.env.NODE_ENV || "development",
   }),
 };

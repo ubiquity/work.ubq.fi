@@ -2,7 +2,7 @@
   #filters {
     display: none;
   }
-  .filters-container label {
+  .filters-container label:not([for="view-toggle"]) {
     width: 48px;
   }
 }
@@ -23,19 +23,24 @@
   }
   #logo {
     height: 28px;
-    margin-right: 4px;
+    margin-right: 8px;
+    vertical-align: middle;
   }
   #authenticated,
   #branding {
     opacity: 0.5;
     transition: 125ms opacity ease-in-out;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
   }
   #authenticated:hover,
   #branding:hover {
     opacity: 1;
   }
   #branding > span {
-    padding: 8px;
+    padding: 4px;
+    vertical-align: middle;
   }
   body,
   html {
@@ -183,10 +188,10 @@
   p.repository-name {
     display: inline-block;
   }
-  label:first-child {
+  label:not([for="view-toggle"]):first-child {
     margin-left: 0;
   }
-  label {
+  label:not([for="view-toggle"]) {
     padding: 4px 6px;
     border-radius: 4px;
     margin: 0 4px 0;
@@ -215,21 +220,23 @@
     padding: 0;
     border: none;
   }
-  .filters-container label {
+
+  label {
     cursor: pointer;
   }
-  .filters-container label:hover {
+  .filters-container label:not([for="view-toggle"]):hover {
     background-color: #80808040;
   }
-  .filters-container label:active {
+  .filters-container label:not([for="view-toggle"]):active {
     background-color: #80808080;
   }
-  input[type="radio"]:checked + label {
+  input[type="radio"]:checked + label:not([for="view-toggle"]) {
     background-color: #80808080 !important;
   }
   .labels {
     display: flex;
     margin-left: auto;
+    justify-content: flex-end;
   }
   .partner {
     bottom: 0;
@@ -298,7 +305,7 @@
     border-bottom: 1px solid #80808020;
     justify-content: center;
     -webkit-backdrop-filter: blur(8px);
-    justify-content: space-between;
+    /* justify-content: space-between; */
     justify-content: space-evenly;
   }
   .toolbar > * {
@@ -341,13 +348,19 @@
   .full {
     display: unset !important;
   }
+
   @media screen and (max-width: 804px) {
     .mid {
-      padding-left: 8px;
+      padding: 0 4px;
       display: inline-block;
     }
     #branding > span {
       padding: 0;
+    }
+  }
+  @media screen and (max-width: 320px) {
+    .mid {
+      display: none;
     }
   }
   @media screen and (max-width: 1139px) {
@@ -362,7 +375,6 @@
     }
     #branding {
       margin: auto;
-      margin-left: 12px;
     }
     .toolbar {
       overflow-x: auto;
@@ -370,13 +382,8 @@
       padding-left: 0;
       display: flex;
       align-items: center;
-      justify-content: center;
-    }
-    .toolbar > * {
-      margin-left: 12px;
     }
     .toolbar button {
-      /* padding: 12px 16px; */
       height: 24px !important;
       padding: 4px 16px;
       line-height: 1;
@@ -625,17 +632,17 @@
     display: none;
   }
   button#github-login-button {
-    margin-left: 0;
+    margin-left: auto;
   }
 
   p.organization-name::after {
     content: "/";
   }
-  input[type="radio"][data-ordering="reverse"] + label::after {
+  input[type="radio"][data-ordering="reverse"] + label:not([for="view-toggle"])::after {
     margin-left: 6px;
     content: "▲";
   }
-  input[type="radio"][data-ordering="normal"] + label::after {
+  input[type="radio"][data-ordering="normal"] + label:not([for="view-toggle"])::after {
     margin-left: 6px;
     content: "▼";
   }
@@ -709,6 +716,7 @@
     height: 48px;
     background-color: #808080;
   }
+
   .spinner {
     position: fixed;
     top: 50%;
@@ -761,5 +769,38 @@
     to {
       opacity: 0;
     }
+
+  #view-toggle:checked::after {
+    content: "Proposals";
+  }
+  #view-toggle::after {
+    content: "Directory";
+    letter-spacing: 1.5px;
+    text-rendering: geometricprecision;
+    text-transform: uppercase;
+    font-size: 16px;
+  }
+
+  #view-toggle {
+    appearance: none;
+  }
+
+  label[for="view-toggle"] {
+    margin-left: 8px;
+  }
+
+  #git-revision {
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-rendering: geometricPrecision;
+    vertical-align: middle;
+    opacity: 0.25;
+    font-size: 12px;
+    color: #fff;
+  }
+
+  #git-revision:hover {
+    opacity: 1;
   }
 }
