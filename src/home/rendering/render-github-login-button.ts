@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import { toolbar } from "../ready-toolbar";
 import { renderErrorInModal } from "./display-popup-modal";
 
 declare const SUPABASE_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
@@ -50,12 +49,13 @@ export function renderAugmentAccessButton() {
 
 const gitHubLoginButton = document.createElement("button");
 export function renderGitHubLoginButton() {
+  const authentication = document.getElementById("authentication");
   gitHubLoginButton.id = "github-login-button";
   gitHubLoginButton.innerHTML = "<span>Login</span><span class='full'>&nbsp;With GitHub</span>";
   gitHubLoginButton.addEventListener("click", () => gitHubLoginButtonHandler());
-  if (toolbar) {
-    toolbar.appendChild(gitHubLoginButton);
-    toolbar.classList.add("ready");
+  if (authentication) {
+    authentication.appendChild(gitHubLoginButton);
+    authentication.classList.add("ready");
   }
 }
 
