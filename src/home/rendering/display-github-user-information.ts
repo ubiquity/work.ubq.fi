@@ -1,10 +1,12 @@
 import { isOrgMemberWithoutScope } from "../getters/get-github-access-token";
 import { GitHubUser } from "../github-types";
 import { renderErrorInModal } from "./display-popup-modal";
-import { getSupabase, renderAugmentAccessButton } from "./render-github-login-button";
+import { getSupabase, renderAugmentAccessButton, authenticationElement } from './render-github-login-button';
+import { toolbar } from "../ready-toolbar";
+
+
 
 export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
-  const toolbar = document.getElementById("toolbar");
   const authenticatedDivElement = document.createElement("div");
   const containerDivElement = document.createElement("div");
   authenticatedDivElement.id = "authenticated";
@@ -37,14 +39,15 @@ export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
     window.location.reload();
   });
 
-  containerDivElement.appendChild(authenticatedDivElement);
+  // containerDivElement.appendChild(authenticatedDivElement);
 
   if (await isOrgMemberWithoutScope()) {
     const accessButton = renderAugmentAccessButton();
     containerDivElement.appendChild(accessButton);
   }
 
-  toolbar.appendChild(containerDivElement);
+  // toolbar.appendChild(containerDivElement);
+  authenticationElement.appendChild(authenticatedDivElement);
   toolbar.setAttribute("data-authenticated", "true");
   toolbar.classList.add("ready");
 }
