@@ -303,15 +303,20 @@
     padding: 4px;
     display: flex;
     border-bottom: 1px solid #7f7f7f20;
-    justify-content: center;
+    /* justify-content: center; */
     -webkit-backdrop-filter: blur(8px);
     /* justify-content: space-between; */
-    justify-content: space-evenly;
+    justify-content: left;
+    align-items: center;
+  }
+  #authentication {
+    position: absolute;
+    right: 8px;
   }
   .toolbar > * {
-    align-items: center;
+    /* align-items: center; */
     display: inline-flex;
-    text-align: left;
+    /* text-align: left; */
   }
   #authenticated > * {
     display: inline-flex;
@@ -378,10 +383,10 @@
     }
     .toolbar {
       overflow-x: auto;
-      margin: 0;
-      padding-left: 0;
-      display: flex;
-      align-items: center;
+      /* margin: 0; */
+      /* padding-left: 0; */
+      /* display: flex; */
+      /* align-items: center; */
     }
     .toolbar button {
       height: 24px !important;
