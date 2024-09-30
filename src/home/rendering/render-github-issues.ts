@@ -36,7 +36,7 @@ export function renderGitHubIssues(tasks: TaskMaybeFull[]) {
       spinner.classList.add("fade-out");
       setTimeout(() => {
         spinner.classList.add("hidden");
-      }, 100)
+      }, 100);
     }, 100);
   }
 
