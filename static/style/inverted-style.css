@@ -403,6 +403,13 @@
       overflow: hidden;
     }
 
+    .preview.active {
+      transform: translateX(0) !important;
+    }
+    body.preview-active #issues-container {
+      transform: translateX(0) !important;
+    }
+
     body.preview-active > #issues-container > div,
     body.preview-active > background {
       filter: blur(8px);
@@ -538,6 +545,7 @@
   }
   .preview.active {
     pointer-events: all;
+    transform: translateX(50%);
   }
   .preview.active * {
     pointer-events: all;
