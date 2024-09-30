@@ -51,7 +51,7 @@ setTimeout(() => {
   if (spinner && issues.length === 0) {
     spinner.innerHTML = "<p>Failed to load issues. Please try again!</p>";
     spinner.classList.remove("spinner");
-    spinner.classList.add("load-error")
+    spinner.classList.add("load-error");
   } else if (spinner) {
     spinner.classList.add("hidden");
   }
