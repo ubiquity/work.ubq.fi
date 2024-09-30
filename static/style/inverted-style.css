@@ -543,10 +543,7 @@
   .preview * {
     pointer-events: none;
   }
-  .preview.active {
-    pointer-events: all;
-    transform: translateX(50%);
-  }
+
   .preview.active * {
     pointer-events: all;
   }
@@ -558,6 +555,7 @@
   .preview.active {
     opacity: 1;
     pointer-events: all;
+    transform: translateX(50%);
   }
   .preview-header {
     display: flex;
@@ -755,7 +753,7 @@
     opacity: 0.25;
     font-size: 12px;
     color: #000000;
-    position: absolute;
+    position: fixed;
     bottom: 22px;
     right: 22px;
     text-decoration: none;

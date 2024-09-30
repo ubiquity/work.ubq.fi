@@ -546,7 +546,6 @@
 
   .preview.active * {
     pointer-events: all;
-    transform: translateX(50%);
   }
   .close-preview svg {
     fill: #ffffff80;
@@ -556,6 +555,7 @@
   .preview.active {
     opacity: 1;
     pointer-events: all;
+    transform: translateX(50%);
   }
   .preview-header {
     display: flex;
