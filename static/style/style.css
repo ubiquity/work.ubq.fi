@@ -543,12 +543,10 @@
   .preview * {
     pointer-events: none;
   }
-  .preview.active {
-    pointer-events: all;
-    transform: translateX(50%);
-  }
+
   .preview.active * {
     pointer-events: all;
+    transform: translateX(50%);
   }
   .close-preview svg {
     fill: #ffffff80;
