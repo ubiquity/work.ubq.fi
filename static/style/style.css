@@ -720,7 +720,14 @@
     border-radius: 50%;
     border-top: 8px solid white;
     animation: spin 1s linear infinite;
-    z-index: 9999; /* Ensure it stays on top */
+    z-index: 9999;
+  }
+
+  .load-error {
+    position: fixed;
+    top: 50%;
+    left: 43%;
+    z-index: 9999;
   }
 
   .spinner.hidden {

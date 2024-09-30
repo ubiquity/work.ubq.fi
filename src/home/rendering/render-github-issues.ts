@@ -49,8 +49,9 @@ setTimeout(() => {
   const issues = document.querySelectorAll(".issue-element-inner");
 
   if (spinner && issues.length === 0) {
-    spinner.innerHTML = "<p>Failed to load issues. Please try again.</p>";
-    spinner.classList.remove("hidden");
+    spinner.innerHTML = "<p>Failed to load issues. Please try again!</p>";
+    spinner.classList.remove("spinner");
+    spinner.classList.add("load-error")
   } else if (spinner) {
     spinner.classList.add("hidden");
   }

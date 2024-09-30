@@ -715,16 +715,24 @@
     left: 50%;
     width: 40px;
     height: 40px;
-    margin: -40px 0 0 -40px; /* Adjust position to center */
+    margin: -40px 0 0 -40px;
     border: 8px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     border-top: 8px solid white;
     animation: spin 1s linear infinite;
-    z-index: 9999; /* Ensure it stays on top */
+    z-index: 9999;
+  }
+
+  .load-error {
+    position: fixed;
+    top: 50%;
+    left: 43%;
+    font-size: 28px;
+    z-index: 9999;
   }
 
   .spinner.hidden {
-    display: none; /* Hides spinner completely */
+    display: none;
   }
 
   @keyframes spin {
