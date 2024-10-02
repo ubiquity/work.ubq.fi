@@ -59,8 +59,11 @@ void (async function home() {
       );
     });
   }
-  displayGitHubIssues();
-  applyAvatarsToIssues();
+
+  if (!container.childElementCount) {
+    displayGitHubIssues();
+    applyAvatarsToIssues();
+  }
   return fullTasks;
 })();
 
