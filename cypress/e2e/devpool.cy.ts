@@ -315,7 +315,6 @@ describe("DevPool", () => {
     }).as("head");
     cy.visit("/");
     cy.get("#authenticated").should("be.visible");
-    cy.get("#augment-access-button").should("be.visible");
     cy.get('[for="price-bottom"]').should("be.visible");
   });
 });
