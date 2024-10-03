@@ -32,13 +32,13 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
   // Refresh the storage if there is no logged-in object in cachedTasks but there is one now.
   if (_cachedTasks && !_cachedTasks.loggedIn && _accessToken) {
     localStorage.removeItem(GITHUB_TASKS_STORAGE_KEY);
-    return fetchAndDisplayPreviewsFromNetwork(sorting, options);
+    return fetchAndDisplayIssuesFromNetwork(sorting, options);
   }
 
   // If previously logged in but not anymore, clear cache and fetch from network.
   if (_cachedTasks && _cachedTasks.loggedIn && !_accessToken) {
     localStorage.removeItem(GITHUB_TASKS_STORAGE_KEY);
-    return fetchAndDisplayPreviewsFromNetwork(sorting, options);
+    return fetchAndDisplayIssuesFromNetwork(sorting, options);
   }
 
   // makes sure tasks have a timestamp to know how old the cache is, or refresh if older than 15 minutes
@@ -55,14 +55,14 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
 
   if (!cachedTasks.length) {
     // load from network if there are no cached issues
-    return fetchAndDisplayPreviewsFromNetwork(sorting, options);
+    return fetchAndDisplayIssuesFromNetwork(sorting, options);
   } else {
     displayGitHubIssues(sorting, options);
     return fetchAvatars();
   }
 }
 
-export async function fetchAndDisplayPreviewsFromNetwork(sorting?: Sorting, options = { ordering: "normal" }) {
+export async function fetchAndDisplayIssuesFromNetwork(sorting?: Sorting, options = { ordering: "normal" }) {
   // const fetchedPreviews = await fetchIssuePreviews();
   // const cachedTasks = taskManager.getTasks();
   // const updatedCachedIssues = verifyGitHubIssueState(cachedTasks, fetchedPreviews);
@@ -73,11 +73,11 @@ export async function fetchAndDisplayPreviewsFromNetwork(sorting?: Sorting, opti
 
 export async function fetchAvatars() {
   const cachedTasks = taskManager.getTasks();
-  const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
+  // const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
 
   const avatarPromises = cachedTasks.map(async (task: GitHubIssue) => {
-    const match = task.body?.match(urlPattern);
-    const orgName = match?.groups?.org;
+    // const match = task.body?.match(urlPattern);
+    const [orgName] = task.repository_url.split("/").slice(-2);
     if (orgName) {
       return fetchAvatar(orgName);
     }
