@@ -86,7 +86,6 @@ export async function fetchAvatars() {
 
   await Promise.allSettled(avatarPromises);
   applyAvatarsToIssues();
-  return cachedTasks;
 }
 
 // export function taskWithFullTest(task: TaskNoFull | TaskWithFull): task is TaskWithFull {

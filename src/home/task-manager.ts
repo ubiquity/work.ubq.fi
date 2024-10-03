@@ -1,6 +1,7 @@
 import { getGitHubAccessToken } from "./getters/get-github-access-token";
 import { setLocalStore } from "./getters/get-local-store";
 import { GITHUB_TASKS_STORAGE_KEY, GitHubIssue } from "./github-types";
+import { applyAvatarsToIssues } from "./rendering/render-github-issues";
 
 export class TaskManager {
   private _tasks: GitHubIssue[] = [];
@@ -11,6 +12,7 @@ export class TaskManager {
 
   public syncTasks(incoming: GitHubIssue[]) {
     this._tasks = incoming;
+    applyAvatarsToIssues();
     void this._writeToStorage(incoming);
   }
 

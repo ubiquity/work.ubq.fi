@@ -1,13 +1,12 @@
 import { grid } from "../the-grid";
 import { authentication } from "./authentication";
 import { initiateDevRelTracking } from "./devrel-tracker";
-import { displayGitHubIssues } from "./fetch-github/fetch-and-display-previews";
+import { fetchAvatars, displayGitHubIssues } from './fetch-github/fetch-and-display-previews';
 import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
 import { registerServiceWorker } from "./register-service-worker";
 import { renderServiceMessage } from "./render-service-message";
 // import { renderErrorInModal } from "./rendering/display-popup-modal";
-import { applyAvatarsToIssues } from "./rendering/render-github-issues";
 import { renderGitRevision } from "./rendering/render-github-login-button";
 import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { TaskManager } from "./task-manager";
@@ -40,14 +39,15 @@ void (async function home() {
   void readyToolbar();
   const gitHubIssues = await fetchIssuesFull();
   taskManager.syncTasks(gitHubIssues);
+  void fetchAvatars();
+  void displayGitHubIssues();
 
   if ("serviceWorker" in navigator) {
     registerServiceWorker();
   }
 
-  if (!container.childElementCount) {
-    displayGitHubIssues();
-    applyAvatarsToIssues();
-  }
+  // if (!container.childElementCount) {
+  //   applyAvatarsToIssues();
+  // }
   return gitHubIssues;
 })();
