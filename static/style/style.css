@@ -755,9 +755,15 @@
     animation: spin 1s linear infinite;
     top: calc(50vh - 48px);
     position: fixed;
+    opacity: 1;
+    transition: 0.5s all ease-in-out;
+    right: calc(50% - 48px);
+    filter: blur(0px);
+    pointer-events: none;
   }
   #issues-container.ready::after {
-    display: none;
+    opacity: 0;
+    filter: blur(8px);
   }
   @keyframes spin {
     0% {
