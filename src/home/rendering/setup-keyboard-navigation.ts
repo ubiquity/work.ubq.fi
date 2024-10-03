@@ -58,27 +58,25 @@ function keyDownHandler() {
 
         container.classList.add("keyboard-selection");
 
-        const previewId = visibleIssues[newIndex].children[0].getAttribute("data-preview-id");
-
-        const issueElement = visibleIssues.find((issue) => issue.children[0].getAttribute("data-preview-id") === previewId);
-
-        if (issueElement) {
-          const issueFull = taskManager.getTaskByPreviewId(Number(previewId)).full;
-          if (issueFull) {
-            viewIssueDetails(issueFull);
+        const issueId = visibleIssues[newIndex].children[0].getAttribute("data-issue-id");
+        if (issueId) {
+          const gitHubIssue = taskManager.getGitHubIssueById(parseInt(issueId, 10));
+          if (gitHubIssue) {
+            viewIssueDetails(gitHubIssue);
           }
         }
       }
     } else if (event.key === "Enter") {
       const selectedIssue = container.querySelector("#issues-container > div.selected");
       if (selectedIssue) {
-        const previewId = selectedIssue.children[0].getAttribute("data-preview-id");
+        const gitHubIssueId = selectedIssue.children[0].getAttribute("data-issue-id");
+        if (!gitHubIssueId) {
+          return;
+        }
 
-        if (previewId) {
-          const issueFull = taskManager.getTaskByPreviewId(Number(previewId)).full;
-          if (issueFull) {
-            window.open(issueFull.html_url, "_blank");
-          }
+        const gitHubIssue = taskManager.getGitHubIssueById(parseInt(gitHubIssueId, 10));
+        if (gitHubIssue) {
+          window.open(gitHubIssue.html_url, "_blank");
         }
       }
     } else if (event.key === "Escape") {

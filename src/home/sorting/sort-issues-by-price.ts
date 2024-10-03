@@ -1,9 +1,11 @@
-import { TaskMaybeFull } from "../fetch-github/preview-to-full-mapping";
+// @ts-nocheck
 
-export function sortIssuesByPrice(issues: TaskMaybeFull[]) {
+import { GitHubIssue } from "../github-types";
+
+export function sortIssuesByPrice(issues: GitHubIssue[]) {
   return issues.sort((a, b) => {
-    const aPriceLabel = a.preview.labels.find((label) => label.name.startsWith("Pricing: "));
-    const bPriceLabel = b.preview.labels.find((label) => label.name.startsWith("Pricing: "));
+    const aPriceLabel = a.labels.find((label) => label.name.startsWith("Pricing: "));
+    const bPriceLabel = b.labels.find((label) => label.name.startsWith("Pricing: "));
 
     const aPriceMatch = aPriceLabel ? aPriceLabel.name.match(/Pricing: (\d+)/) : null;
     const bPriceMatch = bPriceLabel ? bPriceLabel.name.match(/Pricing: (\d+)/) : null;

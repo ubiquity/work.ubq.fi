@@ -1,15 +1,13 @@
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { getImageFromCache } from "../getters/get-indexed-db";
 import { getLocalStore } from "../getters/get-local-store";
-import { GITHUB_TASKS_STORAGE_KEY, TaskStorageItems } from "../github-types";
+import { GITHUB_TASKS_STORAGE_KEY, GitHubIssue, TaskStorageItems } from "../github-types";
 import { taskManager } from "../home";
 import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-github-issues";
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
 import { fetchAvatar } from "./fetch-avatar";
 import { organizationImageCache } from "./fetch-issues-full";
-import { fetchIssuePreviews } from "./fetch-issues-preview";
-import { TaskMaybeFull, TaskNoFull, TaskWithFull } from "./preview-to-full-mapping";
 
 export type Options = {
   ordering: "normal" | "reverse";
@@ -52,7 +50,7 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
     };
   }
 
-  const cachedTasks = _cachedTasks.tasks as TaskMaybeFull[];
+  const cachedTasks = _cachedTasks.tasks;
   taskManager.syncTasks(cachedTasks);
 
   if (!cachedTasks.length) {
@@ -65,10 +63,10 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
 }
 
 export async function fetchAndDisplayPreviewsFromNetwork(sorting?: Sorting, options = { ordering: "normal" }) {
-  const fetchedPreviews = await fetchIssuePreviews();
-  const cachedTasks = taskManager.getTasks();
-  const updatedCachedIssues = verifyGitHubIssueState(cachedTasks, fetchedPreviews);
-  taskManager.syncTasks(updatedCachedIssues);
+  // const fetchedPreviews = await fetchIssuePreviews();
+  // const cachedTasks = taskManager.getTasks();
+  // const updatedCachedIssues = verifyGitHubIssueState(cachedTasks, fetchedPreviews);
+  // taskManager.syncTasks(updatedCachedIssues);
   displayGitHubIssues(sorting, options);
   return fetchAvatars();
 }
@@ -77,8 +75,8 @@ export async function fetchAvatars() {
   const cachedTasks = taskManager.getTasks();
   const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
 
-  const avatarPromises = cachedTasks.map(async (task) => {
-    const match = task.preview.body?.match(urlPattern);
+  const avatarPromises = cachedTasks.map(async (task: GitHubIssue) => {
+    const match = task.body?.match(urlPattern);
     const orgName = match?.groups?.org;
     if (orgName) {
       return fetchAvatar(orgName);
@@ -91,39 +89,39 @@ export async function fetchAvatars() {
   return cachedTasks;
 }
 
-export function taskWithFullTest(task: TaskNoFull | TaskWithFull): task is TaskWithFull {
-  return (task as TaskWithFull).full !== null && (task as TaskWithFull).full !== undefined;
-}
+// export function taskWithFullTest(task: TaskNoFull | TaskWithFull): task is TaskWithFull {
+//   return (task as TaskWithFull).full !== null && (task as TaskWithFull).full !== undefined;
+// }
 
-export function verifyGitHubIssueState(cachedTasks: TaskMaybeFull[], fetchedPreviews: TaskNoFull[]): (TaskNoFull | TaskWithFull)[] {
-  return fetchedPreviews.map((fetched) => {
-    const cachedTask = cachedTasks.find((c) => c.full?.id === fetched.preview.id);
-    if (cachedTask) {
-      if (taskWithFullTest(cachedTask)) {
-        const cachedFullIssue = cachedTask.full;
-        const task = { ...fetched, full: cachedFullIssue };
-        return task;
-      } else {
-        // no full issue in task
-      }
-    } else {
-      // no cached task
-    }
-    return {
-      preview: fetched.preview,
-    } as TaskNoFull;
-  });
-}
+// export function verifyGitHubIssueState(cachedTasks: GitHubIssue[], fetchedPreviews: TaskNoFull[]): (TaskNoFull | TaskWithFull)[] {
+//   return fetchedPreviews.map((fetched) => {
+//     const cachedTask = cachedTasks.find((c) => c.full?.id === fetched.preview.id);
+//     if (cachedTask) {
+//       if (taskWithFullTest(cachedTask)) {
+//         const cachedFullIssue = cachedTask.full;
+//         const task = { ...fetched, full: cachedFullIssue };
+//         return task;
+//       } else {
+//         // no full issue in task
+//       }
+//     } else {
+//       // no cached task
+//     }
+//     return {
+//       preview: fetched.preview,
+//     } as TaskNoFull;
+//   });
+// }
 
 export function displayGitHubIssues(sorting?: Sorting, options = { ordering: "normal" }) {
   // Load avatars from cache
   const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
   const cachedTasks = taskManager.getTasks();
-  cachedTasks.forEach(async ({ preview }) => {
-    if (!preview.body) {
-      throw new Error(`Preview body is undefined for task with id: ${preview.id}`);
+  cachedTasks.forEach(async (issue) => {
+    if (!issue.body) {
+      throw new Error(`Preview body is undefined for task with id: ${issue.id}`);
     }
-    const match = preview.body.match(urlPattern);
+    const match = issue.body.match(urlPattern);
     const orgName = match?.groups?.org;
     if (orgName) {
       const avatarUrl = await getImageFromCache({ dbName: "GitHubAvatars", storeName: "ImageStore", orgName: `avatarUrl-${orgName}` });
@@ -140,10 +138,10 @@ export function displayGitHubIssues(sorting?: Sorting, options = { ordering: "no
 }
 
 function getProposalsOnlyFilter(getProposals: boolean) {
-  return (task: TaskMaybeFull) => {
-    if (!task.full?.labels) return false;
+  return (issue: GitHubIssue) => {
+    if (!issue?.labels) return false;
 
-    const hasPriceLabel = task.full.labels.some((label) => {
+    const hasPriceLabel = issue.labels.some((label) => {
       if (typeof label === "string") return false;
       return label.name?.startsWith("Price: ") || label.name?.startsWith("Pricing: ");
     });

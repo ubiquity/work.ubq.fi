@@ -1,26 +1,25 @@
 import { marked } from "marked";
 import { organizationImageCache } from "../fetch-github/fetch-issues-full";
-import { TaskMaybeFull } from "../fetch-github/preview-to-full-mapping";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { renderErrorInModal } from "./display-popup-modal";
-import { preview, previewBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
+import { modal, modalBodyInner, titleAnchor, titleHeader } from './render-preview-modal';
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
 
-export function renderGitHubIssues(tasks: TaskMaybeFull[]) {
+export function renderGitHubIssues(tasks: GitHubIssue[]) {
   const container = taskManager.getContainer();
   if (container.classList.contains("ready")) {
     container.classList.remove("ready");
     container.innerHTML = "";
   }
-  const existingIssueIds = new Set(Array.from(container.querySelectorAll(".issue-element-inner")).map((element) => element.getAttribute("data-preview-id")));
+  const existingIssueIds = new Set(Array.from(container.querySelectorAll(".issue-element-inner")).map((element) => element.getAttribute("data-issue-id")));
 
   let delay = 0;
   const baseDelay = 1000 / 15; // Base delay in milliseconds
 
   for (const task of tasks) {
-    if (!existingIssueIds.has(task.preview.id.toString())) {
-      const issueWrapper = everyNewIssue({ taskPreview: task, container });
+    if (!existingIssueIds.has(task.id.toString())) {
+      const issueWrapper = everyNewIssue({ gitHubIssue: task, container });
       if (issueWrapper) {
         setTimeout(() => issueWrapper.classList.add("active"), delay);
         delay += baseDelay;
@@ -32,22 +31,22 @@ export function renderGitHubIssues(tasks: TaskMaybeFull[]) {
   setupKeyboardNavigation(container);
 }
 
-function everyNewIssue({ taskPreview, container }: { taskPreview: TaskMaybeFull; container: HTMLDivElement }) {
+function everyNewIssue({ gitHubIssue: gitHubIssue, container }: { gitHubIssue: GitHubIssue; container: HTMLDivElement }) {
   const issueWrapper = document.createElement("div");
   const issueElement = document.createElement("div");
-  issueElement.setAttribute("data-preview-id", taskPreview.preview.id.toString());
+  issueElement.setAttribute("data-issue-id", gitHubIssue.id.toString());
   issueElement.classList.add("issue-element-inner");
 
   const urlPattern = /https:\/\/github\.com\/([^/]+)\/([^/]+)\//;
-  if (!taskPreview.preview.body) {
-    console.warn(`No body found for issue ${taskPreview.preview.id}.`);
+  if (!gitHubIssue.body) {
+    console.warn(`No body found for issue ${gitHubIssue.id}.`);
     return;
   }
-  const match = taskPreview.preview.body.match(urlPattern);
+  const match = gitHubIssue.body.match(urlPattern);
   const organizationName = match?.[1];
 
   if (!organizationName) {
-    console.warn(`No organization name found for issue ${taskPreview.preview.id}.`);
+    console.warn(`No organization name found for issue ${gitHubIssue.id}.`);
     return;
   }
 
@@ -56,8 +55,8 @@ function everyNewIssue({ taskPreview, container }: { taskPreview: TaskMaybeFull;
     console.warn("No repository name found");
     return;
   }
-  const labels = parseAndGenerateLabels(taskPreview);
-  setUpIssueElement(issueElement, taskPreview, organizationName, repositoryName, labels, match);
+  const labels = parseAndGenerateLabels(gitHubIssue);
+  setUpIssueElement(issueElement, gitHubIssue, organizationName, repositoryName, labels, match);
   issueWrapper.appendChild(issueElement);
 
   container.appendChild(issueWrapper);
@@ -66,7 +65,7 @@ function everyNewIssue({ taskPreview, container }: { taskPreview: TaskMaybeFull;
 
 function setUpIssueElement(
   issueElement: HTMLDivElement,
-  task: TaskMaybeFull,
+  task: GitHubIssue,
   organizationName: string,
   repositoryName: string,
   labels: string[],
@@ -76,7 +75,7 @@ function setUpIssueElement(
 
   issueElement.innerHTML = `
       <div class="info"><div class="title"><h3>${
-        task.preview.title
+        task.title
       }</h3></div><div class="partner"><p class="organization-name">${organizationName}</p><p class="repository-name">${repositoryName}</p></div></div><div class="labels">${labels.join(
         ""
       )}${image}</div>`;
@@ -95,7 +94,7 @@ function setUpIssueElement(
 
       issueWrapper.classList.add("selected");
 
-      const full = task.full;
+      const full = task;
       if (!full) {
         window.open(match?.input, "_blank");
       } else {
@@ -107,12 +106,12 @@ function setUpIssueElement(
   });
 }
 
-function parseAndGenerateLabels(task: TaskMaybeFull) {
+function parseAndGenerateLabels(task: GitHubIssue) {
   type LabelKey = "Pricing: " | "Time: " | "Priority: ";
 
   const labelOrder: Record<LabelKey, number> = { "Pricing: ": 1, "Time: ": 2, "Priority: ": 3 };
 
-  const { labels, otherLabels } = task.preview.labels.reduce(
+  const { labels, otherLabels } = task.labels.reduce(
     (acc, label) => {
       // check if label is a single string
       if (typeof label === "string") {
@@ -144,7 +143,7 @@ function parseAndGenerateLabels(task: TaskMaybeFull) {
   );
 
   // Sort labels
-  labels.sort((a, b) => a.order - b.order);
+  labels.sort((a: { order: number }, b: { order: number }) => a.order - b.order);
 
   // Log the other labels
   if (otherLabels.length) {
@@ -156,18 +155,8 @@ function parseAndGenerateLabels(task: TaskMaybeFull) {
 }
 
 // Function to update and show the preview
-function previewIssue(taskPreview: TaskMaybeFull) {
-  const task = taskManager.getTaskByPreviewId(taskPreview.preview.id);
-
-  if (!task) {
-    throw new Error("Issue not found");
-  }
-
-  if (!task.full) {
-    throw new Error("No full issue found");
-  }
-
-  viewIssueDetails(task.full);
+function previewIssue(gitHubIssue: GitHubIssue) {
+  viewIssueDetails(gitHubIssue);
 }
 
 export function viewIssueDetails(full: GitHubIssue) {
@@ -175,11 +164,11 @@ export function viewIssueDetails(full: GitHubIssue) {
   titleHeader.textContent = full.title;
   titleAnchor.href = full.html_url;
   if (!full.body) return;
-  previewBodyInner.innerHTML = marked(full.body) as string;
+  modalBodyInner.innerHTML = marked(full.body) as string;
 
   // Show the preview
-  preview.classList.add("active");
-  preview.classList.remove("error");
+  modal.classList.add("active");
+  modal.classList.remove("error");
   document.body.classList.add("preview-active");
 }
 

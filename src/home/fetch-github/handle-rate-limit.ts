@@ -1,11 +1,11 @@
 import { RequestError } from "@octokit/request-error";
 import { Octokit } from "@octokit/rest";
 import { getGitHubUser } from "../getters/get-github-user";
-import { renderErrorInModal } from "../rendering/display-popup-modal";
-import { rateLimitModal } from "./fetch-issues-preview";
-import { gitHubLoginButton } from "../rendering/render-github-login-button";
-import { preview } from "../rendering/render-preview-modal";
 import { toolbar } from "../ready-toolbar";
+import { renderErrorInModal } from "../rendering/display-popup-modal";
+import { gitHubLoginButton } from "../rendering/render-github-login-button";
+import { modal } from "../rendering/render-preview-modal";
+import { rateLimitModal } from "./fetch-issues-preview";
 
 type RateLimit = {
   reset: number | null;
@@ -18,7 +18,7 @@ export async function handleRateLimit(octokit?: Octokit, error?: RequestError) {
     user: false,
   };
 
-  preview.classList.add("active");
+  modal.classList.add("active");
   document.body.classList.add("preview-active");
 
   if (toolbar) {

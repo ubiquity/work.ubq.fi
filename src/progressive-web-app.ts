@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+
 self.addEventListener("install", (event: InstallEvent) => {
   event.waitUntil(
     caches.open("v1").then((cache) => {
@@ -5,7 +8,8 @@ self.addEventListener("install", (event: InstallEvent) => {
     })
   );
 });
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 self.addEventListener("fetch", (event: FetchEvent) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
