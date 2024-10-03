@@ -115,24 +115,30 @@ export async function fetchAvatars() {
 
 export function displayGitHubIssues(sorting?: Sorting, options = { ordering: "normal" }) {
   // Load avatars from cache
-  const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
-  const cachedTasks = taskManager.getTasks();
-  cachedTasks.forEach(async (issue) => {
-    if (!issue.body) {
-      throw new Error(`Preview body is undefined for task with id: ${issue.id}`);
-    }
-    const match = issue.body.match(urlPattern);
-    const orgName = match?.groups?.org;
-    if (orgName) {
-      const avatarUrl = await getImageFromCache({ dbName: "GitHubAvatars", storeName: "ImageStore", orgName: `avatarUrl-${orgName}` });
-      if (avatarUrl) {
-        organizationImageCache.set(orgName, avatarUrl);
-      }
-    }
+  // const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
+  const cached = taskManager.getTasks();
+  cached.forEach(async (gitHubIssue) => {
+    // if (!issue.body) {
+    // throw new Error(`Preview body is undefined for task with id: ${issue.id}`);
+    // }
+    // const match = issue.body.match(urlPattern);
+    // const orgName = match?.groups?.org;
+    // if (orgName) {
+
+    const [orgName] = gitHubIssue.repository_url.split("/").slice(-2);
+
+    getImageFromCache({
+      dbName: "GitHubAvatars",
+      storeName: "ImageStore",
+      orgName: `avatarUrl-${orgName}`,
+    })
+      .then((avatarUrl) => organizationImageCache.set(orgName, avatarUrl))
+      .catch(console.error);
+    // }
   });
 
   // Render issues
-  const sortedIssues = sortIssuesController(cachedTasks, sorting, options);
+  const sortedIssues = sortIssuesController(cached, sorting, options);
   const sortedAndFiltered = sortedIssues.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
   renderGitHubIssues(sortedAndFiltered);
 }
@@ -143,7 +149,7 @@ function getProposalsOnlyFilter(getProposals: boolean) {
 
     const hasPriceLabel = issue.labels.some((label) => {
       if (typeof label === "string") return false;
-      return label.name?.startsWith("Price: ") || label.name?.startsWith("Pricing: ");
+      return label.name?.startsWith("Price: ") || label.name?.startsWith("Price: ");
     });
 
     // If getProposals is true, we want tasks WITHOUT price labels

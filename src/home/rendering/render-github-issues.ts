@@ -31,32 +31,33 @@ export function renderGitHubIssues(tasks: GitHubIssue[]) {
   setupKeyboardNavigation(container);
 }
 
-function everyNewIssue({ gitHubIssue: gitHubIssue, container }: { gitHubIssue: GitHubIssue; container: HTMLDivElement }) {
+function everyNewIssue({ gitHubIssue, container }: { gitHubIssue: GitHubIssue; container: HTMLDivElement }) {
   const issueWrapper = document.createElement("div");
   const issueElement = document.createElement("div");
   issueElement.setAttribute("data-issue-id", gitHubIssue.id.toString());
   issueElement.classList.add("issue-element-inner");
 
-  const urlPattern = /https:\/\/github\.com\/([^/]+)\/([^/]+)\//;
-  if (!gitHubIssue.body) {
-    console.warn(`No body found for issue ${gitHubIssue.id}.`);
-    return;
-  }
-  const match = gitHubIssue.body.match(urlPattern);
-  const organizationName = match?.[1];
+  // const urlPattern = /https:\/\/github\.com\/([^/]+)\/([^/]+)\//;
+  // if (!gitHubIssue.body) {
+  //   console.warn(`No body found for issue ${gitHubIssue.id}.`);
+  //   return;
+  // }
+  // const match = gitHubIssue.body.match(urlPattern);
+  // const organizationName = match?.[1];
 
-  if (!organizationName) {
-    console.warn(`No organization name found for issue ${gitHubIssue.id}.`);
-    return;
-  }
+  // if (!organizationName) {
+  //   console.warn(`No organization name found for issue ${gitHubIssue.id}.`);
+  //   return;
+  // }
 
-  const repositoryName = match?.[2];
-  if (!repositoryName) {
-    console.warn("No repository name found");
-    return;
-  }
+  // const repositoryName = match?.[2];
+  // if (!repositoryName) {
+  //   console.warn("No repository name found");
+  //   return;
+  // }
   const labels = parseAndGenerateLabels(gitHubIssue);
-  setUpIssueElement(issueElement, gitHubIssue, organizationName, repositoryName, labels, match);
+  const [organizationName, repositoryName] = gitHubIssue.repository_url.split('/').slice(-2);
+  setUpIssueElement(issueElement, gitHubIssue, organizationName, repositoryName, labels, gitHubIssue.html_url);
   issueWrapper.appendChild(issueElement);
 
   container.appendChild(issueWrapper);
@@ -69,7 +70,7 @@ function setUpIssueElement(
   organizationName: string,
   repositoryName: string,
   labels: string[],
-  match: RegExpMatchArray | null
+  url: string
 ) {
   const image = `<img />`;
 
@@ -96,7 +97,7 @@ function setUpIssueElement(
 
       const full = task;
       if (!full) {
-        window.open(match?.input, "_blank");
+        window.open(url, "_blank");
       } else {
         previewIssue(task);
       }
@@ -107,9 +108,9 @@ function setUpIssueElement(
 }
 
 function parseAndGenerateLabels(task: GitHubIssue) {
-  type LabelKey = "Pricing: " | "Time: " | "Priority: ";
+  type LabelKey = "Price: " | "Time: " | "Priority: ";
 
-  const labelOrder: Record<LabelKey, number> = { "Pricing: ": 1, "Time: ": 2, "Priority: ": 3 };
+  const labelOrder: Record<LabelKey, number> = { "Price: ": 1, "Time: ": 2, "Priority: ": 3 };
 
   const { labels, otherLabels } = task.labels.reduce(
     (acc, label) => {
@@ -129,7 +130,7 @@ function parseAndGenerateLabels(task: GitHubIssue) {
         };
       }
 
-      const match = label.name.match(/^(Pricing|Time|Priority): /);
+      const match = label.name.match(/^(Price|Time|Priority): /);
       if (match) {
         const name = label.name.replace(match[0], "");
         const labelStr = `<label class="${match[1].toLowerCase().trim()}">${name}</label>`;
