@@ -37,24 +37,6 @@ function everyNewIssue({ gitHubIssue, container }: { gitHubIssue: GitHubIssue; c
   issueElement.setAttribute("data-issue-id", gitHubIssue.id.toString());
   issueElement.classList.add("issue-element-inner");
 
-  // const urlPattern = /https:\/\/github\.com\/([^/]+)\/([^/]+)\//;
-  // if (!gitHubIssue.body) {
-  //   console.warn(`No body found for issue ${gitHubIssue.id}.`);
-  //   return;
-  // }
-  // const match = gitHubIssue.body.match(urlPattern);
-  // const organizationName = match?.[1];
-
-  // if (!organizationName) {
-  //   console.warn(`No organization name found for issue ${gitHubIssue.id}.`);
-  //   return;
-  // }
-
-  // const repositoryName = match?.[2];
-  // if (!repositoryName) {
-  //   console.warn("No repository name found");
-  //   return;
-  // }
   const labels = parseAndGenerateLabels(gitHubIssue);
   const [organizationName, repositoryName] = gitHubIssue.repository_url.split("/").slice(-2);
   setUpIssueElement(issueElement, gitHubIssue, organizationName, repositoryName, labels, gitHubIssue.html_url);

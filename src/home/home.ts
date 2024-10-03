@@ -6,19 +6,19 @@ import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
 import { registerServiceWorker } from "./register-service-worker";
 import { renderServiceMessage } from "./render-service-message";
-// import { renderErrorInModal } from "./rendering/display-popup-modal";
+import { renderErrorInModal } from "./rendering/display-popup-modal";
 import { renderGitRevision } from "./rendering/render-github-login-button";
 import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { TaskManager } from "./task-manager";
 
 // All unhandled errors are caught and displayed in a modal
-// window.addEventListener("error", (event: ErrorEvent) => renderErrorInModal(event.error));
+window.addEventListener("error", (event: ErrorEvent) => renderErrorInModal(event.error));
 
 // All unhandled promise rejections are caught and displayed in a modal
-// window.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
-//   renderErrorInModal(event.reason as Error);
-//   event.preventDefault();
-// });
+window.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
+  renderErrorInModal(event.reason as Error);
+  event.preventDefault();
+});
 
 renderGitRevision();
 initiateDevRelTracking();
@@ -46,8 +46,5 @@ void (async function home() {
     registerServiceWorker();
   }
 
-  // if (!container.childElementCount) {
-  //   applyAvatarsToIssues();
-  // }
   return gitHubIssues;
 })();
