@@ -13,7 +13,7 @@ export type Options = {
   ordering: "normal" | "reverse";
 };
 
-let isProposalOnlyViewer = false; // or proposal viewer
+let isProposalOnlyViewer = false;
 
 export const viewToggle = document.getElementById("view-toggle") as HTMLInputElement;
 if (!viewToggle) {
@@ -29,19 +29,16 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
   let _cachedTasks = getLocalStore(GITHUB_TASKS_STORAGE_KEY) as TaskStorageItems;
   const _accessToken = await getGitHubAccessToken();
 
-  // Refresh the storage if there is no logged-in object in cachedTasks but there is one now.
   if (_cachedTasks && !_cachedTasks.loggedIn && _accessToken) {
     localStorage.removeItem(GITHUB_TASKS_STORAGE_KEY);
     return fetchAndDisplayIssuesFromNetwork(sorting, options);
   }
 
-  // If previously logged in but not anymore, clear cache and fetch from network.
   if (_cachedTasks && _cachedTasks.loggedIn && !_accessToken) {
     localStorage.removeItem(GITHUB_TASKS_STORAGE_KEY);
     return fetchAndDisplayIssuesFromNetwork(sorting, options);
   }
 
-  // makes sure tasks have a timestamp to know how old the cache is, or refresh if older than 15 minutes
   if (!_cachedTasks || !_cachedTasks.timestamp || _cachedTasks.timestamp + 60 * 1000 * 15 <= Date.now()) {
     _cachedTasks = {
       timestamp: Date.now(),
@@ -54,7 +51,6 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
   taskManager.syncTasks(cachedTasks);
 
   if (!cachedTasks.length) {
-    // load from network if there are no cached issues
     return fetchAndDisplayIssuesFromNetwork(sorting, options);
   } else {
     displayGitHubIssues(sorting, options);
@@ -63,20 +59,14 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
 }
 
 export async function fetchAndDisplayIssuesFromNetwork(sorting?: Sorting, options = { ordering: "normal" }) {
-  // const fetchedPreviews = await fetchIssuePreviews();
-  // const cachedTasks = taskManager.getTasks();
-  // const updatedCachedIssues = verifyGitHubIssueState(cachedTasks, fetchedPreviews);
-  // taskManager.syncTasks(updatedCachedIssues);
   displayGitHubIssues(sorting, options);
   return fetchAvatars();
 }
 
 export async function fetchAvatars() {
   const cachedTasks = taskManager.getTasks();
-  // const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
 
   const avatarPromises = cachedTasks.map(async (task: GitHubIssue) => {
-    // const match = task.body?.match(urlPattern);
     const [orgName] = task.repository_url.split("/").slice(-2);
     if (orgName) {
       return fetchAvatar(orgName);
@@ -88,42 +78,9 @@ export async function fetchAvatars() {
   applyAvatarsToIssues();
 }
 
-// export function taskWithFullTest(task: TaskNoFull | TaskWithFull): task is TaskWithFull {
-//   return (task as TaskWithFull).full !== null && (task as TaskWithFull).full !== undefined;
-// }
-
-// export function verifyGitHubIssueState(cachedTasks: GitHubIssue[], fetchedPreviews: TaskNoFull[]): (TaskNoFull | TaskWithFull)[] {
-//   return fetchedPreviews.map((fetched) => {
-//     const cachedTask = cachedTasks.find((c) => c.full?.id === fetched.preview.id);
-//     if (cachedTask) {
-//       if (taskWithFullTest(cachedTask)) {
-//         const cachedFullIssue = cachedTask.full;
-//         const task = { ...fetched, full: cachedFullIssue };
-//         return task;
-//       } else {
-//         // no full issue in task
-//       }
-//     } else {
-//       // no cached task
-//     }
-//     return {
-//       preview: fetched.preview,
-//     } as TaskNoFull;
-//   });
-// }
-
 export function displayGitHubIssues(sorting?: Sorting, options = { ordering: "normal" }) {
-  // Load avatars from cache
-  // const urlPattern = /https:\/\/github\.com\/(?<org>[^/]+)\/(?<repo>[^/]+)\/issues\/(?<issue_number>\d+)/;
   const cached = taskManager.getTasks();
   cached.forEach(async (gitHubIssue) => {
-    // if (!issue.body) {
-    // throw new Error(`Preview body is undefined for task with id: ${issue.id}`);
-    // }
-    // const match = issue.body.match(urlPattern);
-    // const orgName = match?.groups?.org;
-    // if (orgName) {
-
     const [orgName] = gitHubIssue.repository_url.split("/").slice(-2);
 
     getImageFromCache({
@@ -133,10 +90,8 @@ export function displayGitHubIssues(sorting?: Sorting, options = { ordering: "no
     })
       .then((avatarUrl) => organizationImageCache.set(orgName, avatarUrl))
       .catch(console.error);
-    // }
   });
 
-  // Render issues
   const sortedIssues = sortIssuesController(cached, sorting, options);
   const sortedAndFiltered = sortedIssues.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
   renderGitHubIssues(sortedAndFiltered);
@@ -151,8 +106,6 @@ function getProposalsOnlyFilter(getProposals: boolean) {
       return label.name?.startsWith("Price: ") || label.name?.startsWith("Price: ");
     });
 
-    // If getProposals is true, we want tasks WITHOUT price labels
-    // If getProposals is false, we want tasks WITH price labels
     return getProposals ? !hasPriceLabel : hasPriceLabel;
   };
 }
