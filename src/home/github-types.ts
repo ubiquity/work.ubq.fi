@@ -15,12 +15,14 @@ export type TaskStorageItems = {
 export type GitHubUserResponse = RestEndpointMethodTypes["users"]["getByUsername"]["response"];
 export type GitHubUser = GitHubUserResponse["data"];
 export type GitHubIssue = RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
-export type GitHubLabel = {
-  id?: number;
-  node_id?: string;
-  url?: string;
-  name: string;
-  description?: string | null;
-  color?: string | null;
-  default?: boolean;
-} | string;
+export type GitHubLabel =
+  | {
+      id?: number;
+      node_id?: string;
+      url?: string;
+      name: string;
+      description?: string | null;
+      color?: string | null;
+      default?: boolean;
+    }
+  | string;

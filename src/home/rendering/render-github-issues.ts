@@ -3,7 +3,7 @@ import { organizationImageCache } from "../fetch-github/fetch-issues-full";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { renderErrorInModal } from "./display-popup-modal";
-import { modal, modalBodyInner, titleAnchor, titleHeader } from './render-preview-modal';
+import { modal, modalBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
 
 export function renderGitHubIssues(tasks: GitHubIssue[]) {
@@ -56,7 +56,7 @@ function everyNewIssue({ gitHubIssue, container }: { gitHubIssue: GitHubIssue; c
   //   return;
   // }
   const labels = parseAndGenerateLabels(gitHubIssue);
-  const [organizationName, repositoryName] = gitHubIssue.repository_url.split('/').slice(-2);
+  const [organizationName, repositoryName] = gitHubIssue.repository_url.split("/").slice(-2);
   setUpIssueElement(issueElement, gitHubIssue, organizationName, repositoryName, labels, gitHubIssue.html_url);
   issueWrapper.appendChild(issueElement);
 
@@ -64,14 +64,7 @@ function everyNewIssue({ gitHubIssue, container }: { gitHubIssue: GitHubIssue; c
   return issueWrapper;
 }
 
-function setUpIssueElement(
-  issueElement: HTMLDivElement,
-  task: GitHubIssue,
-  organizationName: string,
-  repositoryName: string,
-  labels: string[],
-  url: string
-) {
+function setUpIssueElement(issueElement: HTMLDivElement, task: GitHubIssue, organizationName: string, repositoryName: string, labels: string[], url: string) {
   const image = `<img />`;
 
   issueElement.innerHTML = `

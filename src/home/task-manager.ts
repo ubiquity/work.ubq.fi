@@ -23,7 +23,7 @@ export class TaskManager {
   }
 
   public getGitHubIssueById(id: number): GitHubIssue | undefined {
-    return this._tasks.find(task => task.id === id);
+    return this._tasks.find((task) => task.id === id);
   }
 
   private async _writeToStorage(tasks: GitHubIssue[]) {

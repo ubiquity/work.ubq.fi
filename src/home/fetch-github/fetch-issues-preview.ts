@@ -33,65 +33,65 @@ import { displayPopupMessage } from "../rendering/display-popup-modal";
 // }
 
 // export async function fetchIssues(): Promise<GitHubIssue[]> {
-  // const octokit = new Octokit({ auth: await getGitHubAccessToken() });
-  // let freshIssues: GitHubIssue[] = [];
-  // let hasPrivateRepoAccess = false; // Flag to track access to the private repository
+// const octokit = new Octokit({ auth: await getGitHubAccessToken() });
+// let freshIssues: GitHubIssue[] = [];
+// let hasPrivateRepoAccess = false; // Flag to track access to the private repository
 
-  // try {
-  //   // Check if the user has access to the private repository
-  //   hasPrivateRepoAccess = await checkPrivateRepoAccess();
+// try {
+//   // Check if the user has access to the private repository
+//   hasPrivateRepoAccess = await checkPrivateRepoAccess();
 
-  //   // // Fetch issues from public repository
-  //   // const publicResponse = await octokit.paginate(octokit.issues.listForRepo, {
-  //   //   owner: "ubiquity",
-  //   //   repo: "devpool-directory",
-  //   //   state: "open",
-  //   // });
+//   // // Fetch issues from public repository
+//   // const publicResponse = await octokit.paginate(octokit.issues.listForRepo, {
+//   //   owner: "ubiquity",
+//   //   repo: "devpool-directory",
+//   //   state: "open",
+//   // });
 
-  //   // const publicIssues = publicResponse.filter((issue: GitHubIssue) => !issue.pull_request);
+//   // const publicIssues = publicResponse.filter((issue: GitHubIssue) => !issue.pull_request);
 
-  //   // Fetch issues from the private repository only if the user has access
-  //   if (hasPrivateRepoAccess) {
-  //     await fetchPrivateIssues();
-  //   } else {
-  //     // If user doesn't have access, only load issues from the public repository
-  //     freshIssues = publicIssues;
-  //   }
-  // } catch (error) {
-  //   if (!!error && typeof error === "object" && "status" in error && error.status === 403) {
-  //     await handleRateLimit(octokit, error as RequestError);
-  //   } else {
-  //     throw error;
-  //   }
-  // }
+//   // Fetch issues from the private repository only if the user has access
+//   if (hasPrivateRepoAccess) {
+//     await fetchPrivateIssues();
+//   } else {
+//     // If user doesn't have access, only load issues from the public repository
+//     freshIssues = publicIssues;
+//   }
+// } catch (error) {
+//   if (!!error && typeof error === "object" && "status" in error && error.status === 403) {
+//     await handleRateLimit(octokit, error as RequestError);
+//   } else {
+//     throw error;
+//   }
+// }
 
-  // const tasks = freshIssues.map((preview: GitHubIssue) => ({
-  //   preview: preview,
-  //   full: null,
-  //   isNew: true,
-  //   isModified: true,
-  // }));
+// const tasks = freshIssues.map((preview: GitHubIssue) => ({
+//   preview: preview,
+//   full: null,
+//   isNew: true,
+//   isModified: true,
+// }));
 
-  // return tasks;
+// return tasks;
 
-  // async function fetchPrivateIssues() {
-  //   const privateResponse = await octokit.paginate(octokit.issues.listForRepo, {
-  //     owner: "ubiquity",
-  //     repo: "devpool-directory-private",
-  //     state: "open",
-  //   });
-  //   const privateIssues = privateResponse.filter((issue: GitHubIssue) => !issue.pull_request);
+// async function fetchPrivateIssues() {
+//   const privateResponse = await octokit.paginate(octokit.issues.listForRepo, {
+//     owner: "ubiquity",
+//     repo: "devpool-directory-private",
+//     state: "open",
+//   });
+//   const privateIssues = privateResponse.filter((issue: GitHubIssue) => !issue.pull_request);
 
-    // Mark private issues
-    // TODO: indicate private issues in the UI
+// Mark private issues
+// TODO: indicate private issues in the UI
 
-    // const privateIssuesWithFlag = privateIssues.map((issue) => {
-    //   return issue;
-    // });
+// const privateIssuesWithFlag = privateIssues.map((issue) => {
+//   return issue;
+// });
 
-    // Combine public and private issues
-    // return privateIssues
-  // }
+// Combine public and private issues
+// return privateIssues
+// }
 // }
 
 export function rateLimitModal(message: string) {
