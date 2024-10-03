@@ -1,10 +1,10 @@
-import { TaskMaybeFull } from "../fetch-github/preview-to-full-mapping";
+import { GitHubIssue } from "../github-types";
 import { Sorting } from "./generate-sorting-buttons";
 import { sortIssuesBy } from "./sort-issues-by";
 import { sortIssuesByPriority } from "./sort-issues-by-priority";
 import { sortIssuesByTime } from "./sort-issues-by-time";
 
-export function sortIssuesController(tasks: TaskMaybeFull[], sorting?: Sorting, options = { ordering: "normal" }) {
+export function sortIssuesController(tasks: GitHubIssue[], sorting?: Sorting, options = { ordering: "normal" }) {
   let sortedIssues = tasks;
 
   if (sorting) {

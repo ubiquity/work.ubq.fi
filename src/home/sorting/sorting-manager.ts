@@ -52,12 +52,12 @@ export class SortingManager {
         const filterText = textBox.value.toLowerCase();
         const issues = Array.from(issuesContainer.children) as HTMLDivElement[];
         issues.forEach((issue) => {
-          const issuePreviewId = issue.children[0].getAttribute("data-preview-id");
-          if (!issuePreviewId) throw new Error(`No preview id found for issue ${issue}`);
-          const fullIssue = taskManager.getTaskByPreviewId(Number(issuePreviewId)).full;
-          if (!fullIssue) throw new Error(`No full issue found for preview id ${issuePreviewId}`);
+          const issueId = issue.children[0].getAttribute("data-issue-id");
+          if (!issueId) return;
+          const gitHubIssue = taskManager.getGitHubIssueById(parseInt(issueId));
+          if (!gitHubIssue) return;
           const searchableProperties = ["title", "body", "number", "html_url"] as const;
-          const searchableStrings = searchableProperties.map((prop) => fullIssue[prop]?.toString().toLowerCase());
+          const searchableStrings = searchableProperties.map((prop) => gitHubIssue[prop]?.toString().toLowerCase());
           const isVisible = searchableStrings.some((str) => str?.includes(filterText));
           issue.style.display = isVisible ? "block" : "none";
         });

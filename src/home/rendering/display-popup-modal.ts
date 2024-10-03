@@ -1,13 +1,13 @@
 import { toolbar } from "../ready-toolbar";
-import { preview, previewBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
+import { modal, modalBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
 export function displayPopupMessage({ modalHeader, modalBody, isError, url }: { modalHeader: string; modalBody: string; isError: boolean; url?: string }) {
   titleHeader.textContent = modalHeader;
   if (url) {
     titleAnchor.href = url;
   }
-  previewBodyInner.innerHTML = modalBody;
+  modalBodyInner.innerHTML = modalBody;
 
-  preview.classList.add("active");
+  modal.classList.add("active");
   document.body.classList.add("preview-active");
 
   if (toolbar) {
@@ -18,9 +18,9 @@ export function displayPopupMessage({ modalHeader, modalBody, isError, url }: { 
   }
 
   if (isError) {
-    preview.classList.add("error");
+    modal.classList.add("error");
   } else {
-    preview.classList.remove("error");
+    modal.classList.remove("error");
   }
   console.trace({
     modalHeader,

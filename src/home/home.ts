@@ -1,11 +1,12 @@
 import { grid } from "../the-grid";
 import { authentication } from "./authentication";
 import { initiateDevRelTracking } from "./devrel-tracker";
-import { displayGitHubIssues, fetchAndDisplayPreviewsFromCache } from "./fetch-github/fetch-and-display-previews";
+import { fetchAvatars, displayGitHubIssues } from "./fetch-github/fetch-and-display-previews";
 import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
+import { registerServiceWorker } from "./register-service-worker";
+import { renderServiceMessage } from "./render-service-message";
 import { renderErrorInModal } from "./rendering/display-popup-modal";
-import { applyAvatarsToIssues } from "./rendering/render-github-issues";
 import { renderGitRevision } from "./rendering/render-github-login-button";
 import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { TaskManager } from "./task-manager";
@@ -36,39 +37,14 @@ export const taskManager = new TaskManager(container);
 void (async function home() {
   void authentication();
   void readyToolbar();
-  const previews = await fetchAndDisplayPreviewsFromCache();
-  const fullTasks = await fetchIssuesFull(previews);
-  taskManager.syncTasks(fullTasks);
-  await taskManager.writeToStorage();
+  const gitHubIssues = await fetchIssuesFull();
+  taskManager.syncTasks(gitHubIssues);
+  void fetchAvatars();
+  void displayGitHubIssues();
 
   if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/dist/src/progressive-web-app.js").then(
-        (registration) => {
-          console.log("ServiceWorker registration successful with scope: ", registration.scope);
-        },
-        (err) => {
-          console.log("ServiceWorker registration failed: ", err);
-        }
-      );
-    });
+    registerServiceWorker();
   }
 
-  if (!container.childElementCount) {
-    displayGitHubIssues();
-    applyAvatarsToIssues();
-  }
-  return fullTasks;
+  return gitHubIssues;
 })();
-
-function renderServiceMessage() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const message = urlParams.get("message");
-  if (message) {
-    const serviceMessageContainer = document.querySelector("#bottom-bar > div");
-    if (serviceMessageContainer) {
-      serviceMessageContainer.textContent = message;
-      serviceMessageContainer.parentElement?.classList.add("ready");
-    }
-  }
-}

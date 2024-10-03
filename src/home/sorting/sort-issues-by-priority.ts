@@ -1,17 +1,17 @@
-import { TaskMaybeFull } from "../fetch-github/preview-to-full-mapping";
+import { GitHubIssue } from "../github-types";
 
-export function sortIssuesByPriority(issues: TaskMaybeFull[]) {
+export function sortIssuesByPriority(issues: GitHubIssue[]) {
+  const priorityRegex = /Priority: (\d+)/;
+
   return issues.sort((a, b) => {
-    const priorityRegex = /Priority: (\d+)/;
-    const aPriorityMatch = a.preview.labels.find((label) => priorityRegex.test(label.name));
-    const bPriorityMatch = b.preview.labels.find((label) => priorityRegex.test(label.name));
+    function getPriority(issue: GitHubIssue) {
+      const priorityLabel = issue.labels.find(
+        (label): label is { name: string } => typeof label === "object" && "name" in label && typeof label.name === "string" && priorityRegex.test(label.name)
+      );
+      const match = priorityLabel?.name.match(priorityRegex);
+      return match ? parseInt(match[1], 10) : -1;
+    }
 
-    const priorityA = aPriorityMatch ? aPriorityMatch.name.match(priorityRegex) : null;
-    const priorityB = bPriorityMatch ? bPriorityMatch.name.match(priorityRegex) : null;
-
-    const aPriority = priorityA && priorityA[1] ? parseInt(priorityA[1], 10) : 0;
-    const bPriority = priorityB && priorityB[1] ? parseInt(priorityB[1], 10) : 0;
-
-    return bPriority - aPriority;
+    return getPriority(b) - getPriority(a);
   });
 }
