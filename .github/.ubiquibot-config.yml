@@ -28,7 +28,7 @@ plugins:
             fundExternalClosedIssue: false
   - skipBotEvents: false
     uses:
-      - plugin: ubiquibot/conversation-rewards@development
+      - plugin: ubiquity-os-marketplace/text-conversation-rewards@main
         # we don't skip bot events so conversation rewards triggered by the bot also run
         with:
           evmNetworkId: 100
@@ -44,81 +44,53 @@ plugins:
               enabled: true
             formattingEvaluator:
               multipliers:
-                - role: [ISSUE_SPECIFICATION]
+                - role: [ ISSUE_SPECIFICATION ]
                   multiplier: 3
                   rewards:
-                    regex:
-                      "\\b\\w+\\b": 0.1
-                    html:
-                      br: 0
-                      code: 5
-                      p: 1
-                      em: 0
-                      img: 5
-                      strong: 0
-                      blockquote: 0
-                      h1: 1
-                      h2: 1
-                      h3: 1
-                      h4: 1
-                      h5: 1
-                      h6: 1
-                      a: 5
-                      li: 1
-                      td: 1
-                      hr: 0
-                - role: [ISSUE_AUTHOR]
+                    wordValue: 0.1
+                - role: [ ISSUE_AUTHOR ]
                   multiplier: 1
                   rewards:
-                    regex:
-                      "\\b\\w+\\b": 0.2
-                - role: [ISSUE_ASSIGNEE]
+                    wordValue: 0.2
+                - role: [ ISSUE_ASSIGNEE ]
                   multiplier: 1
                   rewards:
-                    regex:
-                      "\\b\\w+\\b": 0.1
-                - role: [ISSUE_COLLABORATOR]
+                    wordValue: 0.1
+                - role: [ ISSUE_COLLABORATOR ]
                   multiplier: 1
                   rewards:
-                    regex:
-                      "\\b\\w+\\b": 0.1
-                - role: [ISSUE_CONTRIBUTOR]
+                    wordValue: 0.1
+                - role: [ ISSUE_CONTRIBUTOR ]
                   multiplier: 0.25
                   rewards:
-                    regex:
-                      "\\b\\w+\\b": 0.1
-                - role: [PULL_SPECIFICATION]
+                    wordValue: 0.1
+                - role: [ PULL_SPECIFICATION ]
                   multiplier: 0
                   rewards:
-                    regex:
-                      "\\b\\w+\\b": 0
-                - role: [PULL_AUTHOR]
+                    wordValue: 0
+                - role: [ PULL_AUTHOR ]
                   multiplier: 0
                   rewards:
-                    regex:
-                      "\\b\\w+\\b": 0.2
-                - role: [PULL_ASSIGNEE]
+                    wordValue: 0.2
+                - role: [ PULL_ASSIGNEE ]
                   multiplier: 1
                   rewards:
-                    regex:
-                      "\\b\\w+\\b": 0.1
-                - role: [PULL_COLLABORATOR]
+                    wordValue: 0.1
+                - role: [ PULL_COLLABORATOR ]
                   multiplier: 1
                   rewards:
-                    regex:
-                      "\\b\\w+\\b": 0.1
-                - role: [PULL_CONTRIBUTOR]
+                    wordValue: 0.1
+                - role: [ PULL_CONTRIBUTOR ]
                   multiplier: 0.25
                   rewards:
-                    regex:
-                      "\\b\\w+\\b": 0.1
+                    wordValue: 0.1
             permitGeneration:
               enabled: true
             githubComment:
               post: true
               debug: false
   - uses:
-      - plugin: ubiquibot/user-activity-watcher@development
+      - plugin: ubiquity-os-marketplace/daemon-disqualifier@development
         with:
           watch:
             optOut:
@@ -127,7 +99,7 @@ plugins:
               - staging
               - production
   - uses:
-      - plugin: ubiquibot/automated-merging@development
+      - plugin: ubiquity-os-marketplace/daemon-merging@development
         with:
           approvalsRequired:
             collaborator: 1
@@ -146,4 +118,4 @@ plugins:
           taskStaleTimeoutDuration: "30 Days"
           startRequiresWallet: true # default is true
   - uses:
-      - plugin: ubiquibot/issue-comment-embeddings@development
+      - plugin: ubiquity-os-marketplace/text-vector-embeddings@development
