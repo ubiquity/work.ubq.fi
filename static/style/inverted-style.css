@@ -753,11 +753,11 @@
     border-top: 4px solid #000000;
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    top: calc(50vh - 48px);
+    top: calc(50vh - (24px + 2px)); /* 2px to accomodate border width */
     position: fixed;
     opacity: 1;
     transition: 0.5s all ease-in-out;
-    right: calc(50% - 48px);
+    right: calc(50% - (24px + 2px)); /* 2px to accomodate border width */
     filter: blur(0px);
     pointer-events: none;
   }
