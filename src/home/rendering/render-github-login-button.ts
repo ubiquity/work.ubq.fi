@@ -29,8 +29,6 @@ export async function checkSupabaseSession() {
 }
 
 async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
-  const previewDomainPattern = /(localhost:8080|\.pages\.dev|devpool\.directory)$/;
-
   let redirectTo = "https://work.ubq.fi";  // Default to production URL
 
   // If we are in an authorized preview environment, auth should redirect back to it
@@ -38,7 +36,7 @@ async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
     redirectTo = "http://localhost:8080";
   } else if (window.location.hostname === "devpool.directory") {
     redirectTo = "https://devpool.directory";
-  } else if (previewDomainPattern.test(window.location.hostname)) {
+  } else if (window.location.hostname === "devpool-directory-ui.pages.dev") {
     redirectTo = "https://devpool-directory-ui.pages.dev";
   }
 
