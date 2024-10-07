@@ -29,15 +29,17 @@ export async function checkSupabaseSession() {
 }
 
 async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
-  const previewDomainPattern = /(localhost:8080|\.pages\.dev)$/;
+  const previewDomainPattern = /(localhost:8080|\.pages\.dev|devpool\.directory)$/;
 
   let redirectTo = "https://work.ubq.fi";  // Default to production URL
 
-  // Determine if we are in a preview environment
+  // If we are in an authorized preview environment, auth should redirect back to it
   if (window.location.hostname === "localhost" && window.location.port === "8080") {
-    redirectTo = "http://localhost:8080";  // Redirect back to localhost:8080
+    redirectTo = "http://localhost:8080";
+  } else if (window.location.hostname === "devpool.directory") {
+    redirectTo = "https://devpool.directory";
   } else if (previewDomainPattern.test(window.location.hostname)) {
-    redirectTo = "https://devpool-directory-ui.pages.dev";  // Redirect back to the preview deployment
+    redirectTo = "https://devpool-directory-ui.pages.dev";
   }
 
   const { error } = await supabase.auth.signInWithOAuth({
