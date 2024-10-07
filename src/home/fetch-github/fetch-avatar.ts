@@ -22,6 +22,7 @@ export async function fetchAvatar(orgName: string): Promise<Blob | void> {
   }
 
   // Start the fetch process and store the promise in the pending fetches map
+  // It will try to fetch from IndexedDB first, then from GitHub organizations, and finally from GitHub users, returning in the first successful step
   const fetchPromise = (async () => {
     console.log(`Attempting to fetch avatar for ${orgName}`);
 
@@ -33,9 +34,9 @@ export async function fetchAvatar(orgName: string): Promise<Blob | void> {
       return avatarBlob;
     }
 
-    // Step 2: No avatar in IndexedDB, fetch from network
     const octokit = new Octokit({ auth: await getGitHubAccessToken() });
 
+    // Step 2: No avatar in IndexedDB, fetch from GitHub
     try {
       const {
         data: { avatar_url: avatarUrl },
@@ -59,11 +60,11 @@ export async function fetchAvatar(orgName: string): Promise<Blob | void> {
         console.log(`Avatar cached for ${orgName}`);
         return blob;
       }
-    } catch (error) {
-      renderErrorInModal(error as Error, `Failed to fetch avatar for organization ${orgName}: ${error}`);
+    } catch (orgError) {
+      console.warn(`Failed to fetch avatar from organization ${orgName}: ${orgError}`);
     }
 
-    // Step 3: Try fetching for users if the organization lookup failed
+    // Step 3: Try fetching from GitHub users if the organization lookup failed
     try {
       const {
         data: { avatar_url: avatarUrl },
@@ -85,11 +86,10 @@ export async function fetchAvatar(orgName: string): Promise<Blob | void> {
 
         organizationImageCache.set(orgName, blob);
         console.log(`Avatar cached for user ${orgName}`);
-
         return blob;
       }
     } catch (innerError) {
-      renderErrorInModal(innerError as Error, `Failed to fetch avatar for user ${orgName}: ${innerError}`);
+      renderErrorInModal(innerError as Error, `All tries failed to fetch avatar for ${orgName}: ${innerError}`);
     }
   })();
 
