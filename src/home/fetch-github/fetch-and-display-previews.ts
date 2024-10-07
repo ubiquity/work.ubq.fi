@@ -1,5 +1,4 @@
 import { getGitHubAccessToken } from "../getters/get-github-access-token";
-import { getImageFromCache } from "../getters/get-indexed-db";
 import { getLocalStore } from "../getters/get-local-store";
 import { GITHUB_TASKS_STORAGE_KEY, GitHubIssue, TaskStorageItems } from "../github-types";
 import { taskManager } from "../home";
@@ -7,7 +6,6 @@ import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-gi
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
 import { fetchAvatar } from "./fetch-avatar";
-import { organizationImageCache } from "./fetch-issues-full";
 
 export type Options = {
   ordering: "normal" | "reverse";
@@ -80,18 +78,6 @@ export async function fetchAvatars() {
 
 export function displayGitHubIssues(sorting?: Sorting, options = { ordering: "normal" }) {
   const cached = taskManager.getTasks();
-  cached.forEach(async (gitHubIssue) => {
-    const [orgName] = gitHubIssue.repository_url.split("/").slice(-2);
-
-    getImageFromCache({
-      dbName: "GitHubAvatars",
-      storeName: "ImageStore",
-      orgName: `avatarUrl-${orgName}`,
-    })
-      .then((avatarUrl) => organizationImageCache.set(orgName, avatarUrl))
-      .catch(console.error);
-  });
-
   const sortedIssues = sortIssuesController(cached, sorting, options);
   const sortedAndFiltered = sortedIssues.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
   renderGitHubIssues(sortedAndFiltered);
