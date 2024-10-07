@@ -33,10 +33,13 @@ async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
 
   // If we are in an authorized preview environment, auth should redirect back to it
   if (window.location.hostname === "localhost" && window.location.port === "8080") {
+    console.log("Localhost detected, redirecting to localhost:8080");
     redirectTo = "http://localhost:8080";
   } else if (window.location.hostname === "devpool.directory") {
+    console.log("Devpool directory detected, redirecting to devpool.directory");
     redirectTo = "https://devpool.directory";
   } else if (window.location.hostname === "devpool-directory-ui.pages.dev") {
+    console.log("Devpool directory UI detected, redirecting to devpool-directory-ui.pages.dev");
     redirectTo = "https://devpool-directory-ui.pages.dev";
   }
 
