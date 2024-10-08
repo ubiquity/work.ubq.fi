@@ -27,17 +27,20 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
   let _cachedTasks = getLocalStore(GITHUB_TASKS_STORAGE_KEY) as TaskStorageItems;
   const _accessToken = await getGitHubAccessToken();
 
-  if (_cachedTasks && !_cachedTasks.loggedIn && _accessToken) { // checks if the user has logged in and resets cache
+  if (_cachedTasks && !_cachedTasks.loggedIn && _accessToken) {
+    // checks if the user has logged in and resets cache
     localStorage.removeItem(GITHUB_TASKS_STORAGE_KEY);
     return fetchAndDisplayIssuesFromNetwork(sorting, options);
   }
 
-  if (_cachedTasks && _cachedTasks.loggedIn && !_accessToken) { // checks if the user has logged out and resets cache 
+  if (_cachedTasks && _cachedTasks.loggedIn && !_accessToken) {
+    // checks if the user has logged out and resets cache
     localStorage.removeItem(GITHUB_TASKS_STORAGE_KEY);
     return fetchAndDisplayIssuesFromNetwork(sorting, options);
   }
 
-  if (!_cachedTasks || !_cachedTasks.timestamp || _cachedTasks.timestamp + 60 * 1000 * 15 <= Date.now()) { // checks if cache is older than 15 minutes and resets if so
+  if (!_cachedTasks || !_cachedTasks.timestamp || _cachedTasks.timestamp + 60 * 1000 * 15 <= Date.now()) {
+    // checks if cache is older than 15 minutes and resets if so
     _cachedTasks = {
       timestamp: Date.now(),
       tasks: [],
@@ -65,7 +68,7 @@ export async function fetchAndDisplayIssuesFromNetwork(sorting?: Sorting, option
 export async function fetchAvatars() {
   const cachedTasks = taskManager.getTasks();
 
-  // fetches avatar for each organization for each task, but fetchAvatar() will only fetch once per organization 
+  // fetches avatar for each organization for each task, but fetchAvatar() will only fetch once per organization
   const avatarPromises = cachedTasks.map(async (task: GitHubIssue) => {
     const [orgName] = task.repository_url.split("/").slice(-2);
     if (orgName) {
