@@ -28,13 +28,13 @@ export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, option
   const _accessToken = await getGitHubAccessToken();
 
   if (_cachedTasks && !_cachedTasks.loggedIn && _accessToken) {
-    // checks if the user has logged in and resets cache
+    // checks if the user has logged in and clears cache, issues are re-cached on reload because of home force fetching
     localStorage.removeItem(GITHUB_TASKS_STORAGE_KEY);
     return fetchAndDisplayIssuesFromNetwork(sorting, options);
-  }
-
-  if (_cachedTasks && _cachedTasks.loggedIn && !_accessToken) {
-    // checks if the user has logged out and resets cache
+  } 
+  
+  else if (_cachedTasks && _cachedTasks.loggedIn && !_accessToken) {
+    // checks if the user has logged out and clears cache, issues are re-cached on reload because of home force fetching
     localStorage.removeItem(GITHUB_TASKS_STORAGE_KEY);
     return fetchAndDisplayIssuesFromNetwork(sorting, options);
   }
