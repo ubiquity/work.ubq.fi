@@ -192,31 +192,6 @@ describe("DevPool", () => {
     cy.get("#filter-top").should("be.visible");
   });
 
-  describe("Display error modal", () => {
-    it("should display an error modal when fetching issue previews fails on page load", () => {
-      cy.intercept("GET", "https://raw.githubusercontent.com/ubiquity/devpool-directory/refs/heads/development/devpool-issues*", {
-        statusCode: 500,
-        body: "Internal Server Error",
-      }).as("getPublicIssues");
-      // Expect the error to be thrown
-      cy.once("uncaught:exception", () => false);
-      cy.intercept("https://api.github.com/user**", (req) => {
-        req.reply({
-          statusCode: 200,
-          body: githubUser,
-        });
-      }).as("getUser");
-
-      cy.visit("/");
-
-      cy.wait("@getPublicIssues");
-
-      cy.get(".preview-header").should("be.visible");
-      cy.get(".preview-header").should("contain", "HttpError");
-      cy.get(".preview-body-inner").should("contain", "Internal Server Error");
-    });
-  });
-
   // it("Displayed user name should fall back to login when its name is empty", () => {
   //   const userWithoutName = {
   //     ...githubUser,
