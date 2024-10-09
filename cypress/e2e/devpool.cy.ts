@@ -94,7 +94,7 @@ describe("DevPool", () => {
       cy.get('div[id="issues-container"]').children().should("have.length", 2);
     });
 
-    it("Main page don't display invalid issue", () => {
+    it("Main page shouldn't display invalid issue", () => {
       cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/refs/heads/development/devpool-issues.json", (req) => {
         req.reply({
           statusCode: 200,
