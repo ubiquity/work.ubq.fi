@@ -1,5 +1,5 @@
 import { fetchAvatars } from "./fetch-github/fetch-and-display-previews";
-import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
+import { fetchIssues } from "./fetch-github/fetch-issues-full";
 import { getGitHubAccessToken } from "./getters/get-github-access-token";
 import { setLocalStore } from "./getters/get-local-store";
 import { GITHUB_TASKS_STORAGE_KEY, GitHubIssue } from "./github-types";
@@ -13,7 +13,7 @@ export class TaskManager {
 
   // Syncs tasks by fetching issues, writing them to storage and then fetching avatars
   public async syncTasks() {
-    const issues = await fetchIssuesFull();
+    const issues = await fetchIssues();
 
     this._tasks = issues;
     void this._writeToStorage(issues);
