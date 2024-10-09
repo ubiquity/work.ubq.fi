@@ -1,6 +1,5 @@
-import { getGitHubAccessToken } from "../getters/get-github-access-token";
-import { getLocalStore } from "../getters/get-local-store";
-import { GITHUB_TASKS_STORAGE_KEY, GitHubIssue, TaskStorageItems } from "../github-types";
+import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity";
+import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-github-issues";
 import { Sorting } from "../sorting/generate-sorting-buttons";
@@ -19,56 +18,13 @@ if (!viewToggle) {
 }
 viewToggle.addEventListener("click", () => {
   isProposalOnlyViewer = !isProposalOnlyViewer;
-  displayGitHubIssues();
-  applyAvatarsToIssues();
+  void displayGitHubIssues();
 });
-
-export async function fetchAndDisplayPreviewsFromCache(sorting?: Sorting, options = { ordering: "normal" }) {
-  let _cachedTasks = getLocalStore(GITHUB_TASKS_STORAGE_KEY) as TaskStorageItems;
-  const _accessToken = await getGitHubAccessToken();
-
-  if (_cachedTasks && !_cachedTasks.loggedIn && _accessToken) {
-    // checks if the user has logged in and clears cache, issues are re-cached on reload because of home force fetching
-    localStorage.removeItem(GITHUB_TASKS_STORAGE_KEY);
-    return fetchAndDisplayIssuesFromNetwork(sorting, options);
-  } 
-  
-  else if (_cachedTasks && _cachedTasks.loggedIn && !_accessToken) {
-    // checks if the user has logged out and clears cache, issues are re-cached on reload because of home force fetching
-    localStorage.removeItem(GITHUB_TASKS_STORAGE_KEY);
-    return fetchAndDisplayIssuesFromNetwork(sorting, options);
-  }
-
-  if (!_cachedTasks || !_cachedTasks.timestamp || _cachedTasks.timestamp + 60 * 1000 * 15 <= Date.now()) {
-    // checks if cache is older than 15 minutes and resets if so
-    _cachedTasks = {
-      timestamp: Date.now(),
-      tasks: [],
-      loggedIn: _accessToken !== null,
-    };
-  }
-
-  const cachedTasks = _cachedTasks.tasks;
-  taskManager.syncTasks(cachedTasks); // this takes the cached tasks and recaches them, seems ugly. it also reapplies avatars
-
-  if (!cachedTasks.length) {
-    return fetchAndDisplayIssuesFromNetwork(sorting, options);
-  } else {
-    displayGitHubIssues(sorting, options); // currently this is the exact same as the above, so it's redundant and check is unnecessary
-    return fetchAvatars();
-  }
-}
-
-// this does not fetch issues. calling fetchAvatars() might be redundant too but it's O(1) since it's in cache
-export async function fetchAndDisplayIssuesFromNetwork(sorting?: Sorting, options = { ordering: "normal" }) {
-  displayGitHubIssues(sorting, options);
-  return fetchAvatars();
-}
 
 export async function fetchAvatars() {
   const cachedTasks = taskManager.getTasks();
 
-  // fetches avatar for each organization for each task, but fetchAvatar() will only fetch once per organization
+  // fetches avatar for each organization for each task, but fetchAvatar() will only fetch once per organization, remaining are returned from cache
   const avatarPromises = cachedTasks.map(async (task: GitHubIssue) => {
     const [orgName] = task.repository_url.split("/").slice(-2);
     if (orgName) {
@@ -78,15 +34,15 @@ export async function fetchAvatars() {
   });
 
   await Promise.allSettled(avatarPromises);
-  applyAvatarsToIssues();
 }
 
-export function displayGitHubIssues(sorting?: Sorting, options = { ordering: "normal" }) {
-  const cached = taskManager.getTasks();
-  const sortedIssues = sortIssuesController(cached, sorting, options);
+export async function displayGitHubIssues(sorting?: Sorting, options = { ordering: "normal" }) {
+  await checkCacheIntegrityAndSyncTasks();
+  const cachedTasks = taskManager.getTasks();
+  const sortedIssues = sortIssuesController(cachedTasks, sorting, options);
   const sortedAndFiltered = sortedIssues.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
-  // applyAvatarsToIssues could be called here only or within renderGitHubIssues
   renderGitHubIssues(sortedAndFiltered);
+  applyAvatarsToIssues();
 }
 
 function getProposalsOnlyFilter(getProposals: boolean) {
