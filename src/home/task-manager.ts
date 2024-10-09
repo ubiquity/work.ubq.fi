@@ -19,7 +19,6 @@ export class TaskManager {
     void this._writeToStorage(issues);
 
     await fetchAvatars();
-    console.log("Tasks synced");
   }
 
   public getTasks() {
