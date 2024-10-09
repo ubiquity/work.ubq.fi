@@ -173,8 +173,7 @@ describe("DevPool", () => {
     // Simulates the redirection after a successful login
     cy.visit("/");
     cy.get("#authenticated").should("exist");
-    // TODO
-    // cy.get("#filter-top").should("be.visible");
+    cy.get("#filter-top").should("be.visible");
   });
 
   it("Displayed user name should fall back to login when its name is empty", () => {
@@ -209,7 +208,12 @@ describe("DevPool", () => {
 
   it("Should display filters on small devices", () => {
     cy.viewport("iphone-x");
-    cy.intercept("https://api.github.com/user**", { statusCode: 200, body: githubUser }).as("getUser");
+    cy.intercept("https://api.github.com/user**", (req) => {
+      req.reply({
+        statusCode: 200,
+        body: githubUser,
+      });
+    }).as("getUser");
     cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/refs/heads/development/devpool-issues.json", (req) =>
       req.reply({ statusCode: 200, body: [issue1, issue2] })
     ).as("getIssues");
