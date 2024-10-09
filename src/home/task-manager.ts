@@ -1,4 +1,4 @@
-import { fetchAvatars } from "./fetch-github/fetch-and-display-previews";
+import { fetchAvatars } from "./fetch-github/fetch-avatar";
 import { fetchIssues } from "./fetch-github/fetch-issues-full";
 import { getGitHubAccessToken } from "./getters/get-github-access-token";
 import { setLocalStore } from "./getters/get-local-store";
