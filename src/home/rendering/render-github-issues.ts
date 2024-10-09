@@ -31,7 +31,7 @@ export function renderGitHubIssues(tasks: GitHubIssue[]) {
   setupKeyboardNavigation(container);
 
   // Scroll to the top of the page
-  window.scrollTo({ top: 0});
+  window.scrollTo({ top: 0 });
 }
 
 function everyNewIssue({ gitHubIssue, container }: { gitHubIssue: GitHubIssue; container: HTMLDivElement }) {
