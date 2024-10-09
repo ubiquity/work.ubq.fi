@@ -9,8 +9,10 @@ export type Options = {
   ordering: "normal" | "reverse";
 };
 
+// start at Directory view
 let isProposalOnlyViewer = false;
 
+// if the Directory/Proposals toggle is clicked re-render the issues
 export const viewToggle = document.getElementById("view-toggle") as HTMLInputElement;
 if (!viewToggle) {
   throw new Error("Could not find view toggle");
@@ -19,15 +21,6 @@ viewToggle.addEventListener("click", () => {
   isProposalOnlyViewer = !isProposalOnlyViewer;
   void displayGitHubIssues();
 });
-
-export async function displayGitHubIssues(sorting?: Sorting, options = { ordering: "normal" }) {
-  await checkCacheIntegrityAndSyncTasks();
-  const cachedTasks = taskManager.getTasks();
-  const sortedIssues = sortIssuesController(cachedTasks, sorting, options);
-  const sortedAndFiltered = sortedIssues.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
-  renderGitHubIssues(sortedAndFiltered);
-  applyAvatarsToIssues();
-}
 
 function getProposalsOnlyFilter(getProposals: boolean) {
   return (issue: GitHubIssue) => {
@@ -40,4 +33,14 @@ function getProposalsOnlyFilter(getProposals: boolean) {
 
     return getProposals ? !hasPriceLabel : hasPriceLabel;
   };
+}
+
+// checks the cache's integrity, sorts issues, checks Directory/Proposals toggle, renders them and applies avatars
+export async function displayGitHubIssues(sorting?: Sorting, options = { ordering: "normal" }) {
+  await checkCacheIntegrityAndSyncTasks();
+  const cachedTasks = taskManager.getTasks();
+  const sortedIssues = sortIssuesController(cachedTasks, sorting, options);
+  const sortedAndFiltered = sortedIssues.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
+  renderGitHubIssues(sortedAndFiltered);
+  applyAvatarsToIssues();
 }
