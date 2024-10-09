@@ -9,6 +9,7 @@ import { taskManager } from "../home";
 // Map to track ongoing avatar fetches
 const pendingFetches: Map<string, Promise<Blob | void>> = new Map();
 
+// Fetches the avatar for a given organization from GitHub either from cache, indexedDB or GitHub API
 export async function fetchAvatar(orgName: string): Promise<Blob | void> {
   // Check if the avatar is already cached in memory
   const cachedAvatar = organizationImageCache.get(orgName);
@@ -98,6 +99,7 @@ export async function fetchAvatar(orgName: string): Promise<Blob | void> {
   }
 }
 
+// fetches avatars for all tasks (issues) cached. it will fetch only once per organization, remaining are returned from cache
 export async function fetchAvatars() {
   const cachedTasks = taskManager.getTasks();
 
