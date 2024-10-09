@@ -4,11 +4,13 @@ import { Session } from "@supabase/supabase-js";
 describe("DevPool", () => {
   let issue1: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
   let issue2: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
+  let invalidIssue: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
   let githubUser: Session["user"];
 
   before(() => {
     cy.fixture("issue-1.json").then((content) => (issue1 = content));
     cy.fixture("issue-2.json").then((content) => (issue2 = content));
+    cy.fixture("invalid-issue.json").then((content) => (invalidIssue = content));
     cy.fixture("user-github.json").then((content) => (githubUser = content));
   });
 
@@ -89,6 +91,19 @@ describe("DevPool", () => {
       cy.get('[for="activity-bottom"]').should("be.visible").click();
       cy.get('div[id="issues-container"]').children().should("have.length", 2);
       cy.get('[for="activity-bottom"]').click();
+      cy.get('div[id="issues-container"]').children().should("have.length", 2);
+    });
+
+    it("Main page don't display invalid issue", () => {
+      cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/refs/heads/development/devpool-issues.json", (req) => {
+        req.reply({
+          statusCode: 200,
+          body: [issue1, issue2, invalidIssue],
+        });
+      }).as("getIssueDetails");
+
+      cy.visit("/");
+      cy.wait(3000);
       cy.get('div[id="issues-container"]').children().should("have.length", 2);
     });
   });
