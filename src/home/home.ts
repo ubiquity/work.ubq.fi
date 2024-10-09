@@ -37,7 +37,7 @@ void (async function home() {
   void authentication();
   void readyToolbar();
   await taskManager.syncTasks(); // Sync tasks on load
-  void displayGitHubIssues();   
+  void displayGitHubIssues();
   if ("serviceWorker" in navigator) {
     registerServiceWorker();
   }
