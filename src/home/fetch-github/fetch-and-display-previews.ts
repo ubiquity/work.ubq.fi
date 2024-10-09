@@ -4,7 +4,6 @@ import { taskManager } from "../home";
 import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-github-issues";
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
-import { fetchAvatar } from "./fetch-avatar";
 
 export type Options = {
   ordering: "normal" | "reverse";
@@ -20,21 +19,6 @@ viewToggle.addEventListener("click", () => {
   isProposalOnlyViewer = !isProposalOnlyViewer;
   void displayGitHubIssues();
 });
-
-export async function fetchAvatars() {
-  const cachedTasks = taskManager.getTasks();
-
-  // fetches avatar for each organization for each task, but fetchAvatar() will only fetch once per organization, remaining are returned from cache
-  const avatarPromises = cachedTasks.map(async (task: GitHubIssue) => {
-    const [orgName] = task.repository_url.split("/").slice(-2);
-    if (orgName) {
-      return fetchAvatar(orgName);
-    }
-    return Promise.resolve();
-  });
-
-  await Promise.allSettled(avatarPromises);
-}
 
 export async function displayGitHubIssues(sorting?: Sorting, options = { ordering: "normal" }) {
   await checkCacheIntegrityAndSyncTasks();
