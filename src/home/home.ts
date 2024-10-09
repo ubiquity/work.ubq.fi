@@ -36,8 +36,8 @@ export const taskManager = new TaskManager(container);
 void (async function home() {
   void authentication();
   void readyToolbar();
-  await taskManager.syncTasks();
-  void displayGitHubIssues();
+  await taskManager.syncTasks(); // Sync tasks on load
+  void displayGitHubIssues();   
   if ("serviceWorker" in navigator) {
     registerServiceWorker();
   }

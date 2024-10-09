@@ -16,6 +16,7 @@ export function rateLimitModal(message: string) {
   displayPopupMessage({ modalHeader: `GitHub API rate limit exceeded.`, modalBody: message, isError: false });
 }
 
+// Handles specifically GitHub's API rate limit
 export async function handleRateLimit(octokit?: Octokit, error?: RequestError) {
   const rate: RateLimit = {
     reset: null,
