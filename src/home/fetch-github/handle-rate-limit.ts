@@ -5,13 +5,18 @@ import { toolbar } from "../ready-toolbar";
 import { renderErrorInModal } from "../rendering/display-popup-modal";
 import { gitHubLoginButton } from "../rendering/render-github-login-button";
 import { modal } from "../rendering/render-preview-modal";
-import { rateLimitModal } from "./fetch-issues-preview";
+import { displayPopupMessage } from "../rendering/display-popup-modal";
 
 type RateLimit = {
   reset: number | null;
   user: boolean;
 };
 
+export function rateLimitModal(message: string) {
+  displayPopupMessage({ modalHeader: `GitHub API rate limit exceeded.`, modalBody: message, isError: false });
+}
+
+// Handles specifically GitHub's API rate limit
 export async function handleRateLimit(octokit?: Octokit, error?: RequestError) {
   const rate: RateLimit = {
     reset: null,

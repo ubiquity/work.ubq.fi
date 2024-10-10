@@ -1,5 +1,4 @@
-import { fetchAndDisplayPreviewsFromCache } from "../fetch-github/fetch-and-display-previews";
-import { getGitHubAccessToken } from "../getters/get-github-access-token";
+import { displayGitHubIssues } from "../fetch-github/fetch-and-display-previews";
 import { taskManager } from "../home";
 import { renderErrorInModal } from "../rendering/display-popup-modal";
 import { Sorting } from "./generate-sorting-buttons";
@@ -30,21 +29,13 @@ export class SortingManager {
     textBox.type = "text";
     textBox.id = `filter-${this._instanceId}`;
     textBox.placeholder = "Text Filter";
-    getGitHubAccessToken()
-      .then((token) => {
-        if (!token) {
-          textBox.classList.add("hidden");
-        } else {
-          textBox.classList.remove("hidden");
-          document.addEventListener("keydown", (event) => {
-            if ((event.metaKey || event.ctrlKey) && event.key === "f") {
-              event.preventDefault();
-              textBox.focus();
-            }
-          });
-        }
-      })
-      .catch((e) => console.error(`[_generateFilterTextBox] Failed to retrieve token: ${e}`));
+
+    document.addEventListener("keydown", (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === "f") {
+        event.preventDefault();
+        textBox.focus();
+      }
+    });
 
     const issuesContainer = document.getElementById("issues-container") as HTMLDivElement;
     textBox.addEventListener("input", () => {
@@ -108,7 +99,7 @@ export class SortingManager {
     return label;
   }
 
-  private async _handleSortingClick(input: HTMLInputElement, option: string) {
+  private _handleSortingClick(input: HTMLInputElement, option: string) {
     const ordering = input === this._lastChecked ? "reverse" : "normal";
     input.checked = input !== this._lastChecked;
     input.setAttribute("data-ordering", ordering);
@@ -123,7 +114,7 @@ export class SortingManager {
     input.setAttribute("data-ordering", ordering);
     // instantly load from cache
     try {
-      void fetchAndDisplayPreviewsFromCache(option as Sorting, { ordering });
+      void displayGitHubIssues(option as Sorting, { ordering });
     } catch (error) {
       renderErrorCatch(error as ErrorEvent);
     }

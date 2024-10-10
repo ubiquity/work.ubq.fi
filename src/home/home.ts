@@ -1,8 +1,7 @@
 import { grid } from "../the-grid";
 import { authentication } from "./authentication";
 import { initiateDevRelTracking } from "./devrel-tracker";
-import { fetchAvatars, displayGitHubIssues } from "./fetch-github/fetch-and-display-previews";
-import { fetchIssuesFull } from "./fetch-github/fetch-issues-full";
+import { displayGitHubIssues } from "./fetch-github/fetch-and-display-previews";
 import { readyToolbar } from "./ready-toolbar";
 import { registerServiceWorker } from "./register-service-worker";
 import { renderServiceMessage } from "./render-service-message";
@@ -37,14 +36,9 @@ export const taskManager = new TaskManager(container);
 void (async function home() {
   void authentication();
   void readyToolbar();
-  const gitHubIssues = await fetchIssuesFull();
-  taskManager.syncTasks(gitHubIssues);
-  void fetchAvatars();
+  await taskManager.syncTasks(); // Sync tasks on load
   void displayGitHubIssues();
-
   if ("serviceWorker" in navigator) {
     registerServiceWorker();
   }
-
-  return gitHubIssues;
 })();
