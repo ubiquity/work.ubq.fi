@@ -2,6 +2,7 @@ import { TaskStorageItems } from "../github-types";
 import { renderErrorInModal } from "../rendering/display-popup-modal";
 import { OAuthToken } from "./get-github-access-token";
 
+// storage is key-based an can either store tasks, OAuth token or be empty
 export function getLocalStore(key: string): TaskStorageItems | OAuthToken | null {
   const cachedIssues = localStorage.getItem(key);
   if (cachedIssues) {

@@ -1,4 +1,4 @@
-import { fetchAndDisplayPreviewsFromCache } from "../fetch-github/fetch-and-display-previews";
+import { displayGitHubIssues } from "../fetch-github/fetch-and-display-previews";
 import { taskManager } from "../home";
 import { renderErrorInModal } from "../rendering/display-popup-modal";
 import { Sorting } from "./generate-sorting-buttons";
@@ -99,7 +99,7 @@ export class SortingManager {
     return label;
   }
 
-  private async _handleSortingClick(input: HTMLInputElement, option: string) {
+  private _handleSortingClick(input: HTMLInputElement, option: string) {
     const ordering = input === this._lastChecked ? "reverse" : "normal";
     input.checked = input !== this._lastChecked;
     input.setAttribute("data-ordering", ordering);
@@ -114,7 +114,7 @@ export class SortingManager {
     input.setAttribute("data-ordering", ordering);
     // instantly load from cache
     try {
-      void fetchAndDisplayPreviewsFromCache(option as Sorting, { ordering });
+      void displayGitHubIssues(option as Sorting, { ordering });
     } catch (error) {
       renderErrorCatch(error as ErrorEvent);
     }
