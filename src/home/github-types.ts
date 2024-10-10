@@ -7,7 +7,7 @@ export interface AvatarCache {
 export const GITHUB_TASKS_STORAGE_KEY = "gitHubTasks";
 
 export type TaskStorageItems = {
-  timestamp: number;
+  timestamp: number; // in milliseconds
   tasks: GitHubIssue[];
   loggedIn: boolean;
 };

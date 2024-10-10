@@ -29,10 +29,12 @@ export async function checkSupabaseSession() {
 }
 
 async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
+  let redirectTo = window.location.href;
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
       scopes,
+      redirectTo
     },
   });
   if (error) {

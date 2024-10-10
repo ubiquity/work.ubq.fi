@@ -29,6 +29,9 @@ export function renderGitHubIssues(tasks: GitHubIssue[]) {
   container.classList.add("ready");
   // Call this function after the issues have been rendered
   setupKeyboardNavigation(container);
+
+  // Scroll to the top of the page
+  window.scrollTo({ top: 0 });
 }
 
 function everyNewIssue({ gitHubIssue, container }: { gitHubIssue: GitHubIssue; container: HTMLDivElement }) {

@@ -1,3 +1,4 @@
+// this file contains functions to save and retrieve images from IndexedDB which is client-side in-browser storage
 export async function saveImageToCache({
   dbName,
   storeName,
