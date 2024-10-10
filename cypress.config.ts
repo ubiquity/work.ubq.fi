@@ -17,6 +17,7 @@ export default defineConfig({
     },
     baseUrl: "http://localhost:8080",
     experimentalStudio: true,
+    testIsolation: false
   },
   viewportHeight: 900,
   viewportWidth: 1440,
