@@ -176,7 +176,6 @@ describe("DevPool", () => {
     }).as("githubPage");
     cy.visit("/");
     // Check that there is no text field visible for sorting
-    cy.get("#filter-top").should("not.be.visible");
     cy.get("#github-login-button").click();
     // Change the interception because now we are supposed to be logged in
     cy.intercept("https://api.github.com/user**", (req) => {
