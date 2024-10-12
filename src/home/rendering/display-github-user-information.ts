@@ -41,7 +41,7 @@ export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
 
   if (await isOrgMemberWithoutScope()) {
     const accessButton = renderAugmentAccessButton();
-    containerDivElement.appendChild(accessButton);
+    authenticatedDivElement.appendChild(accessButton);
   }
 
   authenticationElement.appendChild(containerDivElement);
