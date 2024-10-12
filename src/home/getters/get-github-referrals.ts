@@ -1,5 +1,3 @@
-import fetch from 'node-fetch';
-
 declare const WORKER_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
 
 export async function getReferralFromUser(devGitHubId: number): Promise<string | null> {

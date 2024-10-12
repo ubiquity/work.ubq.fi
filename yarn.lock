@@ -1275,16 +1275,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-fetch@npm:^2.6.11":
-  version: 2.6.11
-  resolution: "@types/node-fetch@npm:2.6.11"
-  dependencies:
-    "@types/node": "npm:*"
-    form-data: "npm:^4.0.0"
-  checksum: 10c0/5283d4e0bcc37a5b6d8e629aee880a4ffcfb33e089f4b903b2981b19c623972d1e64af7c3f9540ab990f0f5c89b9b5dda19c5bcb37a8e177079e93683bfd2f49
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:*":
   version: 22.7.5
   resolution: "@types/node@npm:22.7.5"
@@ -1506,7 +1496,6 @@ __metadata:
     "@octokit/rest": "npm:^20.0.2"
     "@supabase/supabase-js": "npm:^2.39.0"
     "@types/node": "npm:^20.10.0"
-    "@types/node-fetch": "npm:^2.6.11"
     "@typescript-eslint/eslint-plugin": "npm:^6.13.1"
     "@typescript-eslint/parser": "npm:^6.13.1"
     cypress: "npm:13.11.0"
@@ -1520,7 +1509,6 @@ __metadata:
     knip: "npm:^3.3.0"
     lint-staged: "npm:^15.1.0"
     marked: "npm:^11.0.0"
-    node-fetch: "npm:^2.7.0"
     npm-run-all: "npm:^4.1.5"
     prettier: "npm:^3.2.5"
     ts-jest: "npm:29.1.2"
@@ -3488,7 +3476,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.0, form-data@npm:~4.0.0":
+"form-data@npm:~4.0.0":
   version: 4.0.1
   resolution: "form-data@npm:4.0.1"
   dependencies:
@@ -5350,20 +5338,6 @@ __metadata:
     data-uri-to-buffer: "npm:^3.0.1"
     fetch-blob: "npm:^2.1.1"
   checksum: 10c0/99e2947718c281ad76fe009f15ff67ac1781b72f7a81bbc2770cc20297b4482589384982bcd47516a21d6e76e1649e64609e18f83b4c71e09cf5964fbb9ef832
-  languageName: node
-  linkType: hard
-
-"node-fetch@npm:^2.7.0":
-  version: 2.7.0
-  resolution: "node-fetch@npm:2.7.0"
-  dependencies:
-    whatwg-url: "npm:^5.0.0"
-  peerDependencies:
-    encoding: ^0.1.0
-  peerDependenciesMeta:
-    encoding:
-      optional: true
-  checksum: 10c0/b55786b6028208e6fbe594ccccc213cab67a72899c9234eb59dba51062a299ea853210fcf526998eaa2867b0963ad72338824450905679ff0fa304b8c5093ae8
   languageName: node
   linkType: hard
 
