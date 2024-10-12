@@ -1,4 +1,4 @@
-import { trackDevRelReferral } from "./devrel-tracker";
+import { trackDevRelReferral } from "./tracking/devrel-tracker";
 import { getGitHubAccessToken } from "./getters/get-github-access-token";
 import { getGitHubUser } from "./getters/get-github-user";
 import { GitHubUser } from "./github-types";

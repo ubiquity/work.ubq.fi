@@ -1,6 +1,6 @@
 import { grid } from "../the-grid";
 import { authentication } from "./authentication";
-import { initiateDevRelTracking } from "./devrel-tracker";
+import { initiateDevRelTracking } from "./tracking/devrel-tracker";
 import { displayGitHubIssues } from "./fetch-github/fetch-and-display-previews";
 import { readyToolbar } from "./ready-toolbar";
 import { registerServiceWorker } from "./register-service-worker";
