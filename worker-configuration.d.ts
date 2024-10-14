@@ -1,0 +1,3 @@
+interface Env {
+	myKVNamespace: KVNamespace;
+}

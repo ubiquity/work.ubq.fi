@@ -1,7 +1,7 @@
 declare const WORKER_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
 
 export async function getReferralFromUser(devGitHubId: number): Promise<string | null> {
-    const url = `${WORKER_URL}/get?key=${encodeURIComponent(devGitHubId)}`;
+    const url = `${WORKER_URL}/tracker/get?key=${encodeURIComponent(devGitHubId)}`;
 
     const response = await fetch(url, {
         method: 'GET',
@@ -20,7 +20,7 @@ export async function getReferralFromUser(devGitHubId: number): Promise<string |
 }
 
 export async function getListOfReferrals(): Promise<any> {
-  const url = `${WORKER_URL}/list`;
+  const url = `${WORKER_URL}/tracker/list`;
 
   const response = await fetch(url, {
       method: 'GET',
