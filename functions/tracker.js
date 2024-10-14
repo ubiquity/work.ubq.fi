@@ -1,3 +1,5 @@
+import { corsHeaders } from "./helpers";
+
 export async function onRequest(ctx) {
   const { request, env } = ctx;
 
@@ -16,11 +18,11 @@ export async function onRequest(ctx) {
         }
 
       default:
-        return new Response("Method Not Allowed", { status: 405 });
+        return new Response("Method Not Allowed", { headers: corsHeaders, status: 405 });
     }
   } catch (error) {
     console.error("Error processing request:", error);
-    return new Response("Internal Server Error", { status: 500 });
+    return new Response("Internal Server Error", { headers: corsHeaders, status: 500 });
   }
 }
 
@@ -30,17 +32,17 @@ async function handleSet(url, env) {
 
   if (key && value) {
     await env.userToReferral.put(key, value);
-    return new Response(`Key '${key}' added with value '${value}'`, { status: 200 });
+    return new Response(`Key '${key}' added with value '${value}'`, { headers: corsHeaders, status: 200 });
   }
-  return new Response("Missing key or value", { status: 400 });
+  return new Response("Missing key or value", { headers: corsHeaders, status: 400 });
 }
 
 async function handleGet(key, env) {
   const value = await env.userToReferral.get(key);
   if (value) {
-    return new Response(`Value for '${key}': ${value}`, { status: 200 });
+    return new Response(`Value for '${key}': ${value}`, { headers:corsHeaders, status: 200 });
   }
-  return new Response(`No value found for '${key}'`, { status: 404 });
+  return new Response(`No value found for '${key}'`, { headers: corsHeaders, status: 404 });
 }
 
 async function handleList(env) {
@@ -52,7 +54,7 @@ async function handleList(env) {
   }
 
   return new Response(JSON.stringify(keyValuePairs, null, 2), {
-    headers: { "Content-Type": "application/json" },
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
   
