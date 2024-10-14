@@ -16,7 +16,7 @@ export async function trackDevRelReferral(devGitHubId: number) {
 
   // key: user_id (devGitHubId), value: referral_id (devRelCode)
   if (devRelCode && devRelCode != "done") {
-    const url = `${WORKER_URL}/tracker/set?key=${encodeURIComponent(devGitHubId)}&value=${encodeURIComponent(devRelCode)}`;
+    const url = `${WORKER_URL}/tracker?key=${encodeURIComponent(devGitHubId)}&value=${encodeURIComponent(devRelCode)}`;
 
     const response = await fetch(url, {
         method: 'POST',
