@@ -6,6 +6,7 @@ const disableKeyBoardNavigationCurried = disableKeyboardNavigationCurry;
 
 let isKeyDownListenerAdded = false;
 let isMouseOverListenerAdded = false;
+let isScrubButtonsListenerAdded = false;
 
 export function setupKeyboardNavigation(container: HTMLDivElement) {
   if (!isKeyDownListenerAdded) {
@@ -16,6 +17,48 @@ export function setupKeyboardNavigation(container: HTMLDivElement) {
     container.addEventListener("mouseover", disableKeyBoardNavigationCurried);
     isMouseOverListenerAdded = true;
   }
+  if (!isScrubButtonsListenerAdded) {
+    setupScrubButtons();
+    isScrubButtonsListenerAdded = true;
+  }
+}
+
+function setupScrubButtons() {
+  const scrubLeft = document.getElementById("scrub-left");
+  const scrubRight = document.getElementById("scrub-right");
+
+  if (scrubLeft) {
+    scrubLeft.addEventListener("click", () => handleScrub("ArrowUp"));
+    scrubLeft.addEventListener("touchend", handleTouchEnd);
+  }
+  if (scrubRight) {
+    scrubRight.addEventListener("click", () => handleScrub("ArrowDown"));
+    scrubRight.addEventListener("touchend", handleTouchEnd);
+  }
+
+  // Prevent zooming on double tap
+  document.addEventListener("touchmove", preventZoom, { passive: false });
+}
+
+function handleTouchEnd(event: TouchEvent) {
+  event.preventDefault();
+  const target = event.target as HTMLElement;
+  if (target.id === "scrub-left") {
+    handleScrub("ArrowUp");
+  } else if (target.id === "scrub-right") {
+    handleScrub("ArrowDown");
+  }
+}
+
+function preventZoom(event: TouchEvent) {
+  if (event.touches.length > 1) {
+    event.preventDefault();
+  }
+}
+
+function handleScrub(direction: "ArrowUp" | "ArrowDown") {
+  const event = new KeyboardEvent("keydown", { key: direction });
+  keyDownHandlerCurried(event);
 }
 
 function disableKeyboardNavigationCurry() {
