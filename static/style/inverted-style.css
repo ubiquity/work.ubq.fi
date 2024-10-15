@@ -735,23 +735,43 @@
     height: 48px;
     background-color: #7f7f7f;
   }
-  #view-toggle:checked::after {
-    content: "Proposals";
-    cursor: pointer;
+  /* Hide the radio buttons */
+  input[name="view-toggle"] {
+    display: none;
   }
-  #view-toggle::after {
-    content: "Directory";
+
+  /* Style the text display */
+  #view-toggle-text {
+    cursor: pointer;
     letter-spacing: 1.5px;
     text-rendering: geometricprecision;
     text-transform: uppercase;
     font-size: 16px;
   }
-  #view-toggle {
-    appearance: none;
+
+  /* Add visual indication for the current view */
+  #view-toggle-text::after {
+    content: " ▼";
+    font-size: 0.8em;
   }
-  label[for="view-toggle"] {
-    margin-left: 8px;
+
+  /* Maintain the view-specific display styles */
+  #radio-directory:checked ~ .directory-view {
+    display: block;
   }
+  #radio-proposals:checked ~ .proposals-view {
+    display: block;
+  }
+  #radio-notifications:checked ~ .notifications-view {
+    display: block;
+  }
+
+  .directory-view,
+  .proposals-view,
+  .notifications-view {
+    display: none;
+  }
+
   #bottom-right {
     position: fixed;
     bottom: 4px;
