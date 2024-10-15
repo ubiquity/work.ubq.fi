@@ -1,11 +1,11 @@
 import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity";
 import { GitHubIssue } from "../github-types";
-import { taskManager } from "../home";
+import { taskManager, notificationManager } from "../home";
 import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-github-issues";
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
 
-import NOTIFICATIONS_EXAMPLE from "./fixtures/notifications-example";
+// import NOTIFICATIONS_EXAMPLE from "./fixtures/notifications-example";
 import { renderGitHubNotifications } from "../rendering/render-github-notifications";
 
 export type Options = {
@@ -90,7 +90,7 @@ export async function displayGitHubIssues(sorting?: Sorting, options = { orderin
 
   if (currentViewState === "notifications") {
     console.trace("Notification view time");
-    const notifications = NOTIFICATIONS_EXAMPLE;
+    const notifications = notificationManager.getNotifications();
     renderGitHubNotifications(notifications);
   } else {
     const filteredIssues = sortedIssues.filter(getViewFilter(currentViewState));
