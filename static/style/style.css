@@ -199,7 +199,7 @@
     line-height: 1.25;
     padding: 4px 6px;
     border-radius: 4px;
-    margin: 0 4px 0;
+    margin: 0 2px 0;
     font-size: 12px;
     text-align: center;
     white-space: nowrap;
@@ -417,6 +417,9 @@
     }
   }
   @media screen and (max-width: 1280px) {
+    .preview {
+      max-width: calc(100vw - 14px);
+    }
     body.preview-active {
       overflow: hidden;
     }
@@ -529,13 +532,14 @@
     display: none;
   }
   .preview-body-inner {
-    line-height: 1.25;
+    padding: 16px;
+    overflow: scroll;
+    max-height: calc(100vh - 206px);
   }
   .preview-body-inner > :last-child {
     margin-bottom: 0;
   }
   .preview {
-    text-align: left;
     position: fixed;
     transition: 0.25s all cubic-bezier(0, 1, 1, 1);
     max-width: 640px;
@@ -545,6 +549,7 @@
     top: 60px;
     pointer-events: none;
     width: calc(100vw - 14px);
+    max-height: calc(100% - 120px);
   }
   .preview * {
     pointer-events: none;
@@ -594,16 +599,11 @@
     text-overflow: ellipsis;
   }
   .preview-body {
-    overflow: scroll;
-    margin: 0;
-    border-top: 1px solid #20202080;
-    padding: 16px;
-    max-height: calc(100vh - (80px));
-    max-height: calc(100vh - (242px));
+    overflow: hidden;
+    height: calc(100% - 180px);
+    display: block;
   }
-  .preview-content {
-    width: 100%;
-  }
+
   .preview button.close-preview {
     right: 0;
     top: 0;
@@ -626,7 +626,7 @@
     overflow-x: auto;
   }
   .filters-container input[type="text"] {
-    margin: 0 4px;
+    margin: 0 2px;
     padding: 4px;
     border: none;
     border-radius: 4px;
