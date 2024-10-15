@@ -818,14 +818,37 @@
   }
   @keyframes fadeOut {
     0% {
-      filter:opacity(1);
+      filter: opacity(1);
     }
     100% {
-      filter:opacity(0);
+      filter: opacity(0);
+      border-color: transparent;
     }
   }
   #faq-link > button {
     background: unset;
     border: unset;
+  }
+
+  div#mobile-modal-scrub {
+    position: fixed;
+    right: 0;
+    display: none;
+  }
+
+  div#mobile-modal-scrub > button {
+    margin-right: 6px;
+    font-size: 24px;
+    padding: 0px 48px;
+    border: unset;
+  }
+  #bottom-bar {
+    overflow: visible;
+  }
+  .preview-active #filters-bottom {
+    display: none;
+  }
+  .preview-active div#mobile-modal-scrub {
+    display: unset;
   }
 }
