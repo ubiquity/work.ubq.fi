@@ -818,10 +818,10 @@
   }
   @keyframes fadeOut {
     0% {
-      opacity: 1;
+      filter:opacity(1);
     }
     100% {
-      opacity: 0;
+      filter:opacity(0);
     }
   }
   #faq-link > button {

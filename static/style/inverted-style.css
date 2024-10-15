@@ -797,9 +797,6 @@
     right: calc(50% - (24px + 2px)); /* 2px to accomodate border width */
 
     pointer-events: none;
-    border-color: transparent;
-    font-size: 40px;
-    text-align: center;
   }
   #issues-container.ready::after {
     opacity: 0;
@@ -821,14 +818,10 @@
   }
   @keyframes fadeOut {
     0% {
-      opacity: 1;
-      content: "❌";
-      transform: none;
+      filter:opacity(1);
     }
     100% {
-      opacity: 0;
-      content: "❌";
-      transform: none;
+      filter:opacity(0);
     }
   }
   #faq-link > button {
