@@ -9,6 +9,7 @@ import { renderErrorInModal } from "./rendering/display-popup-modal";
 import { renderGitRevision } from "./rendering/render-github-login-button";
 import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { TaskManager } from "./task-manager";
+import { NotificationManager } from "./notification-manager";
 
 // All unhandled errors are caught and displayed in a modal
 window.addEventListener("error", (event: ErrorEvent) => renderErrorInModal(event.error));
@@ -32,6 +33,7 @@ if (!container) {
 }
 
 export const taskManager = new TaskManager(container);
+export const notificationManager = new NotificationManager(container);
 
 void (async function home() {
   void authentication();
@@ -41,4 +43,7 @@ void (async function home() {
   if ("serviceWorker" in navigator) {
     registerServiceWorker();
   }
+  await notificationManager.syncNotifications(); // Sync notifications on load
+  const notifications = notificationManager.getNotifications();
+  console.trace(notifications);
 })();

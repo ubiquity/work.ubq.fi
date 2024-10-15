@@ -1,23 +1,20 @@
-import { TaskStorageItems } from "../github-types";
+import { TaskStorageItems, NotificationStorageItems } from "../github-types";
 import { renderErrorInModal } from "../rendering/display-popup-modal";
 import { OAuthToken } from "./get-github-access-token";
 
-// storage is key-based an can either store tasks, OAuth token or be empty
-export function getLocalStore(key: string): TaskStorageItems | OAuthToken | null {
-  const cachedIssues = localStorage.getItem(key);
-  if (cachedIssues) {
+export function getLocalStore<T extends TaskStorageItems | NotificationStorageItems | OAuthToken>(key: string): T | null {
+  const cachedData = localStorage.getItem(key);
+  if (cachedData) {
     try {
-      const value = JSON.parse(cachedIssues);
-
-      return value; // as OAuthToken;
+      const value = JSON.parse(cachedData) as T;
+      return value;
     } catch (error) {
-      renderErrorInModal(error as Error, "Failed to parse cached issues from local storage");
+      renderErrorInModal(error as Error, "Failed to parse cached data from local storage");
     }
   }
   return null;
 }
 
-export function setLocalStore(key: string, value: TaskStorageItems | OAuthToken) {
-  // remove state from issues before saving to local storage
-  localStorage[key] = JSON.stringify(value);
+export function setLocalStore<T extends TaskStorageItems | NotificationStorageItems | OAuthToken>(key: string, value: T): void {
+  localStorage.setItem(key, JSON.stringify(value));
 }
