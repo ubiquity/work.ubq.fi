@@ -27,7 +27,9 @@ export function renderGitHubNotifications(notifications: GitHubNotification[]) {
     container.classList.remove("ready");
     container.innerHTML = "";
   }
-  const existingNotificationIds = new Set(Array.from(container.querySelectorAll(".notification-element-inner")).map((element) => element.getAttribute("data-notification-id")));
+  const existingNotificationIds = new Set(
+    Array.from(container.querySelectorAll(".notification-element-inner")).map((element) => element.getAttribute("data-notification-id"))
+  );
 
   let delay = 0;
   const baseDelay = 1000 / 15; // Base delay in milliseconds
@@ -72,7 +74,7 @@ function setUpNotificationElement(notificationElement: HTMLDivElement, notificat
         <p class="notification-reason">${notification.reason}</p>
       </div>
     </div>
-    <div class="status">${notification.unread ? 'Unread' : 'Read'}</div>
+    <div class="status">${notification.unread ? "Unread" : "Read"}</div>
   `;
 
   notificationElement.addEventListener("click", () => {
