@@ -1,9 +1,9 @@
-import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity";
 import { GitHubIssue } from "../github-types";
-import { taskManager, notificationManager } from "../home";
+import { notificationManager, taskManager } from "../home";
 import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-github-issues";
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
+import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity";
 
 // import NOTIFICATIONS_EXAMPLE from "./fixtures/notifications-example";
 import { renderGitHubNotifications } from "../rendering/render-github-notifications";

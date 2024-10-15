@@ -91,12 +91,67 @@ function setUpNotificationElement(notificationElement: HTMLDivElement, notificat
 
       notificationWrapper.classList.add("selected");
 
-      // Open the notification URL in a new tab
-      window.open(notification.subject.url, "_blank");
+      // Construct the correct HTML URL
+      const htmlUrl = constructHtmlUrl(notification);
+
+      // Open the constructed HTML URL in a new tab
+      window.open(htmlUrl, "_blank");
     } catch (error) {
       console.error("Error handling notification click:", error);
     }
   });
 }
 
-// ... You can add more helper functions here if needed
+function constructHtmlUrl(notification: GitHubNotification): string {
+  const baseUrl = "https://github.com";
+  const repoFullName = notification.repository.full_name;
+
+  function getLastUrlSegment(url: string): string | null {
+    const segments = url.split("/");
+    return segments.length > 0 ? segments[segments.length - 1] : null;
+  }
+
+  try {
+    const issueNumber = getLastUrlSegment(notification.subject.url);
+    const prNumber = getLastUrlSegment(notification.subject.url);
+    const commitSha = getLastUrlSegment(notification.subject.url);
+    const tagName = getLastUrlSegment(notification.subject.url);
+
+    let commentId;
+
+    if (notification.subject.latest_comment_url) {
+      commentId = getLastUrlSegment(notification.subject.latest_comment_url);
+    }
+
+    let url = `${baseUrl}/${repoFullName}`;
+
+    switch (notification.subject.type) {
+      case "Issue":
+        if (!issueNumber) throw new Error("Invalid issue URL");
+        url = `${url}/issues/${issueNumber}`;
+        break;
+      case "PullRequest":
+        if (!prNumber) throw new Error("Invalid pull request URL");
+        url = `${url}/pull/${prNumber}`;
+        break;
+      case "Commit":
+        if (!commitSha) throw new Error("Invalid commit URL");
+        url = `${url}/commit/${commitSha}`;
+        break;
+      case "Release":
+        if (!tagName) throw new Error("Invalid release URL");
+        url = `${url}/releases/tag/${tagName}`;
+        break;
+    }
+
+    // Add comment hash if available
+    if (commentId) {
+      url += `#issuecomment-${commentId}`;
+    }
+
+    return url;
+  } catch (error) {
+    console.error("Error constructing HTML URL:", error);
+    return `${baseUrl}/${repoFullName}`;
+  }
+}
