@@ -24,7 +24,7 @@
   }
   #logo {
     height: 28px;
-    margin-right: 8px;
+    margin-right: 6px;
     vertical-align: middle;
   }
   #authenticated,
@@ -367,6 +367,7 @@
   #branding {
     font-weight: 400;
     text-rendering: geometricPrecision;
+    padding: 8px;
   }
   .full {
     display: unset !important;

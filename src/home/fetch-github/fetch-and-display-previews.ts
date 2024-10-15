@@ -67,12 +67,12 @@ function getViewFilter(viewState: ViewState) {
 
     switch (viewState) {
       case "directory":
-        return true;
+        return hasPriceLabel;
       case "proposals":
         return !hasPriceLabel;
       case "notifications":
-        // Implement notification filter logic here
-        return issue.labels.some((label) => typeof label !== "string" && label.name === "Notification");
+        console.trace("Notification view time");
+        return false; // We'll load a separate JSON for notifications
       default:
         return false;
     }
@@ -84,7 +84,13 @@ export async function displayGitHubIssues(sorting?: Sorting, options = { orderin
   await checkCacheIntegrityAndSyncTasks();
   const cachedTasks = taskManager.getTasks();
   const sortedIssues = sortIssuesController(cachedTasks, sorting, options);
-  const filteredIssues = sortedIssues.filter(getViewFilter(currentViewState));
-  renderGitHubIssues(filteredIssues);
-  applyAvatarsToIssues();
+
+  if (currentViewState === "notifications") {
+    console.trace("Notification view time");
+    // TODO: Load and process notifications JSON
+  } else {
+    const filteredIssues = sortedIssues.filter(getViewFilter(currentViewState));
+    renderGitHubIssues(filteredIssues);
+    applyAvatarsToIssues();
+  }
 }
