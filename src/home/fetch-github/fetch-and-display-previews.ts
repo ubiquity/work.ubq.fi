@@ -5,6 +5,9 @@ import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-gi
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
 
+import NOTIFICATIONS_EXAMPLE from "./fixtures/notifications-example";
+import { renderGitHubNotifications } from "../rendering/render-github-notifications";
+
 export type Options = {
   ordering: "normal" | "reverse";
 };
@@ -87,7 +90,8 @@ export async function displayGitHubIssues(sorting?: Sorting, options = { orderin
 
   if (currentViewState === "notifications") {
     console.trace("Notification view time");
-    // TODO: Load and process notifications JSON
+    const notifications = NOTIFICATIONS_EXAMPLE;
+    renderGitHubNotifications(notifications);
   } else {
     const filteredIssues = sortedIssues.filter(getViewFilter(currentViewState));
     renderGitHubIssues(filteredIssues);
