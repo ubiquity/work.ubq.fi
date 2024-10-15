@@ -1,7 +1,7 @@
-import { EventContext, KVNamespace} from "@cloudflare/workers-types";
+import { EventContext, KVNamespace } from "@cloudflare/workers-types";
 
 export interface Env {
-    userToReferral: KVNamespace;
+  userToReferral: KVNamespace;
 }
 
-export type Context = EventContext<Env, string, Record<string, string> >;
+export type Context = EventContext<Env, string, Record<string, string>>;
