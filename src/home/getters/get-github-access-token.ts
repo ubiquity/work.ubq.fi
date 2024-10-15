@@ -27,19 +27,18 @@ export async function isOrgMemberWithoutScope() {
 }
 
 export async function getGitHubAccessToken(): Promise<string | null> {
-  // better to use official function, looking up localstorage has flaws
   const oauthToken = await checkSupabaseSession();
-
-  const expiresAt = oauthToken?.expires_at;
-  if (expiresAt) {
-    if (expiresAt < Date.now() / 1000) {
-      localStorage.removeItem(`sb-${SUPABASE_STORAGE_KEY}-auth-token`);
-      return null;
-    }
-  }
 
   const accessToken = oauthToken?.provider_token;
   if (accessToken) {
+    const octokit = new Octokit({ auth: accessToken });
+    const { headers } = await octokit.request("HEAD /");
+    const scopes = headers["x-oauth-scopes"]?.split(", ") || [];
+
+    if (!scopes.includes("notifications")) {
+      throw new Error("Missing the 'notifications' scope. Please re-authorize the application with the correct scopes.");
+    }
+
     return accessToken;
   }
 

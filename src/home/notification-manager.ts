@@ -1,6 +1,6 @@
 import { fetchNotifications } from "./fetch-github/fetch-notifications";
 import { getGitHubAccessToken } from "./getters/get-github-access-token";
-import { setLocalStore, getLocalStore } from "./getters/get-local-store";
+import { getLocalStore, setLocalStore } from "./getters/get-local-store";
 import { GITHUB_NOTIFICATIONS_STORAGE_KEY, GitHubNotification, NotificationStorageItems } from "./github-types";
 
 export class NotificationManager {
