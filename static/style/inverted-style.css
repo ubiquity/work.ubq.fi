@@ -863,166 +863,173 @@
     display: unset;
   }
 
-/* GitHub Notifications Styles */
-#notifications-container {
-  max-width: 640px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  padding: 56px 0;
-  transition: 0.25s all cubic-bezier(0, 1, 1, 1);
-  width: 100%;
-}
+  /* GitHub Notifications Styles */
+  #notifications-container {
+    max-width: 640px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 56px 0;
+    transition: 0.25s all cubic-bezier(0, 1, 1, 1);
+    width: 100%;
+  }
 
-#notifications-container::-webkit-scrollbar {
-  display: none;
-}
+  #notifications-container::-webkit-scrollbar {
+    display: none;
+  }
 
-#notifications-container .notification-element-inner {
-  transition: 125ms opacity ease-out 62.5ms;
-}
+  #notifications-container .notification-element-inner {
+    transition: 125ms opacity ease-out 62.5ms;
+  }
 
-#notifications-container:hover .notification-element-inner {
-  opacity: 0.5;
-}
+  #notifications-container:hover .notification-element-inner {
+    opacity: 0.5;
+  }
 
-#notifications-container.keyboard-selection:hover .notification-element-inner {
-  opacity: 1;
-}
+  #notifications-container.keyboard-selection:hover .notification-element-inner {
+    opacity: 1;
+  }
 
-#notifications-container * {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
+  #notifications-container * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 
-#notifications-container > div {
-  padding: 0 16px;
-  overflow: hidden;
-  background-size: 56px;
-  background-position: 0;
-  background-repeat: no-repeat;
-  opacity: 0.125;
-  margin: 4px;
-  border: 1px solid #7f7f7f20;
-  border-radius: 4px;
-  cursor: pointer;
-  filter: blur(4px);
-  display: block;
-}
-
-#notifications-container > div.selected,
-#notifications-container > div.selected .info,
-#notifications-container > div.selected h3 {
-  opacity: 1;
-}
-
-#notifications-container.keyboard-selection > div.active {
-  opacity: 0.33;
-}
-
-#notifications-container.keyboard-selection > div.active.selected {
-  opacity: 1;
-}
-
-#notifications-container > div.active {
-  transition: 125ms all ease-in-out;
-  opacity: 1;
-  filter: blur(0);
-}
-
-#notifications-container > div:hover {
-  opacity: 1;
-  transition: background-color 0s;
-}
-
-#notifications-container > div:hover .info {
-  opacity: 1;
-}
-
-#notifications-container > div:hover .notification-element-inner {
-  transition: 125ms opacity ease-in-out;
-  opacity: 1;
-}
-
-#notifications-container > div:active {
-  background-color: #7f7f7f40;
-}
-
-#notifications-container h3 {
-  line-height: 1;
-  font-size: 16px;
-  text-overflow: ellipsis;
-  margin: 0;
-  white-space: nowrap;
-}
-
-.notification-element-inner {
-  position: relative;
-  text-align: left;
-  display: flex;
-  padding: 12px 0;
-  align-items: center;
-}
-
-.notification-element-inner .info {
-  opacity: 0.66;
-  transition: 125ms opacity ease-in-out;
-  align-items: center;
-  max-width: calc(100vw - 42px);
-  overflow: hidden;
-  padding-right: 8px;
-}
-
-.notification-element-inner .title > h3 {
-  line-height: 1;
-  font-size: 16px;
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.notification-element-inner .details {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  font-size: 12px;
-  color: #404040;
-}
-
-.notification-element-inner .details p {
-  margin: 0;
-  line-height: 1;
-  letter-spacing: 0.5px;
-  text-rendering: geometricPrecision;
-}
-
-.notification-element-inner .repository-name {
-  font-weight: 600;
-}
-
-.notification-element-inner .notification-type,
-.notification-element-inner .notification-reason {
-  background-color: #7f7f7f20;
-  border-radius: 3px;
-  padding: 2px 5px;
-}
-
-.notification-element-inner .status {
-  margin-top: 8px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-@media screen and (max-width: 1139px) {
-  .notification-element-inner {
+  #notifications-container > div {
+    padding: 0 16px;
+    overflow: hidden;
+    background-size: 56px;
+    background-position: 0;
+    background-repeat: no-repeat;
+    opacity: 0.125;
+    margin: 4px;
+    border: 1px solid #7f7f7f20;
+    border-radius: 4px;
+    cursor: pointer;
+    filter: blur(4px);
     display: block;
   }
 
-  .notification-element-inner .details {
-    margin-top: 4px;
+  #notifications-container > div.selected,
+  #notifications-container > div.selected .info,
+  #notifications-container > div.selected h3 {
+    opacity: 1;
   }
-}
 
+  #notifications-container.keyboard-selection > div.active {
+    opacity: 0.33;
+  }
 
+  #notifications-container.keyboard-selection > div.active.selected {
+    opacity: 1;
+  }
+
+  #notifications-container > div.active {
+    transition: 125ms all ease-in-out;
+    opacity: 1;
+    filter: blur(0);
+  }
+
+  #notifications-container > div:hover {
+    opacity: 1;
+    transition: background-color 0s;
+  }
+
+  #notifications-container > div:hover .info {
+    opacity: 1;
+  }
+
+  #notifications-container > div:hover .notification-element-inner {
+    transition: 125ms opacity ease-in-out;
+    opacity: 1;
+  }
+
+  #notifications-container > div:active {
+    background-color: #7f7f7f40;
+  }
+
+  #notifications-container h3 {
+    line-height: 1;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .notification-element-inner {
+    /* position: relative; */
+    /* text-align: justify; */
+    /* display: flex; */
+    padding: 12px 0;
+    vertical-align: middle;
+  }
+
+  .notification-element-inner .info {
+    opacity: 0.66;
+    transition: 125ms opacity ease-in-out;
+    align-items: center;
+    max-width: calc(100vw - 42px);
+    overflow: hidden;
+    padding-right: 8px;
+    display: inline-block;
+    width: calc(50% - 16px);
+    vertical-align: middle;
+  }
+
+  .notification-element-inner .title > h3 {
+    line-height: 1;
+    font-size: 16px;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .notification-element-inner .details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 12px;
+    color: #404040;
+  }
+
+  .notification-element-inner .details p {
+    margin: 0;
+    line-height: 1;
+    letter-spacing: 0.5px;
+    text-rendering: geometricPrecision;
+  }
+
+  .notification-element-inner .repository-name {
+    font-weight: 600;
+  }
+
+  .notification-element-inner .notification-type,
+  .notification-element-inner .notification-reason {
+    background-color: #7f7f7f20;
+    border-radius: 3px;
+    padding: 2px 5px;
+  }
+
+  .notification-element-inner .status {
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: right;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: 0;
+    width: calc(50% - 16px);
+    vertical-align: middle;
+  }
+
+  @media screen and (max-width: 1139px) {
+    .notification-element-inner {
+      display: block;
+    }
+
+    .notification-element-inner .details {
+      margin-top: 4px;
+    }
+  }
 }

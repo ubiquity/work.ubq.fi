@@ -958,11 +958,11 @@
   }
 
   .notification-element-inner {
-    position: relative;
-    text-align: left;
-    display: flex;
+    /* position: relative; */
+    /* text-align: justify; */
+    /* display: flex; */
     padding: 12px 0;
-    align-items: center;
+    vertical-align: middle;
   }
 
   .notification-element-inner .info {
@@ -972,6 +972,9 @@
     max-width: calc(100vw - 42px);
     overflow: hidden;
     padding-right: 8px;
+    display: inline-block;
+    width: calc(50% - 16px);
+    vertical-align: middle;
   }
 
   .notification-element-inner .title > h3 {
@@ -1012,6 +1015,12 @@
     margin-top: 8px;
     font-size: 12px;
     font-weight: 600;
+    text-align: right;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: 0;
+    width: calc(50% - 16px);
+    vertical-align: middle;
   }
 
   @media screen and (max-width: 1139px) {
