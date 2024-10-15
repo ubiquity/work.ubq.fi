@@ -365,8 +365,6 @@
     opacity: 1;
   }
   #branding {
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
     font-weight: 400;
     text-rendering: geometricPrecision;
   }
@@ -743,16 +741,8 @@
   /* Style the text display */
   #view-toggle-text {
     cursor: pointer;
-    letter-spacing: 1.5px;
     text-rendering: geometricprecision;
-    text-transform: uppercase;
     font-size: 16px;
-  }
-
-  /* Add visual indication for the current view */
-  #view-toggle-text::after {
-    content: " ▼";
-    font-size: 0.8em;
   }
 
   /* Maintain the view-specific display styles */

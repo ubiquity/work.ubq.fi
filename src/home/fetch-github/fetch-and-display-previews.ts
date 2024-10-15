@@ -17,7 +17,7 @@ let currentViewState: ViewState = "directory";
 const radioButtons = [
   document.getElementById("radio-directory") as HTMLInputElement,
   document.getElementById("radio-proposals") as HTMLInputElement,
-  document.getElementById("radio-notifications") as HTMLInputElement
+  document.getElementById("radio-notifications") as HTMLInputElement,
 ];
 
 const viewToggleLabel = document.querySelector('label[for="view-toggle"]') as HTMLLabelElement;
@@ -28,14 +28,13 @@ if (!radioButtons.every(Boolean) || !viewToggleLabel || !viewToggleText) {
 }
 
 function updateView() {
-  const checkedRadio = radioButtons.find(radio => radio.checked);
+  const checkedRadio = radioButtons.find((radio) => radio.checked);
   if (checkedRadio) {
     // Update the text display
-    viewToggleText.textContent = checkedRadio.id.replace('radio-', '').charAt(0).toUpperCase() +
-                                 checkedRadio.id.replace('radio-', '').slice(1);
+    viewToggleText.textContent = checkedRadio.id.replace("radio-", "").charAt(0).toUpperCase() + checkedRadio.id.replace("radio-", "").slice(1);
 
     // Update currentViewState
-    currentViewState = checkedRadio.id.replace('radio-', '') as ViewState;
+    currentViewState = checkedRadio.id.replace("radio-", "") as ViewState;
 
     // Trigger re-rendering of issues
     void displayGitHubIssues();
@@ -43,13 +42,13 @@ function updateView() {
 }
 
 function cycleRadioButtons() {
-  const currentIndex = radioButtons.findIndex(radio => radio.checked);
+  const currentIndex = radioButtons.findIndex((radio) => radio.checked);
   const nextIndex = (currentIndex + 1) % radioButtons.length;
   radioButtons[nextIndex].checked = true;
   updateView();
 }
 
-viewToggleLabel.addEventListener('click', (event) => {
+viewToggleLabel.addEventListener("click", (event) => {
   event.preventDefault(); // Prevent default label behavior
   cycleRadioButtons();
 });
