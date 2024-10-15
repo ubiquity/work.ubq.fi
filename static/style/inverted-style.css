@@ -792,6 +792,11 @@
     0% {
       transform: rotate(0deg);
     }
+
+    75% {
+      transform: rotate(5400deg);
+      border-bottom-color: #000000;
+    }
     100% {
       transform: rotate(7200deg);
       border-color: #000000;
