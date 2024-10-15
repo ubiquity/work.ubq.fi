@@ -152,9 +152,7 @@
     margin: 0;
     white-space: nowrap;
   }
-  #issues-container p {
-    text-align: right;
-  }
+
   p {
     margin: 0;
     line-height: 1;
@@ -186,9 +184,7 @@
     opacity: 0.5;
     display: inline-block;
   }
-  p.repository-name {
-    display: inline-block;
-  }
+
   label:not([for="view-toggle"]):first-child {
     margin-left: 0;
   }
@@ -245,7 +241,16 @@
   .partner {
     bottom: 0;
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
   }
+
+  .info > .partner > * {
+    display: inline-block;
+  }
+
   body {
     display: flex;
     align-items: center;
@@ -257,6 +262,8 @@
     transition: 125ms opacity ease-in-out;
     align-items: center;
     max-width: calc(100vw - 42px);
+    overflow: hidden;
+    padding-right: 8px;
   }
   .title > h3 {
     line-height: 1;
@@ -265,9 +272,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .issue-element-inner > * {
-    max-width: 50%;
-  }
+
   #issues-container > .issue-element-wrapper {
     opacity: 0.5;
     transition: 0.33s all cubic-bezier(0, 1, 1, 1);
@@ -388,6 +393,9 @@
     }
   }
   @media screen and (max-width: 1139px) {
+    .partner {
+      margin-top: 0;
+    }
     .issue-element-inner > * {
       max-width: unset;
     }
@@ -474,7 +482,8 @@
     display: block;
   }
   .preview hr {
-    border-color: #ffffff40;
+    border-width: 0;
+    border-top: 1px solid #80808020;
   }
   .preview p {
     line-height: 1.25;
@@ -566,12 +575,14 @@
     opacity: 1;
     pointer-events: all;
     transform: translateX(50%);
+    overflow: hidden;
   }
   .preview-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 8px 16px;
+    border-bottom: 1px solid #80808020;
   }
   .preview-header > a {
     word-wrap: initial;
@@ -660,6 +671,7 @@
   #bottom-bar {
     top: unset;
     bottom: 0;
+    bottom: env(safe-area-inset-bottom);
     opacity: 1;
     border-top: 1px solid #80808020;
     border-bottom: unset;
@@ -761,7 +773,7 @@
     opacity: 1;
   }
   #bottom-right svg {
-    fill: #ffffff80;
+    fill: #ffffffbf;
   }
   #bottom-right:hover svg {
     fill: #ffffff;
@@ -801,5 +813,9 @@
       transform: rotate(7200deg);
       border-color: #ffffff;
     }
+  }
+  #faq-link > button {
+    background: unset;
+    border:unset
   }
 }
