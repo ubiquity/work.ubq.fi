@@ -261,7 +261,6 @@
     line-height: 1;
     font-size: 16px;
     margin: 0;
-    /* width: 100%; */
     overflow: hidden;
     text-overflow: ellipsis;
   }
