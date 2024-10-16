@@ -24,7 +24,7 @@
   }
   #logo {
     height: 28px;
-    margin-right: 8px;
+    margin-right: 6px;
     vertical-align: middle;
   }
   #authenticated,
@@ -365,10 +365,9 @@
     opacity: 1;
   }
   #branding {
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
     font-weight: 400;
     text-rendering: geometricPrecision;
+    padding: 8px;
   }
   .full {
     display: unset !important;
@@ -735,23 +734,35 @@
     height: 48px;
     background-color: #808080;
   }
-  #view-toggle:checked::after {
-    content: "Proposals";
-    cursor: pointer;
+  /* Hide the radio buttons */
+  input[name="view-toggle"] {
+    display: none;
   }
-  #view-toggle::after {
-    content: "Directory";
-    letter-spacing: 1.5px;
+
+  /* Style the text display */
+  #view-toggle-text {
+    cursor: pointer;
     text-rendering: geometricprecision;
-    text-transform: uppercase;
     font-size: 16px;
   }
-  #view-toggle {
-    appearance: none;
+
+  /* Maintain the view-specific display styles */
+  #radio-directory:checked ~ .directory-view {
+    display: block;
   }
-  label[for="view-toggle"] {
-    margin-left: 8px;
+  #radio-proposals:checked ~ .proposals-view {
+    display: block;
   }
+  #radio-notifications:checked ~ .notifications-view {
+    display: block;
+  }
+
+  .directory-view,
+  .proposals-view,
+  .notifications-view {
+    display: none;
+  }
+
   #bottom-right {
     position: fixed;
     bottom: 4px;
@@ -790,11 +801,11 @@
     animation:
       spin 1.5s cubic-bezier(1, 0, 1, 1) infinite alternate,
       fadeOut 1.5s ease-out 5s forwards;
-    top: calc(50vh - (24px + 2px)); /* 2px to accomodate border width */
+    top: calc(50vh - (24px + 2px)); /* 2px to accommodate border width */
     position: fixed;
     opacity: 1;
     transition: 0.5s all ease-in-out;
-    right: calc(50% - (24px + 2px)); /* 2px to accomodate border width */
+    right: calc(50% - (24px + 2px)); /* 2px to accommodate border width */
 
     pointer-events: none;
   }
@@ -850,5 +861,185 @@
   }
   .preview-active div#mobile-modal-scrub {
     display: unset;
+  }
+
+  /* GitHub Notifications Styles */
+  #notifications-container {
+    max-width: 640px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 56px 0;
+    transition: 0.25s all cubic-bezier(0, 1, 1, 1);
+    width: 100%;
+  }
+
+  #notifications-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  #notifications-container .notification-element-inner {
+    transition: 125ms opacity ease-out 62.5ms;
+  }
+
+  #notifications-container:hover .notification-element-inner {
+    opacity: 0.5;
+  }
+
+  #notifications-container.keyboard-selection:hover .notification-element-inner {
+    opacity: 1;
+  }
+
+  #notifications-container * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  #notifications-container > div {
+    padding: 0 16px;
+    overflow: hidden;
+    background-size: 56px;
+    background-position: 0;
+    background-repeat: no-repeat;
+    opacity: 0.125;
+    margin: 4px;
+    border: 1px solid #80808020;
+    border-radius: 4px;
+    cursor: pointer;
+    filter: blur(4px);
+    display: block;
+  }
+
+  #notifications-container > div.selected,
+  #notifications-container > div.selected .info,
+  #notifications-container > div.selected h3 {
+    opacity: 1;
+  }
+
+  #notifications-container.keyboard-selection > div.active {
+    opacity: 0.33;
+  }
+
+  #notifications-container.keyboard-selection > div.active.selected {
+    opacity: 1;
+  }
+
+  #notifications-container > div.active {
+    transition: 125ms all ease-in-out;
+    opacity: 1;
+    filter: blur(0);
+  }
+
+  #notifications-container > div:hover {
+    opacity: 1;
+    transition: background-color 0s;
+  }
+
+  #notifications-container > div:hover .info {
+    opacity: 1;
+  }
+
+  #notifications-container > div:hover .notification-element-inner {
+    transition: 125ms opacity ease-in-out;
+    opacity: 1;
+  }
+
+  #notifications-container > div:active {
+    background-color: #80808040;
+  }
+
+  #notifications-container h3 {
+    line-height: 1;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .notification-element-inner {
+    /* position: relative; */
+    /* text-align: justify; */
+    /* display: flex; */
+    padding: 12px 0;
+    vertical-align: middle;
+  }
+
+  .notification-element-inner .info {
+    opacity: 0.66;
+    transition: 125ms opacity ease-in-out;
+    align-items: center;
+    max-width: calc(100vw - 42px);
+    overflow: hidden;
+    padding-right: 8px;
+    display: inline-block;
+    width: calc(50% - 16px);
+    vertical-align: middle;
+  }
+
+  .notification-element-inner .title > h3 {
+    line-height: 1;
+    font-size: 16px;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .notification-element-inner .details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 12px;
+    color: #bfbfbf;
+  }
+
+  .notification-element-inner .details p {
+    margin: 0;
+    line-height: 1;
+    letter-spacing: 0.5px;
+    text-rendering: geometricPrecision;
+  }
+
+  .notification-element-inner .repository-name {
+    font-weight: 600;
+  }
+
+  .notification-element-inner .notification-type,
+  .notification-element-inner .notification-reason {
+    background-color: #80808020;
+    border-radius: 3px;
+    padding: 2px 5px;
+  }
+
+  .notification-element-inner .status {
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: right;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: 0;
+    width: calc(50% - 16px);
+    vertical-align: middle;
+  }
+
+  @media screen and (max-width: 1139px) {
+    .notification-element-inner {
+      display: block;
+    }
+
+    .notification-element-inner .details {
+      margin-top: 4px;
+    }
+  }
+
+  .notification-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  svg {
+    fill: currentColor;
   }
 }

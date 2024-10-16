@@ -22,12 +22,6 @@ export function displayPopupMessage({ modalHeader, modalBody, isError, url }: { 
   } else {
     modal.classList.remove("error");
   }
-  console.trace({
-    modalHeader,
-    modalBody,
-    isError,
-    url,
-  });
 }
 
 export function renderErrorInModal(error: Error, info?: string) {

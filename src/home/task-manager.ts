@@ -1,23 +1,24 @@
 import { fetchAvatars } from "./fetch-github/fetch-avatar";
 import { fetchIssues } from "./fetch-github/fetch-issues-full";
 import { getGitHubAccessToken } from "./getters/get-github-access-token";
-import { setLocalStore } from "./getters/get-local-store";
-import { GITHUB_TASKS_STORAGE_KEY, GitHubIssue } from "./github-types";
+import { getLocalStore, setLocalStore } from "./getters/get-local-store";
+import { GITHUB_TASKS_STORAGE_KEY, GitHubIssue, TaskStorageItems } from "./github-types";
+import { initOctokit } from "./rendering/github-notifications/init-octokit";
 
 export class TaskManager {
-  private _tasks: GitHubIssue[] = [];
+  private _tasks: GitHubIssue[];
   private _container: HTMLDivElement;
+  private _octokit = initOctokit();
+
   constructor(container: HTMLDivElement) {
     this._container = container;
+    this._tasks = this._readFromStorage()?.tasks || [];
   }
 
-  // Syncs tasks by fetching issues, writing them to storage and then fetching avatars
   public async syncTasks() {
-    const issues = await fetchIssues();
-
+    const issues = await fetchIssues(await this._octokit);
     this._tasks = issues;
     void this._writeToStorage(issues);
-
     await fetchAvatars();
   }
 
@@ -40,5 +41,9 @@ export class TaskManager {
       tasks: tasks,
       loggedIn: _accessToken !== null,
     });
+  }
+
+  private _readFromStorage() {
+    return getLocalStore(GITHUB_TASKS_STORAGE_KEY) as TaskStorageItems;
   }
 }

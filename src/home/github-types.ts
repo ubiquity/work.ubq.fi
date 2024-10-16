@@ -26,3 +26,13 @@ export type GitHubLabel =
       default?: boolean;
     }
   | string;
+
+export const GITHUB_NOTIFICATIONS_STORAGE_KEY = "gitHubNotifications";
+
+export type NotificationStorageItems = {
+  timestamp: number; // in milliseconds
+  notifications: GitHubNotification[];
+  loggedIn: boolean;
+};
+
+export type GitHubNotification = RestEndpointMethodTypes["activity"]["listNotificationsForAuthenticatedUser"]["response"]["data"][0];
