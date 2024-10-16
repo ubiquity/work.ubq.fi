@@ -1,6 +1,8 @@
 import { taskManager } from "../home";
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
 
+import icons from "./icons/notification-icons";
+
 interface GitHubNotification {
   id: string;
   unread: boolean;
@@ -65,16 +67,36 @@ function createNewNotification({ notification, container }: { notification: GitH
 }
 
 function setUpNotificationElement(notificationElement: HTMLDivElement, notification: GitHubNotification) {
+  let iconHtml;
+  if (notification.subject.type === "PullRequest") {
+    iconHtml = icons.pullRequest;
+  } else if (notification.subject.type === "Issue") {
+    iconHtml = icons.issue;
+  } else if (notification.subject.type === "Release") {
+    iconHtml = icons.release;
+  } else if (notification.subject.type === "Commit") {
+    iconHtml = icons.commit;
+  } else if (notification.subject.type === "Discussion") {
+    iconHtml = icons.discussion;
+  } else {
+    iconHtml = icons.default;
+  }
+
+  const formattedReason = notification.reason.replace(/_/g, ' ');
+
   notificationElement.innerHTML = `
     <div class="info">
-      <div class="title"><h3>${notification.subject.title}</h3></div>
+      <div class="title">
+        ${iconHtml}
+        <h3>${notification.subject.title}</h3>
+      </div>
       <div class="details">
         <p class="repository-name">${notification.repository.full_name}</p>
-        <p class="notification-type">${notification.subject.type}</p>
-        <p class="notification-reason">${notification.reason}</p>
+        <!-- <p class="notification-type">${notification.subject.type}</p> -->
+        <p class="notification-reason">${formattedReason}</p>
       </div>
     </div>
-    <div class="status">${notification.unread ? "Unread" : "Read"}</div>
+    <div class="status">${notification.unread ? "🔵" : ""}</div>
   `;
 
   notificationElement.addEventListener("click", () => {

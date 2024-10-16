@@ -1032,4 +1032,14 @@
       margin-top: 4px;
     }
   }
+
+  .notification-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  svg {
+    fill: currentColor;
+  }
 }
