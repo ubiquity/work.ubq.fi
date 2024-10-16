@@ -1,4 +1,5 @@
 import { getGitHubAccessToken } from "./getters/get-github-access-token";
+import { corsHeaders } from "../../functions/types";
 
 declare const WORKER_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
 
@@ -25,6 +26,7 @@ export async function trackDevRelReferral(devGitHubId: number) {
     const response = await fetch(url, {
       method: "POST",
       headers: {
+        ...corsHeaders,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(accessToken),

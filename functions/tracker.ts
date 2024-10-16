@@ -1,11 +1,5 @@
-import { Env, Context, CustomRequest } from "./types";
+import { Env, Context, CustomRequest, corsHeaders } from "./types";
 import { validatePOST } from "./validators";
-
-export const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
 
 export async function onRequest(ctx: Context): Promise<Response> {
   const { request, env } = ctx;
@@ -14,6 +8,12 @@ export async function onRequest(ctx: Context): Promise<Response> {
 
   try {
     switch (request.method) {
+      case "OPTIONS":
+        return new Response(null, {
+          headers: corsHeaders,
+          status: 204,
+        });
+
       case "POST":
         return await handleSet(url, env, request);
 
