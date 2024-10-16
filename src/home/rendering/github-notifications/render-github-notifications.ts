@@ -20,18 +20,21 @@ export async function renderGitHubNotifications() {
     container.innerHTML = "";
   }
 
-  const processedNotifications = await processNotifications(notifications, octokit);
+  // Filter for unread notifications
+  const unreadNotifications = notifications.filter(notification => !notification.unread);
 
-  console.trace({ processedNotifications });
+  const processedNotifications = await processNotifications(unreadNotifications, octokit);
+
+  // console.trace({ processedNotifications });
 
   const filteredNotifications = processedNotifications.filter(
     (notification): notification is EnrichedGitHubNotification => notification !== null && !notification.isDraft
   );
 
-  console.trace({ filteredNotifications });
+  // console.trace({ filteredNotifications });
 
   const finalNotifications = filteredNotifications.sort((a, b) => calculateNotificationScore(b) - calculateNotificationScore(a));
-  console.trace({ finalNotifications });
+  // console.trace({ finalNotifications });
 
   const existingNotificationIds = new Set(
     Array.from(container.querySelectorAll(".notification-element-inner")).map((element) => element.getAttribute("data-notification-id"))
@@ -59,7 +62,7 @@ export async function renderGitHubNotifications() {
 }
 
 async function processNotifications(notifications: GitHubNotification[], octokit: Octokit): Promise<(EnrichedGitHubNotification | null)[]> {
-  console.trace("processNotifications");
+  // console.trace("processNotifications");
   return Promise.all(
     notifications.map(async (notification) => {
       const isAssociated = await isAssociatedWithTask(notification, octokit);

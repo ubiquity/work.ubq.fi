@@ -55,7 +55,7 @@ export const authenticationElement = document.getElementById("authentication") a
 export function renderGitHubLoginButton() {
   gitHubLoginButton.id = "github-login-button";
   gitHubLoginButton.innerHTML = "<span>Login</span><span class='full'>&nbsp;With GitHub</span>";
-  gitHubLoginButton.addEventListener("click", () => gitHubLoginButtonHandler("public_repo read:org notifications"));
+  gitHubLoginButton.addEventListener("click", () => gitHubLoginButtonHandler("repo read:org notifications"));
   if (authenticationElement) {
     authenticationElement.appendChild(gitHubLoginButton);
     authenticationElement.classList.add("ready");

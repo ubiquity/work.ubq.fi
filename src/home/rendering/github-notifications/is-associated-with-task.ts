@@ -16,19 +16,26 @@ type GraphQlTaskResponse = {
 
 export async function isAssociatedWithTask(notification: GitHubNotification, octokit: Octokit): Promise<boolean> {
   if (notification.subject.type === "Issue") {
-    // Have to load it because devpool-issues.json doesn't show assigned tasks.
-    // If they are working on it then they should be assigned.
-    // @TODO: load all issues, even if assigned, in the directory. This will save network requests from the client.
+    const owner = notification.repository.owner.login;
+    const repo = notification.repository.name;
+    const issueNumber = parseInt(notification.subject.url.split("/").pop() || "0", 10);
 
-    const issueLabels = await octokit.issues.listLabelsOnIssue({
-      owner: notification.repository.owner.login,
-      repo: notification.repository.name,
-      issue_number: parseInt(notification.subject.url.split("/").pop() || "0", 10),
-    });
+    try {
+      const issueLabels = await octokit.issues.listLabelsOnIssue({
+        owner,
+        repo,
+        issue_number: issueNumber,
+      });
 
-    const hasPriceLabel = issueLabels.data.some((label) => label.name.startsWith("Price: "));
-    if (hasPriceLabel) {
-      return true;
+      const hasPriceLabel = issueLabels.data.some((label) => label.name.startsWith("Price: "));
+      return hasPriceLabel;
+    } catch (error) {
+      console.error("Error fetching issue labels:", error);
+      if (error.status === 404) {
+        console.error("404 Not Found. This could mean the issue doesn't exist or the authenticated user doesn't have access.");
+      }
+      // If we can't fetch the labels, we'll assume it's not associated with a task
+      return false;
     }
   } else if (notification.subject.type === "PullRequest") {
     try {
@@ -77,16 +84,19 @@ export async function isAssociatedWithTask(notification: GitHubNotification, oct
 
       const response: GraphQlTaskResponse = await octokit.graphql(query, variables);
 
-      const linkedItems = response.repository.pullRequest.timelineItems.nodes;
+      const linkedItems = response.repository.pullRequest.timelineItems.nodes.filter(Boolean);
 
       for (const item of linkedItems) {
         const labels = item.subject?.labels?.nodes || item.source?.labels?.nodes;
-        if (labels && labels.some((label) => label.name.toLowerCase().startsWith("priority: "))) {
+        if (labels && labels.some((label) => label.name.startsWith("Price: "))) {
           return true;
         }
       }
     } catch (error) {
-      console.error("Error checking linked issues for priority labels:", error);
+      console.error("Error checking linked issues for price labels:", error);
+      if (error.status === 404) {
+        console.error("404 Not Found. This could mean the repository is private and the authenticated user doesn't have access.");
+      }
     }
   }
   return false;

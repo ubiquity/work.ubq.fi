@@ -19,7 +19,6 @@ export function setUpNotificationElement(notificationElement: HTMLDivElement, no
   }
 
   const formattedReason = notification.reason.replace(/_/g, " ");
-
   notificationElement.innerHTML = `
     <div class="info">
       <div class="title">
@@ -28,12 +27,12 @@ export function setUpNotificationElement(notificationElement: HTMLDivElement, no
       </div>
       <div class="details">
         <p class="repository-name">${notification.repository.full_name}</p>
-        <!-- <p class="notification-type">${notification.subject.type}</p> -->
         <p class="notification-reason">${formattedReason}</p>
       </div>
     </div>
     <div class="status">${notification.unread ? "🔵" : ""}</div>
   `;
+
 
   notificationElement.addEventListener("click", () => {
     try {
