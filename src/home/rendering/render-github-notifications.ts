@@ -82,7 +82,7 @@ function setUpNotificationElement(notificationElement: HTMLDivElement, notificat
     iconHtml = icons.default;
   }
 
-  const formattedReason = notification.reason.replace(/_/g, ' ');
+  const formattedReason = notification.reason.replace(/_/g, " ");
 
   notificationElement.innerHTML = `
     <div class="info">

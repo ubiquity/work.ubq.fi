@@ -43,6 +43,7 @@ void (async function home() {
   if ("serviceWorker" in navigator) {
     registerServiceWorker();
   }
+  await notificationManager.loadNotificationsFromStorage();
   await notificationManager.syncNotifications(); // Sync notifications on load
   const notifications = notificationManager.getNotifications();
   console.trace(notifications);
