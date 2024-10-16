@@ -1,4 +1,4 @@
-import { getGitHubAccessToken } from "./getters/get-github-access-token";
+import { checkSupabaseSession } from "./rendering/render-github-login-button";
 
 declare const WORKER_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
 
@@ -20,14 +20,14 @@ export async function trackDevRelReferral(devGitHubId: number) {
   if (devRelCode && devRelCode != "done") {
     const url = `${WORKER_URL}/tracker?key=${encodeURIComponent(devGitHubId)}&value=${encodeURIComponent(devRelCode)}`;
 
-    const accessToken = await getGitHubAccessToken();
+    const authToken = await checkSupabaseSession();
 
     const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(accessToken),
+      body: JSON.stringify(authToken),
     });
 
     if (response.status === 200) {
