@@ -21,7 +21,7 @@ export async function renderGitHubNotifications() {
   }
 
   // Filter for unread notifications
-  const unreadNotifications = notifications.filter(notification => !notification.unread);
+  const unreadNotifications = notifications.filter((notification) => !notification.unread);
 
   const processedNotifications = await processNotifications(unreadNotifications, octokit);
 

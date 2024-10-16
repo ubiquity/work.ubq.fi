@@ -33,7 +33,6 @@ export function setUpNotificationElement(notificationElement: HTMLDivElement, no
     <div class="status">${notification.unread ? "🔵" : ""}</div>
   `;
 
-
   notificationElement.addEventListener("click", () => {
     try {
       const notificationWrapper = notificationElement.parentElement;
