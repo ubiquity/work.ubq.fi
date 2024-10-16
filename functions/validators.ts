@@ -1,18 +1,33 @@
 import { CustomRequest } from "./types";
 import { OAuthToken } from "../src/home/getters/get-github-access-token";
+import { Octokit } from "@octokit/rest";
 
 export async function validatePOST(url: URL, request: CustomRequest): Promise<boolean> {
   try {
     const jsonData: unknown = await request.json();
-
     const authToken = jsonData as OAuthToken;
 
-    const githubUserId = authToken?.user?.id;
+    const providerToken = authToken?.provider_token;
 
-    const key = url.searchParams.get("key");
+    if (providerToken) {
+      const octokit = new Octokit({ auth: providerToken });
 
-    if (githubUserId && githubUserId == key) {
-      return true;
+      try {
+        await octokit.request("GET /user");
+
+        const githubUserId = authToken?.user?.user_metadata?.provider_id;
+
+        const key = url.searchParams.get("key");
+
+        if (githubUserId && githubUserId === key) {
+          return true;
+        }
+
+        return false;
+      } catch (error) {
+        console.error("User is not logged in");
+        return false;
+      }
     }
     return false;
   } catch (error) {
