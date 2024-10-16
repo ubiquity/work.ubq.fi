@@ -1,4 +1,5 @@
-import { Env, Context } from "./types";
+import { Env, Context, CustomRequest } from "./types";
+import { validatePOST } from "./validators";
 
 export const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,7 +13,7 @@ export async function onRequest(ctx: Context): Promise<Response> {
   try {
     switch (request.method) {
       case "POST":
-        return await handleSet(url, env);
+        return await handleSet(url, env, request);
 
       case "GET":
         if (url.searchParams.has("key")) {
@@ -37,11 +38,20 @@ export async function onRequest(ctx: Context): Promise<Response> {
   }
 }
 
-async function handleSet(url: URL, env: Env): Promise<Response> {
+async function handleSet(url: URL, env: Env, request: CustomRequest): Promise<Response> {
   const key = url.searchParams.get("key");
   const value = url.searchParams.get("value");
 
   if (key && value) {
+    const isValid = await validatePOST(url, request);
+
+    if (!isValid) {
+      return new Response("Unauthorized", {
+        headers: corsHeaders,
+        status: 400,
+      });
+    }
+
     await env.userToReferral.put(key, value);
     return new Response(`Key '${key}' added with value '${value}'`, {
       headers: corsHeaders,

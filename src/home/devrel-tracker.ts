@@ -1,3 +1,5 @@
+import { getGitHubAccessToken } from "./getters/get-github-access-token";
+
 declare const WORKER_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
 
 export function initiateDevRelTracking() {
@@ -18,8 +20,14 @@ export async function trackDevRelReferral(devGitHubId: number) {
   if (devRelCode && devRelCode != "done") {
     const url = `${WORKER_URL}/tracker?key=${encodeURIComponent(devGitHubId)}&value=${encodeURIComponent(devRelCode)}`;
 
+    const accessToken = await getGitHubAccessToken();
+
     const response = await fetch(url, {
-        method: 'POST',
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(accessToken),
     });
 
     if (response.status === 200) {
