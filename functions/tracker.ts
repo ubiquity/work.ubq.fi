@@ -3,6 +3,8 @@ import { validatePOST } from "./validators";
 
 export const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
 };
 
 export async function onRequest(ctx: Context): Promise<Response> {
