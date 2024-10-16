@@ -1,4 +1,4 @@
-import { Octokit } from '@octokit/rest';
+import { Octokit } from "@octokit/rest";
 import { GitHubIssue } from "../github-types";
 export const organizationImageCache = new Map<string, Blob | null>(); // this should be declared in image related script
 
@@ -7,14 +7,14 @@ export const organizationImageCache = new Map<string, Blob | null>(); // this sh
 
 export async function fetchIssues(octokit: Octokit): Promise<GitHubIssue[]> {
   const { data } = await octokit.repos.getContent({
-    owner: 'ubiquity',
-    repo: 'devpool-directory',
-    path: 'devpool-issues.json',
-    ref: 'development'
+    owner: "ubiquity",
+    repo: "devpool-directory",
+    path: "devpool-issues.json",
+    ref: "development",
   });
 
-  if (!('content' in data)) {
-    throw new Error('Content not found in the response');
+  if (!("content" in data)) {
+    throw new Error("Content not found in the response");
   }
 
   const decodedContent = atob(data.content);

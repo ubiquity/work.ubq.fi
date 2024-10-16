@@ -1,5 +1,5 @@
 import { initOctokit } from "./init-octokit";
-import { GitHubNotification } from '../../github-types';
+import { GitHubNotification } from "../../github-types";
 
 export async function checkIfDraftPullRequest(notification: GitHubNotification): Promise<boolean> {
   try {

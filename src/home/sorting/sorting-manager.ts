@@ -17,7 +17,6 @@ export class SortingManager {
     this._instanceId = instanceId;
     this._filterTextBox = this._generateFilterTextBox();
     this._sortingButtons = this._generateSortingButtons(sortingOptions);
-
   }
 
   public render() {
@@ -119,7 +118,6 @@ export class SortingManager {
     } catch (error) {
       renderErrorCatch(error as ErrorEvent);
     }
-
   }
 }
 
