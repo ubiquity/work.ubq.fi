@@ -17,6 +17,7 @@ export class SortingManager {
     this._instanceId = instanceId;
     this._filterTextBox = this._generateFilterTextBox();
     this._sortingButtons = this._generateSortingButtons(sortingOptions);
+
   }
 
   public render() {
@@ -118,13 +119,7 @@ export class SortingManager {
     } catch (error) {
       renderErrorCatch(error as ErrorEvent);
     }
-    // load from network in the background
-    // const fetchedPreviews = await fetchIssuePreviews();
-    // const cachedTasks = taskManager.getTasks();
-    // const updatedCachedIssues = verifyGitHubIssueState(cachedTasks, fetchedPreviews);
-    // displayGitHubIssues(sorting, options);
-    // taskManager.syncTasks(updatedCachedIssues);
-    // return fetchAvatars();
+
   }
 }
 

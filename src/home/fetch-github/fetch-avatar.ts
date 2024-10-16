@@ -1,10 +1,9 @@
-import { Octokit } from "@octokit/rest";
-import { getGitHubAccessToken } from "../getters/get-github-access-token";
 import { getImageFromCache, saveImageToCache } from "../getters/get-indexed-db";
-import { renderErrorInModal } from "../rendering/display-popup-modal";
-import { organizationImageCache } from "./fetch-issues-full";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
+import { renderErrorInModal } from "../rendering/display-popup-modal";
+import { initOctokit } from "../rendering/github-notifications/init-octokit";
+import { organizationImageCache } from "./fetch-issues-full";
 
 // Map to track ongoing avatar fetches
 const pendingFetches: Map<string, Promise<Blob | void>> = new Map();
@@ -32,7 +31,7 @@ export async function fetchAvatar(orgName: string): Promise<Blob | void> {
       return avatarBlob;
     }
 
-    const octokit = new Octokit({ auth: await getGitHubAccessToken() });
+    const octokit = await initOctokit();
 
     // Step 2: No avatar in IndexedDB, fetch from GitHub
     try {

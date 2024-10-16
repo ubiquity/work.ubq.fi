@@ -1,4 +1,15 @@
 {
   "version": "0.2",
-  "words": ["devpool", "octocat", "ratelimit", "supabase", "UBIQUIBOT"]
+  "words": [
+    "devpool",
+    "issuecomment",
+    "octocat",
+    "ratelimit",
+    "supabase",
+    "UBIQUIBOT"
+  ],
+  "ignorePaths": [
+    "**/*.js",
+    "**/*.json"
+  ]
 }

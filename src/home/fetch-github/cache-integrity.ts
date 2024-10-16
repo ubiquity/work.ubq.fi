@@ -7,6 +7,10 @@ export async function checkCacheIntegrityAndSyncTasks() {
 
   // if there are no cached tasks, or timestamp is invalid, or tasks were cached over 15 minutes ago resync tasks
   if (!_cachedTasks || !_cachedTasks.timestamp || _cachedTasks.timestamp + 60 * 1000 * 15 <= Date.now()) {
-    await taskManager.syncTasks();
+    if (taskManager) {
+      await taskManager.syncTasks();
+    } else {
+      console.trace("TaskManager not found in global scope");
+    }
   }
 }

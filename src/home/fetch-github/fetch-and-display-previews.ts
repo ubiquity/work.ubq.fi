@@ -1,12 +1,12 @@
 import { GitHubIssue } from "../github-types";
-import { notificationManager, taskManager } from "../home";
+import { taskManager } from "../home";
 import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-github-issues";
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
 import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity";
 
 // import NOTIFICATIONS_EXAMPLE from "./fixtures/notifications-example";
-import { renderGitHubNotifications } from "../rendering/render-github-notifications";
+import { renderGitHubNotifications } from "../rendering/github-notifications/render-github-notifications";
 
 export type Options = {
   ordering: "normal" | "reverse";
@@ -33,13 +33,8 @@ if (!radioButtons.every(Boolean) || !viewToggleLabel || !viewToggleText) {
 function updateView() {
   const checkedRadio = radioButtons.find((radio) => radio.checked);
   if (checkedRadio) {
-    // Update the text display
     viewToggleText.textContent = checkedRadio.id.replace("radio-", "").charAt(0).toUpperCase() + checkedRadio.id.replace("radio-", "").slice(1);
-
-    // Update currentViewState
     currentViewState = checkedRadio.id.replace("radio-", "") as ViewState;
-
-    // Trigger re-rendering of issues
     void displayGitHubIssues();
   }
 }
@@ -57,7 +52,7 @@ viewToggleLabel.addEventListener("click", (event) => {
 });
 
 // Initialize the view
-updateView();
+// updateView();
 
 function getViewFilter(viewState: ViewState) {
   return (issue: GitHubIssue) => {
@@ -84,14 +79,11 @@ function getViewFilter(viewState: ViewState) {
 
 // checks the cache's integrity, sorts issues, applies view filter, renders them and applies avatars
 export async function displayGitHubIssues(sorting?: Sorting, options = { ordering: "normal" }) {
-  await checkCacheIntegrityAndSyncTasks();
+  await checkCacheIntegrityAndSyncTasks().catch(console.error);
   const cachedTasks = taskManager.getTasks();
   const sortedIssues = sortIssuesController(cachedTasks, sorting, options);
-
   if (currentViewState === "notifications") {
-    console.trace("Notification view time");
-    const notifications = notificationManager.getNotifications();
-    renderGitHubNotifications(notifications);
+    await renderGitHubNotifications();
   } else {
     const filteredIssues = sortedIssues.filter(getViewFilter(currentViewState));
     renderGitHubIssues(filteredIssues);

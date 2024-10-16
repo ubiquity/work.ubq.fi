@@ -1,5 +1,5 @@
 declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
-import { Octokit } from "@octokit/rest";
+import { initOctokit } from "../rendering/github-notifications/init-octokit";
 import { checkSupabaseSession } from "../rendering/render-github-login-button";
 import { getLocalStore } from "./get-local-store";
 
@@ -7,7 +7,7 @@ import { getLocalStore } from "./get-local-store";
  * Checks if the logged-in user is part of Ubiquity's Org, and didn't grant the 'repo' scope
  */
 export async function isOrgMemberWithoutScope() {
-  const octokit = new Octokit({ auth: await getGitHubAccessToken() });
+  const octokit = await initOctokit();
   try {
     await octokit.orgs.getMembershipForAuthenticatedUser({
       org: "ubiquity",
@@ -28,20 +28,10 @@ export async function isOrgMemberWithoutScope() {
 
 export async function getGitHubAccessToken(): Promise<string | null> {
   const oauthToken = await checkSupabaseSession();
-
   const accessToken = oauthToken?.provider_token;
   if (accessToken) {
-    const octokit = new Octokit({ auth: accessToken });
-    const { headers } = await octokit.request("HEAD /");
-    const scopes = headers["x-oauth-scopes"]?.split(", ") || [];
-
-    if (!scopes.includes("notifications")) {
-      throw new Error("Missing the 'notifications' scope. Please re-authorize the application with the correct scopes.");
-    }
-
     return accessToken;
   }
-
   return null;
 }
 
