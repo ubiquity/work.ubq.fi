@@ -37,12 +37,14 @@ export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
     window.location.reload();
   });
 
+  containerDivElement.appendChild(authenticatedDivElement);
+
   if (await isOrgMemberWithoutScope()) {
     const accessButton = renderAugmentAccessButton();
-    containerDivElement.appendChild(accessButton);
+    authenticatedDivElement.appendChild(accessButton);
   }
 
-  authenticationElement.appendChild(authenticatedDivElement);
+  authenticationElement.appendChild(containerDivElement);
   toolbar.setAttribute("data-authenticated", "true");
   toolbar.classList.add("ready");
 }
