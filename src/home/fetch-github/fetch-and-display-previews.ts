@@ -1,9 +1,9 @@
-import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-github-issues";
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
+import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity";
 
 export type Options = {
   ordering: "normal" | "reverse";
