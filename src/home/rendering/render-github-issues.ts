@@ -159,7 +159,7 @@ function updateUrlWithIssueId(issueID: number) {
   const newURL = new URL(window.location.href);
   newURL.searchParams.set("issue", String(issueID));
 
-  if(isProposalOnlyViewer){
+  if (isProposalOnlyViewer) {
     newURL.searchParams.set("proposal", "true");
   }
 

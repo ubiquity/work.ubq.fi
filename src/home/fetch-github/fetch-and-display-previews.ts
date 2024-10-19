@@ -15,7 +15,7 @@ export let isProposalOnlyViewer = new URLSearchParams(window.location.search).ge
 
 export const viewToggle = document.getElementById("view-toggle") as HTMLInputElement;
 
-if(isProposalOnlyViewer){
+if (isProposalOnlyViewer) {
   viewToggle.checked = true;
 }
 
