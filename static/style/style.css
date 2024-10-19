@@ -373,7 +373,7 @@
   .full {
     display: unset !important;
   }
-  @media screen and (max-width: 560px) {
+  @media screen and (max-width: 967px) {
     #bottom-right {
       display: none;
     }
