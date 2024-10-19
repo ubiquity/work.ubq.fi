@@ -33,6 +33,10 @@ export async function trackDevRelReferral() {
 
     if (response.status === 200) {
       localStorage.setItem("devRel", "done");
+
+      const newURL = new URL(window.location.href);
+      newURL.searchParams.delete("ref");
+      window.history.pushState({}, "", newURL.toString());
     } else {
       console.error(`Failed to set referral. Status: ${response.status}`);
     }
