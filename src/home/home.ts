@@ -2,6 +2,7 @@ import { grid } from "../the-grid";
 import { authentication } from "./authentication";
 import { initiateDevRelTracking } from "./devrel-tracker";
 import { displayGitHubIssues } from "./fetch-github/fetch-and-display-previews";
+import { postLoadUpdateIssues } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
 import { registerServiceWorker } from "./register-service-worker";
 import { renderServiceMessage } from "./render-service-message";
@@ -36,7 +37,8 @@ export const taskManager = new TaskManager(container);
 void (async function home() {
   void authentication();
   void readyToolbar();
-  await taskManager.syncTasks(); // Sync tasks on load
+  await taskManager.syncTasks(); // Sync tasks from cache on load
+  await postLoadUpdateIssues(); // Update cache and issues if cache is outdated
   void displayGitHubIssues();
   if ("serviceWorker" in navigator) {
     registerServiceWorker();

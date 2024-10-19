@@ -1,4 +1,6 @@
-// this file contains functions to save and retrieve images from IndexedDB which is client-side in-browser storage
+import { GitHubIssue } from "../github-types";
+
+// this file contains functions to save and retrieve issues/images from IndexedDB which is client-side in-browser storage
 export async function saveImageToCache({
   dbName,
   storeName,
@@ -67,5 +69,51 @@ export function getImageFromCache({ dbName, storeName, orgName }: { dbName: stri
         reject("Error retrieving image from DB: " + errorEventTarget.error?.message);
       };
     };
+  });
+}
+
+async function openIssuesDB(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("IssuesDB", 2);
+
+    request.onupgradeneeded = (event) => {
+      const db = (event.target as IDBOpenDBRequest).result;
+      if (!db.objectStoreNames.contains("issues")) {
+        db.createObjectStore("issues", { keyPath: "id" });
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+// Saves fetched issues into IndexedDB
+export async function saveIssuesToCache(issues: GitHubIssue[]): Promise<void> {
+  const db = await openIssuesDB();
+  const transaction = db.transaction("issues", "readwrite");
+  const store = transaction.objectStore("issues");
+
+  for (const issue of issues) {
+    store.put(issue); // Add or update issue
+  }
+
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
+
+// Retrieves issues from IndexedDB
+export async function getIssuesFromCache(): Promise<GitHubIssue[]> {
+  const db = await openIssuesDB();
+  const transaction = db.transaction("issues", "readonly");
+  const store = transaction.objectStore("issues");
+
+  return new Promise((resolve, reject) => {
+    const request = store.getAll();
+
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject(request.error);
   });
 }
