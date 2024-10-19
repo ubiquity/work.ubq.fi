@@ -6,6 +6,7 @@ import { readyToolbar } from "./ready-toolbar";
 import { registerServiceWorker } from "./register-service-worker";
 import { renderServiceMessage } from "./render-service-message";
 import { renderErrorInModal } from "./rendering/display-popup-modal";
+import { loadIssueFromURL } from "./rendering/render-github-issues";
 import { renderGitRevision } from "./rendering/render-github-login-button";
 import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { TaskManager } from "./task-manager";
@@ -38,6 +39,7 @@ void (async function home() {
   void readyToolbar();
   await taskManager.syncTasks(); // Sync tasks on load
   void displayGitHubIssues();
+  loadIssueFromURL();
   if ("serviceWorker" in navigator) {
     registerServiceWorker();
   }
