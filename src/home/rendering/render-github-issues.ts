@@ -163,7 +163,7 @@ function updateURLWithIssueID(issueID: number) {
 }
 
 // Opens the preview modal if a URL contains an issueID
-export function loadIssueFromURL(){
+export function loadIssueFromURL() {
   const urlParams = new URLSearchParams(window.location.search);
   const issueID = urlParams.get("issue");
 
@@ -174,7 +174,7 @@ export function loadIssueFromURL(){
   }
 
   // If ID doesn't exist, don't load issue
-  const issue : GitHubIssue = taskManager.getGitHubIssueById(Number(issueID)) as GitHubIssue;
+  const issue: GitHubIssue = taskManager.getGitHubIssueById(Number(issueID)) as GitHubIssue;
   if (!issue) {
     const newURL = new URL(window.location.href);
     newURL.searchParams.delete("issue");
