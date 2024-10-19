@@ -34,7 +34,7 @@ describe("DevPool", () => {
     beforeEach(() => {
       // Very important to make sure we don't store data between tests
       cy.clearLocalStorage();
-      cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/refs/heads/development/devpool-issues.json", (req) => {
+      cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
         req.reply({
           statusCode: 200,
           body: [issue1, issue2],
@@ -95,7 +95,7 @@ describe("DevPool", () => {
     });
 
     it("Main page shouldn't display invalid issue", () => {
-      cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/refs/heads/development/devpool-issues.json", (req) => {
+      cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
         req.reply({
           statusCode: 200,
           body: [issue1, issue2, invalidIssue],
