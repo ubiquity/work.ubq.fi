@@ -38,8 +38,8 @@ void (async function home() {
   void authentication();
   void readyToolbar();
   await taskManager.syncTasks(); // Sync tasks from cache on load
-  await postLoadUpdateIssues(); // Update cache and issues if cache is outdated
   void displayGitHubIssues();
+  await postLoadUpdateIssues(); // Update cache and issues if cache is outdated
   if ("serviceWorker" in navigator) {
     registerServiceWorker();
   }
