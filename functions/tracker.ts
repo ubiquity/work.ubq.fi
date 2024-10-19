@@ -1,5 +1,6 @@
-import { Env, Context, CustomRequest } from "./types";
+import { Env, Context } from "./types";
 import { validatePOST } from "./validators";
+import { Request } from "@cloudflare/workers-types";
 
 export const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -46,7 +47,7 @@ export async function onRequest(ctx: Context): Promise<Response> {
   }
 }
 
-async function handleSet(env: Env, request: CustomRequest): Promise<Response> {
+async function handleSet(env: Env, request: Request): Promise<Response> {
   const result = await validatePOST(request);
 
   if (!result.isValid || !result.githubUserId || !result.referralCode) {
