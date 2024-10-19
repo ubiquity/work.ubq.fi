@@ -1,7 +1,5 @@
 import { checkSupabaseSession } from "./rendering/render-github-login-button";
 
-declare const WORKER_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
-
 export function initiateDevRelTracking() {
   const oldDevRelCode = localStorage.getItem("devRel");
   if (!oldDevRelCode) {
@@ -18,9 +16,9 @@ export async function trackDevRelReferral() {
 
   // key: user_id (devGitHubId), value: referral_id (devRelCode)
   if (devRelCode && devRelCode != "done") {
-    const url = `${WORKER_URL}/tracker`;
+    const url = "/tracker";
 
-    const authToken = await checkSupabaseSession();
+    const supabaseAuth = await checkSupabaseSession();
 
     const response = await fetch(url, {
       method: "POST",
@@ -28,7 +26,7 @@ export async function trackDevRelReferral() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        authToken: authToken,
+        authToken: supabaseAuth.provider_token,
         referralCode: devRelCode,
       }),
     });
