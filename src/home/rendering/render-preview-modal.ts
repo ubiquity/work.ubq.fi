@@ -43,8 +43,13 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-function closeModal() {
+export function closeModal() {
   modal.classList.remove("active");
   document.body.classList.remove("preview-active");
   issuesContainer?.classList.remove("keyboard-selection");
+
+  const newURL = new URL(window.location.href);
+  newURL.searchParams.delete("issue");
+  console.log("p");
+  window.history.pushState({}, "", newURL.toString());
 }
