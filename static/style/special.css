@@ -32,9 +32,15 @@
   .grid-loaded #bottom-bar {
     background-color: var(--dark-background-half);
   }
+  #issues-container::after {
+    filter: blur(0px) drop-shadow(0 0 8px #fff);
+  }
 }
 
 @media (prefers-color-scheme: light) {
+  #issues-container::after {
+    filter: blur(0px);
+  }
   #issues-container > div,
   .preview > .preview-content {
     box-shadow: inset 0 0 24px #00000008;
