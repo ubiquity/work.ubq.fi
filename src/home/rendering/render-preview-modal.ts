@@ -50,6 +50,6 @@ export function closeModal() {
 
   const newURL = new URL(window.location.href);
   newURL.searchParams.delete("issue");
-  console.log("p");
-  window.history.pushState({}, "", newURL.toString());
+  newURL.searchParams.delete("proposal");
+  window.history.replaceState({}, "", newURL.toString());
 }
