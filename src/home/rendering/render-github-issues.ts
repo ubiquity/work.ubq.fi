@@ -3,7 +3,7 @@ import { organizationImageCache } from "../fetch-github/fetch-issues-full";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { renderErrorInModal } from "./display-popup-modal";
-import { modal, modalBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
+import { closeModal, modal, modalBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
 
 export function renderGitHubIssues(tasks: GitHubIssue[]) {
@@ -149,6 +149,40 @@ export function viewIssueDetails(full: GitHubIssue) {
   modal.classList.add("active");
   modal.classList.remove("error");
   document.body.classList.add("preview-active");
+
+  updateURLWithIssueID(full.id);
+}
+
+// Adds issue ID to url in format (i.e http://localhost:8080/?issue=2559612103)
+function updateURLWithIssueID(issueID: number) {
+  const newURL = new URL(window.location.href);
+  newURL.searchParams.set("issue", String(issueID));
+
+  // Push to history
+  window.history.pushState({ issueID }, "", newURL.toString());
+}
+
+// Opens the preview modal if a URL contains an issueID
+export function loadIssueFromURL(){
+  const urlParams = new URLSearchParams(window.location.search);
+  const issueID = urlParams.get("issue");
+
+  // If no issue ID in the URL, don't load issue
+  if (!issueID) {
+    closeModal();
+    return;
+  }
+
+  // If ID doesn't exist, don't load issue
+  const issue : GitHubIssue = taskManager.getGitHubIssueById(Number(issueID)) as GitHubIssue;
+  if (!issue) {
+    const newURL = new URL(window.location.href);
+    newURL.searchParams.delete("issue");
+    window.history.pushState({}, "", newURL.toString());
+    return;
+  }
+
+  viewIssueDetails(issue);
 }
 
 export function applyAvatarsToIssues() {
