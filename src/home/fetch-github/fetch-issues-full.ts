@@ -18,7 +18,7 @@ export async function postLoadUpdateIssues() {
     const cachedIssues = taskManager.getTasks();
     const fetchedIssues = await fetchIssues();
 
-    if(issuesAreDifferent(cachedIssues, fetchedIssues)) {
+    if (issuesAreDifferent(cachedIssues, fetchedIssues)) {
       console.log("Issues are different, updating cache");
       await saveIssuesToCache(fetchedIssues);
       await taskManager.syncTasks();
