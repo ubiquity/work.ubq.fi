@@ -1,37 +1,43 @@
-import { CustomRequest } from "./types";
-import { OAuthToken } from "../src/home/getters/get-github-access-token";
+import { CustomRequest, POSTRequestBody, ValidationResult } from "./types";
 import { Octokit } from "@octokit/rest";
 
-export async function validatePOST(url: URL, request: CustomRequest): Promise<boolean> {
+export async function validatePOST(request: CustomRequest): Promise<ValidationResult> {
   try {
-    const jsonData: unknown = await request.json();
-    const authToken = jsonData as OAuthToken;
+    const jsonData: POSTRequestBody = await request.json();
 
-    const providerToken = authToken?.provider_token;
+    const { authToken, referralCode } = jsonData;
 
-    if (providerToken) {
-      const octokit = new Octokit({ auth: providerToken });
-
-      try {
-        await octokit.request("GET /user");
-
-        const githubUserId = authToken?.user?.user_metadata?.provider_id;
-
-        const key = url.searchParams.get("key");
-
-        if (githubUserId && githubUserId === key) {
-          return true;
-        }
-
-        return false;
-      } catch (error) {
-        console.error("User is not logged in");
-        return false;
-      }
+    if (!authToken || !referralCode) {
+      console.error("Missing authToken or referralCode");
+      return { isValid: false };
     }
-    return false;
+
+    const providerToken = authToken.provider_token;
+
+    if (!providerToken) {
+      console.error("Missing provider token");
+      return { isValid: false };
+    }
+
+    const octokit = new Octokit({ auth: providerToken });
+
+    try {
+      await octokit.request("GET /user");
+
+      const githubUserId = authToken.user?.user_metadata?.provider_id;
+
+      if (githubUserId) {
+        return { isValid: true, githubUserId: githubUserId, referralCode: referralCode };
+      } else {
+        console.error("Missing GitHub user ID");
+        return { isValid: false };
+      }
+    } catch (error) {
+      console.error("User is not logged in");
+      return { isValid: false };
+    }
   } catch (error) {
     console.error("Invalid JSON");
-    return false;
+    return { isValid: false };
   }
 }

@@ -13,12 +13,12 @@ export function initiateDevRelTracking() {
   }
 }
 
-export async function trackDevRelReferral(devGitHubId: number) {
+export async function trackDevRelReferral() {
   const devRelCode = localStorage.getItem("devRel");
 
   // key: user_id (devGitHubId), value: referral_id (devRelCode)
   if (devRelCode && devRelCode != "done") {
-    const url = `${WORKER_URL}/tracker?key=${encodeURIComponent(devGitHubId)}&value=${encodeURIComponent(devRelCode)}`;
+    const url = `${WORKER_URL}/tracker`;
 
     const authToken = await checkSupabaseSession();
 
@@ -27,7 +27,10 @@ export async function trackDevRelReferral(devGitHubId: number) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(authToken),
+      body: JSON.stringify({
+        authToken: authToken,
+        referralCode: devRelCode,
+      }),
     });
 
     if (response.status === 200) {

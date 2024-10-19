@@ -21,12 +21,12 @@ export async function onRequest(ctx: Context): Promise<Response> {
         });
 
       case "POST":
-        return await handleSet(url, env, request);
+        return await handleSet(env, request);
 
       case "GET":
         if (url.searchParams.has("key")) {
-          const keyParam = url.searchParams.get("key") as string;
-          return await handleGet(keyParam, env);
+          const key = url.searchParams.get("key") as string;
+          return await handleGet(key, env);
         } else {
           return await handleList(env);
         }
@@ -46,55 +46,51 @@ export async function onRequest(ctx: Context): Promise<Response> {
   }
 }
 
-async function handleSet(url: URL, env: Env, request: CustomRequest): Promise<Response> {
-  const key = url.searchParams.get("key");
-  const value = url.searchParams.get("value");
+async function handleSet(env: Env, request: CustomRequest): Promise<Response> {
+  const result = await validatePOST(request);
 
-  if (key && value) {
-    const isValid = await validatePOST(url, request);
-
-    if (!isValid) {
-      return new Response("Unauthorized", {
-        headers: corsHeaders,
-        status: 400,
-      });
-    }
-
-    await env.userToReferral.put(key, value);
-    return new Response(`Key '${key}' added with value '${value}'`, {
+  if (!result.isValid || !result.githubUserId || !result.referralCode) {
+    return new Response("Unauthorized", {
       headers: corsHeaders,
-      status: 200,
+      status: 400,
     });
   }
-  return new Response("Missing key or value", {
+
+  const { githubUserId, referralCode } = result;
+
+  await env.KVNamespace.put(githubUserId, referralCode);
+
+  return new Response(`Key '${githubUserId}' added with value '${referralCode}'`, {
     headers: corsHeaders,
-    status: 400,
+    status: 200,
   });
 }
 
-async function handleGet(key: string, env: Env): Promise<Response> {
-  const value = await env.userToReferral.get(key);
-  if (value) {
-    return new Response(`Value for '${key}': ${value}`, {
+async function handleGet(githubUserId: string, env: Env): Promise<Response> {
+  const referralCode = await env.KVNamespace.get(githubUserId);
+  if (referralCode) {
+    return new Response(`Value for '${githubUserId}': ${referralCode}`, {
       headers: corsHeaders,
       status: 200,
     });
+  } else {
+    return new Response(`No value found for '${githubUserId}'`, {
+      headers: corsHeaders,
+      status: 404,
+    });
   }
-  return new Response(`No value found for '${key}'`, {
-    headers: corsHeaders,
-    status: 404,
-  });
 }
 
 async function handleList(env: Env): Promise<Response> {
-  const keys = await env.userToReferral.list();
-  const keyValuePairs: Record<string, string | null> = {};
+  const githubUsersIds = await env.KVNamespace.list();
+  const referrals: Record<string, string | null> = {};
 
-  for (const key of keys.keys) {
-    keyValuePairs[key.name] = await env.userToReferral.get(key.name);
+  for (const { name: userId } of githubUsersIds.keys) {
+    const referralCode = await env.KVNamespace.get(userId);
+    referrals[userId] = referralCode;
   }
 
-  return new Response(JSON.stringify(keyValuePairs, null, 2), {
+  return new Response(JSON.stringify(referrals, null, 2), {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
