@@ -1,0 +1,14 @@
+name = "tracker-worker"
+
+compatibility_date = "2024-10-15"
+
+pages_build_output_dir = "./static"
+
+[[kv_namespaces]]
+binding = "KVNamespace"
+id = "0a6aaf0a6edb428189606b116da58ef7"
+
+[vars]
+SUPABASE_URL = "https://zjypueniamnpwwwgywzs.supabase.co"
+SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpqeXB1ZW5pYW1ucHd3d2d5d3pzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjgzMDU2NjAsImV4cCI6MjA0Mzg4MTY2MH0.uJlI-XadK4RzFm8UkcaeK1acdR21QsgBcUcJH_xoPh4"
+
