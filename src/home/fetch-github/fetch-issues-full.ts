@@ -20,7 +20,7 @@ export async function postLoadUpdateIssues() {
     const fetchedIssues = await fetchIssues();
 
     if (issuesAreDifferent(cachedIssues, fetchedIssues)) {
-      await saveIssuesToCache(cachedIssues,fetchedIssues);
+      await saveIssuesToCache(cachedIssues, fetchedIssues);
       await taskManager.syncTasks();
       void displayGitHubIssues();
     }
@@ -37,7 +37,7 @@ function sortIssues(issues: GitHubIssue[]): GitHubIssue[] {
 // Check if issues are different
 function issuesAreDifferent(cached: GitHubIssue[], fetched: GitHubIssue[]): boolean {
   cached = sortIssues(cached);
-  fetched = sortIssues(fetched);  
+  fetched = sortIssues(fetched);
 
   if (cached.length !== fetched.length) return true;
 

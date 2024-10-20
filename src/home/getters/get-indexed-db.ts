@@ -88,18 +88,13 @@ async function openIssuesDB(): Promise<IDBDatabase> {
   });
 }
 // Saves fetched issues into IndexedDB and removes stale issues
-export async function saveIssuesToCache(
-  cachedIssues: GitHubIssue[],
-  fetchedIssues: GitHubIssue[]
-): Promise<void> {
+export async function saveIssuesToCache(cachedIssues: GitHubIssue[], fetchedIssues: GitHubIssue[]): Promise<void> {
   const db = await openIssuesDB();
   const transaction = db.transaction("issues", "readwrite");
   const store = transaction.objectStore("issues");
 
   // Identify and remove stale issues (in cache but not in fetched list)
-  const staleIssues = cachedIssues.filter(
-    (cachedIssue) => !fetchedIssues.some((issue) => issue.id === cachedIssue.id)
-  );
+  const staleIssues = cachedIssues.filter((cachedIssue) => !fetchedIssues.some((issue) => issue.id === cachedIssue.id));
   for (const issue of staleIssues) {
     store.delete(issue.id);
   }
