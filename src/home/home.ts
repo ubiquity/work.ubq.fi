@@ -4,7 +4,6 @@ import { initiateDevRelTracking } from "./devrel-tracker";
 import { displayGitHubIssues } from "./fetch-github/fetch-and-display-previews";
 import { postLoadUpdateIssues } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
-import { registerServiceWorker } from "./register-service-worker";
 import { renderServiceMessage } from "./render-service-message";
 import { renderErrorInModal } from "./rendering/display-popup-modal";
 import { renderGitRevision } from "./rendering/render-github-login-button";
@@ -40,7 +39,13 @@ void (async function home() {
   await taskManager.syncTasks(); // Sync tasks from cache on load
   void displayGitHubIssues();
   await postLoadUpdateIssues(); // Update cache and issues if cache is outdated
-  if ("serviceWorker" in navigator) {
-    registerServiceWorker();
+
+  // Register service worker for PWA
+  if('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/progressive-web-app.js').then(function() {
+        console.log("Service worker registered")
+    }).catch(function(err) {
+        console.log(err);
+    });
   }
 })();
