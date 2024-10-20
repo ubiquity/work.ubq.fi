@@ -41,11 +41,14 @@ void (async function home() {
   await postLoadUpdateIssues(); // Update cache and issues if cache is outdated
 
   // Register service worker for PWA
-  if('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/progressive-web-app.js').then(function() {
-        console.log("Service worker registered")
-    }).catch(function(err) {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+      .register("/progressive-web-app.js")
+      .then(() => {
+        console.log("Service worker registered");
+      })
+      .catch((err) => {
         console.log(err);
-    });
+      });
   }
 })();
