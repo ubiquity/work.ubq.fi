@@ -1,7 +1,7 @@
 import { GitHubIssue } from "../github-types";
 export const organizationImageCache = new Map<string, Blob | null>(); // this should be declared in image related script
 
-// Fetches the issues from devpool-issues.json file in the __STORAGE__ branch of the devpool-directory repo
+// Fetches the issues from `devpool-issues.json` file in the `__STORAGE__` branch of the `devpool-directory` repo
 // https://github.com/ubiquity/devpool-directory/blob/__STORAGE__/devpool-issues.json
 
 export async function fetchIssues(): Promise<GitHubIssue[]> {
