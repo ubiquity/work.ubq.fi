@@ -1,6 +1,7 @@
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-github-issues";
+import { closeModal } from "../rendering/render-preview-modal";
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
 import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity";
@@ -9,16 +10,25 @@ export type Options = {
   ordering: "normal" | "reverse";
 };
 
-// start at Directory view
-let isProposalOnlyViewer = false;
+// start at view based on URL
+export let isProposalOnlyViewer = new URLSearchParams(window.location.search).get("proposal") === "true";
 
-// if the Directory/Proposals toggle is clicked re-render the issues
 export const viewToggle = document.getElementById("view-toggle") as HTMLInputElement;
+
+if (isProposalOnlyViewer) {
+  viewToggle.checked = true;
+}
+
 if (!viewToggle) {
   throw new Error("Could not find view toggle");
 }
+
+// if the Directory/Proposals toggle is clicked re-render the issues
 viewToggle.addEventListener("click", () => {
   isProposalOnlyViewer = !isProposalOnlyViewer;
+
+  // If you are in a preview, close it
+  closeModal();
   void displayGitHubIssues();
 });
 
