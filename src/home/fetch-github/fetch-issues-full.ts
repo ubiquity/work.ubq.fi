@@ -13,18 +13,16 @@ export async function fetchIssues(): Promise<GitHubIssue[]> {
   return jsonData;
 }
 
+// First issues are rendered from cache then this function is called to update if needed
 export async function postLoadUpdateIssues() {
   try {
     const cachedIssues = taskManager.getTasks();
     const fetchedIssues = await fetchIssues();
 
     if (issuesAreDifferent(cachedIssues, fetchedIssues)) {
-      console.log("Issues are different, updating cache");
-      await saveIssuesToCache(fetchedIssues);
+      await saveIssuesToCache(cachedIssues,fetchedIssues);
       await taskManager.syncTasks();
       void displayGitHubIssues();
-    } else {
-      console.log("Issues are the same, not updating cache");
     }
   } catch (error) {
     console.error("Error updating issues cache", error);
@@ -36,9 +34,10 @@ function sortIssues(issues: GitHubIssue[]): GitHubIssue[] {
   return issues.slice().sort((a, b) => a.id - b.id);
 }
 
+// Check if issues are different
 function issuesAreDifferent(cached: GitHubIssue[], fetched: GitHubIssue[]): boolean {
   cached = sortIssues(cached);
-  fetched = sortIssues(fetched);
+  fetched = sortIssues(fetched);  
 
   if (cached.length !== fetched.length) return true;
 
