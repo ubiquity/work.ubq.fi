@@ -3,8 +3,9 @@ import { organizationImageCache } from "../fetch-github/fetch-issues-full";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { renderErrorInModal } from "./display-popup-modal";
-import { modal, modalBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
+import { closeModal, modal, modalBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
+import { isProposalOnlyViewer } from "../fetch-github/fetch-and-display-previews";
 
 export function renderGitHubIssues(tasks: GitHubIssue[]) {
   const container = taskManager.getContainer();
@@ -149,7 +150,54 @@ export function viewIssueDetails(full: GitHubIssue) {
   modal.classList.add("active");
   modal.classList.remove("error");
   document.body.classList.add("preview-active");
+
+  updateUrlWithIssueId(full.id);
 }
+
+// Adds issue ID to url in format (i.e http://localhost:8080/?issue=2559612103)
+function updateUrlWithIssueId(issueID: number) {
+  const newURL = new URL(window.location.href);
+  newURL.searchParams.set("issue", String(issueID));
+
+  if (isProposalOnlyViewer) {
+    newURL.searchParams.set("proposal", "true");
+  }
+
+  // Push to history
+  window.history.pushState({ issueID }, "", newURL.toString());
+}
+
+// Opens the preview modal if a URL contains an issueID
+export function loadIssueFromUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const issueID = urlParams.get("issue");
+
+  // If no issue ID in the URL, don't load issue
+  if (!issueID) {
+    closeModal();
+    return;
+  }
+
+  // If ID doesn't exist, don't load issue
+  const issue: GitHubIssue = taskManager.getGitHubIssueById(Number(issueID)) as GitHubIssue;
+  console.log(issue);
+  console.log(issueID);
+  if (!issue) {
+    console.log("deleting");
+    const newURL = new URL(window.location.href);
+    newURL.searchParams.delete("issue");
+    newURL.searchParams.delete("proposal");
+    window.history.pushState({}, "", newURL.toString());
+    return;
+  }
+
+  viewIssueDetails(issue);
+}
+
+// This ensure previews load for the URL
+window.addEventListener("popstate", () => {
+  location.reload();
+});
 
 export function applyAvatarsToIssues() {
   const container = taskManager.getContainer();

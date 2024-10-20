@@ -6,6 +6,7 @@ import { postLoadUpdateIssues } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
 import { renderServiceMessage } from "./render-service-message";
 import { renderErrorInModal } from "./rendering/display-popup-modal";
+import { loadIssueFromUrl } from "./rendering/render-github-issues";
 import { renderGitRevision } from "./rendering/render-github-login-button";
 import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
 import { TaskManager } from "./task-manager";
@@ -37,7 +38,8 @@ void (async function home() {
   void authentication();
   void readyToolbar();
   await taskManager.syncTasks(); // Sync tasks from cache on load
-  void displayGitHubIssues();
+  loadIssueFromUrl(); // Load issue preview from URL if present
+  void displayGitHubIssues(); // Display issues from cache
   await postLoadUpdateIssues(); // Update cache and issues if cache is outdated
 
   // Register service worker for PWA

@@ -49,6 +49,15 @@ self.addEventListener("activate", (event) => {
 
 // Fetch event: Respond from cache or network
 self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+
+  // If the request has query parameters, bypass the cache
+  if (url.search) { 
+    console.log('[Service Worker] Bypassing cache for:', event.request.url);
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   console.log("[Service Worker] Fetch intercepted for:", event.request.url);
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
@@ -59,11 +68,7 @@ self.addEventListener("fetch", (event) => {
       console.log(`[Service Worker] Fetching from network: ${event.request.url}`);
       return fetch(event.request)
         .then((networkResponse) => {
-          // Optionally cache the new response
-          return caches.open(cacheName).then((cache) => {
-            cache.put(event.request, networkResponse.clone());
-            return networkResponse;
-          });
+          return networkResponse;
         })
         .catch((error) => {
           console.error("[Service Worker] Network request failed:", error);
