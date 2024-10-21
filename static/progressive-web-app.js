@@ -13,12 +13,10 @@ const urlsToCache = [
 
 // Install event (caches all necessary files)
 self.addEventListener("install", (event) => {
-  console.log("[Service Worker] Install event");
   event.waitUntil(
     caches
       .open(cacheName)
       .then((cache) => {
-        console.log("[Service Worker] Caching resources");
         return cache.addAll(urlsToCache);
       })
       .catch((error) => console.error("[Service Worker] Cache failed:", error))
@@ -28,7 +26,6 @@ self.addEventListener("install", (event) => {
 
 // Activate event (deletes old caches when updated)
 self.addEventListener("activate", (event) => {
-  console.log("[Service Worker] Activate event");
   event.waitUntil(
     caches
       .keys()
@@ -36,7 +33,6 @@ self.addEventListener("activate", (event) => {
         return Promise.all(
           cacheNames.map((name) => {
             if (name !== cacheName) {
-              console.log(`[Service Worker] Deleting old cache: ${name}`);
               return caches.delete(name);
             }
           })
@@ -53,27 +49,22 @@ self.addEventListener("fetch", (event) => {
 
   // If the request has query parameters, bypass the cache
   if (url.search) { 
-    console.log('[Service Worker] Bypassing cache for:', event.request.url);
     event.respondWith(fetch(event.request));
     return;
   }
 
-  console.log("[Service Worker] Fetch intercepted for:", event.request.url);
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
-        console.log(`[Service Worker] Serving from cache: ${event.request.url}`);
         return cachedResponse;
       }
-      console.log(`[Service Worker] Fetching from network: ${event.request.url}`);
       return fetch(event.request)
         .then((networkResponse) => {
           return networkResponse;
         })
         .catch((error) => {
           console.error("[Service Worker] Network request failed:", error);
-          // Fallback to cached home
-          return caches.match("/");
+          return null;
         });
     })
   );
