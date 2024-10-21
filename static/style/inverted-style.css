@@ -5,6 +5,9 @@
   .filters-container label:not([for="view-toggle"]) {
     width: 48px;
   }
+  #bottom-right {
+    display: none;
+  }
 }
 @media (orientation: landscape) {
   #bottom-bar,
@@ -372,11 +375,6 @@
   }
   .full {
     display: unset !important;
-  }
-  @media screen and (max-width: 560px) {
-    #bottom-right {
-      display: none;
-    }
   }
   @media screen and (max-width: 804px) {
     .mid {
