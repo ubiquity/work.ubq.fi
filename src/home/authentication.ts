@@ -6,6 +6,11 @@ import { displayGitHubUserInformation } from "./rendering/display-github-user-in
 import { renderGitHubLoginButton } from "./rendering/render-github-login-button";
 
 export async function authentication() {
+  if (!navigator.onLine) {
+    console.warn("App is offline. Skipping authentication.");
+    return;
+  }
+
   const accessToken = await getGitHubAccessToken();
   if (!accessToken) {
     renderGitHubLoginButton();

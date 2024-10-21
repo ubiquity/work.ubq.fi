@@ -5,7 +5,7 @@ import { pwaManifest } from "./plugins/pwa-manifest";
 import { execSync } from "child_process";
 config();
 
-const typescriptEntries = ["src/home/home.ts", "src/progressive-web-app.ts"];
+const typescriptEntries = ["src/home/home.ts"];
 const cssEntries = ["static/style/style.css"];
 const entries = [...typescriptEntries, ...cssEntries, "static/manifest.json", "static/favicon.svg", "static/icon-512x512.png"];
 

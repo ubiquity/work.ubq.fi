@@ -2,8 +2,8 @@ import { grid } from "../the-grid";
 import { authentication } from "./authentication";
 import { initiateDevRelTracking } from "./devrel-tracker";
 import { displayGitHubIssues } from "./fetch-github/fetch-and-display-previews";
+import { postLoadUpdateIssues } from "./fetch-github/fetch-issues-full";
 import { readyToolbar } from "./ready-toolbar";
-import { registerServiceWorker } from "./register-service-worker";
 import { renderServiceMessage } from "./render-service-message";
 import { renderErrorInModal } from "./rendering/display-popup-modal";
 import { loadIssueFromUrl } from "./rendering/render-github-issues";
@@ -37,10 +37,20 @@ export const taskManager = new TaskManager(container);
 void (async function home() {
   void authentication();
   void readyToolbar();
-  await taskManager.syncTasks(); // Sync tasks on load
-  void displayGitHubIssues();
-  loadIssueFromUrl();
+  await taskManager.syncTasks(); // Sync tasks from cache on load
+  loadIssueFromUrl(); // Load issue preview from URL if present
+  void displayGitHubIssues(); // Display issues from cache
+  await postLoadUpdateIssues(); // Update cache and issues if cache is outdated
+
+  // Register service worker for PWA
   if ("serviceWorker" in navigator) {
-    registerServiceWorker();
+    navigator.serviceWorker
+      .register("/progressive-web-app.js")
+      .then(() => {
+        console.log("Service worker registered");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 })();

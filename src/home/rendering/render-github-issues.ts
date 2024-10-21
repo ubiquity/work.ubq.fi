@@ -180,7 +180,10 @@ export function loadIssueFromUrl() {
 
   // If ID doesn't exist, don't load issue
   const issue: GitHubIssue = taskManager.getGitHubIssueById(Number(issueID)) as GitHubIssue;
+  console.log(issue);
+  console.log(issueID);
   if (!issue) {
+    console.log("deleting");
     const newURL = new URL(window.location.href);
     newURL.searchParams.delete("issue");
     newURL.searchParams.delete("proposal");
