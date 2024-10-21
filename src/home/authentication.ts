@@ -10,7 +10,7 @@ export async function authentication() {
     console.warn("App is offline. Skipping authentication.");
     return;
   }
-  
+
   const accessToken = await getGitHubAccessToken();
   if (!accessToken) {
     renderGitHubLoginButton();
