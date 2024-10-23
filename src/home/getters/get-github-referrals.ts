@@ -1,5 +1,5 @@
 export async function getReferralFromUser(devGitHubId: number): Promise<string | null> {
-  const url = `/tracker?key=${encodeURIComponent(devGitHubId)}`;
+  const url = `/referral-manager?key=${encodeURIComponent(devGitHubId)}`;
 
   const response = await fetch(url, {
     method: "GET",
@@ -18,7 +18,7 @@ export async function getReferralFromUser(devGitHubId: number): Promise<string |
 }
 
 export async function getListOfReferrals(): Promise<Record<string, string | null> | null> {
-  const url = "/tracker";
+  const url = "/referral-manager";
 
   const response = await fetch(url, {
     method: "GET",
