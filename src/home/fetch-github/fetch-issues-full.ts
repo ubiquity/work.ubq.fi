@@ -22,7 +22,7 @@ export async function postLoadUpdateIssues() {
     if (issuesAreDifferent(cachedIssues, fetchedIssues)) {
       await saveIssuesToCache(cachedIssues, fetchedIssues); // this handles stale and new issues
       await taskManager.syncTasks();
-      void displayGitHubIssues(undefined,undefined,true);
+      void displayGitHubIssues(undefined, undefined, true);
     }
   } catch (error) {
     console.error("Error updating issues cache", error);
