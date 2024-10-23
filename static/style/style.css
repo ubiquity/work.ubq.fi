@@ -8,7 +8,11 @@
   #bottom-right {
     display: none;
   }
+  #toolbar{
+    justify-content: space-between;
+  }
 }
+
 @media (orientation: landscape) {
   #bottom-bar,
   #filters-bottom {
@@ -238,7 +242,7 @@
   }
   .labels {
     display: flex;
-    margin-left: auto;
+    margin-left: 5px;
     justify-content: flex-end;
   }
   .partner {
@@ -327,13 +331,13 @@
     display: flex;
     border-bottom: 1px solid #80808020;
     -webkit-backdrop-filter: blur(8px);
-    justify-content: left;
     align-items: center;
   }
   #authentication {
-    position: absolute;
-    right: 8px;
+    flex: 0 0 auto;
     cursor: pointer;
+    margin-right: 10px;
+    margin-left: 10px;
   }
   .toolbar > * {
     display: inline-flex;
@@ -372,9 +376,6 @@
     letter-spacing: 1.5px;
     font-weight: 400;
     text-rendering: geometricPrecision;
-  }
-  .full {
-    display: unset !important;
   }
   @media screen and (max-width: 804px) {
     .mid {
@@ -632,15 +633,16 @@
     line-height: 1.25;
   }
   .filters-container {
-    overflow-x: auto;
+    flex: 1;
   }
   .filters-container input[type="text"] {
-    margin: 0 2px;
+    margin: 0 10px;
     padding: 4px;
     border: none;
     border-radius: 4px;
     background-color: #80808020;
     width: 100%;
+    max-width: 500px;
     height: 16px;
     text-align: center;
     min-width: 80px;
@@ -745,6 +747,7 @@
     font-size: 16px;
   }
   #view-toggle {
+    flex: 0 0 auto;
     appearance: none;
   }
   label[for="view-toggle"] {
