@@ -21,7 +21,6 @@ self.addEventListener("install", (event) => {
       })
       .catch((error) => console.error("[Service Worker] Cache failed:", error))
   );
-  self.skipWaiting(); // activate the new worker immediately
 });
 
 // Activate event (deletes old caches when updated)
