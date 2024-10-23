@@ -210,6 +210,11 @@
     padding: 12px 0;
     align-items: center;
   }
+  .issue-element-inner .labels {
+    display: flex;
+    margin-left: auto;
+    justify-content: flex-end;
+  }
   p.organization-name {
     opacity: 0.5;
     display: inline-block;
