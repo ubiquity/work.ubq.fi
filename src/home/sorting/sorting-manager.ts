@@ -56,9 +56,7 @@ export class SortingManager {
           const gitHubIssue = taskManager.getGitHubIssueById(parseInt(issueId));
           if (!gitHubIssue) return;
           const searchableProperties = ["title", "body", "number", "html_url"] as const;
-          const searchableStrings = searchableProperties.map((prop) =>
-            gitHubIssue[prop]?.toString().toLowerCase()
-          );
+          const searchableStrings = searchableProperties.map((prop) => gitHubIssue[prop]?.toString().toLowerCase());
           const isVisible = searchableStrings.some((str) => str?.includes(filterText));
           issue.style.display = isVisible ? "block" : "none";
         });
