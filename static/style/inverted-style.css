@@ -1,4 +1,4 @@
-@media (orientation: portrait) {
+@media (orientation: portrait) or (max-width: 800px) {
   #filters {
     display: none;
   }
@@ -11,9 +11,32 @@
   #toolbar{
     justify-content: space-between;
   }
+  #bottom-bar{
+    height: 60px;
+    padding: 10px 20px;
+    align-items: center;
+    justify-content: center;
+  }
+  #filters-bottom{
+    margin: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 600px;
+  }
+  .labels{
+    margin: 0;
+    align-items: center;
+    width: 100%;
+  }
+  #filter-bottom{
+    max-width: 100%;
+    margin: 0;
+    padding: 5px 0;
+  }
 }
 
-@media (orientation: landscape) {
+@media (orientation: landscape) and (width > 800px) {
   #bottom-bar,
   #filters-bottom {
     display: none;
