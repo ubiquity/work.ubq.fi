@@ -1,4 +1,4 @@
-const cacheName = "pwacache-v2"; // Increment this when files change
+const cacheName = "pwacache-v3"; // Increment this when files change
 const urlsToCache = [
   "/",
   "/index.html",
