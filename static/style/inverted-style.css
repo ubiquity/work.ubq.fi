@@ -153,9 +153,20 @@
   #issues-container.keyboard-selection > div.active {
     opacity: 0.33;
   }
-  #issues-container.keyboard-selection > div.active.selected {
-    opacity: 1;
-  }
+
+  @media (hover: hover) {
+    #issues-container.keyboard-selection > div.active.selected {
+      opacity: 1;
+    }
+    #issues-container > div:hover {
+      opacity: 1;
+      transition: background-color 0s;
+    }
+    #issues-container:hover .issue-element-inner {
+      opacity: 0.5;
+    }
+  } 
+  
   #issues-container > div.active {
     transition: 125ms all ease-in-out;
     opacity: 1;
