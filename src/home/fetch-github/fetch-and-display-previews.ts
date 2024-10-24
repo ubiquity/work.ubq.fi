@@ -46,11 +46,11 @@ function getProposalsOnlyFilter(getProposals: boolean) {
 }
 
 // checks the cache's integrity, sorts issues, checks Directory/Proposals toggle, renders them and applies avatars
-export async function displayGitHubIssues(sorting?: Sorting, options = { ordering: "normal" }) {
+export async function displayGitHubIssues(sorting?: Sorting, options = { ordering: "normal" }, skipAnimation = false) {
   await checkCacheIntegrityAndSyncTasks();
   const cachedTasks = taskManager.getTasks();
   const sortedIssues = sortIssuesController(cachedTasks, sorting, options);
   const sortedAndFiltered = sortedIssues.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
-  renderGitHubIssues(sortedAndFiltered);
+  renderGitHubIssues(sortedAndFiltered, skipAnimation);
   applyAvatarsToIssues();
 }

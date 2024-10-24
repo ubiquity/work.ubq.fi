@@ -7,7 +7,7 @@ import { closeModal, modal, modalBodyInner, titleAnchor, titleHeader } from "./r
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
 import { isProposalOnlyViewer } from "../fetch-github/fetch-and-display-previews";
 
-export function renderGitHubIssues(tasks: GitHubIssue[]) {
+export function renderGitHubIssues(tasks: GitHubIssue[], skipAnimation: boolean) {
   const container = taskManager.getContainer();
   if (container.classList.contains("ready")) {
     container.classList.remove("ready");
@@ -22,8 +22,12 @@ export function renderGitHubIssues(tasks: GitHubIssue[]) {
     if (!existingIssueIds.has(task.id.toString())) {
       const issueWrapper = everyNewIssue({ gitHubIssue: task, container });
       if (issueWrapper) {
-        setTimeout(() => issueWrapper.classList.add("active"), delay);
-        delay += baseDelay;
+        if (skipAnimation) {
+          issueWrapper.classList.add("active");
+        } else {
+          setTimeout(() => issueWrapper.classList.add("active"), delay);
+          delay += baseDelay;
+        }
       }
     }
   }
