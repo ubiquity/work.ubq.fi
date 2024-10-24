@@ -113,7 +113,7 @@
     transition: 125ms opacity ease-out 62.5ms;
   }
   #issues-container:hover .issue-element-inner {
-    opacity: 1;
+    opacity: 0.5;
   }
   #issues-container.keyboard-selection:hover .issue-element-inner {
     opacity: 1;
@@ -161,21 +161,16 @@
     opacity: 1;
     filter: blur(0);
   }
-  @media (hover: hover) {
-    #issues-container > div:hover {
-      opacity: 1;
-      transition: background-color 0s;
-    }
-    #issues-container > div:hover .info {
-      opacity: 1;
-    }
-    #issues-container > div:hover .issue-element-inner {
-      transition: 125ms opacity ease-in-out;
-      opacity: 1;
-    }
-    #issues-container:hover .issue-element-inner {
-      opacity: 0.5;
-    }
+  #issues-container > div:hover {
+    opacity: 1;
+    transition: background-color 0s;
+  }
+  #issues-container > div:hover .info {
+    opacity: 1;
+  }
+  #issues-container > div:hover .issue-element-inner {
+    transition: 125ms opacity ease-in-out;
+    opacity: 1;
   }
   #issues-container > div:active {
     background-color: #7f7f7f40;
