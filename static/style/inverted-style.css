@@ -1,4 +1,4 @@
-@media (orientation: portrait) {
+@media (orientation: portrait) or (max-width: 800px) {
   #filters {
     display: none;
   }
@@ -8,8 +8,35 @@
   #bottom-right {
     display: none;
   }
+  #toolbar{
+    justify-content: space-between;
+  }
+  #bottom-bar{
+    height: 60px;
+    padding: 10px 20px;
+    align-items: center;
+    justify-content: center;
+  }
+  #filters-bottom{
+    margin: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 600px;
+  }
+  .labels{
+    margin: 0;
+    align-items: center;
+    width: 100%;
+  }
+  #filter-bottom{
+    max-width: 100%;
+    margin: 0;
+    padding: 5px 0;
+  }
 }
-@media (orientation: landscape) {
+
+@media (orientation: landscape) and (width > 800px) {
   #bottom-bar,
   #filters-bottom {
     display: none;
@@ -183,6 +210,11 @@
     padding: 12px 0;
     align-items: center;
   }
+  .issue-element-inner .labels {
+    display: flex;
+    margin-left: auto;
+    justify-content: flex-end;
+  }
   p.organization-name {
     opacity: 0.5;
     display: inline-block;
@@ -238,7 +270,7 @@
   }
   .labels {
     display: flex;
-    margin-left: auto;
+    margin-left: 5px;
     justify-content: flex-end;
   }
   .partner {
@@ -327,13 +359,13 @@
     display: flex;
     border-bottom: 1px solid #7f7f7f20;
     -webkit-backdrop-filter: blur(8px);
-    justify-content: left;
     align-items: center;
   }
   #authentication {
-    position: absolute;
-    right: 8px;
+    flex: 0 0 auto;
     cursor: pointer;
+    margin-right: 10px;
+    margin-left: 10px;
   }
   .toolbar > * {
     display: inline-flex;
@@ -372,9 +404,6 @@
     letter-spacing: 1.5px;
     font-weight: 400;
     text-rendering: geometricPrecision;
-  }
-  .full {
-    display: unset !important;
   }
   @media screen and (max-width: 804px) {
     .mid {
@@ -632,15 +661,16 @@
     line-height: 1.25;
   }
   .filters-container {
-    overflow-x: auto;
+    flex: 1;
   }
   .filters-container input[type="text"] {
-    margin: 0 2px;
+    margin: 0 10px;
     padding: 4px;
     border: none;
     border-radius: 4px;
     background-color: #7f7f7f20;
     width: 100%;
+    max-width: 500px;
     height: 16px;
     text-align: center;
     min-width: 80px;
@@ -745,6 +775,7 @@
     font-size: 16px;
   }
   #view-toggle {
+    flex: 0 0 auto;
     appearance: none;
   }
   label[for="view-toggle"] {

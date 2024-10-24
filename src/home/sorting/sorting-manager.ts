@@ -30,6 +30,7 @@ export class SortingManager {
     textBox.id = `filter-${this._instanceId}`;
     textBox.placeholder = "Text Filter";
 
+    // Handle CTRL+F
     document.addEventListener("keydown", (event) => {
       if ((event.metaKey || event.ctrlKey) && event.key === "f") {
         event.preventDefault();
@@ -37,13 +38,20 @@ export class SortingManager {
       }
     });
 
+    // Get the search query from the URL (if it exists) and pre-fill the input
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get("search") || "";
+    textBox.value = searchQuery;
+
     const issuesContainer = document.getElementById("issues-container") as HTMLDivElement;
-    textBox.addEventListener("input", () => {
+
+    const filterIssues = () => {
       try {
         const filterText = textBox.value.toLowerCase();
         const issues = Array.from(issuesContainer.children) as HTMLDivElement[];
         issues.forEach((issue) => {
           const issueId = issue.children[0].getAttribute("data-issue-id");
+          issue.classList.add("active");
           if (!issueId) return;
           const gitHubIssue = taskManager.getGitHubIssueById(parseInt(issueId));
           if (!gitHubIssue) return;
@@ -55,6 +63,29 @@ export class SortingManager {
       } catch (error) {
         return renderErrorInModal(error as Error);
       }
+    };
+
+    // Observer to detect when children are added to the issues container
+    const observer = new MutationObserver(() => {
+      if (issuesContainer.children.length > 0) {
+        observer.disconnect(); // Stop observing once children are present
+        if (searchQuery) filterIssues(); // Filter on load if search query exists
+      }
+    });
+
+    // Start observing the issues container for child elements
+    observer.observe(issuesContainer, { childList: true });
+
+    // Add event listener for input changes to filter and update URL
+    textBox.addEventListener("input", () => {
+      const filterText = textBox.value;
+      // Update the URL with the search parameter
+      const newURL = new URL(window.location.href);
+      newURL.searchParams.set("search", filterText);
+      window.history.replaceState({}, "", newURL.toString());
+
+      // Filter the issues based on the input
+      filterIssues();
     });
 
     return textBox;
