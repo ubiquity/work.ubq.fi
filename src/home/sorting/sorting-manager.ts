@@ -9,6 +9,8 @@ export class SortingManager {
   private _filterTextBox: HTMLInputElement;
   private _sortingButtons: HTMLElement;
   private _instanceId: string;
+  private _sortingState: { [key: string]: "unsorted" | "ascending" | "descending" } = {};  // Track state for each sorting option
+
 
   constructor(filtersId: string, sortingOptions: readonly string[], instanceId: string) {
     const filters = document.getElementById(filtersId);
@@ -17,8 +19,14 @@ export class SortingManager {
     this._instanceId = instanceId;
     this._filterTextBox = this._generateFilterTextBox();
     this._sortingButtons = this._generateSortingButtons(sortingOptions);
+    
+    // Initialize sorting states to 'unsorted' for all options
+    sortingOptions.forEach(option => {
+      this._sortingState[option] = 'unsorted';
+    });
   }
 
+  
   public render() {
     this._toolBarFilters.appendChild(this._sortingButtons);
     this._toolBarFilters.appendChild(this._filterTextBox);
@@ -131,33 +139,56 @@ export class SortingManager {
   }
 
   private _handleSortingClick(input: HTMLInputElement, option: string) {
-    const ordering = input === this._lastChecked ? "reverse" : "normal";
-    input.checked = input !== this._lastChecked;
-    input.setAttribute("data-ordering", ordering);
-    this._lastChecked = input.checked ? input : null;
-    this._filterTextBox.value = "";
-    input.parentElement?.childNodes.forEach((node) => {
-      if (node instanceof HTMLInputElement) {
-        node.setAttribute("data-ordering", "");
-      }
-    });
+    // Get the current ordering from the button (normal, reverse, or disabled)
+    const currentOrdering = input.getAttribute("data-ordering");
+    let newOrdering: string;
+     
 
-    input.setAttribute("data-ordering", ordering);
-    // instantly load from cache
-    try {
-      void displayGitHubIssues(option as Sorting, { ordering });
-    } catch (error) {
-      renderErrorCatch(error as ErrorEvent);
+    // Determine the new ordering based on the current state
+    if (currentOrdering === "normal") {
+      newOrdering = "reverse"; // Second click -> reverse sorting
+    } else if (currentOrdering === "reverse") {
+      newOrdering = "disabled"; // Third click -> disable sorting
+    } else {
+      newOrdering = "normal"; // First click or disabled -> normal sorting
     }
-    // load from network in the background
-    // const fetchedPreviews = await fetchIssuePreviews();
-    // const cachedTasks = taskManager.getTasks();
-    // const updatedCachedIssues = verifyGitHubIssueState(cachedTasks, fetchedPreviews);
-    // displayGitHubIssues(sorting, options);
-    // taskManager.syncTasks(updatedCachedIssues);
-    // return fetchAvatars();
+  
+    // Apply the new ordering state
+    input.setAttribute("data-ordering", newOrdering);
+  
+    // Clear sorting if disabled
+    if (newOrdering === "disabled") {
+      this._lastChecked = null; // Reset the last checked input
+      input.checked = false; // Uncheck the button
+      this._filterTextBox.value = ""; // Clear the text filter box
+      this._clearSorting(); // Reset sorting to default or disabled state
+    } else {
+      input.checked = input !== this._lastChecked; // Handle checking the radio
+      this._lastChecked = input.checked ? input : null;
+      input.setAttribute("data-ordering", newOrdering);
+  
+      // Apply the sorting based on the new state (normal or reverse)
+      try {
+        void displayGitHubIssues(option as Sorting, { ordering: newOrdering });
+      } catch (error) {
+        renderErrorCatch(error as ErrorEvent);
+      }
+    }
+  }
+  // Method to clear sorting and reset the display
+private _clearSorting() {
+  // Logic to reset sorting goes here
+  // For example, you can reset to the default ordering or reload the unsorted issues
+  try {
+    // Reload unsorted issues (or reset to initial state)
+    void displayGitHubIssues(); // Without any sorting option
+  } catch (error) {
+    renderErrorInModal(error as Error);
   }
 }
+
+}
+ 
 
 function renderErrorCatch(event: ErrorEvent) {
   return renderErrorInModal(event.error);
