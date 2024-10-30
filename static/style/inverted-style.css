@@ -100,6 +100,7 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
     padding: 56px 0;
+    padding-bottom: 90px;
     transition: 0.25s all cubic-bezier(0, 1, 1, 1);
     width: 100%;
   }
