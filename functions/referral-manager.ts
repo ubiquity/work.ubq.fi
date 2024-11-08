@@ -59,7 +59,7 @@ async function handleSet(env: Env, request: Request): Promise<Response> {
 
   const { gitHubUserId, referralCode } = result;
 
-  const oldRefCode = await env.KVNamespace.get(gitHubUserId);
+  const oldRefCode = await env.REFERRAL_TRACKING.get(gitHubUserId);
 
   if (oldRefCode) {
     return new Response(`Key '${gitHubUserId}' already has a referral code: '${oldRefCode}'`, {
@@ -68,7 +68,7 @@ async function handleSet(env: Env, request: Request): Promise<Response> {
     });
   }
 
-  await env.KVNamespace.put(gitHubUserId, referralCode);
+  await env.REFERRAL_TRACKING.put(gitHubUserId, referralCode);
 
   return new Response(`Key '${gitHubUserId}' added with value '${referralCode}'`, {
     headers: corsHeaders,
@@ -77,7 +77,7 @@ async function handleSet(env: Env, request: Request): Promise<Response> {
 }
 
 async function handleGet(gitHubUserId: string, env: Env): Promise<Response> {
-  const referralCode = await env.KVNamespace.get(gitHubUserId);
+  const referralCode = await env.REFERRAL_TRACKING.get(gitHubUserId);
   if (referralCode) {
     return new Response(`Value for '${gitHubUserId}': ${referralCode}`, {
       headers: corsHeaders,
@@ -92,11 +92,11 @@ async function handleGet(gitHubUserId: string, env: Env): Promise<Response> {
 }
 
 async function handleList(env: Env): Promise<Response> {
-  const gitHubUsersIds = await env.KVNamespace.list();
+  const gitHubUsersIds = await env.REFERRAL_TRACKING.list();
   const referrals: Record<string, string | null> = {};
 
   for (const { name: userId } of gitHubUsersIds.keys) {
-    const referralCode = await env.KVNamespace.get(userId);
+    const referralCode = await env.REFERRAL_TRACKING.get(userId);
     referrals[userId] = referralCode;
   }
 
