@@ -1771,6 +1771,8 @@ __metadata:
     marked: "npm:^11.0.0"
     npm-run-all: "npm:^4.1.5"
     prettier: "npm:^3.2.5"
+    toml: "npm:3.0.0"
+    tomlify-j0.4: "npm:3.0.0"
     ts-jest: "npm:29.1.2"
     tsx: "npm:^4.7.1"
     typescript: "npm:^5.3.3"
@@ -7535,6 +7537,20 @@ __metadata:
   dependencies:
     to-no-case: "npm:^1.0.0"
   checksum: b99e1b5d0f3c90a8d47fa3b155d515027bd83a370740e82ee7cb064f86e3655f030f068bddcb8d18239e7408761b4376d89ab91e5ccdb17dc859d8fd4f570ac5
+  languageName: node
+  linkType: hard
+
+"toml@npm:3.0.0":
+  version: 3.0.0
+  resolution: "toml@npm:3.0.0"
+  checksum: 8d7ed3e700ca602e5419fca343e1c595eb7aa177745141f0761a5b20874b58ee5c878cd045c408da9d130cb2b611c639912210ba96ce2f78e443569aa8060c18
+  languageName: node
+  linkType: hard
+
+"tomlify-j0.4@npm:3.0.0":
+  version: 3.0.0
+  resolution: "tomlify-j0.4@npm:3.0.0"
+  checksum: 78349675ac24e4aa7b518f54cb3b55884d9f5d5a6a44fdeff63b3c55887ccce7c491802f2a527ee38a559d259adc5a14b431f926f892179f020db3d5025d9a94
   languageName: node
   linkType: hard
 
