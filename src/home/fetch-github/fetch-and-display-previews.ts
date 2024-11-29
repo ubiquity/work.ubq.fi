@@ -91,13 +91,7 @@ export async function displayGitHubIssues({
   applyAvatarsToIssues();
 }
 
-export async function searchDisplayGitHubIssues({
-  searchText,
-  skipAnimation = false,
-}: {
-  searchText: string;
-  skipAnimation?: boolean;
-}) {
+export async function searchDisplayGitHubIssues({ searchText, skipAnimation = false }: { searchText: string; skipAnimation?: boolean }) {
   const searchResult = filterIssuesBySearch(searchText);
   let filteredIssues = searchResult.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
   filteredIssues = filterIssuesByOrganization(filteredIssues);
