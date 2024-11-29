@@ -1,5 +1,4 @@
-import { displayGitHubIssues } from "../fetch-github/fetch-and-display-previews";
-import { taskManager } from "../home";
+import { displayGitHubIssues, searchDisplayGitHubIssues } from "../fetch-github/fetch-and-display-previews";
 import { renderErrorInModal } from "../rendering/display-popup-modal";
 import { Sorting } from "./generate-sorting-buttons";
 
@@ -13,11 +12,15 @@ export class SortingManager {
 
   constructor(filtersId: string, sortingOptions: readonly string[], instanceId: string) {
     const filters = document.getElementById(filtersId);
+
     if (!filters) throw new Error(`${filtersId} not found`);
     this._toolBarFilters = filters;
     this._instanceId = instanceId;
-    this._filterTextBox = this._generateFilterTextBox();
+
+    // Initialize sorting buttons first
     this._sortingButtons = this._generateSortingButtons(sortingOptions);
+    // Then initialize filter text box
+    this._filterTextBox = this._generateFilterTextBox();
 
     // Initialize sorting states to 'unsorted' for all options
     sortingOptions.forEach((option) => {
@@ -51,45 +54,57 @@ export class SortingManager {
 
     const issuesContainer = document.getElementById("issues-container") as HTMLDivElement;
 
-    function filterIssues() {
-      try {
-        const filterText = textBox.value.toLowerCase();
-        const issues = Array.from(issuesContainer.children) as HTMLDivElement[];
-        issues.forEach((issue) => {
-          const issueId = issue.children[0].getAttribute("data-issue-id");
-          issue.classList.add("active");
-          if (!issueId) return;
-          const gitHubIssue = taskManager.getGitHubIssueById(parseInt(issueId));
-          if (!gitHubIssue) return;
-          const searchableProperties = ["title", "body", "number", "html_url"] as const;
-          const searchableStrings = searchableProperties.map((prop) => gitHubIssue[prop]?.toString().toLowerCase());
-          const isVisible = searchableStrings.some((str) => str?.includes(filterText));
-          issue.style.display = isVisible ? "block" : "none";
-        });
-      } catch (error) {
-        return renderErrorInModal(error as Error);
-      }
-    }
-
     // Observer to detect when children are added to the issues container (only once)
     const observer = new MutationObserver(() => {
       if (issuesContainer.children.length > 0) {
         observer.disconnect(); // Stop observing once children are present
-        if (searchQuery) filterIssues(); // Filter on load if search query exists
+        if (searchQuery) {
+          try {
+            void searchDisplayGitHubIssues({
+              searchText: searchQuery,
+            });
+          } catch (error) {
+            renderErrorInModal(error as Error);
+          }
+        }
       }
     });
     observer.observe(issuesContainer, { childList: true });
 
     textBox.addEventListener("input", () => {
       const filterText = textBox.value;
+      // Reset sorting buttons when there is text in search menu
+      if (filterText) {
+        this._resetSortButtons();
+      }
       // Update the URL with the search parameter
       const newURL = new URL(window.location.href);
-      newURL.searchParams.set("search", filterText);
+      if (filterText) {
+        newURL.searchParams.set("search", filterText);
+      } else {
+        newURL.searchParams.delete("search");
+      }
       window.history.replaceState({}, "", newURL.toString());
-      filterIssues(); // Run the filter function immediately on input
+      try {
+        void searchDisplayGitHubIssues({
+          searchText: filterText,
+        });
+      } catch (error) {
+        renderErrorInModal(error as Error);
+      }
     });
 
     return textBox;
+  }
+
+  private _resetSortButtons() {
+    this._sortingButtons.querySelectorAll('input[type="radio"]').forEach((input) => {
+      if (input instanceof HTMLInputElement) {
+        input.checked = false;
+        input.setAttribute("data-ordering", "");
+      }
+    });
+    this._lastChecked = null;
   }
 
   private _generateSortingButtons(sortingOptions: readonly string[]) {
@@ -146,6 +161,19 @@ export class SortingManager {
 
     // Apply the new ordering state
     input.setAttribute("data-ordering", newOrdering);
+    input.parentElement?.childNodes.forEach((node) => {
+      if (node instanceof HTMLInputElement) {
+        node.setAttribute("data-ordering", "");
+      }
+    });
+
+    // Clear search when applying a different sort
+    this._filterTextBox.value = "";
+    const newURL = new URL(window.location.href);
+    newURL.searchParams.delete("search");
+    window.history.replaceState({}, "", newURL.toString());
+
+    // Reset other buttons
     input.parentElement?.childNodes.forEach((node) => {
       if (node instanceof HTMLInputElement) {
         node.setAttribute("data-ordering", "");

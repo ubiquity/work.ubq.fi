@@ -3,12 +3,15 @@ import { getGitHubAccessToken } from "./getters/get-github-access-token";
 import { getIssuesFromCache } from "./getters/get-indexed-db";
 import { setLocalStore } from "./getters/get-local-store";
 import { GITHUB_TASKS_STORAGE_KEY, GitHubIssue } from "./github-types";
+import { IssueSearch } from "./issues-search";
 
 export class TaskManager {
   private _tasks: GitHubIssue[] = [];
   private _container: HTMLDivElement;
+  public issueSearcher: IssueSearch;
   constructor(container: HTMLDivElement) {
     this._container = container;
+    this.issueSearcher = new IssueSearch(this);
   }
 
   // Syncs tasks by getting issues from cache, writing them to storage and then fetching avatars
@@ -17,6 +20,9 @@ export class TaskManager {
 
     this._tasks = issues;
     void this._writeToStorage(issues);
+
+    // Initialize issues for search operations
+    await this.issueSearcher.initializeIssues(issues);
 
     await fetchAvatars();
   }

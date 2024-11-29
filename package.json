@@ -9,8 +9,9 @@
     "node": ">=20.10.0"
   },
   "scripts": {
-    "start": "wrangler pages dev --port 8080",
-    "watch": "tsx build/esbuild-server.ts",
+    "start": "run-p start-wrangler watch",
+    "start-wrangler": "npx wrangler pages dev static --port 8080",
+    "watch": "tsx build/esbuild-watch.ts",
     "build": "tsx build/esbuild-build.ts",
     "format": "run-s format:lint format:prettier format:cspell",
     "format:lint": "eslint --fix .",

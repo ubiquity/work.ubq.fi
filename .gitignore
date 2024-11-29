@@ -13,3 +13,9 @@ static/dist
 
 cypress/screenshots
 cypress/videos
+
+# Wrangler
+.wrangler
+
+# vscode
+.vscode

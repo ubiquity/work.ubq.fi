@@ -11,13 +11,14 @@ export async function authentication() {
     return;
   }
 
+  const accessToken = await getGitHubAccessToken();
+  if (!accessToken) {
+    renderGitHubLoginButton();
+  }
+
   const gitHubUser: null | GitHubUser = await getGitHubUser();
   if (gitHubUser) {
     await trackReferralCode();
     await displayGitHubUserInformation(gitHubUser);
-  }
-  const accessToken = await getGitHubAccessToken();
-  if (!accessToken) {
-    renderGitHubLoginButton();
   }
 }

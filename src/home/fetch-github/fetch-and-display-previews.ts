@@ -3,6 +3,7 @@ import { taskManager } from "../home";
 import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-github-issues";
 import { renderOrgHeaderLabel } from "../rendering/render-org-header";
 import { closeModal } from "../rendering/render-preview-modal";
+import { filterIssuesBySearch } from "../sorting/filter-issues-by-search";
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
 import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity";
@@ -87,5 +88,19 @@ export async function displayGitHubIssues({
   let sortedAndFiltered = sortedIssues.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
   sortedAndFiltered = filterIssuesByOrganization(sortedAndFiltered);
   renderGitHubIssues(sortedAndFiltered, skipAnimation);
+  applyAvatarsToIssues();
+}
+
+export async function searchDisplayGitHubIssues({
+  searchText,
+  skipAnimation = false,
+}: {
+  searchText: string;
+  skipAnimation?: boolean;
+}) {
+  const searchResult = filterIssuesBySearch(searchText);
+  let filteredIssues = searchResult.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
+  filteredIssues = filterIssuesByOrganization(filteredIssues);
+  renderGitHubIssues(filteredIssues, skipAnimation);
   applyAvatarsToIssues();
 }

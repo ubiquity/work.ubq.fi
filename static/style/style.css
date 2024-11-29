@@ -528,16 +528,29 @@
   .preview img {
     max-width: 100%;
   }
+  .preview table {
+    border-collapse: collapse;
+    margin-bottom: 12px;
+  }
+  .preview th {
+    font-weight: bold;
+  }
+  .preview th, 
+  .preview td {
+    padding: 6px 13px;
+  }
   .preview pre {
     position: relative;
     display: inline-block;
     width: 100%;
-    overflow: scroll;
-    height: 48px;
+    box-sizing: border-box;
+    overflow-x: auto;
+    padding: 16px;
+    background-color: #80808020;
   }
   .preview pre code {
-    position: absolute;
     font-family: monospace;
+    font-size: 12px;
   }
   .preview ol,
   .preview ul {
