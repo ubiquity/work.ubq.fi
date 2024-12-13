@@ -4,5 +4,8 @@ compatibility_date = "2024-10-23"
 
 pages_build_output_dir = "./static"
 
+[env.dev]
+[env.prod]
+
 [vars]
 YARN_VERSION = "1.22.22"
