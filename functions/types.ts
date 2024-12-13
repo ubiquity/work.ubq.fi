@@ -1,7 +1,7 @@
 import { EventContext, KVNamespace } from "@cloudflare/workers-types";
 
 export interface Env {
-  KVNamespace: KVNamespace;
+  REFERRAL_TRACKING: KVNamespace;
 }
 
 export interface POSTRequestBody {
