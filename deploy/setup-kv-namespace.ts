@@ -14,7 +14,7 @@ import * as toml from "toml";
 // @ts-expect-error No typings exist for this package
 import * as tomlify from "tomlify-j0.4";
 
-const tomlFilePath = "../wrangler.toml";
+const tomlFilePath = "./wrangler.toml";
 const wranglerToml: WranglerConfiguration = toml.parse(fs.readFileSync(tomlFilePath, "utf-8"));
 
 const NAMESPACE_TITLE = "kv";
