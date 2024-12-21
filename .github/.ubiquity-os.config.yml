@@ -51,13 +51,10 @@ plugins:
             requirePriceLabel: true
             limitRewards: true
             collaboratorOnlyPaymentInvocation: true
-            contentEvaluator:
-              enabled: true
+            contentEvaluator: {}
             userExtractor:
-              enabled: true
               redeemTask: true
-            dataPurge:
-              enabled: true
+            dataPurge: {}
             formattingEvaluator:
               multipliers:
                 - roles:
@@ -204,8 +201,7 @@ plugins:
                   multiplier: 0
                   rewards:
                     wordValue: 0
-            permitGeneration:
-              enabled: true
+            permitGeneration: {}
             githubComment:
               post: true
               debug: false
