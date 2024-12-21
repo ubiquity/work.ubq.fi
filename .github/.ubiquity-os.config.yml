@@ -206,6 +206,9 @@ plugins:
             githubComment:
               post: true
               debug: false
+          dataCollection:
+            maxAttempts: 10
+            delayMs: 1000
   - uses:
       - plugin: ubiquity-os-marketplace/daemon-disqualifier@main
         with:
