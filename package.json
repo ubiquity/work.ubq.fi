@@ -39,6 +39,7 @@
     "dotenv": "^16.3.1",
     "esbuild-plugin-env": "^1.0.8",
     "marked": "^11.0.0",
+    "marked-footnote": "^1.2.4",
     "wrangler": "^3.83.0"
   },
   "devDependencies": {
