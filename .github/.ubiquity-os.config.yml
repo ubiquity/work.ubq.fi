@@ -57,7 +57,7 @@ plugins:
             dataPurge: {}
             formattingEvaluator:
               multipliers:
-                - roles:
+                - role:
                     - PULL_SPECIFICATION
                   multiplier: 1
                   rewards:
@@ -123,7 +123,7 @@ plugins:
                       ol:
                         score: 1
                         countWords: true
-                - roles:
+                - role:
                     - ISSUE_SPECIFICATION
                     - ISSUE_AUTHOR
                     - ISSUE_ASSIGNEE
@@ -196,7 +196,7 @@ plugins:
                       ol:
                         score: 1
                         countWords: true
-                - roles:
+                - role:
                     - PULL_AUTHOR
                   multiplier: 0
                   rewards:
