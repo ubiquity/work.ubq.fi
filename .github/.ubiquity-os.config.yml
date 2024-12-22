@@ -51,11 +51,7 @@ plugins:
             requirePriceLabel: true
             limitRewards: true
             collaboratorOnlyPaymentInvocation: true
-            contentEvaluator:
-              multipliers:
-                - role:
-                    - "ISSUE_SPECIFICATION"
-                  relevance: 1
+            contentEvaluator: {}
             userExtractor:
               redeemTask: true
             dataPurge: {}
