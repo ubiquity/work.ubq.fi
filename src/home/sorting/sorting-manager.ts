@@ -8,7 +8,9 @@ export class SortingManager {
   private _toolBarFilters: HTMLElement;
   private _filterTextBox: HTMLInputElement;
   private _sortingButtons: HTMLElement;
+  private _filterAvailableIssuesButton: HTMLElement;
   private _instanceId: string;
+  private _filterAvailableIssues: boolean = true;
   private _sortingState: { [key: string]: "unsorted" | "ascending" | "descending" } = {}; // Track state for each sorting option
 
   constructor(filtersId: string, sortingOptions: readonly string[], instanceId: string) {
@@ -20,6 +22,8 @@ export class SortingManager {
 
     // Initialize sorting buttons first
     this._sortingButtons = this._generateSortingButtons(sortingOptions);
+    // Initialize filter available issues button
+    this._filterAvailableIssuesButton = this._generateFilterAvailableIssuesButton();
     // Then initialize filter text box
     this._filterTextBox = this._generateFilterTextBox();
 
@@ -32,6 +36,7 @@ export class SortingManager {
   public render() {
     this._toolBarFilters.appendChild(this._filterTextBox);
     this._toolBarFilters.appendChild(this._sortingButtons);
+    this._toolBarFilters.appendChild(this._filterAvailableIssuesButton);
   }
 
   private _generateFilterTextBox() {
@@ -66,6 +71,7 @@ export class SortingManager {
           try {
             void searchDisplayGitHubIssues({
               searchText: searchQuery,
+              filterAvailableIssues: this._filterAvailableIssues,
             });
           } catch (error) {
             renderErrorInModal(error as Error);
@@ -93,6 +99,7 @@ export class SortingManager {
       try {
         void searchDisplayGitHubIssues({
           searchText: filterText,
+          filterAvailableIssues: this._filterAvailableIssues,
         });
       } catch (error) {
         renderErrorInModal(error as Error);
@@ -105,6 +112,7 @@ export class SortingManager {
         try {
           void searchDisplayGitHubIssues({
             searchText: textBox.value,
+            filterAvailableIssues: this._filterAvailableIssues,
           });
         } catch (error) {
           renderErrorInModal(error as Error);
@@ -115,10 +123,18 @@ export class SortingManager {
     return textBox;
   }
 
+  private _resetSearchBar() {
+    this._filterTextBox.value = "";
+    const newURL = new URL(window.location.href);
+    newURL.searchParams.delete("search");
+    window.history.replaceState({}, "", newURL.toString());
+  }
+
   private _resetSortButtons() {
     this._sortingButtons.querySelectorAll('input[type="radio"]').forEach((input) => {
       if (input instanceof HTMLInputElement) {
         input.checked = false;
+        this._sortingState[input.value] = "unsorted";
         input.setAttribute("data-ordering", "");
       }
     });
@@ -148,6 +164,65 @@ export class SortingManager {
     return buttons;
   }
 
+  private _generateFilterAvailableIssuesButton() {
+    const div = document.createElement("div");
+    div.className = "labels";
+
+    const input = document.createElement("input");
+    input.type = "button";
+    input.value = "filter availability";
+    input.id = `filter-availability-${this._instanceId}`;
+
+    const label = document.createElement("label");
+    label.htmlFor = `filter-availability-${this._instanceId}`;
+    label.textContent = "Show All Issues";
+
+    input.addEventListener("click", () => {
+      this._filterAvailableIssues = !this._filterAvailableIssues;
+      label.textContent = this._filterAvailableIssues ? "Show All Issues" : "Show Available Issues";
+
+      try {
+        // Clear search when applying the filter
+        this._resetSearchBar();
+
+        const { sortingOption, sortingOrder } = this._detectSortingState();
+        void displayGitHubIssues({
+          sorting: sortingOption as Sorting,
+          options: { ordering: sortingOrder },
+          filterAvailableIssues: this._filterAvailableIssues,
+        });
+      } catch (error) {
+        renderErrorInModal(error as Error);
+      }
+    });
+
+    div.appendChild(input);
+    div.appendChild(label);
+
+    return div;
+  }
+
+  private _detectSortingState() {
+    let sortingOption;
+    let sortingOrder = "normal";
+
+    for (const option of Object.keys(this._sortingState)) {
+      const order = this._sortingState[option];
+
+      if (order !== "unsorted") {
+        sortingOption = option;
+
+        if (order === "descending") {
+          sortingOrder = "normal";
+        } else if (order === "ascending") {
+          sortingOrder = "reverse";
+        }
+        break;
+      }
+    }
+    return { sortingOption, sortingOrder };
+  }
+
   private _createRadioButton(option: string): HTMLInputElement {
     const input = document.createElement("input");
     input.type = "radio";
@@ -168,35 +243,26 @@ export class SortingManager {
     const currentOrdering = input.getAttribute("data-ordering");
     let newOrdering: string;
 
+    // Reset sort buttons
+    this._resetSortButtons();
+
     // Determine the new ordering based on the current state
     if (currentOrdering === "normal") {
       newOrdering = "reverse";
+      this._sortingState[option] = "ascending";
     } else if (currentOrdering === "reverse") {
       newOrdering = "disabled";
+      this._sortingState[option] = "unsorted";
     } else {
       newOrdering = "normal";
+      this._sortingState[option] = "descending";
     }
 
     // Apply the new ordering state
     input.setAttribute("data-ordering", newOrdering);
-    input.parentElement?.childNodes.forEach((node) => {
-      if (node instanceof HTMLInputElement) {
-        node.setAttribute("data-ordering", "");
-      }
-    });
 
     // Clear search when applying a different sort
-    this._filterTextBox.value = "";
-    const newURL = new URL(window.location.href);
-    newURL.searchParams.delete("search");
-    window.history.replaceState({}, "", newURL.toString());
-
-    // Reset other buttons
-    input.parentElement?.childNodes.forEach((node) => {
-      if (node instanceof HTMLInputElement) {
-        node.setAttribute("data-ordering", "");
-      }
-    });
+    this._resetSearchBar();
 
     if (newOrdering === "disabled") {
       this._lastChecked = null;
@@ -209,7 +275,11 @@ export class SortingManager {
 
       // Apply the sorting based on the new state (normal or reverse)
       try {
-        void displayGitHubIssues({ sorting: option as Sorting, options: { ordering: newOrdering } });
+        void displayGitHubIssues({
+          sorting: option as Sorting,
+          options: { ordering: newOrdering },
+          filterAvailableIssues: this._filterAvailableIssues,
+        });
       } catch (error) {
         renderErrorCatch(error as ErrorEvent);
       }
@@ -218,7 +288,9 @@ export class SortingManager {
 
   private _clearSorting() {
     try {
-      void displayGitHubIssues();
+      void displayGitHubIssues({
+        filterAvailableIssues: this._filterAvailableIssues,
+      });
     } catch (error) {
       renderErrorInModal(error as Error);
     }

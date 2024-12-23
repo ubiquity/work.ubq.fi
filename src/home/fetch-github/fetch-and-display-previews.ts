@@ -4,6 +4,7 @@ import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-gi
 import { renderOrgHeaderLabel } from "../rendering/render-org-header";
 import { closeModal } from "../rendering/render-preview-modal";
 import { filterIssuesBySearch } from "../sorting/filter-issues-by-search";
+import { filterIssuesByAvailability } from "../sorting/filter-issues-by-availability";
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
 import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity";
@@ -76,10 +77,12 @@ function filterIssuesByOrganization(issues: GitHubIssue[]): GitHubIssue[] {
 export async function displayGitHubIssues({
   sorting,
   options = { ordering: "normal" },
+  filterAvailableIssues = true,
   skipAnimation = false,
 }: {
   sorting?: Sorting;
   options?: { ordering: string };
+  filterAvailableIssues?: boolean;
   skipAnimation?: boolean;
 } = {}) {
   await checkCacheIntegrityAndSyncTasks();
@@ -87,20 +90,24 @@ export async function displayGitHubIssues({
   const sortedIssues = sortIssuesController(cachedTasks, sorting, options);
   let sortedAndFiltered = sortedIssues.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
   sortedAndFiltered = filterIssuesByOrganization(sortedAndFiltered);
+  sortedAndFiltered = filterAvailableIssues ? filterIssuesByAvailability(sortedAndFiltered) : sortedAndFiltered;
   renderGitHubIssues(sortedAndFiltered, skipAnimation);
   applyAvatarsToIssues();
 }
 
 export async function searchDisplayGitHubIssues({
   searchText,
+  filterAvailableIssues = true,
   skipAnimation = false,
 }: {
   searchText: string;
+  filterAvailableIssues?: boolean;
   skipAnimation?: boolean;
 }) {
   const searchResult = filterIssuesBySearch(searchText);
   let filteredIssues = searchResult.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
   filteredIssues = filterIssuesByOrganization(filteredIssues);
+  filteredIssues = filterAvailableIssues ? filterIssuesByAvailability(filteredIssues) : filteredIssues;
   renderGitHubIssues(filteredIssues, skipAnimation);
   applyAvatarsToIssues();
 }
