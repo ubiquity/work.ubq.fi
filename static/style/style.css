@@ -247,7 +247,8 @@
     text-align: center;
     white-space: nowrap;
     background-color: #80808020;
-    width: 64px;
+    min-width: 55px;
+    width: auto;
     letter-spacing: 0.5px;
     flex-grow: 4;
     justify-content: center;
@@ -258,7 +259,7 @@
     overflow: hidden;
     display: inline-block;
   }
-  input[type="radio"] {
+  input[type="radio"], input[type="button"] {
     background-color: unset;
     cursor: default;
     appearance: unset;
