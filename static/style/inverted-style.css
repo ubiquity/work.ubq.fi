@@ -46,7 +46,7 @@
     margin: 0;
   }
 }
-@media (orientation: landscape) and (width > 800px) {
+@media (orientation: landscape) and (width > 1050px) {
   #bottom-bar,
   #filters-bottom {
     display: none;
