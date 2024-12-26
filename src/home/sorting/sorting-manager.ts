@@ -174,12 +174,12 @@ export class SortingManager {
   private _generateFilterAvailableIssuesButton() {
     const input = document.createElement("input");
     input.type = "button";
-    input.value = "All Issues";
+    input.value = "Unassigned";
     input.id = `filter-availability-${this._instanceId}`;
 
     input.addEventListener("click", () => {
       this._filterAvailableIssues = !this._filterAvailableIssues;
-      input.value = this._filterAvailableIssues ? "All Issues" : "Unassigned";
+      input.value = this._filterAvailableIssues ? "Unassigned" : "All Issues";
 
       try {
         // Clear search when applying the filter
