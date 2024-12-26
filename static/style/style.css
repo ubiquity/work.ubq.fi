@@ -5,6 +5,9 @@
   .filters-container label:not([for="view-toggle"]) {
     width: 48px;
   }
+  .filters {
+    width: 100%;
+  }
   #bottom-right {
     display: none;
   }
@@ -684,6 +687,7 @@
   .filters {
     display: flex;
     min-width: 50%;
+    margin-left: 2px;
   }
   .filters input[type="text"] {
     padding: 4px;
@@ -702,10 +706,11 @@
     display: none;
   }
   .filters input[type="button"] {
-    padding: 4px;
+    padding: 4px 6px;
     border: none;
+    margin-left: 4px;
+    margin-right: 4px;
     border-radius: 4px;
-    margin: 0 4px 0 4px;
     font-size: 12px;
     text-align: center;
     background-color: #80808020;

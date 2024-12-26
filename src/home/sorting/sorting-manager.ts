@@ -179,7 +179,7 @@ export class SortingManager {
 
     input.addEventListener("click", () => {
       this._filterAvailableIssues = !this._filterAvailableIssues;
-      input.value = this._filterAvailableIssues ? "All Issues" : "Unassigned Issues";
+      input.value = this._filterAvailableIssues ? "All Issues" : "Unassigned";
 
       try {
         // Clear search when applying the filter
