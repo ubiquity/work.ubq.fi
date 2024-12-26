@@ -6,9 +6,8 @@ import { Sorting } from "./generate-sorting-buttons";
 export class SortingManager {
   private _lastChecked: HTMLInputElement | null = null;
   private _toolBarFilters: HTMLElement;
-  private _filterTextBox: HTMLInputElement;
+  private _filtersDiv: HTMLElement;
   private _sortingButtons: HTMLElement;
-  private _filterAvailableIssuesButton: HTMLElement;
   private _instanceId: string;
   private _filterAvailableIssues: boolean = true;
   private _sortingState: { [key: string]: "unsorted" | "ascending" | "descending" } = {}; // Track state for each sorting option
@@ -22,10 +21,12 @@ export class SortingManager {
 
     // Initialize sorting buttons first
     this._sortingButtons = this._generateSortingButtons(sortingOptions);
-    // Initialize filter available issues button
-    this._filterAvailableIssuesButton = this._generateFilterAvailableIssuesButton();
-    // Then initialize filter text box
-    this._filterTextBox = this._generateFilterTextBox();
+    // Initialize filters div
+    this._filtersDiv = this._generateFiltersDiv();
+    // Add filter search box to filters div
+    this._filtersDiv.appendChild(this._generateFilterTextBox());
+    // Add filter available issues button to filters div
+    this._filtersDiv.appendChild(this._generateFilterAvailableIssuesButton());
 
     // Initialize sorting states to 'unsorted' for all options
     sortingOptions.forEach((option) => {
@@ -34,9 +35,14 @@ export class SortingManager {
   }
 
   public render() {
-    this._toolBarFilters.appendChild(this._filterTextBox);
+    this._toolBarFilters.appendChild(this._filtersDiv);
     this._toolBarFilters.appendChild(this._sortingButtons);
-    this._toolBarFilters.appendChild(this._filterAvailableIssuesButton);
+  }
+
+  private _generateFiltersDiv() {
+    const div = document.createElement("div");
+    div.className = "filters";
+    return div;
   }
 
   private _generateFilterTextBox() {
@@ -124,7 +130,8 @@ export class SortingManager {
   }
 
   private _resetSearchBar() {
-    this._filterTextBox.value = "";
+    const filterTextBox = this._filtersDiv.querySelector('input[type="text"]') as HTMLInputElement;
+    filterTextBox.value = "";
     const newURL = new URL(window.location.href);
     newURL.searchParams.delete("search");
     window.history.replaceState({}, "", newURL.toString());
@@ -165,21 +172,14 @@ export class SortingManager {
   }
 
   private _generateFilterAvailableIssuesButton() {
-    const div = document.createElement("div");
-    div.className = "labels";
-
     const input = document.createElement("input");
     input.type = "button";
-    input.value = "filter availability";
+    input.value = "All Issues";
     input.id = `filter-availability-${this._instanceId}`;
-
-    const label = document.createElement("label");
-    label.htmlFor = `filter-availability-${this._instanceId}`;
-    label.textContent = "Show All Issues";
 
     input.addEventListener("click", () => {
       this._filterAvailableIssues = !this._filterAvailableIssues;
-      label.textContent = this._filterAvailableIssues ? "Show All Issues" : "Show Available Issues";
+      input.value = this._filterAvailableIssues ? "All Issues" : "Unassigned Issues";
 
       try {
         // Clear search when applying the filter
@@ -196,10 +196,7 @@ export class SortingManager {
       }
     });
 
-    div.appendChild(input);
-    div.appendChild(label);
-
-    return div;
+    return input;
   }
 
   private _detectSortingState() {

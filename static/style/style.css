@@ -1,4 +1,4 @@
-@media (orientation: portrait) or (max-width: 1005px) {
+@media (orientation: portrait) or (max-width: 1050px) {
   #filters {
     display: none;
   }
@@ -247,8 +247,7 @@
     text-align: center;
     white-space: nowrap;
     background-color: #80808020;
-    min-width: 55px;
-    width: auto;
+    width: 64px;
     letter-spacing: 0.5px;
     flex-grow: 4;
     justify-content: center;
@@ -259,7 +258,7 @@
     overflow: hidden;
     display: inline-block;
   }
-  input[type="radio"], input[type="button"] {
+  input[type="radio"] {
     background-color: unset;
     cursor: default;
     appearance: unset;
@@ -682,23 +681,42 @@
     /* width: 100%; */
     /* justify-content: normal; */
   }
-  .filters-container input[type="text"] {
+  .filters {
+    display: flex;
+    min-width: 50%;
+  }
+  .filters input[type="text"] {
     padding: 4px;
     border: none;
     border-radius: 4px;
     background-color: #80808020;
     height: 16px;
     text-align: center;
+    width: 75%;
   }
-  #filter-top {
-    width: calc(100vw / 3);
-  }
-  .filters-container input[type="text"]::placeholder {
+  .filters input[type="text"]::placeholder {
     font-size: 12px;
     letter-spacing: 0.5px;
   }
-  .filters-container input[type="text"].hidden {
+  .filters input[type="text"].hidden {
     display: none;
+  }
+  .filters input[type="button"] {
+    padding: 4px;
+    border: none;
+    border-radius: 4px;
+    margin: 0 4px 0 4px;
+    font-size: 12px;
+    text-align: center;
+    background-color: #80808020;
+    letter-spacing: 0.5px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    cursor: pointer;
+    width: 25%;
+  }
+  .filters input[type="button"]:hover {
+    background-color: #80808040;
   }
   button#github-login-button {
     margin-left: auto;
