@@ -13,6 +13,12 @@ export type Options = {
   ordering: "normal" | "reverse";
 };
 
+export let isFilteringAvailableIssues = true;
+
+export function swapAvailabilityFilter() {
+  isFilteringAvailableIssues = !isFilteringAvailableIssues;
+}
+
 // start at view based on URL
 export let isProposalOnlyViewer = new URLSearchParams(window.location.search).get("proposal") === "true";
 
@@ -77,12 +83,10 @@ function filterIssuesByOrganization(issues: GitHubIssue[]): GitHubIssue[] {
 export async function displayGitHubIssues({
   sorting,
   options = { ordering: "normal" },
-  filterAvailableIssues = true,
   skipAnimation = false,
 }: {
   sorting?: Sorting;
   options?: { ordering: string };
-  filterAvailableIssues?: boolean;
   skipAnimation?: boolean;
 } = {}) {
   await checkCacheIntegrityAndSyncTasks();
@@ -90,24 +94,16 @@ export async function displayGitHubIssues({
   const sortedIssues = sortIssuesController(cachedTasks, sorting, options);
   let sortedAndFiltered = sortedIssues.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
   sortedAndFiltered = filterIssuesByOrganization(sortedAndFiltered);
-  sortedAndFiltered = filterAvailableIssues ? filterIssuesByAvailability(sortedAndFiltered) : sortedAndFiltered;
+  sortedAndFiltered = isFilteringAvailableIssues ? filterIssuesByAvailability(sortedAndFiltered) : sortedAndFiltered;
   renderGitHubIssues(sortedAndFiltered, skipAnimation);
   applyAvatarsToIssues();
 }
 
-export async function searchDisplayGitHubIssues({
-  searchText,
-  filterAvailableIssues = true,
-  skipAnimation = false,
-}: {
-  searchText: string;
-  filterAvailableIssues?: boolean;
-  skipAnimation?: boolean;
-}) {
+export async function searchDisplayGitHubIssues({ searchText, skipAnimation = false }: { searchText: string; skipAnimation?: boolean }) {
   const searchResult = filterIssuesBySearch(searchText);
   let filteredIssues = searchResult.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
   filteredIssues = filterIssuesByOrganization(filteredIssues);
-  filteredIssues = filterAvailableIssues ? filterIssuesByAvailability(filteredIssues) : filteredIssues;
+  filteredIssues = isFilteringAvailableIssues ? filterIssuesByAvailability(filteredIssues) : filteredIssues;
   renderGitHubIssues(filteredIssues, skipAnimation);
   applyAvatarsToIssues();
 }

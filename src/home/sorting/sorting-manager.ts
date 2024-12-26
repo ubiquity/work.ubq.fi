@@ -2,6 +2,7 @@ import { displayGitHubIssues, searchDisplayGitHubIssues } from "../fetch-github/
 import { renderErrorInModal } from "../rendering/display-popup-modal";
 import { proposalViewToggle } from "../rendering/render-github-issues";
 import { Sorting } from "./generate-sorting-buttons";
+import { isFilteringAvailableIssues, swapAvailabilityFilter } from "../fetch-github/fetch-and-display-previews";
 
 export class SortingManager {
   private _lastChecked: HTMLInputElement | null = null;
@@ -9,7 +10,6 @@ export class SortingManager {
   private _filtersDiv: HTMLElement;
   private _sortingButtons: HTMLElement;
   private _instanceId: string;
-  private _filterAvailableIssues: boolean = true;
   private _sortingState: { [key: string]: "unsorted" | "ascending" | "descending" } = {}; // Track state for each sorting option
 
   constructor(filtersId: string, sortingOptions: readonly string[], instanceId: string) {
@@ -77,7 +77,6 @@ export class SortingManager {
           try {
             void searchDisplayGitHubIssues({
               searchText: searchQuery,
-              filterAvailableIssues: this._filterAvailableIssues,
             });
           } catch (error) {
             renderErrorInModal(error as Error);
@@ -105,7 +104,6 @@ export class SortingManager {
       try {
         void searchDisplayGitHubIssues({
           searchText: filterText,
-          filterAvailableIssues: this._filterAvailableIssues,
         });
       } catch (error) {
         renderErrorInModal(error as Error);
@@ -118,7 +116,6 @@ export class SortingManager {
         try {
           void searchDisplayGitHubIssues({
             searchText: textBox.value,
-            filterAvailableIssues: this._filterAvailableIssues,
           });
         } catch (error) {
           renderErrorInModal(error as Error);
@@ -178,8 +175,8 @@ export class SortingManager {
     input.id = `filter-availability-${this._instanceId}`;
 
     input.addEventListener("click", () => {
-      this._filterAvailableIssues = !this._filterAvailableIssues;
-      input.value = this._filterAvailableIssues ? "Unassigned" : "All Issues";
+      swapAvailabilityFilter();
+      input.value = isFilteringAvailableIssues ? "Unassigned" : "All Issues";
 
       try {
         // Clear search when applying the filter
@@ -189,7 +186,6 @@ export class SortingManager {
         void displayGitHubIssues({
           sorting: sortingOption as Sorting,
           options: { ordering: sortingOrder },
-          filterAvailableIssues: this._filterAvailableIssues,
         });
       } catch (error) {
         renderErrorInModal(error as Error);
@@ -275,7 +271,6 @@ export class SortingManager {
         void displayGitHubIssues({
           sorting: option as Sorting,
           options: { ordering: newOrdering },
-          filterAvailableIssues: this._filterAvailableIssues,
         });
       } catch (error) {
         renderErrorCatch(error as ErrorEvent);
@@ -285,9 +280,7 @@ export class SortingManager {
 
   private _clearSorting() {
     try {
-      void displayGitHubIssues({
-        filterAvailableIssues: this._filterAvailableIssues,
-      });
+      void displayGitHubIssues();
     } catch (error) {
       renderErrorInModal(error as Error);
     }
