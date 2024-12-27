@@ -29,6 +29,7 @@ export const esBuildContext: esbuild.BuildOptions = {
     SUPABASE_STORAGE_KEY: generateSupabaseStorageKey(),
     GIT_REVISION: execSync(`git rev-parse --short HEAD`).toString().trim(),
     NODE_ENV: process.env.NODE_ENV || "development",
+    VOYAGEAI_API_KEY: process.env.VOYAGEAI_API_KEY,
   }),
 };
 

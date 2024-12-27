@@ -36,10 +36,14 @@
     "@octokit/request-error": "^6.1.0",
     "@octokit/rest": "^20.0.2",
     "@supabase/supabase-js": "^2.39.0",
+    "@types/markdown-it": "^14.1.2",
     "dotenv": "^16.3.1",
     "esbuild-plugin-env": "^1.0.8",
+    "markdown-it": "^14.1.0",
+    "markdown-it-plain-text": "^0.3.0",
     "marked": "^11.0.0",
     "marked-footnote": "^1.2.4",
+    "voyageai": "^0.0.3-1",
     "wrangler": "^3.83.0"
   },
   "devDependencies": {
