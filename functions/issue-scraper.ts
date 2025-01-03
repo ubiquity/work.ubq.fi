@@ -8,8 +8,6 @@ export const corsHeaders = {
 
 export async function onRequest(ctx: Context): Promise<Response> {
   const { request, env } = ctx;
-  console.log("Request received:", request.method, request.url);
-  console.log("Environment", env);
   const url = new URL(request.url);
 
   try {
