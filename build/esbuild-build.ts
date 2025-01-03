@@ -25,10 +25,10 @@ export const esBuildContext: esbuild.BuildOptions = {
     ".json": "dataurl",
   },
   outdir: "static/dist",
-  define: createEnvDefines(["SUPABASE_URL", "SUPABASE_ANON_KEY", "VOYAGEAI_API_KEY"], {
+  define: createEnvDefines(["SUPABASE_URL", "SUPABASE_ANON_KEY"], {
     SUPABASE_STORAGE_KEY: generateSupabaseStorageKey(),
     GIT_REVISION: execSync(`git rev-parse --short HEAD`).toString().trim(),
-    NODE_ENV: process.env.NODE_ENV || "development"
+    NODE_ENV: process.env.NODE_ENV || "development",
   }),
 };
 
