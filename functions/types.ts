@@ -16,6 +16,7 @@ export interface ValidationResult {
   isValid: boolean;
   gitHubUserId?: string;
   referralCode?: string;
+  authToken?: string;
 }
 
 export type Context = EventContext<Env, string, Record<string, string>>;

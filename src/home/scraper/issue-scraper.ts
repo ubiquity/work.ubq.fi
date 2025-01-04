@@ -1,315 +1,40 @@
-import { SupabaseClient } from "@supabase/supabase-js";
-import { VoyageAIClient } from "voyageai";
-import { Octokit } from "@octokit/rest";
-import markdownit from "markdown-it";
-import plainTextPlugin from "markdown-it-plain-text";
+import { checkSupabaseSession } from "../rendering/render-github-login-button";
 
-declare const VOYAGEAI_API_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
+export async function startIssueScraper(username: string) {
+  const supabaseAuth = await checkSupabaseSession();
 
-interface MarkdownItWithPlainText extends markdownit {
-  plainText: string;
-}
+  // Check if 24 hours have passed since last fetch
+  const lastFetchKey = `lastFetch_${username}`;
+  const lastFetch = localStorage.getItem(lastFetchKey);
+  const now = Date.now();
 
-function markdownToPlainText(markdown: string | null): string | null {
-  if (!markdown) return markdown;
-  const md = markdownit() as MarkdownItWithPlainText;
-  md.use(plainTextPlugin);
-  md.render(markdown);
-  return md.plainText;
-}
-
-interface IssueMetadata {
-  nodeId: string;
-  number: number;
-  title: string;
-  body: string;
-  state: string;
-  repositoryName: string;
-  repositoryId: number;
-  assignees: string[];
-  authorId: number;
-  createdAt: string;
-  closedAt: string | null;
-  stateReason: string | null;
-  updatedAt: string;
-}
-
-interface IssueNode {
-  id: string;
-  number: number;
-  title: string;
-  body: string;
-  state: string;
-  stateReason: string | null;
-  createdAt: string;
-  updatedAt: string;
-  closedAt: string | null;
-  author: {
-    login: string;
-  } | null;
-  assignees: {
-    nodes: Array<{
-      login: string;
-    }>;
-  };
-  repository: {
-    id: string;
-    name: string;
-    owner: {
-      login: string;
-    };
-  };
-}
-
-interface GraphQlSearchResponse {
-  search: {
-    pageInfo: {
-      hasNextPage: boolean;
-      endCursor: string | null;
-    };
-    nodes: Array<IssueNode>;
-  };
-}
-
-const SEARCH_ISSUES_QUERY = `
-  query SearchIssues($searchText: String!, $after: String) {
-    search(
-      query: $searchText,
-      type: ISSUE,
-      first: 100,
-      after: $after
-    ) {
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
-      nodes {
-        ... on Issue {
-          id
-          number
-          title
-          body
-          state
-          stateReason
-          createdAt
-          updatedAt
-          closedAt
-          author {
-            login
-          }
-          assignees(first: 10) {
-            nodes {
-              login
-            }
-          }
-          repository {
-            id
-            name
-            owner {
-              login
-            }
-          }
-        }
-      }
-    }
+  if (lastFetch && now - Number(lastFetch) < 24 * 60 * 60 * 1000) {
+    return JSON.stringify({
+      success: true,
+      message: "Skipping fetch - last fetch was less than 24 hours ago",
+    });
   }
-`;
+  
+  const response = await fetch("/issue-scraper", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      authToken: supabaseAuth.provider_token,
+    }),
+  });
 
-async function fetchAuthorId(octokit: InstanceType<typeof Octokit>, login: string): Promise<number> {
-  try {
-    const response = await octokit.rest.users.getByUsername({ username: login });
-    return response.data.id;
-  } catch (error) {
-    console.error(`Error fetching author ID for ${login}:`, error);
-    return -1;
-  }
-}
-
-async function fetchUserIssues(octokit: InstanceType<typeof Octokit>, username: string): Promise<IssueNode[]> {
-  const allIssues: IssueNode[] = [];
-  let hasNextPage = true;
-  let cursor: string | null = null;
-
-  const searchText = `assignee:${username} is:issue is:closed`;
-
-  while (hasNextPage) {
-    const variables: { searchText: string; after?: string } = {
-      searchText,
-    };
-    if (cursor) {
-      variables.after = cursor;
-    }
-
-    const response: GraphQlSearchResponse = await octokit.graphql<GraphQlSearchResponse>(SEARCH_ISSUES_QUERY, variables);
-
-    const completedIssues = response.search.nodes.filter((issue) => issue.stateReason === "COMPLETED");
-    allIssues.push(...completedIssues);
-
-    hasNextPage = response.search.pageInfo.hasNextPage;
-    cursor = response.search.pageInfo.endCursor;
-
-    if (!cursor) break;
-  }
-
-  return allIssues;
-}
-
-// Pulls issues from GitHub and stores them in Supabase
-export async function issueScraper(username: string, supabase: SupabaseClient, token?: string): Promise<string> {
-  try {
-    // Check if 24 hours have passed since last fetch
-    const lastFetchKey = `lastFetch_${username}`;
-    const lastFetch = localStorage.getItem(lastFetchKey);
-    const now = Date.now();
-
-    if (lastFetch && now - Number(lastFetch) < 24 * 60 * 60 * 1000) {
-      return JSON.stringify({
-        success: true,
-        message: "Skipping fetch - last fetch was less than 24 hours ago",
-      });
-    }
-
-    if (!username) {
-      throw new Error("Username is required");
-    }
-
-    if (VOYAGEAI_API_KEY === undefined) {
-      throw new Error("Required environment `VOYAGEAI_API_KEY` is missing");
-    }
-
-    const context = {
-      adapters: {},
-      logger: {
-        info: (message: string, data: Record<string, unknown>) => console.log("INFO:", message + ":", data),
-        error: (message: string, data: Record<string, unknown>) => console.error("ERROR:", message + ":", data),
-      },
-      octokit: new Octokit(token ? { auth: token } : {}),
-    };
-
-    const voyageClient = new VoyageAIClient({ apiKey: VOYAGEAI_API_KEY });
-    const issues = await fetchUserIssues(context.octokit, username);
-    const processedIssues: Array<{ issue: IssueMetadata; error?: string }> = [];
-
-    for (const issue of issues) {
-      try {
-        const authorId = issue.author?.login ? await fetchAuthorId(context.octokit, issue.author.login) : -1;
-        const repoOwner = issue.repository.owner.login;
-
-        const metadata: IssueMetadata = {
-          nodeId: issue.id,
-          number: issue.number,
-          title: issue.title || "",
-          body: issue.body || "",
-          state: issue.state,
-          stateReason: issue.stateReason,
-          repositoryName: issue.repository.name,
-          repositoryId: parseInt(issue.repository.id),
-          assignees: (issue.assignees?.nodes || []).map((assignee) => assignee.login),
-          authorId,
-          createdAt: issue.createdAt,
-          closedAt: issue.closedAt,
-          updatedAt: issue.updatedAt,
-        };
-        const markdown = metadata.body + " " + metadata.title;
-        const plaintext = markdownToPlainText(markdown);
-        if (!plaintext || plaintext === null) {
-          throw new Error("Error converting markdown to plaintext");
-        }
-        const embeddingObject = await voyageClient.embed({
-          input: markdown,
-          model: "voyage-large-2-instruct",
-          inputType: "document",
-        });
-        const embedding = (embeddingObject.data && embeddingObject.data[0]?.embedding) || {};
-        const payload = {
-          issue: metadata,
-          action: "created",
-          sender: {
-            login: username,
-          },
-          repository: {
-            id: parseInt(issue.repository.id),
-            node_id: issue.repository.id,
-            name: issue.repository.name,
-            full_name: `${repoOwner}/${issue.repository.name}`,
-            owner: {
-              login: repoOwner,
-              id: authorId,
-              type: "User",
-              site_admin: false,
-            },
-          },
-        };
-        //Check if the user is authenticated
-        if (!supabase.auth.getUser()) {
-          throw new Error("User is not authenticated");
-        }
-
-        const { error } = await supabase.from("issues").upsert({
-          id: metadata.nodeId,
-          markdown,
-          plaintext,
-          embedding: JSON.stringify(embedding),
-          author_id: metadata.authorId,
-          modified_at: metadata.updatedAt,
-          payload: payload,
-        });
-
-        processedIssues.push({
-          issue: metadata,
-          error: error ? `Error storing issue: ${error.message}` : undefined,
-        });
-      } catch (error) {
-        processedIssues.push({
-          issue: {
-            nodeId: issue.id,
-            number: issue.number,
-            title: issue.title || "",
-            body: issue.body || "",
-            state: issue.state,
-            stateReason: issue.stateReason,
-            repositoryName: issue.repository.name,
-            repositoryId: parseInt(issue.repository.id),
-            assignees: [],
-            authorId: -1,
-            createdAt: issue.createdAt,
-            closedAt: issue.closedAt,
-            updatedAt: issue.updatedAt,
-          },
-          error: `Error processing issue: ${error instanceof Error ? error.message : "Unknown error"}`,
-        });
-      }
-    }
-
-    // Update last fetch timestamp
+  if (response.status === 200) {
     localStorage.setItem(lastFetchKey, now.toString());
-
-    return JSON.stringify(
-      {
-        success: true,
-        stats: {
-          storageSuccessful: processedIssues.filter((p) => !p.error).length,
-          storageFailed: processedIssues.filter((p) => p.error).length,
-        },
-        errors: processedIssues
-          .filter((p) => p.error)
-          .map((p) => ({
-            type: "storage",
-            name: `${p.issue.repositoryName}#${p.issue.number}`,
-            error: p.error,
-          })),
-        issues: processedIssues.map((p) => ({
-          number: p.issue.number,
-          title: p.issue.title,
-          repo: p.issue.repositoryName,
-          error: p.error,
-        })),
-      },
-      null,
-      2
-    );
-  } catch (error) {
-    console.error("Error in issueScraper:", error);
-    throw error;
+    return JSON.stringify({
+      success: true,
+      message: "Successfully fetched issues",
+    });
+  } else {
+    return JSON.stringify({
+      success: false,
+      message: `Failed to fetch issues. Status: ${response.status}`,
+    });
   }
 }
