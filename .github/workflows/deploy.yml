@@ -45,5 +45,5 @@ jobs:
                 VOYAGEAI_API_KEY: ${{ secrets.VOYAGEAI_API_KEY }}
                 SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
                 SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-              run: .github/workflows/sync-env-vars.sh
+              run: bash .github/sync-env-vars.sh
 
