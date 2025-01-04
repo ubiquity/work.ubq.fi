@@ -688,6 +688,7 @@
     display: flex;
     min-width: 50%;
     margin-left: 2px;
+    gap: 4px;
   }
   .filters input[type="text"] {
     padding: 4px;
@@ -708,7 +709,6 @@
   .filters input[type="button"] {
     padding: 4px 6px;
     border: none;
-    margin-left: 4px;
     margin-right: 4px;
     border-radius: 4px;
     font-size: 12px;
@@ -718,6 +718,7 @@
     text-overflow: ellipsis;
     overflow: hidden;
     cursor: pointer;
+    min-width: 0px;
     width: 25%;
   }
   .filters input[type="button"]:hover {
