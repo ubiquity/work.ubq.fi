@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Deploy to Cloudflare
+        if: ${{ github.event.workflow_run.conclusion == 'success' }}
         uses: ubiquity/cloudflare-deploy-action@main
         with:
           repository: ${{ github.repository }}
@@ -44,5 +45,6 @@ jobs:
           VOYAGEAI_API_KEY: ${{ secrets.VOYAGEAI_API_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: bash .github/sync-env-vars.sh
 
