@@ -30,20 +30,18 @@ jobs:
     name: Update environment secrets in Cloudflare
     runs-on: ubuntu-22.04
     steps:
-      - name: Update environment secrets in Cloudflare
-        run: |
-            - name: Checkout repository
-              uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            - name: Make script executable
-              run: chmod +x .github/sync-enn-vars.sh
+      - name: Make script executable
+        run: chmod +x .github/sync-env-vars.sh
 
-            - name: Run sync environment variables script
-              env:
-                CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-                CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-                VOYAGEAI_API_KEY: ${{ secrets.VOYAGEAI_API_KEY }}
-                SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-                SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-              run: bash .github/sync-env-vars.sh
+      - name: Run sync environment variables script
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          VOYAGEAI_API_KEY: ${{ secrets.VOYAGEAI_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: bash .github/sync-env-vars.sh
 
