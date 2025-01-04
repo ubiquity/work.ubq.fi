@@ -20,7 +20,7 @@ export async function onRequest(ctx: Context): Promise<Response> {
             status: 200,
           });
         }
-        return new Response("GET request", {
+        return new Response("GET request without key", {
           headers: corsHeaders,
           status: 200,
         });
