@@ -6,7 +6,7 @@
     width: 48px;
   }
   .filters {
-    width: 100% !important;
+    width: 100%;
   }
   #bottom-right {
     display: none;
