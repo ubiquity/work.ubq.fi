@@ -6,7 +6,7 @@
     width: 48px;
   }
   .filters {
-    width: 100%;
+    width: 100% !important;
   }
   #bottom-right {
     display: none;
@@ -687,7 +687,7 @@
   .filters {
     display: flex;
     min-width: 50%;
-    margin-left: 2px;
+    margin-left: 4px;
     gap: 4px;
   }
   .filters input[type="text"] {
