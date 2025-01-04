@@ -11,6 +11,9 @@ fi
 REPOSITORY_NAME=$GITHUB_REPOSITORY
 REPOSITORY_NAME=${REPOSITORY_NAME//./-}
 
+# Echo the repository name
+echo "Repository name: $REPOSITORY_NAME"
+
 # Make the API call to Cloudflare
 curl -X PUT \
   "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/${REPOSITORY_NAME}/deployment_configs" \
