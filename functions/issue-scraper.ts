@@ -7,112 +7,111 @@ import plainTextPlugin from "markdown-it-plain-text";
 import { validatePOST } from "./validators";
 
 interface MarkdownItWithPlainText extends markdownit {
-    plainText: string;
-  }
-  
+  plainText: string;
+}
+
 interface IssueMetadata {
-    nodeId: string;
-    number: number;
-    title: string;
-    body: string;
-    state: string;
-    repositoryName: string;
-    repositoryId: number;
-    assignees: string[];
-    authorId: number;
-    createdAt: string;
-    closedAt: string | null;
-    stateReason: string | null;
-    updatedAt: string;
-  }
-  
-  interface IssueNode {
-    id: string;
-    number: number;
-    title: string;
-    body: string;
-    state: string;
-    stateReason: string | null;
-    createdAt: string;
-    updatedAt: string;
-    closedAt: string | null;
-    author: {
+  nodeId: string;
+  number: number;
+  title: string;
+  body: string;
+  state: string;
+  repositoryName: string;
+  repositoryId: number;
+  assignees: string[];
+  authorId: number;
+  createdAt: string;
+  closedAt: string | null;
+  stateReason: string | null;
+  updatedAt: string;
+}
+
+interface IssueNode {
+  id: string;
+  number: number;
+  title: string;
+  body: string;
+  state: string;
+  stateReason: string | null;
+  createdAt: string;
+  updatedAt: string;
+  closedAt: string | null;
+  author: {
+    login: string;
+  } | null;
+  assignees: {
+    nodes: Array<{
       login: string;
-    } | null;
-    assignees: {
-      nodes: Array<{
-        login: string;
-      }>;
+    }>;
+  };
+  repository: {
+    id: string;
+    name: string;
+    owner: {
+      login: string;
     };
-    repository: {
-      id: string;
-      name: string;
-      owner: {
-        login: string;
-      };
+  };
+}
+
+interface GraphQlSearchResponse {
+  search: {
+    pageInfo: {
+      hasNextPage: boolean;
+      endCursor: string | null;
     };
-  }
-  
-  interface GraphQlSearchResponse {
-    search: {
-      pageInfo: {
-        hasNextPage: boolean;
-        endCursor: string | null;
-      };
-      nodes: Array<IssueNode>;
-    };
-  }
+    nodes: Array<IssueNode>;
+  };
+}
 
 export const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET",
-    "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET",
+  "Access-Control-Allow-Headers": "Content-Type",
 };
 
 export async function onRequest(ctx: Context): Promise<Response> {
-    const { request, env } = ctx;
+  const { request, env } = ctx;
 
-    try {
-        switch (request.method) {
-            case "POST": {
-                const result = await validatePOST(request);
-                if (!result.isValid || !result.gitHubUserId) {
-                    return new Response("Unauthorized", {
-                        headers: corsHeaders,
-                        status: 400,
-                    });
-                }
-                try {
-                    const supabase = new SupabaseClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY);
-                    const response = await issueScraper(result.gitHubUserId, supabase, env.VOYAGEAI_API_KEY, result.authToken);
-                    return new Response(response, {
-                        headers: corsHeaders,
-                        status: 200,
-                    });
-                } catch (error) {
-                    console.error("Error processing request:", error);
-                    return new Response("Internal Server Error", {
-                        headers: corsHeaders,
-                        status: 500,
-                    });
-                }
-            }
-
-            default:
-                return new Response("Method Not Allowed", {
-                    headers: corsHeaders,
-                    status: 405,
-                });
+  try {
+    switch (request.method) {
+      case "POST": {
+        const result = await validatePOST(request);
+        if (!result.isValid || !result.gitHubUserId) {
+          return new Response("Unauthorized", {
+            headers: corsHeaders,
+            status: 400,
+          });
         }
-    } catch (error) {
-        console.error("Error processing request:", error);
-        return new Response("Internal Server Error", {
+        try {
+          const supabase = new SupabaseClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY);
+          const response = await issueScraper(result.gitHubUserId, supabase, env.VOYAGEAI_API_KEY, result.authToken);
+          return new Response(response, {
+            headers: corsHeaders,
+            status: 200,
+          });
+        } catch (error) {
+          console.error("Error processing request:", error);
+          return new Response("Internal Server Error", {
             headers: corsHeaders,
             status: 500,
+          });
+        }
+      }
+
+      default:
+        return new Response("Method Not Allowed", {
+          headers: corsHeaders,
+          status: 405,
         });
     }
+  } catch (error) {
+    console.error("Error processing request:", error);
+    return new Response("Internal Server Error", {
+      headers: corsHeaders,
+      status: 500,
+    });
+  }
 }
-
 
 function markdownToPlainText(markdown: string | null): string | null {
   if (!markdown) return markdown;
@@ -121,7 +120,6 @@ function markdownToPlainText(markdown: string | null): string | null {
   md.render(markdown);
   return md.plainText;
 }
-
 
 const SEARCH_ISSUES_QUERY = `
   query SearchIssues($searchText: String!, $after: String) {
@@ -209,7 +207,6 @@ async function fetchUserIssues(octokit: InstanceType<typeof Octokit>, username: 
 // Pulls issues from GitHub and stores them in Supabase
 async function issueScraper(username: string, supabase: SupabaseClient, voyageApiKey: string, token?: string): Promise<string> {
   try {
-
     if (!username) {
       throw new Error("Username is required");
     }

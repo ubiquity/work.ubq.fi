@@ -14,7 +14,7 @@ export async function startIssueScraper(username: string) {
       message: "Skipping fetch - last fetch was less than 24 hours ago",
     });
   }
-  
+
   const response = await fetch("/issue-scraper", {
     method: "POST",
     headers: {
