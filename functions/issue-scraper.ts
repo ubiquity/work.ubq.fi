@@ -105,13 +105,7 @@ export async function onRequest(ctx: Context): Promise<Response> {
 
         try {
           const supabase = new SupabaseClient(env.SUPABASE_URL, env.SUPABASE_KEY);
-          const response = await issueScraper(
-            githubUserName,
-            supabase,
-            env.VOYAGEAI_API_KEY,
-            result.authToken,
-            timestamp
-          );
+          const response = await issueScraper(githubUserName, supabase, env.VOYAGEAI_API_KEY, result.authToken, timestamp);
           return new Response(response, {
             headers: corsHeaders,
             status: 200,
@@ -192,19 +186,13 @@ const SEARCH_ISSUES_QUERY = `
   }
 `;
 
-async function fetchUserIssuesBatch(
-  octokit: InstanceType<typeof Octokit>,
-  username: string,
-  lastScraped?: number
-): Promise<IssueNode[]> {
+async function fetchUserIssuesBatch(octokit: InstanceType<typeof Octokit>, username: string, lastScraped?: number): Promise<IssueNode[]> {
   const allIssues: IssueNode[] = [];
   let hasNextPage = true;
   let cursor: string | null = null;
 
   // Construct the query with the lastScraped timestamp
-  const searchText = `assignee:${username} is:issue is:closed reason:completed ${
-    lastScraped ? `closed:>${new Date(lastScraped).toISOString()}` : ""
-  }`;
+  const searchText = `assignee:${username} is:issue is:closed reason:completed ${lastScraped ? `closed:>${new Date(lastScraped).toISOString()}` : ""}`;
 
   while (hasNextPage) {
     const variables: { searchText: string; after?: string } = { searchText };
@@ -212,10 +200,7 @@ async function fetchUserIssuesBatch(
       variables.after = cursor;
     }
 
-    const response: GraphQlSearchResponse = await octokit.graphql<GraphQlSearchResponse>(
-      SEARCH_ISSUES_QUERY,
-      variables
-    );
+    const response: GraphQlSearchResponse = await octokit.graphql<GraphQlSearchResponse>(SEARCH_ISSUES_QUERY, variables);
 
     allIssues.push(...response.search.nodes);
 
@@ -227,65 +212,59 @@ async function fetchUserIssuesBatch(
 }
 
 async function batchEmbeddings(voyageClient: VoyageAIClient, texts: string[]): Promise<(number[] | undefined)[]> {
-    try {
-      const embeddingResponse = await voyageClient.embed({
-        input: texts,
-        model: "voyage-large-2-instruct",
-        inputType: "document",
-      });
-      return embeddingResponse.data?.map((item) => item.embedding) || [];
-    } catch (error) {
-      console.error("Error batching embeddings:", error);
-      throw error;
-    }
+  try {
+    const embeddingResponse = await voyageClient.embed({
+      input: texts,
+      model: "voyage-large-2-instruct",
+      inputType: "document",
+    });
+    return embeddingResponse.data?.map((item) => item.embedding) || [];
+  } catch (error) {
+    console.error("Error batching embeddings:", error);
+    throw error;
   }
-  
-  async function batchUpsertIssues(
-    supabase: SupabaseClient,
-    issues: Array<{
-      id: string;
-      markdown: string;
-      plaintext: string;
-      embedding: string;
-      author_id: number;
-      payload: PayloadType;
-    }>
-  ): Promise<void> {
-    const { error } = await supabase.from("issues").upsert(issues);
-    if (error) {
-      throw new Error(`Error during batch upsert: ${error.message}`);
-    }
-  }
-  
-  async function batchFetchAuthorIds(octokit: InstanceType<typeof Octokit>, logins: string[]): Promise<Record<string, number>> {
-    const authorIdMap: Record<string, number> = {};
-    const BATCH_SIZE = 20;
-    for (let i = 0; i < logins.length; i += BATCH_SIZE) {
-      const batch = logins.slice(i, i + BATCH_SIZE);
-      const promises = batch.map(async (login) => {
-        try {
-          const response = await octokit.rest.users.getByUsername({ username: login });
-          return { login, id: response.data.id };
-        } catch (error) {
-          console.error(`Error fetching author ID for ${login}:`, error);
-          return { login, id: -1 };
-        }
-      });
-      const results = await Promise.all(promises);
-      results.forEach(({ login, id }) => {
-        authorIdMap[login] = id;
-      });
-    }
-    return authorIdMap;
-  }
+}
 
-async function issueScraper(
-  username: string,
+async function batchUpsertIssues(
   supabase: SupabaseClient,
-  voyageApiKey: string,
-  token?: string,
-  timestamp?: number
-): Promise<string> {
+  issues: Array<{
+    id: string;
+    markdown: string;
+    plaintext: string;
+    embedding: string;
+    author_id: number;
+    payload: PayloadType;
+  }>
+): Promise<void> {
+  const { error } = await supabase.from("issues").upsert(issues);
+  if (error) {
+    throw new Error(`Error during batch upsert: ${error.message}`);
+  }
+}
+
+async function batchFetchAuthorIds(octokit: InstanceType<typeof Octokit>, logins: string[]): Promise<Record<string, number>> {
+  const authorIdMap: Record<string, number> = {};
+  const BATCH_SIZE = 20;
+  for (let i = 0; i < logins.length; i += BATCH_SIZE) {
+    const batch = logins.slice(i, i + BATCH_SIZE);
+    const promises = batch.map(async (login) => {
+      try {
+        const response = await octokit.rest.users.getByUsername({ username: login });
+        return { login, id: response.data.id };
+      } catch (error) {
+        console.error(`Error fetching author ID for ${login}:`, error);
+        return { login, id: -1 };
+      }
+    });
+    const results = await Promise.all(promises);
+    results.forEach(({ login, id }) => {
+      authorIdMap[login] = id;
+    });
+  }
+  return authorIdMap;
+}
+
+async function issueScraper(username: string, supabase: SupabaseClient, voyageApiKey: string, token?: string, timestamp?: number): Promise<string> {
   try {
     if (!username) {
       throw new Error("Username is required");
@@ -296,9 +275,7 @@ async function issueScraper(
 
     const issues = await fetchUserIssuesBatch(octokit, username, timestamp);
 
-    const uniqueAuthors = Array.from(
-      new Set(issues.map((issue) => issue.author?.login).filter((login): login is string => !!login))
-    );
+    const uniqueAuthors = Array.from(new Set(issues.map((issue) => issue.author?.login).filter((login): login is string => !!login)));
 
     const authorIdMap = await batchFetchAuthorIds(octokit, uniqueAuthors);
 
