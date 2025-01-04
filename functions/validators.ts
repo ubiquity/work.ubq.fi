@@ -6,7 +6,7 @@ import { Octokit } from "@octokit/rest";
 export async function validatePOST(request: Request): Promise<ValidationResult> {
   const jsonData: POSTRequestBody = await request.json();
 
-  const { authToken, referralCode } = jsonData;
+  const { authToken, referralCode, timestamp } = jsonData;
 
   const octokit = new Octokit({ auth: authToken });
 
@@ -15,7 +15,7 @@ export async function validatePOST(request: Request): Promise<ValidationResult> 
 
     const gitHubUser = response.data;
 
-    return { isValid: true, gitHubUser: gitHubUser, referralCode: referralCode, authToken: authToken };
+    return { isValid: true, gitHubUser: gitHubUser, referralCode: referralCode, authToken: authToken, timestamp };
   } catch (error) {
     console.error("User is not logged in");
     return { isValid: false };

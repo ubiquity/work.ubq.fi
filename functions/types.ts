@@ -12,6 +12,7 @@ export interface Env {
 export interface POSTRequestBody {
   authToken: string;
   referralCode: string;
+  timestamp: number;
 }
 
 export interface ValidationResult {
@@ -19,6 +20,7 @@ export interface ValidationResult {
   gitHubUser?: GitHubUser;
   referralCode?: string;
   authToken?: string;
+  timestamp?: number;
 }
 
 export type Context = EventContext<Env, string, Record<string, string>>;
