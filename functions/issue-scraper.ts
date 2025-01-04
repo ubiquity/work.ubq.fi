@@ -1,4 +1,4 @@
-import { Context, Env } from "./types";
+import { Context } from "./types";
 
 export const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,16 +7,16 @@ export const corsHeaders = {
 };
 
 
-
-export async function onRequest(ctx: Context, env: Env): Promise<Response> {
-  const { request } = ctx;
+export async function onRequest(ctx: Context): Promise<Response> {
+  const { request, env } = ctx;
   const url = new URL(request.url);
+
   try {
     switch (request.method) {
       case "GET":
         if (url.searchParams.has("key")) {
           const key = url.searchParams.get("key") as string;
-          return new Response("GET request with key: " + key + JSON.stringify(env.SUPABASE_ANON_KEY), {
+          return new Response("GET request with key: " + key + JSON.stringify(env), {
             headers: corsHeaders,
             status: 200,
           });

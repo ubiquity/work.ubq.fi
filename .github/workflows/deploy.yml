@@ -32,9 +32,10 @@ jobs:
     steps:
       - name: Update environment secrets in Cloudflare
         run: |
-            REPO_NAME=$(echo "${{ github.event.repository.name }}" | tr '.' '-')
+            REPOSITORY_NAME=${{ github.repository }}
+            REPOSITORY_NAME=${REPOSITORY_NAME//./-}
             curl -X PUT \
-            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/${REPO_NAME}/deployment_configs" \
+            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/" + ${REPOSITORY_NAME} + "/deployment_configs" \
             -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
             -H "Content-Type: application/json" \
             --data '{
