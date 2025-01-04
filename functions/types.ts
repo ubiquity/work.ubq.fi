@@ -2,6 +2,9 @@ import { EventContext, KVNamespace } from "@cloudflare/workers-types";
 
 export interface Env {
   KVNamespace: KVNamespace;
+  SUPABASE_URL: string;
+  SUPABASE_ANON_KEY: string;
+  VOYAGEAI_API_KEY: string;
 }
 
 export interface POSTRequestBody {

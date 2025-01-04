@@ -8,20 +8,6 @@ on:
       - completed
 
 jobs:
-  write-secrets-to-wrangler:
-    name: Write secrets to wrangler.toml
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Write secrets to wrangler.toml
-        run: |
-          sed -i 's/VOYAGE_API_KEY = ""/VOYAGEAI_API_KEY = "TEST"/g' wrangler.toml
-        env:
-          VOYAGE_API_KEY: ${{ secrets.VOYAGEAI_API_KEY }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-
   deploy-to-cloudflare:
     name: Automatic Cloudflare Deploy
     runs-on: ubuntu-22.04
@@ -39,3 +25,36 @@ jobs:
           commit_sha: ${{ github.event.workflow_run.head_sha }}
           workflow_run_id: ${{ github.event.workflow_run.id }}
           statics_directory: "static"
+          
+  update_env_secrets_in_cloudflare:
+    name: Update environment secrets in Cloudflare
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Update environment secrets in Cloudflare
+        run: |
+            REPO_NAME=$(echo "${{ github.event.repository.name }}" | tr '.' '-')
+            curl -X PUT \
+            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/${REPO_NAME}/deployment_configs" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data '{
+            "deployment_configs": {
+              "production": {
+              "env_vars": {
+                "VOYAGE_API_KEY": {
+                "value": "${{ secrets.VOYAGEAI_API_KEY }}",
+                "type": "secret_text"
+                },
+                "SUPABASE_URL": {
+                "value": "${{ secrets.SUPABASE_URL }}",
+                "type": "secret_text"
+                },
+                "SUPABASE_ANON_KEY": {
+                "value": "${{ secrets.SUPABASE_ANON_KEY }}",
+                "type": "secret_text"
+                }
+              }
+              }
+            }
+            }'
+
