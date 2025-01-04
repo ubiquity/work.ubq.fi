@@ -15,7 +15,7 @@ export async function validatePOST(request: Request): Promise<ValidationResult> 
 
     const gitHubUser = response.data;
 
-    return { isValid: true, gitHubUserId: gitHubUser.id.toString(), referralCode: referralCode };
+    return { isValid: true, gitHubUser: gitHubUser, referralCode: referralCode, authToken: authToken };
   } catch (error) {
     console.error("User is not logged in");
     return { isValid: false };

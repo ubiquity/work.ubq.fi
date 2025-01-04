@@ -24,7 +24,7 @@ curl -X PATCH \
     "deployment_configs": {
       "production": {
         "env_vars": {
-          "VOYAGE_API_KEY": {
+          "VOYAGEAI_API_KEY": {
             "value": "'"${VOYAGEAI_API_KEY}"'",
             "type": "secret_text"
           },
