@@ -173,15 +173,16 @@ export class SortingManager {
     input.type = "button";
     input.value = "Unassigned";
     input.id = `filter-availability-${this._instanceId}`;
+    // decide initial value based on URL
+    if(new URLSearchParams(window.location.search).get("allIssues") === "true"){
+      input.value = "All Issues";
+    }
 
     input.addEventListener("click", () => {
       swapAvailabilityFilter();
       input.value = isFilteringAvailableIssues ? "Unassigned" : "All Issues";
 
       try {
-        // Clear search when applying the filter
-        this._resetSearchBar();
-
         const { sortingOption, sortingOrder } = this._detectSortingState();
         void displayGitHubIssues({
           sorting: sortingOption as Sorting,
