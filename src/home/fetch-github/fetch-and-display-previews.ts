@@ -13,10 +13,21 @@ export type Options = {
   ordering: "normal" | "reverse";
 };
 
-export let isFilteringAvailableIssues = true;
+// decide initial value based on URL
+export let isFilteringAvailableIssues = (new URLSearchParams(window.location.search).get("allIssues") === "true") ? false : true;
 
 export function swapAvailabilityFilter() {
   isFilteringAvailableIssues = !isFilteringAvailableIssues;
+
+  //url part
+  const newURL = new URL(window.location.href);
+  if(isFilteringAvailableIssues){
+    newURL.searchParams.delete("allIssues")
+  } else { 
+    newURL.searchParams.set("allIssues","true");
+  }
+  console.log(newURL.toString());
+  window.history.replaceState({}, "", newURL.toString());
 }
 
 // start at view based on URL
