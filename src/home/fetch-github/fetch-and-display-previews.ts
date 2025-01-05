@@ -14,17 +14,17 @@ export type Options = {
 };
 
 // decide initial value based on URL
-export let isFilteringAvailableIssues = (new URLSearchParams(window.location.search).get("allIssues") === "true") ? false : true;
+export let isFilteringAvailableIssues = new URLSearchParams(window.location.search).get("allIssues") === "true" ? false : true;
 
 export function swapAvailabilityFilter() {
   isFilteringAvailableIssues = !isFilteringAvailableIssues;
 
   //url part
   const newURL = new URL(window.location.href);
-  if(isFilteringAvailableIssues){
-    newURL.searchParams.delete("allIssues")
-  } else { 
-    newURL.searchParams.set("allIssues","true");
+  if (isFilteringAvailableIssues) {
+    newURL.searchParams.delete("allIssues");
+  } else {
+    newURL.searchParams.set("allIssues", "true");
   }
   console.log(newURL.toString());
   window.history.replaceState({}, "", newURL.toString());

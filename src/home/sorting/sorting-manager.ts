@@ -174,7 +174,7 @@ export class SortingManager {
     input.value = "Unassigned";
     input.id = `filter-availability-${this._instanceId}`;
     // decide initial value based on URL
-    if(new URLSearchParams(window.location.search).get("allIssues") === "true"){
+    if (new URLSearchParams(window.location.search).get("allIssues") === "true") {
       input.value = "All Issues";
     }
 
@@ -183,11 +183,16 @@ export class SortingManager {
       input.value = isFilteringAvailableIssues ? "Unassigned" : "All Issues";
 
       try {
-        const { sortingOption, sortingOrder } = this._detectSortingState();
-        void displayGitHubIssues({
-          sorting: sortingOption as Sorting,
-          options: { ordering: sortingOrder },
-        });
+        const filterTextBox = this._filtersDiv.querySelector('input[type="text"]') as HTMLInputElement;
+        if(filterTextBox.value){
+          void searchDisplayGitHubIssues({searchText: filterTextBox.value});
+        }else {
+          const { sortingOption, sortingOrder } = this._detectSortingState();
+          void displayGitHubIssues({
+            sorting: sortingOption as Sorting,
+            options: { ordering: sortingOrder },
+          });
+        }
       } catch (error) {
         renderErrorInModal(error as Error);
       }
