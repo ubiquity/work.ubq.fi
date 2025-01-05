@@ -179,9 +179,6 @@ export class SortingManager {
       input.value = isFilteringAvailableIssues ? "Unassigned" : "All Issues";
 
       try {
-        // Clear search when applying the filter
-        this._resetSearchBar();
-
         const { sortingOption, sortingOrder } = this._detectSortingState();
         void displayGitHubIssues({
           sorting: sortingOption as Sorting,
