@@ -281,7 +281,7 @@ async function issueScraper(username: string, supabase: SupabaseClient, voyageAp
 
     const markdowns = issues.map((issue) => {
       if (!issue.title) {
-      throw new Error(`Issue ${issue.id} is missing a title`);
+        throw new Error(`Issue ${issue.id} is missing a title`);
       }
       return `${issue.body || ""} ${issue.title}`;
     });
