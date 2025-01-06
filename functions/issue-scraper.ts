@@ -270,19 +270,30 @@ async function issueScraper(username: string, supabase: SupabaseClient, voyageAp
       throw new Error("Username is required");
     }
 
+    let storageFailed = []
+
     const octokit = new Octokit(token ? { auth: token } : {});
     const voyageClient = new VoyageAIClient({ apiKey: voyageApiKey });
 
-    const issues = await fetchUserIssuesBatch(octokit, username, timestamp);
+    let issues = await fetchUserIssuesBatch(octokit, username, timestamp);
 
     const uniqueAuthors = Array.from(new Set(issues.map((issue) => issue.author?.login).filter((login): login is string => !!login)));
 
     const authorIdMap = await batchFetchAuthorIds(octokit, uniqueAuthors);
 
-    const markdowns = issues.map((issue) => {
+    // Filter the issues to include only those with an valid title
+    issues = issues.filter((issue) => {
       if (!issue.title) {
-        throw new Error(`Issue ${issue.id} is missing a title`);
+        storageFailed.push({
+          id: issue.id,
+          reason: "Issue does not have a title",
+        })
+        return false;
       }
+    })
+
+
+    const markdowns = issues.map((issue) => {
       return `${issue.body || ""} ${issue.title}`;
     });
     const plainTexts = markdowns.map(markdownToPlainText);
@@ -338,13 +349,14 @@ async function issueScraper(username: string, supabase: SupabaseClient, voyageAp
         success: true,
         stats: {
           storageSuccessful: upsertData.length,
-          storageFailed: 0,
+          storageFailed: storageFailed.length,
         },
         issues: upsertData.map((issue) => ({
           id: issue.id,
           markdown: issue.markdown,
           plaintext: issue.plaintext,
         })),
+        storageFailed: storageFailed,
       },
       null,
       2
