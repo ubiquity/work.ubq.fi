@@ -5,7 +5,6 @@ import { trackReferralCode } from "./register-referral";
 import { displayGitHubUserInformation } from "./rendering/display-github-user-information";
 import { renderGitHubLoginButton } from "./rendering/render-github-login-button";
 import { startIssueScraper } from "./scraper/issue-scraper";
-// import { issueScraper } from "./scraper/issue-scraper";
 
 export async function authentication() {
   if (!navigator.onLine) {
@@ -22,8 +21,6 @@ export async function authentication() {
   if (gitHubUser) {
     await trackReferralCode();
     await displayGitHubUserInformation(gitHubUser);
-    // <-- Issue Scraper here -->
-    // const supabase = getSupabase();
     const githubUserName = gitHubUser.login;
     await startIssueScraper(githubUserName);
   }

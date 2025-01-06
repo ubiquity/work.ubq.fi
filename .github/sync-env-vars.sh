@@ -2,7 +2,7 @@
 
 # Check if required environment variables are set
 if [ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$GITHUB_REPOSITORY" ] || \
-   [ -z "$VOYAGEAI_API_KEY" ] || [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ] || [ -z "$SUPABASE_KEY" ]; then
+   [ -z "$VOYAGEAI_API_KEY" ] || [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
     echo "Error: Required environment variables are not set"
     exit 1
 fi
@@ -30,10 +30,6 @@ curl -X PATCH \
           },
           "SUPABASE_URL": {
             "value": "'"${SUPABASE_URL}"'",
-            "type": "secret_text"
-          },
-          "SUPABASE_ANON_KEY": {
-            "value": "'"${SUPABASE_ANON_KEY}"'",
             "type": "secret_text"
           },
           "SUPABASE_KEY": {

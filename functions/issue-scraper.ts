@@ -279,7 +279,12 @@ async function issueScraper(username: string, supabase: SupabaseClient, voyageAp
 
     const authorIdMap = await batchFetchAuthorIds(octokit, uniqueAuthors);
 
-    const markdowns = issues.map((issue) => `${issue.body || ""} ${issue.title || ""}`);
+    const markdowns = issues.map((issue) => {
+      if (!issue.title) {
+      throw new Error(`Issue ${issue.id} is missing a title`);
+      }
+      return `${issue.body || ""} ${issue.title}`;
+    });
     const plainTexts = markdowns.map(markdownToPlainText);
     const embeddings = await batchEmbeddings(voyageClient, markdowns);
 
@@ -297,7 +302,7 @@ async function issueScraper(username: string, supabase: SupabaseClient, voyageAp
           issue: {
             nodeId: issue.id,
             number: issue.number,
-            title: issue.title || "",
+            title: issue.title,
             body: issue.body || "",
             state: issue.state,
             stateReason: issue.stateReason,
