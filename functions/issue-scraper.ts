@@ -142,7 +142,7 @@ function markdownToPlainText(markdown: string | null): string | null {
   return md.plainText;
 }
 
-const SEARCH_ISSUES_QUERY = `
+const SEARCH_ISSUES_QUERY = /* GraphQL */`
   query SearchIssues($searchText: String!, $after: String) {
     search(
       query: $searchText,
@@ -270,7 +270,7 @@ async function issueScraper(username: string, supabase: SupabaseClient, voyageAp
       throw new Error("Username is required");
     }
 
-    let storageFailed = []
+    const storageFailed = [];
 
     const octokit = new Octokit(token ? { auth: token } : {});
     const voyageClient = new VoyageAIClient({ apiKey: voyageApiKey });
@@ -287,11 +287,10 @@ async function issueScraper(username: string, supabase: SupabaseClient, voyageAp
         storageFailed.push({
           id: issue.id,
           reason: "Issue does not have a title",
-        })
+        });
         return false;
       }
-    })
-
+    });
 
     const markdowns = issues.map((issue) => {
       return `${issue.body || ""} ${issue.title}`;
