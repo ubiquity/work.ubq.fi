@@ -142,14 +142,9 @@ function markdownToPlainText(markdown: string | null): string | null {
   return md.plainText;
 }
 
-const SEARCH_ISSUES_QUERY = /* GraphQL */`
+const SEARCH_ISSUES_QUERY = /* GraphQL */ `
   query SearchIssues($searchText: String!, $after: String) {
-    search(
-      query: $searchText,
-      type: ISSUE,
-      first: 100,
-      after: $after
-    ) {
+    search(query: $searchText, type: ISSUE, first: 100, after: $after) {
       pageInfo {
         hasNextPage
         endCursor
