@@ -276,7 +276,7 @@ async function issueScraper(username: string, supabase: SupabaseClient, voyageAp
 
     const authorIdMap = await batchFetchAuthorIds(octokit, uniqueAuthors);
 
-    // Filter the issues to include only those with an valid title
+    // Filter the issues to include only those with a valid title
     issues = issues.filter((issue) => {
       if (!issue.title) {
         storageFailed.push({
@@ -285,7 +285,21 @@ async function issueScraper(username: string, supabase: SupabaseClient, voyageAp
         });
         return false;
       }
+      return true;
     });
+
+    if (issues.length === 0) {
+      return JSON.stringify({
+        success: false,
+        stats: {
+          storageSuccessful: 0,
+          storageFailed: storageFailed.length,
+        },
+        issues: [],
+        storageFailed: storageFailed,
+        error: "No valid issues found to process"
+      }, null, 2);
+    }
 
     const markdowns = issues.map((issue) => {
       return `${issue.body || ""} ${issue.title}`;
