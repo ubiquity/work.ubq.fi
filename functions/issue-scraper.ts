@@ -1,10 +1,46 @@
 import { Context } from "./types";
 import { SupabaseClient } from "@supabase/supabase-js";
-import { VoyageAIClient } from "voyageai";
+import { VoyageAIClient, VoyageAIError } from "voyageai";
 import { Octokit } from "@octokit/rest";
 import markdownit from "markdown-it";
 import plainTextPlugin from "markdown-it-plain-text";
 import { validatePOST } from "./validators";
+import { RequestError } from "@octokit/request-error";
+
+
+interface ApiError {
+  source: 'github' | 'voyage' | 'supabase';
+  status: number;
+  retryAfter: number;
+  isRateLimit: boolean;
+  resetTime?: number;
+}
+
+function createApiError(
+  source: ApiError['source'], 
+  status: number, 
+  headers?: Record<string, string>
+): ApiError {
+  const retryAfter = headers?.['retry-after'] ? 
+    parseInt(headers['retry-after']) : 
+    60;
+  
+  const resetTime = headers?.['x-ratelimit-reset'] ? 
+    parseInt(headers['x-ratelimit-reset']) * 1000 : 
+    undefined;
+
+  const isRateLimit = headers?.['x-ratelimit-remaining'] === '0' || 
+    status === 429 || 
+    (status === 403 && resetTime !== undefined);
+
+  return {
+    source,
+    status,
+    retryAfter,
+    isRateLimit,
+    resetTime
+  };
+}
 
 const VECTOR_SIZE = 1024;
 
@@ -182,25 +218,37 @@ const SEARCH_ISSUES_QUERY = /* GraphQL */ `
 `;
 
 async function fetchUserIssuesBatch(octokit: InstanceType<typeof Octokit>, username: string, lastScraped?: number): Promise<IssueNode[]> {
+  const searchText = `assignee:${username} is:issue is:closed reason:completed ${
+    lastScraped ? `closed:>${new Date(lastScraped).toISOString()}` : ""
+  }`;
   const allIssues: IssueNode[] = [];
-  let hasNextPage = true;
   let cursor: string | null = null;
 
-  // Construct the query with the lastScraped timestamp
-  const searchText = `assignee:${username} is:issue is:closed reason:completed ${lastScraped ? `closed:>${new Date(lastScraped).toISOString()}` : ""}`;
-
+  let hasNextPage = true;
   while (hasNextPage) {
-    const variables: { searchText: string; after?: string } = { searchText };
-    if (cursor) {
-      variables.after = cursor;
+    try {
+      const response = await octokit.graphql<GraphQlSearchResponse>(SEARCH_ISSUES_QUERY, {
+        searchText,
+        after: cursor
+      });
+
+      allIssues.push(...response.search.nodes);
+      
+      hasNextPage = response.search.pageInfo.hasNextPage;
+      
+      cursor = response.search.pageInfo.endCursor;
+    } catch (error: unknown) {
+      if (error instanceof RequestError) {
+        if (error.status === 403 || error.status === 429) {
+            const headers: Record<string, string> = {};
+            for (const [key, value] of Object.entries(error?.response?.headers || {})) {
+              if (value) headers[key] = String(value);
+            }
+            throw createApiError('github', error.status, headers);
+        }
+      }
+      throw error;
     }
-
-    const response: GraphQlSearchResponse = await octokit.graphql<GraphQlSearchResponse>(SEARCH_ISSUES_QUERY, variables);
-
-    allIssues.push(...response.search.nodes);
-
-    hasNextPage = response.search.pageInfo.hasNextPage;
-    cursor = response.search.pageInfo.endCursor;
   }
 
   return allIssues;
@@ -208,32 +256,44 @@ async function fetchUserIssuesBatch(octokit: InstanceType<typeof Octokit>, usern
 
 async function batchEmbeddings(voyageClient: VoyageAIClient, texts: string[]): Promise<(number[] | undefined)[]> {
   try {
-    const embeddingResponse = await voyageClient.embed({
+    const response = await voyageClient.embed({
       input: texts,
       model: "voyage-large-2-instruct",
       inputType: "document",
     });
-    return embeddingResponse.data?.map((item) => item.embedding) || [];
-  } catch (error) {
-    console.error("Error batching embeddings:", error);
-    throw error;
+    return response.data?.map((item) => item.embedding) || [];
+  } catch (error: unknown) {
+    if (error instanceof VoyageAIError) {
+      if (error.statusCode === 429 || error.statusCode === 403) {
+        throw createApiError('voyage', error.statusCode);
+      }
+    }
+    throw createApiError('voyage', 500);
   }
 }
 
-async function batchUpsertIssues(
-  supabase: SupabaseClient,
-  issues: Array<{
-    id: string;
-    markdown: string;
-    plaintext: string;
-    embedding: string;
-    author_id: number;
-    payload: PayloadType;
-  }>
-): Promise<void> {
-  const { error } = await supabase.from("issues").upsert(issues);
-  if (error) {
-    throw new Error(`Error during batch upsert: ${error.message}`);
+async function batchUpsertIssues(supabase: SupabaseClient, issues: Array<{
+  id: string;
+  markdown: string;
+  plaintext: string;
+  embedding: string;
+  author_id: number;
+  payload: PayloadType;
+}>): Promise<void> {
+  try {
+    const { error } = await supabase.from("issues").upsert(issues);
+    if (error?.message?.includes('429') || error?.message?.includes('rate limit')) {
+      throw createApiError('supabase', 429, { 'retry-after': '60' });
+    }
+    if (error) throw error;
+  } catch (error: unknown) {
+    if (error instanceof Error && ('status' in error)) {
+      const status = error.status as number;
+      if (status === 429 || status === 403) {
+        throw createApiError('supabase', status);
+      }
+    }
+    throw error;
   }
 }
 
@@ -289,16 +349,20 @@ async function issueScraper(username: string, supabase: SupabaseClient, voyageAp
     });
 
     if (issues.length === 0) {
-      return JSON.stringify({
-        success: false,
-        stats: {
-          storageSuccessful: 0,
-          storageFailed: storageFailed.length,
+      return JSON.stringify(
+        {
+          success: false,
+          stats: {
+            storageSuccessful: 0,
+            storageFailed: storageFailed.length,
+          },
+          issues: [],
+          storageFailed: storageFailed,
+          error: "No valid issues found to process",
         },
-        issues: [],
-        storageFailed: storageFailed,
-        error: "No valid issues found to process"
-      }, null, 2);
+        null,
+        2
+      );
     }
 
     const markdowns = issues.map((issue) => {
@@ -371,6 +435,30 @@ async function issueScraper(username: string, supabase: SupabaseClient, voyageAp
     );
   } catch (error) {
     console.error("Error in issueScraper:", error);
-    throw error;
+    
+    if ((error as ApiError).source) {
+      const apiError = error as ApiError;
+      const retryTime = apiError.resetTime || (Date.now() + apiError.retryAfter * 1000);
+      const waitMinutes = Math.ceil((retryTime - Date.now()) / 60000);
+      
+      return JSON.stringify({
+        success: false,
+        retryInfo: {
+          source: apiError.source,
+          status: apiError.status,
+          retryAfter: apiError.retryAfter,
+          resetTime: retryTime,
+          isRateLimit: apiError.isRateLimit,
+          message: apiError.isRateLimit 
+            ? `Rate limit exceeded for ${apiError.source}. Please wait ${waitMinutes} minute${waitMinutes === 1 ? '' : 's'}.`
+            : `Service temporarily unavailable (${apiError.source}). Please retry in ${waitMinutes} minute${waitMinutes === 1 ? '' : 's'}.`
+        }
+      });
+    }
+    
+    return JSON.stringify({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
   }
 }
