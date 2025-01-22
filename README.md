@@ -18,7 +18,7 @@ open http://localhost:8080
 
 For local development of the scraper function, you need to set up a `.dev.vars` file based on the `.dev.vars.example` file.
 
-For deplotment, you would need to add the secrets to the Cloudflare Dashboard, for the worker.
+For deployment, you would need to add the secrets to the Cloudflare Dashboard, for the worker.
 
 ### Automatic Light Mode
 
