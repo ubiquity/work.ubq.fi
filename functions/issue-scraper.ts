@@ -426,18 +426,18 @@ async function issueScraper(username: string, supabase: SupabaseClient, voyageAp
   } catch (error) {
     console.error("Error in issueScraper:", error);
 
-    if ('source' in error) {
+    if ("source" in error) {
       const apiError = error as ApiError;
       const waitTime = Math.ceil(((apiError.resetTime || Date.now() + apiError.retryAfter * 1000) - Date.now()) / 60000);
 
       return JSON.stringify({
-      success: false,
-      retryInfo: {
-        source: apiError.source,
-        status: apiError.status,
-        retryAfter: apiError.retryAfter,
-        message: `${apiError.isRateLimit ? 'Rate limit exceeded' : 'Service unavailable'} for ${apiError.source}. Please wait ${waitTime} minute(s).`
-      }
+        success: false,
+        retryInfo: {
+          source: apiError.source,
+          status: apiError.status,
+          retryAfter: apiError.retryAfter,
+          message: `${apiError.isRateLimit ? "Rate limit exceeded" : "Service unavailable"} for ${apiError.source}. Please wait ${waitTime} minute(s).`,
+        },
       });
     }
 
