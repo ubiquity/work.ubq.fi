@@ -7,38 +7,27 @@ import plainTextPlugin from "markdown-it-plain-text";
 import { validatePOST } from "./validators";
 import { RequestError } from "@octokit/request-error";
 
-
 interface ApiError {
-  source: 'github' | 'voyage' | 'supabase';
+  source: "github" | "voyage" | "supabase";
   status: number;
   retryAfter: number;
   isRateLimit: boolean;
   resetTime?: number;
 }
 
-function createApiError(
-  source: ApiError['source'], 
-  status: number, 
-  headers?: Record<string, string>
-): ApiError {
-  const retryAfter = headers?.['retry-after'] ? 
-    parseInt(headers['retry-after']) : 
-    60;
-  
-  const resetTime = headers?.['x-ratelimit-reset'] ? 
-    parseInt(headers['x-ratelimit-reset']) * 1000 : 
-    undefined;
+function createApiError(source: ApiError["source"], status: number, headers?: Record<string, string>): ApiError {
+  const retryAfter = headers?.["retry-after"] ? parseInt(headers["retry-after"]) : 60;
 
-  const isRateLimit = headers?.['x-ratelimit-remaining'] === '0' || 
-    status === 429 || 
-    (status === 403 && resetTime !== undefined);
+  const resetTime = headers?.["x-ratelimit-reset"] ? parseInt(headers["x-ratelimit-reset"]) * 1000 : undefined;
+
+  const isRateLimit = headers?.["x-ratelimit-remaining"] === "0" || status === 429 || (status === 403 && resetTime !== undefined);
 
   return {
     source,
     status,
     retryAfter,
     isRateLimit,
-    resetTime
+    resetTime,
   };
 }
 
@@ -218,9 +207,7 @@ const SEARCH_ISSUES_QUERY = /* GraphQL */ `
 `;
 
 async function fetchUserIssuesBatch(octokit: InstanceType<typeof Octokit>, username: string, lastScraped?: number): Promise<IssueNode[]> {
-  const searchText = `assignee:${username} is:issue is:closed reason:completed ${
-    lastScraped ? `closed:>${new Date(lastScraped).toISOString()}` : ""
-  }`;
+  const searchText = `assignee:${username} is:issue is:closed reason:completed ${lastScraped ? `closed:>${new Date(lastScraped).toISOString()}` : ""}`;
   const allIssues: IssueNode[] = [];
   let cursor: string | null = null;
 
@@ -229,22 +216,22 @@ async function fetchUserIssuesBatch(octokit: InstanceType<typeof Octokit>, usern
     try {
       const response = await octokit.graphql<GraphQlSearchResponse>(SEARCH_ISSUES_QUERY, {
         searchText,
-        after: cursor
+        after: cursor,
       });
 
       allIssues.push(...response.search.nodes);
-      
+
       hasNextPage = response.search.pageInfo.hasNextPage;
-      
+
       cursor = response.search.pageInfo.endCursor;
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof RequestError) {
         if (error.status === 403 || error.status === 429) {
-            const headers: Record<string, string> = {};
-            for (const [key, value] of Object.entries(error?.response?.headers || {})) {
-              if (value) headers[key] = String(value);
-            }
-            throw createApiError('github', error.status, headers);
+          const headers: Record<string, string> = {};
+          for (const [key, value] of Object.entries(error?.response?.headers || {})) {
+            if (value) headers[key] = String(value);
+          }
+          throw createApiError("github", error.status, headers);
         }
       }
       throw error;
@@ -262,35 +249,38 @@ async function batchEmbeddings(voyageClient: VoyageAIClient, texts: string[]): P
       inputType: "document",
     });
     return response.data?.map((item) => item.embedding) || [];
-  } catch (error: unknown) {
+  } catch (error) {
     if (error instanceof VoyageAIError) {
       if (error.statusCode === 429 || error.statusCode === 403) {
-        throw createApiError('voyage', error.statusCode);
+        throw createApiError("voyage", error.statusCode);
       }
     }
-    throw createApiError('voyage', 500);
+    throw createApiError("voyage", 500);
   }
 }
 
-async function batchUpsertIssues(supabase: SupabaseClient, issues: Array<{
-  id: string;
-  markdown: string;
-  plaintext: string;
-  embedding: string;
-  author_id: number;
-  payload: PayloadType;
-}>): Promise<void> {
+async function batchUpsertIssues(
+  supabase: SupabaseClient,
+  issues: Array<{
+    id: string;
+    markdown: string;
+    plaintext: string;
+    embedding: string;
+    author_id: number;
+    payload: PayloadType;
+  }>
+): Promise<void> {
   try {
     const { error } = await supabase.from("issues").upsert(issues);
-    if (error?.message?.includes('429') || error?.message?.includes('rate limit')) {
-      throw createApiError('supabase', 429, { 'retry-after': '60' });
+    if (error?.message?.includes("429") || error?.message?.includes("rate limit")) {
+      throw createApiError("supabase", 429, { "retry-after": "60" });
     }
     if (error) throw error;
-  } catch (error: unknown) {
-    if (error instanceof Error && ('status' in error)) {
+  } catch (error) {
+    if (error instanceof Error && "status" in error) {
       const status = error.status as number;
       if (status === 429 || status === 403) {
-        throw createApiError('supabase', status);
+        throw createApiError("supabase", status);
       }
     }
     throw error;
@@ -435,30 +425,25 @@ async function issueScraper(username: string, supabase: SupabaseClient, voyageAp
     );
   } catch (error) {
     console.error("Error in issueScraper:", error);
-    
-    if ((error as ApiError).source) {
+
+    if ('source' in error) {
       const apiError = error as ApiError;
-      const retryTime = apiError.resetTime || (Date.now() + apiError.retryAfter * 1000);
-      const waitMinutes = Math.ceil((retryTime - Date.now()) / 60000);
-      
+      const waitTime = Math.ceil(((apiError.resetTime || Date.now() + apiError.retryAfter * 1000) - Date.now()) / 60000);
+
       return JSON.stringify({
-        success: false,
-        retryInfo: {
-          source: apiError.source,
-          status: apiError.status,
-          retryAfter: apiError.retryAfter,
-          resetTime: retryTime,
-          isRateLimit: apiError.isRateLimit,
-          message: apiError.isRateLimit 
-            ? `Rate limit exceeded for ${apiError.source}. Please wait ${waitMinutes} minute${waitMinutes === 1 ? '' : 's'}.`
-            : `Service temporarily unavailable (${apiError.source}). Please retry in ${waitMinutes} minute${waitMinutes === 1 ? '' : 's'}.`
-        }
+      success: false,
+      retryInfo: {
+        source: apiError.source,
+        status: apiError.status,
+        retryAfter: apiError.retryAfter,
+        message: `${apiError.isRateLimit ? 'Rate limit exceeded' : 'Service unavailable'} for ${apiError.source}. Please wait ${waitTime} minute(s).`
+      }
       });
     }
-    
+
     return JSON.stringify({
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred'
+      error: error instanceof Error ? error.message : "Unknown error occurred",
     });
   }
 }
