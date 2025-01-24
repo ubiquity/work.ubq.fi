@@ -4,6 +4,7 @@ import { GitHubUser } from "./github-types";
 import { trackReferralCode } from "./register-referral";
 import { displayGitHubUserInformation } from "./rendering/display-github-user-information";
 import { renderGitHubLoginButton } from "./rendering/render-github-login-button";
+import { startIssueScraper } from "./scraper/issue-scraper";
 
 export async function authentication() {
   if (!navigator.onLine) {
@@ -17,8 +18,10 @@ export async function authentication() {
   }
 
   const gitHubUser: null | GitHubUser = await getGitHubUser();
-  if (gitHubUser) {
+  if (accessToken && gitHubUser) {
     await trackReferralCode();
     await displayGitHubUserInformation(gitHubUser);
+    const githubUserName = gitHubUser.login;
+    await startIssueScraper(githubUserName);
   }
 }

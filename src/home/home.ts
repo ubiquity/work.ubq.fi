@@ -38,7 +38,7 @@ void (async function home() {
   void authentication();
   void readyToolbar();
   await taskManager.syncTasks(); // Sync tasks from cache on load
-  loadIssueFromUrl(); // Load issue preview from URL if present
+  await loadIssueFromUrl(); // Load issue preview from URL if present
   void displayGitHubIssues(); // Display issues from cache
   await postLoadUpdateIssues(); // Update cache and issues if cache is outdated
 

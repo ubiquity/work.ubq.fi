@@ -11,6 +11,7 @@ export interface SearchResult {
       matched: string;
       score: number;
     }>;
+    repoMatch: boolean;
   };
 }
 
@@ -19,6 +20,7 @@ export interface SearchWeights {
   body: number;
   fuzzy: number;
   meta: number;
+  repo: number;
 }
 
 export interface SearchConfig {

@@ -24,5 +24,5 @@ export function renderOrgHeaderLabel(orgName: string): void {
 
   // Update the organization name inside the span with class 'full'
   const orgNameSpan = brandingDiv.querySelector("span.full");
-  if (orgNameSpan) orgNameSpan.textContent = `${orgName} | `;
+  if (orgNameSpan) orgNameSpan.textContent = `${orgName.replace(/-/g, " ")} | `;
 }

@@ -1,11 +1,13 @@
 import { displayGitHubIssues, searchDisplayGitHubIssues } from "../fetch-github/fetch-and-display-previews";
 import { renderErrorInModal } from "../rendering/display-popup-modal";
+import { proposalViewToggle } from "../rendering/render-github-issues";
 import { Sorting } from "./generate-sorting-buttons";
+import { isFilteringAvailableIssues, swapAvailabilityFilter } from "../fetch-github/fetch-and-display-previews";
 
 export class SortingManager {
   private _lastChecked: HTMLInputElement | null = null;
   private _toolBarFilters: HTMLElement;
-  private _filterTextBox: HTMLInputElement;
+  private _filtersDiv: HTMLElement;
   private _sortingButtons: HTMLElement;
   private _instanceId: string;
   private _sortingState: { [key: string]: "unsorted" | "ascending" | "descending" } = {}; // Track state for each sorting option
@@ -19,8 +21,12 @@ export class SortingManager {
 
     // Initialize sorting buttons first
     this._sortingButtons = this._generateSortingButtons(sortingOptions);
-    // Then initialize filter text box
-    this._filterTextBox = this._generateFilterTextBox();
+    // Initialize filters div
+    this._filtersDiv = this._generateFiltersDiv();
+    // Add filter search box to filters div
+    this._filtersDiv.appendChild(this._generateFilterTextBox());
+    // Add filter available issues button to filters div
+    this._filtersDiv.appendChild(this._generateFilterAvailableIssuesButton());
 
     // Initialize sorting states to 'unsorted' for all options
     sortingOptions.forEach((option) => {
@@ -29,8 +35,14 @@ export class SortingManager {
   }
 
   public render() {
-    this._toolBarFilters.appendChild(this._filterTextBox);
+    this._toolBarFilters.appendChild(this._filtersDiv);
     this._toolBarFilters.appendChild(this._sortingButtons);
+  }
+
+  private _generateFiltersDiv() {
+    const div = document.createElement("div");
+    div.className = "filters";
+    return div;
   }
 
   private _generateFilterTextBox() {
@@ -38,6 +50,9 @@ export class SortingManager {
     textBox.type = "text";
     textBox.id = `filter-${this._instanceId}`;
     textBox.placeholder = "Search";
+    textBox.spellcheck = false;
+    textBox.autocapitalize = "off";
+    textBox.draggable = false;
 
     // Handle CTRL+F
     document.addEventListener("keydown", (event) => {
@@ -71,6 +86,7 @@ export class SortingManager {
     });
     observer.observe(issuesContainer, { childList: true });
 
+    // if the user types in the search box, update the URL and filter the issues
     textBox.addEventListener("input", () => {
       const filterText = textBox.value;
       // Reset sorting buttons when there is text in search menu
@@ -94,13 +110,35 @@ export class SortingManager {
       }
     });
 
+    // if the user changes between proposal view and directory view, update the search results
+    if (proposalViewToggle) {
+      proposalViewToggle.addEventListener("change", () => {
+        try {
+          void searchDisplayGitHubIssues({
+            searchText: textBox.value,
+          });
+        } catch (error) {
+          renderErrorInModal(error as Error);
+        }
+      });
+    }
+
     return textBox;
+  }
+
+  private _resetSearchBar() {
+    const filterTextBox = this._filtersDiv.querySelector('input[type="text"]') as HTMLInputElement;
+    filterTextBox.value = "";
+    const newURL = new URL(window.location.href);
+    newURL.searchParams.delete("search");
+    window.history.replaceState({}, "", newURL.toString());
   }
 
   private _resetSortButtons() {
     this._sortingButtons.querySelectorAll('input[type="radio"]').forEach((input) => {
       if (input instanceof HTMLInputElement) {
         input.checked = false;
+        this._sortingState[input.value] = "unsorted";
         input.setAttribute("data-ordering", "");
       }
     });
@@ -130,6 +168,60 @@ export class SortingManager {
     return buttons;
   }
 
+  private _generateFilterAvailableIssuesButton() {
+    const input = document.createElement("input");
+    input.type = "button";
+    input.value = "Unassigned";
+    input.id = `filter-availability-${this._instanceId}`;
+    // decide initial value based on URL
+    if (new URLSearchParams(window.location.search).get("allIssues") === "true") {
+      input.value = "All Issues";
+    }
+
+    input.addEventListener("click", () => {
+      swapAvailabilityFilter();
+      input.value = isFilteringAvailableIssues ? "Unassigned" : "All Issues";
+
+      try {
+        const filterTextBox = this._filtersDiv.querySelector('input[type="text"]') as HTMLInputElement;
+        if (filterTextBox.value) {
+          void searchDisplayGitHubIssues({ searchText: filterTextBox.value });
+        } else {
+          const { sortingOption, sortingOrder } = this._detectSortingState();
+          void displayGitHubIssues({
+            sorting: sortingOption as Sorting,
+            options: { ordering: sortingOrder },
+          });
+        }
+      } catch (error) {
+        renderErrorInModal(error as Error);
+      }
+    });
+
+    return input;
+  }
+
+  private _detectSortingState() {
+    let sortingOption;
+    let sortingOrder = "normal";
+
+    for (const option of Object.keys(this._sortingState)) {
+      const order = this._sortingState[option];
+
+      if (order !== "unsorted") {
+        sortingOption = option;
+
+        if (order === "descending") {
+          sortingOrder = "normal";
+        } else if (order === "ascending") {
+          sortingOrder = "reverse";
+        }
+        break;
+      }
+    }
+    return { sortingOption, sortingOrder };
+  }
+
   private _createRadioButton(option: string): HTMLInputElement {
     const input = document.createElement("input");
     input.type = "radio";
@@ -150,35 +242,26 @@ export class SortingManager {
     const currentOrdering = input.getAttribute("data-ordering");
     let newOrdering: string;
 
+    // Reset sort buttons
+    this._resetSortButtons();
+
     // Determine the new ordering based on the current state
     if (currentOrdering === "normal") {
       newOrdering = "reverse";
+      this._sortingState[option] = "ascending";
     } else if (currentOrdering === "reverse") {
       newOrdering = "disabled";
+      this._sortingState[option] = "unsorted";
     } else {
       newOrdering = "normal";
+      this._sortingState[option] = "descending";
     }
 
     // Apply the new ordering state
     input.setAttribute("data-ordering", newOrdering);
-    input.parentElement?.childNodes.forEach((node) => {
-      if (node instanceof HTMLInputElement) {
-        node.setAttribute("data-ordering", "");
-      }
-    });
 
     // Clear search when applying a different sort
-    this._filterTextBox.value = "";
-    const newURL = new URL(window.location.href);
-    newURL.searchParams.delete("search");
-    window.history.replaceState({}, "", newURL.toString());
-
-    // Reset other buttons
-    input.parentElement?.childNodes.forEach((node) => {
-      if (node instanceof HTMLInputElement) {
-        node.setAttribute("data-ordering", "");
-      }
-    });
+    this._resetSearchBar();
 
     if (newOrdering === "disabled") {
       this._lastChecked = null;
@@ -191,7 +274,10 @@ export class SortingManager {
 
       // Apply the sorting based on the new state (normal or reverse)
       try {
-        void displayGitHubIssues({ sorting: option as Sorting, options: { ordering: newOrdering } });
+        void displayGitHubIssues({
+          sorting: option as Sorting,
+          options: { ordering: newOrdering },
+        });
       } catch (error) {
         renderErrorCatch(error as ErrorEvent);
       }

@@ -19,3 +19,6 @@ cypress/videos
 
 # vscode
 .vscode
+
+# Cloudflare
+.dev.vars

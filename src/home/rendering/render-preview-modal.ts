@@ -22,7 +22,6 @@ export function closeModal() {
 
   const newURL = new URL(window.location.href);
   newURL.searchParams.delete("issue");
-  newURL.searchParams.delete("proposal");
   window.history.replaceState({}, "", newURL.toString());
 }
 

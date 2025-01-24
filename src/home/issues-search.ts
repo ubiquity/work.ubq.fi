@@ -9,6 +9,7 @@ export class IssueSearch {
     body: 0.25,
     fuzzy: 0.25,
     meta: 0.125,
+    repo: 0.1,
   };
 
   private readonly _config: SearchConfig = {
@@ -71,6 +72,7 @@ export class IssueSearch {
       bodyMatches: [] as string[],
       labelMatches: [] as string[],
       numberMatch: false,
+      repoMatch: false,
       fuzzyMatches: [] as Array<{
         original: string;
         matched: string;
@@ -86,6 +88,7 @@ export class IssueSearch {
       body: this._searchScorer.calculateBodyScore(issue, searchTerms, matchDetails),
       fuzzy: enableFuzzy ? this._searchScorer.calculateFuzzyScore(searchableContent, searchTerms, matchDetails) : 0,
       meta: this._searchScorer.calculateMetaScore(issue, searchTerms, matchDetails),
+      repo: this._searchScorer.calculateRepoScore(issue, searchTerms, matchDetails),
     };
 
     // Calculate weighted total score
@@ -153,6 +156,7 @@ export class IssueSearch {
         labelMatches: [],
         numberMatch: false,
         fuzzyMatches: [],
+        repoMatch: false,
       },
     };
   }

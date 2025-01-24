@@ -91,6 +91,24 @@ export class SearchScorer {
     return score;
   }
 
+  public calculateRepoScore(issue: GitHubIssue, searchTerms: string[], matchDetails: SearchResult["matchDetails"]): number {
+    let score = 0;
+    if (issue.repository_url) {
+      const repoName = issue.repository_url.split("/").pop()?.toLowerCase() || "";
+      const orgName = issue.repository_url.split("/").slice(-2)[0].toLowerCase() || "";
+      searchTerms.forEach((term) => {
+        if (repoName.startsWith(term.toLowerCase())) {
+          matchDetails.repoMatch = true;
+          score += term.length / repoName.length;
+        }
+        if (orgName.startsWith(term.toLowerCase())) {
+          score += term.length / orgName.length;
+        }
+      });
+    }
+    return score;
+  }
+
   public calculateFuzzyScore(content: string, searchTerms: string[], matchDetails: SearchResult["matchDetails"]): number {
     let score = 0;
     const contentWords = this._tokenizeContent(content);
