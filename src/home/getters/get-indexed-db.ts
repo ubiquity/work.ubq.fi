@@ -44,7 +44,7 @@ export async function saveImageToCache({
   });
 }
 
-export function getImageFromCache({ dbName, storeName, orgName }: { dbName: string; storeName: string; orgName: string }): Promise<Blob | null> {
+export function getImageFromCache({ dbName, storeName, orgName }: { dbName: string; storeName: string; orgName: string }): Promise<{image: Blob; timestamp: string} | null> {
   return new Promise((resolve, reject) => {
     const open = indexedDB.open(dbName, 2); // Increase version number to ensure onupgradeneeded is called
     open.onupgradeneeded = function () {
@@ -59,7 +59,11 @@ export function getImageFromCache({ dbName, storeName, orgName }: { dbName: stri
       const store = transaction.objectStore(storeName);
       const getImage = store.get(`avatarUrl-${orgName}`);
       getImage.onsuccess = function () {
-        resolve(getImage.result?.image || null);
+        if (getImage.result) {
+          resolve({ image: getImage.result.image, timestamp: getImage.result.created });
+        } else {
+          resolve(null);
+        }
       };
       transaction.oncomplete = function () {
         db.close();

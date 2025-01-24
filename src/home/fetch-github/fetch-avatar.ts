@@ -26,10 +26,10 @@ export async function fetchAvatar(orgName: string): Promise<Blob | void> {
   // It will try to fetch from IndexedDB first, then from GitHub organizations, and finally from GitHub users, returning in the first successful step
   const fetchPromise = (async () => {
     // Step 1: Try to get the avatar from IndexedDB
-    const avatarBlob = await getImageFromCache({ dbName: "GitHubAvatars", storeName: "ImageStore", orgName: `avatarUrl-${orgName}` });
-    if (avatarBlob) {
-      organizationImageCache.set(orgName, avatarBlob); // Cache it in memory
-      return avatarBlob;
+    const avatar = await getImageFromCache({ dbName: "GitHubAvatars", storeName: "ImageStore", orgName: `avatarUrl-${orgName}` });
+    if (avatar && Number(avatar.timestamp) + 60 * 1000 * 15 <= Date.now()) { // fail if the image is older than 15 minutes
+      organizationImageCache.set(orgName, avatar.image); // Cache it in memory
+      return avatar.image;
     }
 
     const octokit = new Octokit({ auth: await getGitHubAccessToken() });
