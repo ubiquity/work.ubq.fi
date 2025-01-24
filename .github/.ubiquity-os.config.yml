@@ -4,18 +4,18 @@ plugins:
         with:
           reviewDelayTolerance: "3 Days"
           taskStaleTimeoutDuration: "30 Days"
-          startRequiresWallet: true # default is true
+          startRequiresWallet: true
           requiredLabelsToStart:
             - name: "Priority: 1 (Normal)"
-              role: ['collaborator', 'contributor']
+              allowedRoles: ['collaborator', 'contributor']
             - name: "Priority: 2 (Medium)"
-              role: ['collaborator', 'contributor']            
+              allowedRoles: ['collaborator', 'contributor']            
             - name: "Priority: 3 (High)"
-              role: ['collaborator']
+              allowedRoles: ['collaborator']
             - name: "Priority: 4 (Urgent)"
-              role: ['collaborator']
+              allowedRoles: ['collaborator']
             - name: "Priority: 5 (Emergency)"
-              role: ['collaborator']
+              allowedRoles: ['collaborator']
   - uses:
       - plugin: https://ubiquity-os-command-wallet-main.ubiquity.workers.dev
   - uses:
