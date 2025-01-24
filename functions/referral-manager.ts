@@ -50,14 +50,16 @@ export async function onRequest(ctx: Context): Promise<Response> {
 async function handleSet(env: Env, request: Request): Promise<Response> {
   const result = await validatePOST(request);
 
-  if (!result.isValid || !result.gitHubUserId || !result.referralCode) {
+  if (!result.isValid || !result.gitHubUser || !result.referralCode) {
     return new Response("Unauthorized", {
       headers: corsHeaders,
       status: 400,
     });
   }
 
-  const { gitHubUserId, referralCode } = result;
+  const { gitHubUser, referralCode } = result;
+
+  const gitHubUserId = gitHubUser.id.toString();
 
   const oldRefCode = await env.REFERRAL_TRACKING.get(gitHubUserId);
 

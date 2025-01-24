@@ -1,8 +1,23 @@
 plugins:
   - uses:
-      - plugin: https://ubiquibot-command-wallet-development.ubiquity.workers.dev
+      - plugin: https://ubiquity-os-command-start-stop-main.ubiquity.workers.dev
+        with:
+          reviewDelayTolerance: "3 Days"
+          taskStaleTimeoutDuration: "30 Days"
+          startRequiresWallet: true # default is true
+          requiredLabelsToStart:
+            - name: "Priority: 1 (Normal)"
+            - name: "Priority: 2 (Medium)"
+            - name: "Priority: 3 (High)"
+              roles: ['collaborator', 'admin']
+            - name: "Priority: 4 (Urgent)"
+              roles: ['collaborator', 'admin']
+            - name: "Priority: 5 (Emergency)"
+              roles: ['collaborator', 'admin']
   - uses:
-      - plugin: https://ubiquibot-command-query-user-development.ubiquity.workers.dev
+      - plugin: https://ubiquity-os-command-wallet-main.ubiquity.workers.dev
+  - uses:
+      - plugin: https://ubiquity-os-command-query-user-main.ubiquity.workers.dev
         with:
           allowPublicQuery: true
   - uses:
@@ -48,62 +63,168 @@ plugins:
           evmPrivateEncrypted: "bd5AFnSCO6c5jJyPifpOfr5Zys29RE7SyXkEU3akT13RtGmYDrqGIGuvJQyH53HA5dIba7PL5bXfll0JebmwXYe5gHIXSGX80WuGMDHh0cFfeGjHhmUXe8kkZ1OT2De9qRpqejJcEzdfi-8XNAvP7cQu2Vt-7RNnPw" # https://github.com/ubiquibot/conversation-rewards/pull/111#issuecomment-2348639931
           erc20RewardToken: "0xC6ed4f520f6A4e4DC27273509239b7F8A68d2068"
           incentives:
-            contentEvaluator:
-              enabled: true
+            requirePriceLabel: true
+            limitRewards: true
+            collaboratorOnlyPaymentInvocation: true
+            contentEvaluator: {}
             userExtractor:
-              enabled: true
               redeemTask: true
-            dataPurge:
-              enabled: true
+            dataPurge: {}
             formattingEvaluator:
               multipliers:
-                - role: [ISSUE_SPECIFICATION]
-                  multiplier: 3
-                  rewards:
-                    wordValue: 0.1
-                - role: [ISSUE_AUTHOR]
+                - role:
+                    - PULL_SPECIFICATION
                   multiplier: 1
                   rewards:
                     wordValue: 0.2
-                - role: [ISSUE_ASSIGNEE]
+                    html:
+                      br:
+                        score: 0
+                        countWords: false
+                      code:
+                        score: 5
+                        countWords: false
+                      p:
+                        score: 0
+                        countWords: true
+                      em:
+                        score: 0
+                        countWords: true
+                      img:
+                        score: 5
+                        countWords: true
+                      strong:
+                        score: 0
+                        countWords: false
+                      blockquote:
+                        score: 0
+                        countWords: false
+                      h1:
+                        score: 1
+                        countWords: true
+                      h2:
+                        score: 1
+                        countWords: true
+                      h3:
+                        score: 1
+                        countWords: true
+                      h4:
+                        score: 1
+                        countWords: true
+                      h5:
+                        score: 1
+                        countWords: true
+                      h6:
+                        score: 1
+                        countWords: true
+                      a:
+                        score: 5
+                        countWords: true
+                      li:
+                        score: 0.5
+                        countWords: true
+                      ul:
+                        score: 1
+                        countWords: true
+                      td:
+                        score: 0
+                        countWords: true
+                      hr:
+                        score: 0
+                        countWords: true
+                      pre:
+                        score: 0
+                        countWords: false
+                      ol:
+                        score: 1
+                        countWords: true
+                - role:
+                    - ISSUE_SPECIFICATION
+                    - ISSUE_AUTHOR
+                    - ISSUE_ASSIGNEE
+                    - ISSUE_COLLABORATOR
+                    - ISSUE_CONTRIBUTOR
+                    - PULL_ASSIGNEE
+                    - PULL_COLLABORATOR
+                    - PULL_CONTRIBUTOR
                   multiplier: 1
                   rewards:
                     wordValue: 0.1
-                - role: [ISSUE_COLLABORATOR]
-                  multiplier: 1
-                  rewards:
-                    wordValue: 0.1
-                - role: [ISSUE_CONTRIBUTOR]
-                  multiplier: 0.25
-                  rewards:
-                    wordValue: 0.1
-                - role: [PULL_SPECIFICATION]
+                    html:
+                      br:
+                        score: 0
+                        countWords: true
+                      code:
+                        score: 5
+                        countWords: false
+                      p:
+                        score: 0
+                        countWords: true
+                      em:
+                        score: 0
+                        countWords: true
+                      img:
+                        score: 5
+                        countWords: true
+                      strong:
+                        score: 0
+                        countWords: false
+                      blockquote:
+                        score: 0
+                        countWords: false
+                      h1:
+                        score: 1
+                        countWords: true
+                      h2:
+                        score: 1
+                        countWords: true
+                      h3:
+                        score: 1
+                        countWords: true
+                      h4:
+                        score: 1
+                        countWords: true
+                      h5:
+                        score: 1
+                        countWords: true
+                      h6:
+                        score: 1
+                        countWords: true
+                      a:
+                        score: 5
+                        countWords: true
+                      li:
+                        score: 0.5
+                        countWords: true
+                      ul:
+                        score: 1
+                        countWords: true
+                      td:
+                        score: 0
+                        countWords: true
+                      hr:
+                        score: 0
+                        countWords: true
+                      pre:
+                        score: 0
+                        countWords: false
+                      ol:
+                        score: 1
+                        countWords: true
+                - role:
+                    - PULL_AUTHOR
                   multiplier: 0
                   rewards:
                     wordValue: 0
-                - role: [PULL_AUTHOR]
-                  multiplier: 0
-                  rewards:
-                    wordValue: 0.2
-                - role: [PULL_ASSIGNEE]
-                  multiplier: 1
-                  rewards:
-                    wordValue: 0.1
-                - role: [PULL_COLLABORATOR]
-                  multiplier: 1
-                  rewards:
-                    wordValue: 0.1
-                - role: [PULL_CONTRIBUTOR]
-                  multiplier: 0.25
-                  rewards:
-                    wordValue: 0.1
-            permitGeneration:
-              enabled: true
+            permitGeneration: {}
             githubComment:
               post: true
               debug: false
+          dataCollection:
+            maxAttempts: 10
+            delayMs: 1000
   - uses:
-      - plugin: ubiquity-os-marketplace/daemon-disqualifier@development
+      - plugin: ubiquity-os-marketplace/daemon-disqualifier@main
         with:
           watch:
             optOut:
@@ -112,7 +233,7 @@ plugins:
               - staging
               - production
   - uses:
-      - plugin: ubiquity-os-marketplace/daemon-merging@development
+      - plugin: ubiquity-os-marketplace/daemon-merging@main
         with:
           approvalsRequired:
             collaborator: 1
@@ -125,11 +246,4 @@ plugins:
               - staging
               - production
   - uses:
-      - plugin: https://ubiquity-os-command-start-stop-development.ubiquity.workers.dev
-        with:
-          reviewDelayTolerance: "3 Days"
-          taskStaleTimeoutDuration: "30 Days"
-          startRequiresWallet: true # default is true
-          requiredLabelsToStart: ["Priority: 3 (High)", "Priority: 4 (Urgent)", "Priority: 5 (Emergency)"]
-  - uses:
-      - plugin: ubiquity-os-marketplace/text-vector-embeddings@development
+      - plugin: ubiquity-os-marketplace/text-vector-embeddings@main

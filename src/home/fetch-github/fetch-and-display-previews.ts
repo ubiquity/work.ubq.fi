@@ -4,6 +4,7 @@ import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-gi
 import { renderOrgHeaderLabel } from "../rendering/render-org-header";
 import { closeModal } from "../rendering/render-preview-modal";
 import { filterIssuesBySearch } from "../sorting/filter-issues-by-search";
+import { filterIssuesByAvailability } from "../sorting/filter-issues-by-availability";
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
 import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity";
@@ -11,6 +12,23 @@ import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity";
 export type Options = {
   ordering: "normal" | "reverse";
 };
+
+// decide initial value based on URL
+export let isFilteringAvailableIssues = new URLSearchParams(window.location.search).get("allIssues") === "true" ? false : true;
+
+export function swapAvailabilityFilter() {
+  isFilteringAvailableIssues = !isFilteringAvailableIssues;
+
+  //url part
+  const newURL = new URL(window.location.href);
+  if (isFilteringAvailableIssues) {
+    newURL.searchParams.delete("allIssues");
+  } else {
+    newURL.searchParams.set("allIssues", "true");
+  }
+  console.log(newURL.toString());
+  window.history.replaceState({}, "", newURL.toString());
+}
 
 // start at view based on URL
 export let isProposalOnlyViewer = new URLSearchParams(window.location.search).get("proposal") === "true";
@@ -87,6 +105,7 @@ export async function displayGitHubIssues({
   const sortedIssues = sortIssuesController(cachedTasks, sorting, options);
   let sortedAndFiltered = sortedIssues.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
   sortedAndFiltered = filterIssuesByOrganization(sortedAndFiltered);
+  sortedAndFiltered = isFilteringAvailableIssues ? filterIssuesByAvailability(sortedAndFiltered) : sortedAndFiltered;
   renderGitHubIssues(sortedAndFiltered, skipAnimation);
   applyAvatarsToIssues();
 }
@@ -95,6 +114,7 @@ export async function searchDisplayGitHubIssues({ searchText, skipAnimation = fa
   const searchResult = filterIssuesBySearch(searchText);
   let filteredIssues = searchResult.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
   filteredIssues = filterIssuesByOrganization(filteredIssues);
+  filteredIssues = isFilteringAvailableIssues ? filterIssuesByAvailability(filteredIssues) : filteredIssues;
   renderGitHubIssues(filteredIssues, skipAnimation);
   applyAvatarsToIssues();
 }

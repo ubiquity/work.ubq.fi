@@ -1,4 +1,5 @@
 import { marked } from "marked";
+import markedFootnote from "marked-footnote";
 import { organizationImageCache } from "../fetch-github/fetch-issues-full";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
@@ -169,6 +170,9 @@ export async function viewIssueDetails(full: GitHubIssue) {
     // Prepend the cloned labels to the modal body
     bottomBar.prepend(clonedLabels);
   }
+
+  // Use footnote extension for `marked`
+  marked.use(markedFootnote());
 
   // Set the issue body content using `marked`
   modalBodyInner.innerHTML = marked(full.body) as string;
