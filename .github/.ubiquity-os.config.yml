@@ -5,6 +5,12 @@ plugins:
           reviewDelayTolerance: "3 Days"
           taskStaleTimeoutDuration: "30 Days"
           startRequiresWallet: true
+          maxConcurrentTasks:
+            collaborator: 10
+            contributor: 2
+          assignedIssueScope: "org"
+          emptyWalletText: "Please set your wallet address with the /wallet command first and try again."
+          rolesWithReviewAuthority: ["OWNER", "ADMIN", "MEMBER", "COLLABORATOR"]
           requiredLabelsToStart:
             - name: "Priority: 1 (Normal)"
               allowedRoles: ['collaborator', 'contributor']
@@ -18,6 +24,8 @@ plugins:
               allowedRoles: ['collaborator']
   - uses:
       - plugin: https://ubiquity-os-command-wallet-main.ubiquity.workers.dev
+        with:
+          registerWalletWithVerification: false
   - uses:
       - plugin: https://ubiquity-os-command-query-user-main.ubiquity.workers.dev
         with:
@@ -56,13 +64,13 @@ plugins:
           publicAccessControl:
             setLabel: true
             fundExternalClosedIssue: false
+            protectLabels: ["priority", "price", "time"]
   - skipBotEvents: false
     uses:
       - plugin: ubiquity-os-marketplace/text-conversation-rewards@main
-        # we don't skip bot events so conversation rewards triggered by the bot also run
         with:
           evmNetworkId: 100
-          evmPrivateEncrypted: "bd5AFnSCO6c5jJyPifpOfr5Zys29RE7SyXkEU3akT13RtGmYDrqGIGuvJQyH53HA5dIba7PL5bXfll0JebmwXYe5gHIXSGX80WuGMDHh0cFfeGjHhmUXe8kkZ1OT2De9qRpqejJcEzdfi-8XNAvP7cQu2Vt-7RNnPw" # https://github.com/ubiquibot/conversation-rewards/pull/111#issuecomment-2348639931
+          evmPrivateEncrypted: "bd5AFnSCO6c5jJyPifpOfr5Zys29RE7SyXkEU3akT13RtGmYDrqGIGuvJQyH53HA5dIba7PL5bXfll0JebmwXYe5gHIXSGX80WuGMDHh0cFfeGjHhmUXe8kkZ1OT2De9qRpqejJcEzdfi-8XNAvP7cQu2Vt-7RNnPw"
           erc20RewardToken: "0xC6ed4f520f6A4e4DC27273509239b7F8A68d2068"
           incentives:
             requirePriceLabel: true
@@ -218,6 +226,7 @@ plugins:
                   multiplier: 0
                   rewards:
                     wordValue: 0
+              wordCountExponent: 0.85
             permitGeneration: {}
             githubComment:
               post: true
@@ -228,17 +237,28 @@ plugins:
   - uses:
       - plugin: ubiquity-os-marketplace/daemon-disqualifier@main
         with:
+          warning: "3.5 days"
           watch:
             optOut:
               - ubiquibot
               - launch-party
               - staging
               - production
+          prioritySpeed: true
+          disqualification: "7 days"
+          pullRequestRequired: true
+          eventWhitelist:
+            - pull_request.review_requested
+            - pull_request.ready_for_review
+            - pull_request_review_comment.created
+            - issue_comment.created
+            - push
   - uses:
       - plugin: ubiquity-os-marketplace/daemon-merging@main
         with:
           approvalsRequired:
             collaborator: 1
+            contributor: 2
           mergeTimeout:
             collaborator: "3.5 days"
           repos:
@@ -247,5 +267,11 @@ plugins:
               - launch-party
               - staging
               - production
+          allowedReviewerRoles: ["COLLABORATOR", "MEMBER", "OWNER"]
   - uses:
       - plugin: ubiquity-os-marketplace/text-vector-embeddings@main
+        with:
+          matchThreshold: 0.95
+          warningThreshold: 0.75
+          jobMatchingThreshold: 0.75
+          alwaysRecommend: 0
