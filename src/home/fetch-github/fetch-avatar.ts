@@ -9,6 +9,12 @@ import { taskManager } from "../home";
 // Map to track ongoing avatar fetches
 const pendingFetches: Map<string, Promise<Blob | void>> = new Map();
 
+export async function fetchPartnerAvatars(): Promise<GitHubIssue[]> {
+  const response = await fetch("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-partner-avatars.json");
+  const jsonData = await response.json();
+  return jsonData;
+}
+
 // Fetches the avatar for a given organization from GitHub either from cache, indexedDB or GitHub API
 export async function fetchAvatar(orgName: string): Promise<Blob | void> {
   // Check if the avatar is already cached in memory
@@ -26,11 +32,10 @@ export async function fetchAvatar(orgName: string): Promise<Blob | void> {
   // It will try to fetch from IndexedDB first, then from GitHub organizations, and finally from GitHub users, returning in the first successful step
   const fetchPromise = (async () => {
     // Step 1: Try to get the avatar from IndexedDB
-    const avatar = await getImageFromCache({ dbName: "GitHubAvatars", storeName: "ImageStore", orgName: `avatarUrl-${orgName}` });
-    if (avatar && Number(avatar.timestamp) + 60 * 1000 * 15 <= Date.now()) {
-      // fail if the image is older than 15 minutes
-      organizationImageCache.set(orgName, avatar.image); // Cache it in memory
-      return avatar.image;
+    const avatarBlob = await getImageFromCache({ dbName: "GitHubAvatars", storeName: "ImageStore", orgName: `avatarUrl-${orgName}` });
+    if (avatarBlob) {
+      organizationImageCache.set(orgName, avatarBlob); // Cache it in memory
+      return avatarBlob;
     }
 
     const octokit = new Octokit({ auth: await getGitHubAccessToken() });

@@ -52,7 +52,7 @@ export function getImageFromCache({
   dbName: string;
   storeName: string;
   orgName: string;
-}): Promise<{ image: Blob; timestamp: string } | null> {
+}): Promise<Blob| null> {
   return new Promise((resolve, reject) => {
     const open = indexedDB.open(dbName, 2); // Increase version number to ensure onupgradeneeded is called
     open.onupgradeneeded = function () {
@@ -68,7 +68,7 @@ export function getImageFromCache({
       const getImage = store.get(`avatarUrl-${orgName}`);
       getImage.onsuccess = function () {
         if (getImage.result) {
-          resolve({ image: getImage.result.image, timestamp: getImage.result.created });
+          resolve(getImage.result.image);
         } else {
           resolve(null);
         }
