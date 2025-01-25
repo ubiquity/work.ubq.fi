@@ -1,12 +1,12 @@
 import { marked } from "marked";
 import markedFootnote from "marked-footnote";
-import { organizationImageCache } from "../fetch-github/fetch-issues-full";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { renderErrorInModal } from "./display-popup-modal";
 import { closeModal, modal, modalBodyInner, bottomBar, titleAnchor, titleHeader, bottomBarClearLabels } from "./render-preview-modal";
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
 import { waitForElement } from "./utils";
+import { fetchAvatar, ubiquityAvatarUrl } from "../fetch-github/fetch-avatar";
 
 export function renderGitHubIssues(tasks: GitHubIssue[], skipAnimation: boolean) {
   const container = taskManager.getContainer();
@@ -237,11 +237,11 @@ export function applyAvatarsToIssues() {
   issueElements.forEach((issueElement) => {
     const orgName = issueElement.querySelector(".organization-name")?.textContent;
     if (orgName) {
-      const avatarUrl = organizationImageCache.get(orgName);
+      const avatarUrl = fetchAvatar(orgName) ?? ubiquityAvatarUrl;
       if (avatarUrl) {
         const avatarImg = issueElement.querySelector("img");
         if (avatarImg) {
-          avatarImg.src = URL.createObjectURL(avatarUrl);
+          avatarImg.src = avatarUrl;
         }
       }
     }

@@ -2,7 +2,6 @@ import { saveIssuesToCache } from "../getters/get-indexed-db";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { displayGitHubIssues } from "./fetch-and-display-previews";
-export const organizationImageCache = new Map<string, Blob | null>(); // this should be declared in image related script
 
 // Fetches the issues from `devpool-issues.json` file in the `__STORAGE__` branch of the `devpool-directory` repo
 // https://github.com/ubiquity/devpool-directory/blob/__STORAGE__/devpool-issues.json
