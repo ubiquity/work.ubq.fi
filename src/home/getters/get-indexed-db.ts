@@ -44,7 +44,15 @@ export async function saveImageToCache({
   });
 }
 
-export function getImageFromCache({ dbName, storeName, orgName }: { dbName: string; storeName: string; orgName: string }): Promise<{image: Blob; timestamp: string} | null> {
+export function getImageFromCache({
+  dbName,
+  storeName,
+  orgName,
+}: {
+  dbName: string;
+  storeName: string;
+  orgName: string;
+}): Promise<{ image: Blob; timestamp: string } | null> {
   return new Promise((resolve, reject) => {
     const open = indexedDB.open(dbName, 2); // Increase version number to ensure onupgradeneeded is called
     open.onupgradeneeded = function () {

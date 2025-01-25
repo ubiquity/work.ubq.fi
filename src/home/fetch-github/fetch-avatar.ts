@@ -27,7 +27,8 @@ export async function fetchAvatar(orgName: string): Promise<Blob | void> {
   const fetchPromise = (async () => {
     // Step 1: Try to get the avatar from IndexedDB
     const avatar = await getImageFromCache({ dbName: "GitHubAvatars", storeName: "ImageStore", orgName: `avatarUrl-${orgName}` });
-    if (avatar && Number(avatar.timestamp) + 60 * 1000 * 15 <= Date.now()) { // fail if the image is older than 15 minutes
+    if (avatar && Number(avatar.timestamp) + 60 * 1000 * 15 <= Date.now()) {
+      // fail if the image is older than 15 minutes
       organizationImageCache.set(orgName, avatar.image); // Cache it in memory
       return avatar.image;
     }
