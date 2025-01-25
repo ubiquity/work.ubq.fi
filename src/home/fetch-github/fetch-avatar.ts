@@ -3,7 +3,7 @@ export const ubiquityAvatarUrl = "https://avatars.githubusercontent.com/u/764127
 export type OrgNameAndAvatarUrl = {
   ownerName: string;
   avatar_url?: string;
-}
+};
 
 export async function fetchPartnerAvatars(): Promise<OrgNameAndAvatarUrl[]> {
   const response = await fetch("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-partner-avatars.json");
@@ -20,9 +20,8 @@ export function fetchAvatar(orgName: string): string | undefined {
 
 export async function fetchAvatars() {
   try {
-    const partnerData = await fetchPartnerAvatars(); 
-    console.log("partnerData", partnerData);
-
+    const partnerData = await fetchPartnerAvatars();
+    
     partnerData.forEach(({ ownerName, avatar_url: avatarUrl }) => {
       if (avatarUrl) {
         partnerAvatarMap.set(ownerName.toLowerCase(), avatarUrl);
@@ -32,5 +31,3 @@ export async function fetchAvatars() {
     console.error("Failed to load partner avatars:", error);
   }
 }
-
-
