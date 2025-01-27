@@ -254,7 +254,7 @@ plugins:
             - issue_comment.created
             - push
   - uses:
-      - plugin: ubiquity-os-marketplace/daemon-merging@main
+      - plugin: ubiquity-os-marketplace/daemon-merging
         with:
           approvalsRequired:
             collaborator: 1
