@@ -2,7 +2,7 @@ export const ubiquityAvatarUrl = "https://avatars.githubusercontent.com/u/764127
 
 export type OrgNameAndAvatarUrl = {
   ownerName: string;
-  avatar_url?: string;
+  avatar_url: string;
 };
 
 export async function fetchPartnerAvatars(): Promise<OrgNameAndAvatarUrl[]> {
