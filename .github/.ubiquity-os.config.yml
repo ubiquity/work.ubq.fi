@@ -31,7 +31,7 @@ plugins:
         with:
           allowPublicQuery: true
   - uses:
-      - plugin: ubiquity-os-marketplace/daemon-pricing
+      - plugin: ubiquity-os-marketplace/daemon-pricing@main
         with:
           labels:
             time:
@@ -67,7 +67,7 @@ plugins:
             protectLabels: ["priority", "price", "time"]
   - skipBotEvents: false
     uses:
-      - plugin: ubiquity-os-marketplace/text-conversation-rewards
+      - plugin: ubiquity-os-marketplace/text-conversation-rewards@main
         with:
           evmNetworkId: 100
           evmPrivateEncrypted: "bd5AFnSCO6c5jJyPifpOfr5Zys29RE7SyXkEU3akT13RtGmYDrqGIGuvJQyH53HA5dIba7PL5bXfll0JebmwXYe5gHIXSGX80WuGMDHh0cFfeGjHhmUXe8kkZ1OT2De9qRpqejJcEzdfi-8XNAvP7cQu2Vt-7RNnPw" # https://github.com/ubiquibot/conversation-rewards/pull/111#issuecomment-2348639931
@@ -235,7 +235,7 @@ plugins:
             maxAttempts: 10
             delayMs: 1000
   - uses:
-      - plugin: ubiquity-os-marketplace/daemon-disqualifier
+      - plugin: ubiquity-os-marketplace/daemon-disqualifier@main
         with:
           warning: "3.5 days"
           watch:
@@ -254,7 +254,7 @@ plugins:
             - issue_comment.created
             - push
   - uses:
-      - plugin: ubiquity-os-marketplace/daemon-merging
+      - plugin: ubiquity-os-marketplace/daemon-merging@main
         with:
           approvalsRequired:
             collaborator: 1
@@ -269,11 +269,11 @@ plugins:
               - production
           allowedReviewerRoles: ["COLLABORATOR", "MEMBER", "OWNER"]
   - uses:
-      - plugin: ubiquity-os-marketplace/text-vector-embeddings
+      - plugin: ubiquity-os-marketplace/text-vector-embeddings@main
         with:
           matchThreshold: 0.95
           warningThreshold: 0.75
           jobMatchingThreshold: 0.75
           alwaysRecommend: 0
   - uses:
-      - plugin: ubiquity-os-marketplace/daemon-pull-review
+      - plugin: ubiquity-os-marketplace/daemon-pull-review@main
