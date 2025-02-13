@@ -80,7 +80,7 @@ function setUpIssueElement(issueElement: HTMLDivElement, task: GitHubIssue, orga
       issueWrapper.classList.add("selected");
 
       const full = task;
-      if (!full) {
+      if (!full || !full.body) {
         window.open(url, "_blank");
       } else {
         previewIssue(task);

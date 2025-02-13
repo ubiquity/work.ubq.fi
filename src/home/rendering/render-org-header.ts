@@ -10,7 +10,6 @@ export function renderOrgHeaderLabel(orgName: string): void {
   const img = document.createElement("img");
   img.src = logoUrl;
   img.alt = `${orgName} Logo`;
-  console.log("oi");
   img.id = "logo";
 
   // Replace the existing SVG with the new image

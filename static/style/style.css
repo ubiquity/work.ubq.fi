@@ -9,6 +9,7 @@
     --border-color: hsl(225 25% var(--border-brightness) / 1);
   }
   #logo {
+    border-radius: 6px;
     height: 28px;
     width: 24.469px;
     margin-right: 8px;
