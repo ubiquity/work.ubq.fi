@@ -33,8 +33,8 @@
     {
       "id": 5390000409,
       "node_id": "LA_kwDOJWyCVM8AAAABQUThGQ",
-      "url": "https://api.github.com/repos/ubiquity/devpool-directory/labels/Pricing:%20100%20USD",
-      "name": "Pricing: 100 USD",
+      "url": "https://api.github.com/repos/ubiquity/devpool-directory/labels/Price:%20100%20USD",
+      "name": "Price: 100 USD",
       "color": "ededed",
       "default": false,
       "description": null

@@ -42,44 +42,17 @@
     {
       "id": 5390246739,
       "node_id": "LA_kwDOJWyCVM8AAAABQUijUw",
-      "url": "https://api.github.com/repos/ubiquity/devpool-directory/labels/Pricing:%20600%20USD",
-      "name": "Pricing: 600 USD",
+      "url": "https://api.github.com/repos/ubiquity/devpool-directory/labels/Price:%20600%20USD",
+      "name": "Price: 600 USD",
       "color": "ededed",
       "default": false,
       "description": null
-    },
-    {
-      "id": 5639152271,
-      "node_id": "LA_kwDOJWyCVM8AAAABUB6ijw",
-      "url": "https://api.github.com/repos/ubiquity/devpool-directory/labels/Unavailable",
-      "name": "Unavailable",
-      "color": "ededed",
-      "default": false,
-      "description": ""
     },
     {
       "id": 5906091134,
       "node_id": "LA_kwDOJWyCVM8AAAABYAfMfg",
       "url": "https://api.github.com/repos/ubiquity/devpool-directory/labels/Priority:%203%20(High)",
       "name": "Priority: 3 (High)",
-      "color": "ededed",
-      "default": false,
-      "description": null
-    },
-    {
-      "id": 6607857261,
-      "node_id": "LA_kwDOJWyCVM8AAAABidvmbQ",
-      "url": "https://api.github.com/repos/ubiquity/devpool-directory/labels/Partner:%20ubiquity/cloudflare-deploy-action",
-      "name": "Partner: ubiquity/cloudflare-deploy-action",
-      "color": "ededed",
-      "default": false,
-      "description": null
-    },
-    {
-      "id": 6607857262,
-      "node_id": "LA_kwDOJWyCVM8AAAABidvmbg",
-      "url": "https://api.github.com/repos/ubiquity/devpool-directory/labels/id:%20I_kwDOLGaFrM6ATBS4",
-      "name": "id: I_kwDOLGaFrM6ATBS4",
       "color": "ededed",
       "default": false,
       "description": null
