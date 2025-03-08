@@ -200,7 +200,7 @@ describe("DevPool", () => {
     });
   });
 
-  describe("Display devpools", () => {
+  describe("Display devpools issues", () => {
     beforeEach(() => {
       // Very important to make sure we don't store data between tests
       cy.clearLocalStorage();
