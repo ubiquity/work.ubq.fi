@@ -106,7 +106,6 @@ describe("DevPool", () => {
         });
       }).as("getIssues");
       cy.intercept("https://api.github.com/user", (req) => {
-        console.log("afasdfasdfads", userWithoutName);
         req.reply({
           statusCode: 200,
           body: userWithoutName,
@@ -268,7 +267,6 @@ describe("DevPool", () => {
       cy.get('div[id="issues-container"]').children().should("have.length", 2);
     });
 
-    
     it("Main page displays issues", () => {
       cy.log("Should display two new tasks");
       cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
