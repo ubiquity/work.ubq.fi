@@ -1,11 +1,12 @@
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import { Session } from "@supabase/supabase-js";
+import { OrgNameAndAvatarUrl } from "../../src/home/fetch-github/fetch-avatar";
 
 describe("DevPool", () => {
   let issue1: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
   let issue2: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
   let issue3: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
-  let avatars: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
+  let avatars: OrgNameAndAvatarUrl
   let githubUser: Session["user"];
 
   before(() => {
