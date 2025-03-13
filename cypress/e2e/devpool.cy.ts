@@ -6,7 +6,7 @@ describe("DevPool", () => {
   let issue1: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
   let issue2: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
   let issue3: RestEndpointMethodTypes["issues"]["get"]["response"]["data"];
-  let avatars: OrgNameAndAvatarUrl
+  let avatars: OrgNameAndAvatarUrl;
   let githubUser: Session["user"];
 
   before(() => {
