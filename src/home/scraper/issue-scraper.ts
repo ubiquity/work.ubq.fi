@@ -30,7 +30,7 @@ export async function startIssueScraper(username: string) {
 
   // Prepare the request payload
   const requestBody: { authToken: string; timestamp?: number } = {
-    authToken: supabaseAuth.provider_token,
+    authToken: supabaseAuth?.provider_token,
   };
 
   if (lastFetch) {
