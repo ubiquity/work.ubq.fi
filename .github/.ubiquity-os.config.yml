@@ -76,7 +76,10 @@ plugins:
             requirePriceLabel: true
             limitRewards: true
             collaboratorOnlyPaymentInvocation: true
-            contentEvaluator: {}
+            contentEvaluator:
+              enabled: true
+              openAi:
+                endpoint: https://openrouter.ai/api/v1
             userExtractor:
               redeemTask: true
             dataPurge: {}
