@@ -1,67 +1,74 @@
-zeroTrue: &zeroTrue
+zeroTrue: &a3
   score: 0
   countWords: true
-
-zeroFalse: &zeroFalse
+zeroFalse: &a4
   score: 0
   countWords: false
-
-oneTrue: &oneTrue
+oneTrue: &a1
   score: 1
   countWords: true
-
-oneFalse: &oneFalse
+oneFalse: &a2
   score: 1
   countWords: false
-
-tcrHtmlConfig: &tcrHtmlConfig
-  a: *oneTrue
-  code: *oneFalse
-  img: *oneFalse
-  h1: *oneTrue
-  h2: *oneTrue
-  h3: *oneTrue
-  h4: *oneTrue
-  h5: *oneTrue
-  h6: *oneTrue
-  br: *zeroTrue
-  p: *zeroTrue
-  em: *zeroTrue
-  ul: *zeroTrue
-  td: *zeroTrue
-  hr: *zeroTrue
-  ol: *zeroTrue
-  pre: *zeroFalse
-  strong: *zeroFalse
-  blockquote: *zeroFalse
+tcrHtmlConfig: &a5
+  a: *a1
+  code: *a2
+  img: *a2
+  h1: *a1
+  h2: *a1
+  h3: *a1
+  h4: *a1
+  h5: *a1
+  h6: *a1
+  br: *a3
+  p: *a3
+  em: *a3
+  ul: *a3
+  td: *a3
+  hr: *a3
+  ol: *a3
+  pre: *a4
+  strong: *a4
+  blockquote: *a4
   li:
     score: 0.1
     countWords: true
-
 plugins:
   - uses:
       - plugin: https://ubiquity-os-command-start-stop-main.ubiquity.workers.dev
         with:
-          reviewDelayTolerance: "3 Days"
-          taskStaleTimeoutDuration: "30 Days"
+          reviewDelayTolerance: 3 Days
+          taskStaleTimeoutDuration: 30 Days
           startRequiresWallet: true
           maxConcurrentTasks:
             collaborator: 10
             contributor: 2
-          assignedIssueScope: "org"
-          emptyWalletText: "Please set your wallet address with the /wallet command first and try again."
-          rolesWithReviewAuthority: ["OWNER", "ADMIN", "MEMBER", "COLLABORATOR"]
+          assignedIssueScope: org
+          emptyWalletText: Please set your wallet address with the /wallet command first
+            and try again.
+          rolesWithReviewAuthority:
+            - OWNER
+            - ADMIN
+            - MEMBER
+            - COLLABORATOR
           requiredLabelsToStart:
             - name: "Priority: 1 (Normal)"
-              allowedRoles: ['collaborator', 'contributor']
+              allowedRoles:
+                - collaborator
+                - contributor
             - name: "Priority: 2 (Medium)"
-              allowedRoles: ['collaborator', 'contributor']            
+              allowedRoles:
+                - collaborator
+                - contributor
             - name: "Priority: 3 (High)"
-              allowedRoles: ['collaborator']
+              allowedRoles:
+                - collaborator
             - name: "Priority: 4 (Urgent)"
-              allowedRoles: ['collaborator']
+              allowedRoles:
+                - collaborator
             - name: "Priority: 5 (Emergency)"
-              allowedRoles: ['collaborator']
+              allowedRoles:
+                - collaborator
   - uses:
       - plugin: https://ubiquity-os-command-wallet-main.ubiquity.workers.dev
         with:
@@ -101,16 +108,13 @@ plugins:
               - name: "Priority: 5 (Emergency)"
                 collaboratorOnly: false
           basePriceMultiplier: 2
-          publicAccessControl:
-            setLabel: true
-            fundExternalClosedIssue: false
-            protectLabels: ["priority", "price", "time"]
+          publicAccessControl: false
   - skipBotEvents: false
     uses:
       - plugin: ubiquity-os-marketplace/text-conversation-rewards@main
         with:
           evmNetworkId: 100
-          evmPrivateEncrypted: "bd5AFnSCO6c5jJyPifpOfr5Zys29RE7SyXkEU3akT13RtGmYDrqGIGuvJQyH53HA5dIba7PL5bXfll0JebmwXYe5gHIXSGX80WuGMDHh0cFfeGjHhmUXe8kkZ1OT2De9qRpqejJcEzdfi-8XNAvP7cQu2Vt-7RNnPw" # https://github.com/ubiquibot/conversation-rewards/pull/111#issuecomment-2348639931
+          evmPrivateEncrypted: bd5AFnSCO6c5jJyPifpOfr5Zys29RE7SyXkEU3akT13RtGmYDrqGIGuvJQyH53HA5dIba7PL5bXfll0JebmwXYe5gHIXSGX80WuGMDHh0cFfeGjHhmUXe8kkZ1OT2De9qRpqejJcEzdfi-8XNAvP7cQu2Vt-7RNnPw
           erc20RewardToken: "0xC6ed4f520f6A4e4DC27273509239b7F8A68d2068"
           incentives:
             requirePriceLabel: true
@@ -134,14 +138,14 @@ plugins:
                   multiplier: 1
                   rewards:
                     wordValue: 0.1
-                    html: *tcrHtmlConfig
+                    html: *a5
                 - role:
                     - ISSUE_CONTRIBUTOR
                     - ISSUE_ASSIGNEE
                   multiplier: 0.25
                   rewards:
                     wordValue: 0.1
-                    html: *tcrHtmlConfig
+                    html: *a5
                 - role:
                     - PULL_AUTHOR
                     - PULL_CONTRIBUTOR
@@ -149,7 +153,7 @@ plugins:
                   multiplier: 0
                   rewards:
                     wordValue: 0
-                    html: *tcrHtmlConfig
+                    html: *a5
             permitGeneration: {}
             githubComment:
               post: true
@@ -160,7 +164,7 @@ plugins:
   - uses:
       - plugin: ubiquity-os-marketplace/daemon-disqualifier@main
         with:
-          warning: "3.5 days"
+          warning: 3.5 days
           watch:
             optOut:
               - ubiquibot
@@ -168,7 +172,7 @@ plugins:
               - staging
               - production
           prioritySpeed: true
-          disqualification: "7 days"
+          disqualification: 7 days
           pullRequestRequired: true
           eventWhitelist:
             - pull_request.review_requested
@@ -183,14 +187,17 @@ plugins:
             collaborator: 1
             contributor: 2
           mergeTimeout:
-            collaborator: "3.5 days"
+            collaborator: 3.5 days
           repos:
             ignore:
               - ubiquibot
               - launch-party
               - staging
               - production
-          allowedReviewerRoles: ["COLLABORATOR", "MEMBER", "OWNER"]
+          allowedReviewerRoles:
+            - COLLABORATOR
+            - MEMBER
+            - OWNER
   - uses:
       - plugin: ubiquity-os-marketplace/text-vector-embeddings@main
         with:
