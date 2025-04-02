@@ -57,7 +57,7 @@ export class IssueSearch {
         results.set(issueId, this._createEmptyResult(false));
         continue;
       }
-      if (orgFilter && issue.repository?.owner.login !== orgFilter || repoFilter && issue.repository?.name === repoFilter){
+      if (orgFilter && issue.repository?.owner.login !== orgFilter || repoFilter && issue.repository?.name !== repoFilter){
         results.set(issueId, this._createEmptyResult(false));
         continue;
       }
