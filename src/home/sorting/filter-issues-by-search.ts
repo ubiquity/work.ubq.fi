@@ -21,6 +21,7 @@ export function filterIssuesBySearch(filterText: string) {
   }
 
   const searchResults = taskManager.issueSearcher.search(filterText, orgFilter, repoFilter);
+  // Create the new GithubIssue[] array based on the ranking in the searchResults
   const sortedIssues = Array.from(searchResults.entries())
     .filter(([, result]) => result.score > 0)
     .sort((a, b) => b[1].score - a[1].score)
