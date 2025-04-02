@@ -33,7 +33,7 @@ export class IssueSearch {
     });
   }
 
-  public search(searchText: string): Map<number, SearchResult> {
+  public search(searchText: string, orgFilter?: string, repoFilter?: string): Map<number, SearchResult> {
     let filterText = searchText.toLowerCase().trim();
     const results = new Map<number, SearchResult>();
     const isFuzzySearchEnabled = filterText.startsWith("?");
@@ -57,7 +57,10 @@ export class IssueSearch {
         results.set(issueId, this._createEmptyResult(false));
         continue;
       }
-
+      if (orgFilter && issue.repository?.owner.login !== orgFilter || repoFilter && issue.repository?.name === repoFilter){
+        results.set(issueId, this._createEmptyResult(false));
+        continue;
+      }
       const result = this._calculateIssueRelevance(issue, searchTerms, isFuzzySearchEnabled);
       results.set(issueId, result);
     }
