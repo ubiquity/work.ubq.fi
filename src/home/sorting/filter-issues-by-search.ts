@@ -20,7 +20,7 @@ export function filterIssuesBySearch(filterText: string) {
     searchText = searchText.slice(match[0].length).trim();
   }
 
-  const searchResults = taskManager.issueSearcher.search(filterText, orgFilter, repoFilter);
+  const searchResults = taskManager.issueSearcher.search(searchText, orgFilter, repoFilter);
   // Create the new GithubIssue[] array based on the ranking in the searchResults
   const sortedIssues = Array.from(searchResults.entries())
     .filter(([, result]) => result.score > 0)

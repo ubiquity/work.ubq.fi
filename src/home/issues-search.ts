@@ -44,7 +44,19 @@ export class IssueSearch {
 
     if (!filterText) {
       for (const id of this._searchableIssues.keys()) {
-        results.set(id, this._createEmptyResult());
+        const issue = this._taskManager.getGitHubIssueById(id);
+        if (!issue) {
+          results.set(id, this._createEmptyResult(false));
+          continue;
+        }
+        const issueUrlParts = issue.repository_url.split("/");
+        const repoName = issueUrlParts.pop();
+        const orgName = issueUrlParts.pop();
+        if ((orgFilter && orgName === orgFilter) || (repoFilter && repoName === repoFilter)) {
+          results.set(id, this._createEmptyResult(true));
+        } else {
+          results.set(id, this._createEmptyResult(false));
+        }
       }
       return results;
     }
@@ -57,7 +69,11 @@ export class IssueSearch {
         results.set(issueId, this._createEmptyResult(false));
         continue;
       }
-      if (orgFilter && issue.repository?.owner.login !== orgFilter || repoFilter && issue.repository?.name !== repoFilter){
+      const issueUrlParts = issue.repository_url.split("/");
+      const repoName = issueUrlParts.pop();
+      const orgName = issueUrlParts.pop();
+
+      if (!(orgFilter && orgName === orgFilter) && !(repoFilter && repoName === repoFilter)) {
         results.set(issueId, this._createEmptyResult(false));
         continue;
       }
