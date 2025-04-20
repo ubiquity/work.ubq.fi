@@ -1,35 +1,35 @@
-zeroTrue: &a3
+zeroTrue: &zeroTrue
   score: 0
   countWords: true
-zeroFalse: &a4
+zeroFalse: &zeroFalse
   score: 0
   countWords: false
-oneTrue: &a1
+oneTrue: &oneTrue
   score: 1
   countWords: true
-oneFalse: &a2
+oneFalse: &oneFalse
   score: 1
   countWords: false
-tcrHtmlConfig: &a5
-  a: *a1
-  code: *a2
-  img: *a2
-  h1: *a1
-  h2: *a1
-  h3: *a1
-  h4: *a1
-  h5: *a1
-  h6: *a1
-  br: *a3
-  p: *a3
-  em: *a3
-  ul: *a3
-  td: *a3
-  hr: *a3
-  ol: *a3
-  pre: *a4
-  strong: *a4
-  blockquote: *a4
+tcrHtmlConfig: &tcrHtmlConfig
+  a: *oneTrue
+  code: *oneFalse
+  img: *oneFalse
+  h1: *oneTrue
+  h2: *oneTrue
+  h3: *oneTrue
+  h4: *oneTrue
+  h5: *oneTrue
+  h6: *oneTrue
+  br: *zeroTrue
+  p: *zeroTrue
+  em: *zeroTrue
+  ul: *zeroTrue
+  td: *zeroTrue
+  hr: *zeroTrue
+  ol: *zeroTrue
+  pre: *zeroFalse
+  strong: *zeroFalse
+  blockquote: *zeroFalse
   li:
     score: 0.1
     countWords: true
@@ -114,8 +114,8 @@ plugins:
       - plugin: ubiquity-os-marketplace/text-conversation-rewards@main
         with:
           evmNetworkId: 100
-          evmPrivateEncrypted: bd5AFnSCO6c5jJyPifpOfr5Zys29RE7SyXkEU3akT13RtGmYDrqGIGuvJQyH53HA5dIba7PL5bXfll0JebmwXYe5gHIXSGX80WuGMDHh0cFfeGjHhmUXe8kkZ1OT2De9qRpqejJcEzdfi-8XNAvP7cQu2Vt-7RNnPw
-          erc20RewardToken: "0xC6ed4f520f6A4e4DC27273509239b7F8A68d2068"
+          evmPrivateEncrypted: bd5AFnSCO6c5jJyPifpOfr5Zys29RE7SyXkEU3akT13RtGmYDrqGIGuvJQyH53HtcrHtmlConfigdIba7PL5bXfll0JebmwXYe5gHIXSGX80WuGMDHh0cFfeGjHhmUXe8kkZ1OT2De9qRpqejJcEzdfi-8XNAvP7cQu2Vt-7RNnPw
+          erc20RewardToken: "0xC6ed4f520f6zeroFalsee4DC27273509239b7F8A68d2068"
           incentives:
             requirePriceLabel: true
             limitRewards: true
@@ -138,14 +138,14 @@ plugins:
                   multiplier: 1
                   rewards:
                     wordValue: 0.1
-                    html: *a5
+                    html: *tcrHtmlConfig
                 - role:
                     - ISSUE_CONTRIBUTOR
                     - ISSUE_ASSIGNEE
                   multiplier: 0.25
                   rewards:
                     wordValue: 0.1
-                    html: *a5
+                    html: *tcrHtmlConfig
                 - role:
                     - PULL_AUTHOR
                     - PULL_CONTRIBUTOR
@@ -153,7 +153,7 @@ plugins:
                   multiplier: 0
                   rewards:
                     wordValue: 0
-                    html: *a5
+                    html: *tcrHtmlConfig
             permitGeneration: {}
             githubComment:
               post: true
