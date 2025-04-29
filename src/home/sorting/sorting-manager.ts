@@ -5,6 +5,7 @@ import { Sorting } from "./generate-sorting-buttons";
 import { isFilteringAvailableIssues, swapAvailabilityFilter } from "../fetch-github/fetch-and-display-previews";
 
 export class SortingManager {
+  private static _instances: SortingManager[] = [];
   private _lastChecked: HTMLInputElement | null = null;
   private _toolBarFilters: HTMLElement;
   private _filtersDiv: HTMLElement;
@@ -32,6 +33,8 @@ export class SortingManager {
     sortingOptions.forEach((option) => {
       this._sortingState[option] = "unsorted";
     });
+
+    SortingManager._instances.push(this);
   }
 
   public render() {
@@ -108,6 +111,11 @@ export class SortingManager {
       } catch (error) {
         renderErrorInModal(error as Error);
       }
+
+      // Sync text box across instances
+      SortingManager._instances.forEach((inst) => {
+        if (inst !== this) inst._generateFilterTextBox();
+      });
     });
 
     // if the user changes between proposal view and directory view, update the search results

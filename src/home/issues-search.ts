@@ -70,7 +70,7 @@ export class IssueSearch {
           results.set(id, this._createEmptyResult(false));
           continue;
         }
-      } else {
+      } else if (orgFilter || repoFilter) {
         const orgExact = !!orgFilter && orgName === orgFilter;
         const repoExact = !!repoFilter && repoName === repoFilter;
         const orgPartial = !!orgFilter && orgName.startsWith(orgFilter);
