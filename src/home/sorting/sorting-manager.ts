@@ -114,7 +114,13 @@ export class SortingManager {
 
       // Sync text box across instances
       SortingManager._instances.forEach((inst) => {
-        if (inst !== this) inst._generateFilterTextBox();
+        if (inst !== this) {
+          const textBoxId = `filter-${inst._instanceId}`;
+          const otherTextBox = document.getElementById(textBoxId) as HTMLInputElement;
+          if (otherTextBox) {
+            otherTextBox.value = filterText;
+          }
+        }
       });
     });
 

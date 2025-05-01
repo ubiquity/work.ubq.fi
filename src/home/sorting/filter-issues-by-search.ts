@@ -9,6 +9,7 @@ interface ParseResult {
 
 export function filterIssuesBySearch(filterText: string) {
   const { repoFilter, orgFilter, filteredSearchText } = parseSearchQuery(filterText);
+  console.error(repoFilter, orgFilter)
   const searchResults = taskManager.issueSearcher.search(filteredSearchText, orgFilter, repoFilter);
   // Create the new GithubIssue[] array based on the ranking in the searchResults
   const sortedIssues = Array.from(searchResults.entries())

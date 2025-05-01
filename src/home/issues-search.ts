@@ -66,7 +66,7 @@ export class IssueSearch {
       const orgName = parts.pop()!;
 
       if (orgFilter && repoFilter) {
-        if (orgName !== orgFilter || !repoName.startsWith(repoFilter)) {
+        if (orgName !== orgFilter || !orgName.startsWith(orgFilter) || !repoName.startsWith(repoFilter)) {
           results.set(id, this._createEmptyResult(false));
           continue;
         }
