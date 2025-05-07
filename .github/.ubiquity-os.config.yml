@@ -35,7 +35,7 @@ tcrHtmlConfig: &tcrHtmlConfig
     countWords: true
 plugins:
   - uses:
-      - plugin: https://ubiquity-os-command-start-stop-main.ubiquity.workers.dev
+      - plugin: https://ubiquity-os-command-start-stop.azurewebsites.net
         with:
           reviewDelayTolerance: 3 Days
           taskStaleTimeoutDuration: 30 Days
