@@ -69,6 +69,10 @@ plugins:
             - name: "Priority: 5 (Emergency)"
               allowedRoles:
                 - collaborator
+          taskAccessControl:
+            usdPriceMax:
+              contributor: -1
+              collaborator: Infinity
   - uses:
       - plugin: https://ubiquity-os-command-wallet-main.ubiquity.workers.dev
         with:
