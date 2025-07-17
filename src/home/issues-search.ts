@@ -33,7 +33,7 @@ export class IssueSearch {
     });
   }
 
-  public search(searchText: string): Map<number, SearchResult> {
+  public search(searchText: string, orgFilter?: string, repoFilter?: string): Map<number, SearchResult> {
     let filterText = searchText.toLowerCase().trim();
     const results = new Map<number, SearchResult>();
     const isFuzzySearchEnabled = filterText.startsWith("?");
@@ -43,26 +43,118 @@ export class IssueSearch {
     }
 
     if (!filterText) {
+      if (!orgFilter && !repoFilter) {
+        for (const id of this._searchableIssues.keys()) {
+          results.set(id, this._createEmptyResult(true));
+        }
+        return results;
+      }
+      return this._handleEmptyFilterText(orgFilter, repoFilter);
+    }
+
+    const terms = this._preprocessSearchTerms(filterText);
+
+    for (const id of this._searchableIssues.keys()) {
+      const issue = this._taskManager.getGitHubIssueById(id);
+      if (!issue) {
+        results.set(id, this._createEmptyResult(false));
+        continue;
+      }
+
+      const parts = issue.repository_url.split("/");
+      const repoName = parts.pop()!;
+      const orgName = parts.pop()!;
+
+      if (orgFilter && repoFilter) {
+        if (orgName !== orgFilter || !orgName.startsWith(orgFilter) || !repoName.startsWith(repoFilter)) {
+          results.set(id, this._createEmptyResult(false));
+          continue;
+        }
+      } else if (orgFilter || repoFilter) {
+        const orgExact = !!orgFilter && orgName === orgFilter;
+        const repoExact = !!repoFilter && repoName === repoFilter;
+        const orgPartial = !!orgFilter && orgName.startsWith(orgFilter);
+        const repoPartial = !!repoFilter && repoName.startsWith(repoFilter);
+
+        if (!(orgExact || repoExact || orgPartial || repoPartial)) {
+          results.set(id, this._createEmptyResult(false));
+          continue;
+        }
+      }
+
+      const result = this._calculateIssueRelevance(issue, terms, isFuzzySearchEnabled);
+      results.set(id, result);
+    }
+
+    this._calculateNDCGScore(results);
+    return results;
+  }
+
+  private _handleEmptyFilterText(orgFilter?: string, repoFilter?: string): Map<number, SearchResult> {
+    const results = new Map<number, SearchResult>();
+
+    if (orgFilter && repoFilter) {
       for (const id of this._searchableIssues.keys()) {
-        results.set(id, this._createEmptyResult());
+        const issue = this._taskManager.getGitHubIssueById(id);
+        if (!issue) {
+          results.set(id, this._createEmptyResult(false));
+          continue;
+        }
+
+        const issueUrlParts = issue.repository_url.split("/");
+        const repoName = issueUrlParts.pop()!;
+        const orgName = issueUrlParts.pop()!;
+
+        const match = orgName === orgFilter && repoName.startsWith(repoFilter);
+        results.set(id, this._createEmptyResult(match));
       }
       return results;
     }
 
-    const searchTerms = this._preprocessSearchTerms(filterText);
+    let hasExact = false;
 
-    for (const issueId of this._searchableIssues.keys()) {
-      const issue = this._taskManager.getGitHubIssueById(issueId);
+    for (const id of this._searchableIssues.keys()) {
+      const issue = this._taskManager.getGitHubIssueById(id);
       if (!issue) {
-        results.set(issueId, this._createEmptyResult(false));
+        results.set(id, this._createEmptyResult(false));
         continue;
       }
 
-      const result = this._calculateIssueRelevance(issue, searchTerms, isFuzzySearchEnabled);
-      results.set(issueId, result);
+      if (!orgFilter && !repoFilter) {
+        results.set(id, this._createEmptyResult(true));
+        continue;
+      }
+
+      const issueUrlParts = issue.repository_url.split("/");
+      const repoName = issueUrlParts.pop()!;
+      const orgName = issueUrlParts.pop()!;
+
+      const orgMatch = !!orgFilter && orgName === orgFilter;
+      const repoMatch = !!repoFilter && repoName === repoFilter;
+
+      if (orgMatch || repoMatch) {
+        results.set(id, this._createEmptyResult(true));
+        hasExact = true;
+      } else {
+        results.set(id, this._createEmptyResult(false));
+      }
     }
 
-    this._calculateNDCGScore(results);
+    if (!hasExact) {
+      for (const id of this._searchableIssues.keys()) {
+        const issue = this._taskManager.getGitHubIssueById(id);
+        if (!issue) continue;
+
+        const parts = issue.repository_url.split("/");
+        const repoName = parts.pop()!;
+        const orgName = parts.pop()!;
+
+        if (orgName.startsWith(orgFilter!) || repoName.startsWith(repoFilter!)) {
+          results.set(id, this._createEmptyResult(true));
+        }
+      }
+    }
+
     return results;
   }
 
