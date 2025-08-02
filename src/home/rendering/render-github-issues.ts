@@ -1,12 +1,14 @@
 import { marked } from "marked";
-import { organizationImageCache } from "../fetch-github/fetch-issues-full";
+import markedFootnote from "marked-footnote";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { renderErrorInModal } from "./display-popup-modal";
-import { modal, modalBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
+import { closeModal, modal, modalBodyInner, bottomBar, titleAnchor, titleHeader, bottomBarClearLabels } from "./render-preview-modal";
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
+import { waitForElement } from "./utils";
+import { fetchAvatar, ubiquityAvatarUrl } from "../fetch-github/fetch-avatar";
 
-export function renderGitHubIssues(tasks: GitHubIssue[]) {
+export function renderGitHubIssues(tasks: GitHubIssue[], skipAnimation: boolean) {
   const container = taskManager.getContainer();
   if (container.classList.contains("ready")) {
     container.classList.remove("ready");
@@ -21,8 +23,12 @@ export function renderGitHubIssues(tasks: GitHubIssue[]) {
     if (!existingIssueIds.has(task.id.toString())) {
       const issueWrapper = everyNewIssue({ gitHubIssue: task, container });
       if (issueWrapper) {
-        setTimeout(() => issueWrapper.classList.add("active"), delay);
-        delay += baseDelay;
+        if (skipAnimation) {
+          issueWrapper.classList.add("active");
+        } else {
+          setTimeout(() => issueWrapper.classList.add("active"), delay);
+          delay += baseDelay;
+        }
       }
     }
   }
@@ -74,7 +80,7 @@ function setUpIssueElement(issueElement: HTMLDivElement, task: GitHubIssue, orga
       issueWrapper.classList.add("selected");
 
       const full = task;
-      if (!full) {
+      if (!full || !full.body) {
         window.open(url, "_blank");
       } else {
         previewIssue(task);
@@ -135,35 +141,93 @@ function parseAndGenerateLabels(task: GitHubIssue) {
 
 // Function to update and show the preview
 function previewIssue(gitHubIssue: GitHubIssue) {
-  const ownerLogin = gitHubIssue.repository?.owner?.login ?? gitHubIssue.repository?.owner?.name ?? "";
-  const ownerName = gitHubIssue.repository?.owner?.name ?? ownerLogin ?? "";
-  const ownerAvatarUrl = gitHubIssue.repository?.owner?.avatar_url ?? "";
-  const ownerUrl = gitHubIssue.repository?.owner?.html_url ?? (ownerLogin ? `https://github.com/${ownerLogin}` : "");
-
-  (
-    window as unknown as {
-      setPreviewOrg: (params: { login: string; name?: string; avatarUrl?: string; url?: string }) => void;
-    }
-  ).setPreviewOrg?.({
-    login: ownerLogin,
-    name: ownerName,
-    avatarUrl: ownerAvatarUrl,
-    url: ownerUrl,
-  });
-  viewIssueDetails(gitHubIssue);
+  void viewIssueDetails(gitHubIssue);
 }
 
-export function viewIssueDetails(full: GitHubIssue) {
+// Loads the issue preview modal with the issue details
+export async function viewIssueDetails(full: GitHubIssue) {
   // Update the title and body for the new issue
   titleHeader.textContent = full.title;
   titleAnchor.href = full.html_url;
   if (!full.body) return;
+
+  // Remove any existing cloned labels from the bottom bar
+  bottomBarClearLabels();
+
+  // Wait for the issue element to exist, useful when loading issue from URL
+  const issueElement = await waitForElement(`div[data-issue-id="${full.id}"]`);
+
+  const labelsDiv = issueElement.querySelector(".labels");
+  if (labelsDiv) {
+    // Clone the labels div and remove the img child if it exists
+    const clonedLabels = labelsDiv.cloneNode(true) as HTMLElement;
+    const imgElement = clonedLabels.querySelector("img");
+    if (imgElement) clonedLabels.removeChild(imgElement);
+
+    // Add an extra class and set padding
+    clonedLabels.classList.add("cloned-labels");
+
+    // Prepend the cloned labels to the modal body
+    bottomBar.prepend(clonedLabels);
+  }
+
+  // Use footnote extension for `marked`
+  marked.use(markedFootnote());
+
+  // Set the issue body content using `marked`
   modalBodyInner.innerHTML = marked(full.body) as string;
 
   // Show the preview
   modal.classList.add("active");
   modal.classList.remove("error");
   document.body.classList.add("preview-active");
+
+  updateUrlWithIssueId(full.id);
+}
+
+// Listen for changes in view toggle and update the URL accordingly
+export const proposalViewToggle = document.getElementById("view-toggle") as HTMLInputElement;
+proposalViewToggle.addEventListener("change", () => {
+  const newURL = new URL(window.location.href);
+  if (proposalViewToggle.checked) {
+    newURL.searchParams.set("proposal", "true");
+  } else {
+    newURL.searchParams.delete("proposal");
+  }
+  window.history.replaceState({}, "", newURL.toString());
+});
+
+// Adds issue ID to url in format (i.e http://localhost:8080/?issue=2559612103)
+function updateUrlWithIssueId(issueID: number) {
+  const newURL = new URL(window.location.href);
+  newURL.searchParams.set("issue", String(issueID));
+
+  // Set issue in URL
+  window.history.replaceState({ issueID }, "", newURL.toString());
+}
+
+// Opens the preview modal if a URL contains an issueID
+export function loadIssueFromUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const issueID = urlParams.get("issue");
+
+  // If no issue ID in the URL, don't load issue
+  if (!issueID) {
+    closeModal();
+    return;
+  }
+
+  // If ID doesn't exist, don't load issue
+  const issue: GitHubIssue = taskManager.getGitHubIssueById(Number(issueID)) as GitHubIssue;
+
+  if (!issue) {
+    const newURL = new URL(window.location.href);
+    newURL.searchParams.delete("issue");
+    window.history.pushState({}, "", newURL.toString());
+    return;
+  }
+
+  void viewIssueDetails(issue);
 }
 
 export function applyAvatarsToIssues() {
@@ -173,11 +237,11 @@ export function applyAvatarsToIssues() {
   issueElements.forEach((issueElement) => {
     const orgName = issueElement.querySelector(".organization-name")?.textContent;
     if (orgName) {
-      const avatarUrl = organizationImageCache.get(orgName);
+      const avatarUrl = fetchAvatar(orgName) ?? ubiquityAvatarUrl;
       if (avatarUrl) {
         const avatarImg = issueElement.querySelector("img");
         if (avatarImg) {
-          avatarImg.src = URL.createObjectURL(avatarUrl);
+          avatarImg.src = avatarUrl;
         }
       }
     }

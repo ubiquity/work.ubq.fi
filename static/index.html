@@ -4,18 +4,6 @@
     <meta charset="UTF-8" />
     <title>DevPool Directory | Ubiquity DAO</title>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VZLJ61H1YM"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "G-VZLJ61H1YM");
-    </script>
-
     <link rel="stylesheet" href="style/style.css" />
     <link rel="stylesheet" href="style/inverted-style.css" />
     <link rel="stylesheet" href="style/special.css" />
@@ -56,9 +44,44 @@
             ></path></svg
           ><span
             ><span class="full">Ubiquity DAO | </span><span class="mid">DevPool<input type="checkbox" id="view-toggle" /></span></span></div></label
-      ><div id="filters" class="filters-container"></div><div id="authentication"></div
+      ><div id="filters" class="filters-container"></div>
+      <div id="authentication"></div>
+    </div>
+    <div id="preview-modal" class="preview">
+      <div class="preview-content">
+        <div class="preview-header">
+          <button class="close-preview">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+              <path d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z" />
+            </svg>
+          </button>
+          <a id="preview-title-anchor" target="_blank">
+            <h1 id="preview-title"></h1>
+            <span class="error">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#808080">
+                <path
+                  d="M109-120q-11 0-20-5.5T75-140q-5-9-5.5-19.5T75-180l370-640q6-10 15.5-15t19.5-5q10 0 19.5 5t15.5 15l370 640q6 10 5.5 20.5T885-140q-5 9-14 14.5t-20 5.5H109Zm69-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm0-120q17 0 28.5-11.5T520-400v-120q0-17-11.5-28.5T480-560q-17 0-28.5 11.5T440-520v120q0 17 11.5 28.5T480-360Zm0-100Z"
+                />
+              </svg>
+            </span>
+            <span class="open-new-link">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                <path
+                  d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"
+                />
+              </svg>
+            </span>
+          </a>
+        </div>
+        <div class="preview-body">
+          <div id="preview-body-inner" class="preview-body-inner"></div>
+        </div>
+      </div>
+    </div>
+    <div id="bottom-bar" class="toolbar"
+      ><div id="mobile-modal-scrub"><button id="scrub-left">&lsaquo;</button><button id="scrub-right">&rsaquo;</button></div
+      ><div id="filters-bottom" class="filters-container"></div
     ></div>
-    <div id="bottom-bar" class="toolbar"><div id="filters-bottom" class="filters-container"></div></div>
     <div id="bottom-right">
       <a href="#" id="git-revision" target="_blank"></a>
       <a id="faq-link" href="https://dao.ubq.fi/devpool-flow" target="_blank"

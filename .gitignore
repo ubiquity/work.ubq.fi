@@ -8,6 +8,16 @@ node_modules
 .pnp.loader.mjs
 static/dist
 .env
+.wrangler/
 
 cypress/screenshots
 cypress/videos
+
+# Wrangler
+.wrangler
+
+# vscode
+.vscode
+
+# Cloudflare
+.dev.vars
