@@ -135,6 +135,21 @@ function parseAndGenerateLabels(task: GitHubIssue) {
 
 // Function to update and show the preview
 function previewIssue(gitHubIssue: GitHubIssue) {
+  const ownerLogin = gitHubIssue.repository?.owner?.login ?? gitHubIssue.repository?.owner?.name ?? "";
+  const ownerName = gitHubIssue.repository?.owner?.name ?? ownerLogin ?? "";
+  const ownerAvatarUrl = gitHubIssue.repository?.owner?.avatar_url ?? "";
+  const ownerUrl = gitHubIssue.repository?.owner?.html_url ?? (ownerLogin ? `https://github.com/${ownerLogin}` : "");
+
+  (
+    window as unknown as {
+      setPreviewOrg: (params: { login: string; name?: string; avatarUrl?: string; url?: string }) => void;
+    }
+  ).setPreviewOrg?.({
+    login: ownerLogin,
+    name: ownerName,
+    avatarUrl: ownerAvatarUrl,
+    url: ownerUrl,
+  });
   viewIssueDetails(gitHubIssue);
 }
 
