@@ -1,12 +1,12 @@
 import { marked } from "marked";
 import markedFootnote from "marked-footnote";
+import { fetchAvatar, ubiquityAvatarUrl } from "../fetch-github/fetch-avatar";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { renderErrorInModal } from "./display-popup-modal";
-import { closeModal, modal, modalBodyInner, bottomBar, titleAnchor, titleHeader, bottomBarClearLabels } from "./render-preview-modal";
+import { bottomBar, bottomBarClearLabels, closeModal, modal, modalBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
 import { waitForElement } from "./utils";
-import { fetchAvatar, ubiquityAvatarUrl } from "../fetch-github/fetch-avatar";
 
 export function renderGitHubIssues(tasks: GitHubIssue[], skipAnimation: boolean) {
   const container = taskManager.getContainer();
@@ -141,6 +141,22 @@ function parseAndGenerateLabels(task: GitHubIssue) {
 
 // Function to update and show the preview
 function previewIssue(gitHubIssue: GitHubIssue) {
+  const ownerLogin = gitHubIssue.repository?.owner?.login ?? gitHubIssue.repository?.owner?.name ?? "";
+  const ownerName = gitHubIssue.repository?.owner?.name ?? ownerLogin ?? "";
+  const ownerAvatarUrl = gitHubIssue.repository?.owner?.avatar_url ?? "";
+  const ownerUrl = gitHubIssue.repository?.owner?.html_url ?? (ownerLogin ? `https://github.com/${ownerLogin}` : "");
+
+  (
+    window as unknown as {
+      setPreviewOrg?: (params: { login: string; name?: string; avatarUrl?: string; url?: string }) => void;
+    }
+  ).setPreviewOrg?.({
+    login: ownerLogin,
+    name: ownerName,
+    avatarUrl: ownerAvatarUrl,
+    url: ownerUrl,
+  });
+
   void viewIssueDetails(gitHubIssue);
 }
 
