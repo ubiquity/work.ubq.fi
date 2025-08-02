@@ -28,9 +28,36 @@ error.innerHTML = errorIcon;
 
 titleAnchor.appendChild(error);
 titleAnchor.appendChild(openNewLink);
+const orgContainer = document.createElement("a");
+orgContainer.classList.add("org-chip");
+orgContainer.setAttribute("target", "_blank");
+
+const orgAvatar = document.createElement("img");
+orgAvatar.classList.add("org-avatar");
+orgAvatar.alt = "";
+
+const orgName = document.createElement("span");
+orgName.classList.add("org-name");
+
+orgContainer.appendChild(orgAvatar);
+orgContainer.appendChild(orgName);
+
 modalHeader.appendChild(titleAnchor);
+modalHeader.appendChild(orgContainer);
 modalBody.appendChild(modalBodyInner);
 modalContent.appendChild(modalHeader);
+(window as unknown as { setPreviewOrg: (params: { login: string; name?: string; avatarUrl?: string; url?: string }) => void }).setPreviewOrg = ({
+  login,
+  name,
+  avatarUrl,
+  url,
+}) => {
+  orgName.textContent = name || login;
+  orgAvatar.src = avatarUrl || "";
+  orgAvatar.alt = `${name || login} avatar`;
+  if (url) orgContainer.href = url;
+  else orgContainer.removeAttribute("href");
+};
 modalContent.appendChild(modalBody);
 modal.appendChild(modalContent);
 document.body.appendChild(modal);
