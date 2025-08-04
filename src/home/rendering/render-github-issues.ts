@@ -142,12 +142,6 @@ function parseAndGenerateLabels(task: GitHubIssue) {
 
 // Function to update and show the preview
 function previewIssue(gitHubIssue: GitHubIssue) {
-  const [ownerLogin] = gitHubIssue.repository_url.split("/").slice(-2);
-
-  if (ownerLogin) {
-    renderPreviewIssueNav(ownerLogin);
-  }
-
   void viewIssueDetails(gitHubIssue);
 }
 
@@ -163,6 +157,12 @@ export async function viewIssueDetails(full: GitHubIssue) {
 
   // Wait for the issue element to exist, useful when loading issue from URL
   const issueElement = await waitForElement(`div[data-issue-id="${full.id}"]`);
+
+  const [ownerLogin] = full.repository_url.split("/").slice(-2);
+
+  if (ownerLogin) {
+    renderPreviewIssueNav(ownerLogin);
+  }
 
   const labelsDiv = issueElement.querySelector(".labels");
   if (labelsDiv) {
