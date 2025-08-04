@@ -1,7 +1,7 @@
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-github-issues";
-import { renderOrgHeaderLabel, resetOrgHeaderLabel } from "../rendering/render-org-header";
+import { renderOrgHeaderLabel } from "../rendering/render-org-header";
 import { closeModal } from "../rendering/render-preview-modal";
 import { filterIssuesByAvailability } from "../sorting/filter-issues-by-availability";
 import { filterIssuesBySearch } from "../sorting/filter-issues-by-search";
@@ -71,10 +71,7 @@ function filterIssuesByOrganization(issues: GitHubIssue[]): GitHubIssue[] {
   const urlOrgName = pathSegments.length > 0 ? pathSegments[0] : null;
 
   //  if there is no organization name in the URL, return all issues
-  if (!urlOrgName) {
-    resetOrgHeaderLabel();
-    return issues;
-  }
+  if (!urlOrgName) return issues;
 
   // filter issues by matching the URL organization name with the issue's organization name
   const filteredIssues = issues.filter((issue) => {
