@@ -776,6 +776,9 @@
   .issue-preview span.preview {
     display: contents;
   }
+  span.preview {
+    display: none;
+  }
   #bottom-right a {
     text-align: center;
     text-transform: uppercase;
