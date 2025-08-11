@@ -7,7 +7,7 @@ import { displayGitHubIssues } from "./fetch-and-display-previews";
 // https://github.com/ubiquity/devpool-directory/blob/__STORAGE__/devpool-issues.json
 
 export async function fetchIssues(): Promise<GitHubIssue[]> {
-  const response = await fetch("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-issues.json");
+  const response = await fetch("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/devpool-issues.json");
   const jsonData = await response.json();
   return jsonData;
 }

@@ -39,7 +39,7 @@ describe("DevPool", () => {
           headers: { "x-ratelimit-reset": "1617700000" },
         });
       }).as("getUser");
-      cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
+      cy.intercept("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
         req.reply({
           statusCode: 403,
           headers: { "x-ratelimit-reset": "1617700000" },
@@ -100,7 +100,7 @@ describe("DevPool", () => {
       cy.intercept("https://api.github.com/user/memberships/orgs/*", (req) => {
         req.reply({ statusCode: 200 });
       }).as("membership");
-      cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
+      cy.intercept("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
         req.reply({
           statusCode: 200,
           body: [issue1, issue2],
@@ -122,7 +122,7 @@ describe("DevPool", () => {
           statusCode: 404,
         });
       }).as("getUser");
-      cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
+      cy.intercept("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
         req.reply({
           statusCode: 200,
           body: [issue1, issue2],
@@ -178,7 +178,7 @@ describe("DevPool", () => {
         })
       );
       cy.intercept("https://api.github.com/user", { statusCode: 200, body: githubUser }).as("getUser");
-      cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
+      cy.intercept("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
         req.reply({ statusCode: 200, body: [issue1, issue2] });
       }).as("getIssues");
       cy.intercept("https://api.github.com/user/memberships/orgs/*", (req) => {
@@ -212,7 +212,7 @@ describe("DevPool", () => {
     });
 
     it("Items can be sorted - top row - landscape/desktop", () => {
-      cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
+      cy.intercept("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
         req.reply({
           statusCode: 200,
           body: [issue1, issue2],
@@ -240,7 +240,7 @@ describe("DevPool", () => {
 
     it("Items can be sorted - bottom row - portrait/mobile", () => {
       cy.viewport("iphone-x"); // iPhone X portrait
-      cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
+      cy.intercept("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
         req.reply({
           statusCode: 200,
           body: [issue1, issue2],
@@ -268,13 +268,13 @@ describe("DevPool", () => {
 
     it("Main page displays issues", () => {
       cy.log("Should display two new tasks");
-      cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
+      cy.intercept("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
         req.reply({
           statusCode: 200,
           body: [issue1, issue2],
         });
       }).as("getIssues");
-      cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-partner-avatars.json", (req) => {
+      cy.intercept("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/devpool-partner-avatars.json", (req) => {
         req.reply({
           statusCode: 200,
           body: [avatars],
@@ -288,7 +288,7 @@ describe("DevPool", () => {
 
       // Should display still two old task
       cy.log("Should display still one old task");
-      cy.intercept("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
+      cy.intercept("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/devpool-issues.json", (req) => {
         req.reply({
           statusCode: 200,
           body: [issue1, issue2, issue3],

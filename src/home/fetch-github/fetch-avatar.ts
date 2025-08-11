@@ -6,7 +6,7 @@ export type OrgNameAndAvatarUrl = {
 };
 
 export async function fetchPartnerAvatars(): Promise<OrgNameAndAvatarUrl[]> {
-  const response = await fetch("https://raw.githubusercontent.com/ubiquity/devpool-directory/__STORAGE__/devpool-partner-avatars.json");
+  const response = await fetch("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/devpool-partner-avatars.json");
   const jsonData = await response.json();
   return jsonData;
 }
@@ -21,7 +21,7 @@ export function fetchAvatar(orgName: string): string | undefined {
 export async function fetchAvatars() {
   try {
     const partnerData = await fetchPartnerAvatars();
-    
+
     partnerData.forEach(({ ownerName, avatar_url: avatarUrl }) => {
       if (avatarUrl) {
         partnerAvatarMap.set(ownerName.toLowerCase(), avatarUrl);
