@@ -34,7 +34,7 @@ function updatePreviewName(orgName: string): void {
   const brandingDiv = document.getElementById("branding");
   if (!brandingDiv) return;
 
-  const previewNameSpan = brandingDiv.querySelector("span.preview") as HTMLElement;
+  const previewNameSpan = brandingDiv.querySelector("span.brand-preview") as HTMLElement;
   if (previewNameSpan) {
     previewNameSpan.textContent = orgName.replace(/-/g, " ");
   }

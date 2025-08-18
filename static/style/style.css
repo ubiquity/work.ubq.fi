@@ -773,10 +773,11 @@
   .issue-preview span.mid {
     display: none;
   }
-  .issue-preview span.preview {
-    display: contents;
+  .issue-preview span.brand-preview {
+    display: inline-block;
+    padding: 0 4px;
   }
-  span.preview {
+  span.brand-preview {
     display: none;
   }
   #bottom-right a {
