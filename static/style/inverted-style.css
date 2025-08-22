@@ -9,6 +9,7 @@
     --border-color: hsl(225 25% var(--border-brightness) / 1);
   }
   #logo {
+    filter: grayscale(1) contrast(1.5);
     border-radius: 6px;
     height: 28px;
     width: 28px;
@@ -29,7 +30,7 @@
     opacity: 1;
   }
   #branding > span {
-    padding: 4px;
+    padding-right: 8px;
     vertical-align: middle;
   }
   body,
