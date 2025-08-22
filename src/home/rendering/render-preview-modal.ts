@@ -1,3 +1,5 @@
+import { resetOrgHeaderLabel } from "./render-org-header";
+
 export const modal = document.getElementById("preview-modal") as HTMLDivElement;
 export const titleAnchor = document.getElementById("preview-title-anchor") as HTMLAnchorElement;
 export const titleHeader = document.getElementById("preview-title") as HTMLHeadingElement;
@@ -19,6 +21,7 @@ export function closeModal() {
   document.body.classList.remove("preview-active");
   issuesContainer?.classList.remove("keyboard-selection");
   bottomBarClearLabels();
+  resetOrgHeaderLabel();
 
   const newURL = new URL(window.location.href);
   newURL.searchParams.delete("issue");

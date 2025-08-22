@@ -9,6 +9,7 @@
     --border-color: hsl(225 25% var(--border-brightness) / 1);
   }
   #logo {
+    filter: grayscale(1) contrast(1.5);
     border-radius: 6px;
     height: 28px;
     width: 28px;
@@ -29,7 +30,7 @@
     opacity: 1;
   }
   #branding > span {
-    padding: 4px;
+    padding-right: 8px;
     vertical-align: middle;
   }
   body,
@@ -188,7 +189,8 @@
   .labels > img {
     margin-left: 4px;
   }
-  label:not([for="view-toggle"]), .filters input[type="button"] {
+  label:not([for="view-toggle"]),
+  .filters input[type="button"] {
     line-height: 1.25;
     padding: 4px 6px;
     border-radius: 4px;
@@ -230,7 +232,8 @@
   input[type="radio"]:checked + label:not([for="view-toggle"]) {
     background-color: #7f7f7f80 !important;
   }
-  .labels, .filters {
+  .labels,
+  .filters {
     display: flex;
     margin-left: 2px;
     justify-content: flex-end;
@@ -325,7 +328,7 @@
   }
   #authentication {
     position: absolute;
-    right:8px;
+    right: 8px;
     cursor: pointer;
     vertical-align: middle;
     flex: 0 0 auto;
@@ -491,7 +494,7 @@
   .preview th {
     font-weight: bold;
   }
-  .preview th, 
+  .preview th,
   .preview td {
     padding: 6px 13px;
   }
@@ -764,6 +767,20 @@
     bottom: 4px;
     right: 4px;
   }
+  .issue-preview {
+    pointer-events: none;
+  }
+  .issue-preview span.full,
+  .issue-preview span.mid {
+    display: none;
+  }
+  .issue-preview span.brand-preview {
+    display: inline-block;
+    padding: 0 4px;
+  }
+  span.brand-preview {
+    display: none;
+  }
   #bottom-right a {
     text-align: center;
     text-transform: uppercase;
@@ -910,7 +927,7 @@
     /* Prevent content from going under bottom bar */
     /* padding-bottom: 48px; */
   }
-  
+
   .preview-body::-webkit-scrollbar {
     width: 2px;
   }
@@ -924,7 +941,8 @@
   #filters {
     display: none;
   }
-  .filters-container label:not([for="view-toggle"]), .filters input[type="button"] {
+  .filters-container label:not([for="view-toggle"]),
+  .filters input[type="button"] {
     width: 48px;
   }
   #bottom-right {
@@ -955,7 +973,8 @@
     flex-direction: column;
     gap: 4px;
   }
-  .labels, .filters {
+  .labels,
+  .filters {
     display: flex;
     margin: 0;
     align-items: center;
