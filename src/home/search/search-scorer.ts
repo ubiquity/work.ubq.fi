@@ -72,16 +72,15 @@ export class SearchScorer {
     if (issue.labels) {
       searchTerms.forEach((term) => {
         issue.labels?.forEach((label) => {
-          if (typeof label === "object" && label.name) {
-            const labelName = label.name.toLowerCase();
-            if (labelName.includes(term)) {
-              matchDetails.labelMatches.push(label.name);
-              // Apply exponential boost for label matches at word start
-              if (labelName.startsWith(term)) {
-                score += 0.8;
-              } else {
-                score += 0.5;
-              }
+          const labelName = (typeof label === "object" && (label as any).name ? (label as any).name : typeof label === "string" ? label : "").toLowerCase();
+          if (!labelName) return;
+          if (labelName.includes(term)) {
+            matchDetails.labelMatches.push(labelName);
+            // Apply exponential boost for label matches at word start
+            if (labelName.startsWith(term)) {
+              score += 0.8;
+            } else {
+              score += 0.5;
             }
           }
         });

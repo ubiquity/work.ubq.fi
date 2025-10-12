@@ -3,13 +3,70 @@ import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { displayGitHubIssues } from "./fetch-and-display-previews";
 
-// Fetches the issues from `devpool-issues.json` file in the `__STORAGE__` branch of the `devpool-directory` repo
-// https://github.com/ubiquity/devpool-directory/blob/__STORAGE__/devpool-issues.json
+// Fetches issues from the `partner-open-issues.json` artifact on the `__STORAGE__` branch
+// https://github.com/devpool-directory/devpool-directory/blob/__STORAGE__/README_STORAGE.md
+
+type StorageIssue = {
+  owner: string;
+  repo: string;
+  number: number;
+  node_id: string;
+  title: string;
+  url: string; // html url
+  body?: string;
+  labels: Array<string>;
+  assignees?: Array<unknown>;
+  state: string;
+  created_at: string;
+  updated_at: string;
+};
+
+// partner-open-proposals.json has the same item shape as partner-open-issues.json
+
+function hashStringToNumber(input: string): number {
+  let hash = 0;
+  for (let i = 0; i < input.length; i++) {
+    hash = (hash << 5) - hash + input.charCodeAt(i);
+    hash |= 0; // Convert to 32bit integer
+  }
+  // Ensure positive 32-bit integer
+  return hash >>> 0;
+}
+
+function mapStorageIssueToGitHubIssue(issue: StorageIssue): GitHubIssue {
+  const repository_url = `https://github.com/${issue.owner}/${issue.repo}`;
+  const id = hashStringToNumber(issue.node_id);
+  return {
+    id,
+    node_id: issue.node_id,
+    number: issue.number,
+    title: issue.title,
+    body: issue.body || "",
+    labels: issue.labels,
+    repository_url,
+    html_url: issue.url,
+    created_at: issue.created_at,
+    updated_at: issue.updated_at,
+    assignee: issue.assignees && issue.assignees.length > 0 ? ({} as unknown) : null,
+    assignees: Array.isArray(issue.assignees) ? issue.assignees : [],
+  } as unknown as GitHubIssue;
+}
 
 export async function fetchIssues(): Promise<GitHubIssue[]> {
-  const response = await fetch("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/devpool-issues.json");
-  const jsonData = await response.json();
-  return jsonData;
+  const base = "https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__";
+
+  // Fetch priced open issues (directory)
+  const pricedRes = await fetch(`${base}/partner-open-issues.json`);
+  const pricedJson: StorageIssue[] = await pricedRes.json();
+  const priced = pricedJson.map(mapStorageIssueToGitHubIssue);
+
+  // Fetch unpriced open issues (proposals)
+  const proposalsRes = await fetch(`${base}/partner-open-proposals.json`);
+  const proposalsJson: StorageIssue[] = await proposalsRes.json();
+  const proposals = proposalsJson.map(mapStorageIssueToGitHubIssue);
+
+  // Merge; datasets are disjoint by design (priced vs unpriced)
+  return [...priced, ...proposals];
 }
 
 // First issues are rendered from cache then this function is called to update if needed

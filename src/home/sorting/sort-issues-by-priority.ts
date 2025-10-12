@@ -5,11 +5,17 @@ export function sortIssuesByPriority(issues: GitHubIssue[]) {
 
   return issues.sort((a, b) => {
     function getPriority(issue: GitHubIssue) {
-      const priorityLabel = issue.labels.find(
-        (label): label is { name: string } => typeof label === "object" && "name" in label && typeof label.name === "string" && priorityRegex.test(label.name)
-      );
-      const match = priorityLabel?.name.match(priorityRegex);
-      return match ? parseInt(match[1], 10) : -1;
+      // Try object labels
+      const objectLabel = issue.labels.find((l) => typeof l === "object" && "name" in l && typeof (l as any).name === "string" && priorityRegex.test((l as any).name as string)) as
+        | { name: string }
+        | undefined;
+      const objectMatch = objectLabel?.name.match(priorityRegex);
+      if (objectMatch) return parseInt(objectMatch[1], 10);
+
+      // Fallback to string labels
+      const stringLabel = issue.labels.find((l) => typeof l === "string" && priorityRegex.test(l as string)) as string | undefined;
+      const stringMatch = stringLabel?.match(priorityRegex);
+      return stringMatch ? parseInt(stringMatch[1], 10) : -1;
     }
 
     return getPriority(b) - getPriority(a);

@@ -233,7 +233,8 @@ export class IssueSearch {
 
     const title = issue.title;
     const body = removeUrls(issue.body || "");
-    const labels = issue.labels?.map((l) => (typeof l === "object" && l.name ? l.name : "")).join(" ") || "";
+    const labels =
+      issue.labels?.map((l) => (typeof l === "object" && (l as any).name ? (l as any).name : typeof l === "string" ? l : "")).join(" ") || "";
 
     return `${title} ${body} ${labels}`.toLowerCase();
   }

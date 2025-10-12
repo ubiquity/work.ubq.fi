@@ -93,51 +93,38 @@ function setUpIssueElement(issueElement: HTMLDivElement, task: GitHubIssue, orga
 }
 
 function parseAndGenerateLabels(task: GitHubIssue) {
-  type LabelKey = "Price: " | "Time: " | "Priority: ";
+  type LabelKey = "Price: " | "Pricing: " | "Time: " | "Priority: ";
 
-  const labelOrder: Record<LabelKey, number> = { "Price: ": 1, "Time: ": 2, "Priority: ": 3 };
+  const labelOrder: Record<Exclude<LabelKey, "Pricing: ">, number> = { "Price: ": 1, "Time: ": 2, "Priority: ": 3 } as const;
 
-  const { labels, otherLabels } = task.labels.reduce(
-    (acc, label) => {
-      // check if label is a single string
-      if (typeof label === "string") {
-        return {
-          labels: [],
-          otherLabels: [],
-        };
-      }
+  const acc = { labels: [] as { order: number; label: string }[], otherLabels: [] as string[] };
 
-      // check if label.name exists
-      if (!label.name) {
-        return {
-          labels: [],
-          otherLabels: [],
-        };
-      }
+  for (const label of task.labels || []) {
+    const name = typeof label === "string" ? label : label?.name || "";
+    if (!name) continue;
 
-      const match = label.name.match(/^(Price|Time|Priority): /);
-      if (match) {
-        const name = label.name.replace(match[0], "");
-        const labelStr = `<label class="${match[1].toLowerCase().trim()}">${name}</label>`;
-        acc.labels.push({ order: labelOrder[match[0] as LabelKey], label: labelStr });
-      } else if (!label.name.startsWith("Partner: ") && !label.name.startsWith("id: ") && !label.name.startsWith("Unavailable")) {
-        acc.otherLabels.push(label.name);
-      }
-      return acc;
-    },
-    { labels: [] as { order: number; label: string }[], otherLabels: [] as string[] }
-  );
-
-  // Sort labels
-  labels.sort((a: { order: number }, b: { order: number }) => a.order - b.order);
-
-  // Log the other labels
-  if (otherLabels.length) {
-    const otherLabelName = otherLabels.shift() as string;
-    labels.unshift({ order: 0, label: `<label class="label full">${otherLabelName}</label>` });
+    const match = name.match(/^(Price: |Pricing: |Time: |Priority: )/);
+    if (match) {
+      const key = match[0] as LabelKey;
+      const value = name.replace(match[0], "");
+      const cssClass = key === "Pricing: " ? "price" : key.toLowerCase().replace(": ", "").trim();
+      const labelStr = `<label class="${cssClass}">${value}</label>`;
+      const order = key === "Pricing: " ? labelOrder["Price: "] : labelOrder[key as Exclude<LabelKey, "Pricing: ">];
+      acc.labels.push({ order, label: labelStr });
+    } else if (!name.startsWith("Partner: ") && !name.startsWith("id: ") && !name.startsWith("Unavailable")) {
+      acc.otherLabels.push(name);
+    }
   }
 
-  return labels.map((label) => label.label);
+  // Sort and merge labels
+  acc.labels.sort((a, b) => a.order - b.order);
+
+  if (acc.otherLabels.length) {
+    const otherLabelName = acc.otherLabels.shift() as string;
+    acc.labels.unshift({ order: 0, label: `<label class="label full">${otherLabelName}</label>` });
+  }
+
+  return acc.labels.map((l) => l.label);
 }
 
 // Function to update and show the preview

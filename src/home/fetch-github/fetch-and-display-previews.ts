@@ -54,11 +54,12 @@ viewToggle.addEventListener("click", () => {
 
 function getProposalsOnlyFilter(getProposals: boolean) {
   return (issue: GitHubIssue) => {
-    if (!issue?.labels) return false;
-
-    const hasPriceLabel = issue.labels.some((label) => {
-      if (typeof label === "string") return false;
-      return label.name?.startsWith("Price: ") || label.name?.startsWith("Price: ");
+    const labels = Array.isArray(issue?.labels) ? issue.labels : [];
+    const hasPriceLabel = labels.some((label) => {
+      if (typeof label === "string") {
+        return /^(Price:|Pricing:)\s*/.test(label);
+      }
+      return label.name?.startsWith("Price: ") || label.name?.startsWith("Pricing: ");
     });
 
     return getProposals ? !hasPriceLabel : hasPriceLabel;

@@ -10,10 +10,8 @@ export function sortIssuesByPrice(issues: GitHubIssue[]) {
 }
 
 function getPriceFromLabel(label: string | { name?: string }) {
-  if (typeof label === "string" || !label.name) return null;
-  if (label.name.startsWith("Price: ")) {
-    const match = label.name.match(/Price: (\d+)/);
-    return match ? parseInt(match[1], 10) : null;
-  }
-  return null;
+  const text = typeof label === "string" ? label : label?.name || "";
+  if (!text) return null;
+  const match = text.match(/^(Price:|Pricing:)\s*([\d,]+)/);
+  return match ? parseInt(match[2].replace(/,/g, ""), 10) : null;
 }
