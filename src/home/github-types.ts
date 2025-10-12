@@ -27,6 +27,8 @@ export interface GitHubIssue {
   html_url: string; // issue URL
   created_at: string;
   updated_at: string;
+  // Assignment (v2 storage: mirror-state.json)
+  assigned?: boolean;
   assignee?: unknown | null;
   assignees?: unknown[];
 }

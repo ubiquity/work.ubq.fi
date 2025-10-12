@@ -15,13 +15,19 @@ type StorageIssue = {
   url: string; // html url
   body?: string;
   labels: Array<string>;
-  assignees?: Array<unknown>;
   state: string;
   created_at: string;
   updated_at: string;
 };
 
 // partner-open-proposals.json has the same item shape as partner-open-issues.json
+
+// mirror-state.json entry (subset used for UI)
+type MirrorStateEntry = {
+  assigned?: boolean;
+  assignees?: unknown[];
+  directory_issue_url?: string;
+};
 
 function hashStringToNumber(input: string): number {
   let hash = 0;
@@ -33,10 +39,11 @@ function hashStringToNumber(input: string): number {
   return hash >>> 0;
 }
 
-function mapStorageIssueToGitHubIssue(issue: StorageIssue): GitHubIssue {
+function mapStorageIssueToGitHubIssue(issue: StorageIssue, mirror?: MirrorStateEntry): GitHubIssue {
   const repositoryUrl = `https://github.com/${issue.owner}/${issue.repo}`;
   const id = hashStringToNumber(issue.node_id);
-  const hasAssignees = Array.isArray(issue.assignees) && issue.assignees.length > 0;
+  const assigneesArr: unknown[] = mirror && Array.isArray(mirror.assignees) ? (mirror.assignees as unknown[]) : [];
+  const isAssigned = (mirror?.assigned === true) || assigneesArr.length > 0;
   return {
     id,
     node_id: issue.node_id,
@@ -48,8 +55,9 @@ function mapStorageIssueToGitHubIssue(issue: StorageIssue): GitHubIssue {
     html_url: issue.url,
     created_at: issue.created_at,
     updated_at: issue.updated_at,
-    assignee: hasAssignees ? { id: 0, login: "assigned" } : null,
-    assignees: Array.isArray(issue.assignees) ? issue.assignees : [],
+    assigned: isAssigned,
+    assignee: isAssigned ? { id: 0, login: "assigned" } : null,
+    assignees: assigneesArr,
   };
 }
 
@@ -59,12 +67,17 @@ export async function fetchIssues(): Promise<GitHubIssue[]> {
   // Fetch priced open issues (directory)
   const pricedRes = await fetch(`${base}/partner-open-issues.json`);
   const pricedJson: StorageIssue[] = await pricedRes.json();
-  const priced = pricedJson.map(mapStorageIssueToGitHubIssue);
+  
+  // Fetch mirror state for assignment data
+  const mirrorRes = await fetch(`${base}/mirror-state.json`);
+  const mirrorJson: Record<string, MirrorStateEntry> = await mirrorRes.json();
+
+  const priced = pricedJson.map((it) => mapStorageIssueToGitHubIssue(it, mirrorJson[it.node_id]));
 
   // Fetch unpriced open issues (proposals)
   const proposalsRes = await fetch(`${base}/partner-open-proposals.json`);
   const proposalsJson: StorageIssue[] = await proposalsRes.json();
-  const proposals = proposalsJson.map(mapStorageIssueToGitHubIssue);
+  const proposals = proposalsJson.map((it) => mapStorageIssueToGitHubIssue(it, mirrorJson[it.node_id]));
 
   // Merge; datasets are disjoint by design (priced vs unpriced)
   return [...priced, ...proposals];
