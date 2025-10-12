@@ -185,7 +185,7 @@ export class SortingManager {
   private _generateFilterAvailableIssuesButton() {
     const input = document.createElement("input");
     input.type = "button";
-    input.value = "Unassigned";
+    input.value = "Available";
     input.id = `filter-availability-${this._instanceId}`;
     // decide initial value based on URL
     if (new URLSearchParams(window.location.search).get("allIssues") === "true") {
@@ -194,7 +194,7 @@ export class SortingManager {
 
     input.addEventListener("click", () => {
       swapAvailabilityFilter();
-      input.value = isFilteringAvailableIssues ? "Unassigned" : "All Issues";
+      input.value = isFilteringAvailableIssues ? "Available" : "All Issues";
 
       try {
         const filterTextBox = this._filtersDiv.querySelector('input[type="text"]') as HTMLInputElement;

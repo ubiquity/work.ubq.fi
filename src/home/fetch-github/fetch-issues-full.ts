@@ -22,7 +22,8 @@ type StorageIssue = {
 
 // partner-open-proposals.json has the same item shape as partner-open-issues.json
 
-// mirror-state.json entry (subset used for UI)
+// Assignment source: mirror-state.json (subset used for UI)
+// See: https://github.com/devpool-directory/devpool-directory/blob/__STORAGE__/README_STORAGE.md
 type MirrorStateEntry = {
   assigned?: boolean;
   assignees?: unknown[];
@@ -43,7 +44,7 @@ function mapStorageIssueToGitHubIssue(issue: StorageIssue, mirror?: MirrorStateE
   const repositoryUrl = `https://github.com/${issue.owner}/${issue.repo}`;
   const id = hashStringToNumber(issue.node_id);
   const assigneesArr: unknown[] = mirror && Array.isArray(mirror.assignees) ? (mirror.assignees as unknown[]) : [];
-  const isAssigned = (mirror?.assigned === true) || assigneesArr.length > 0;
+  const isAssigned = mirror?.assigned === true || assigneesArr.length > 0;
   return {
     id,
     node_id: issue.node_id,
@@ -67,7 +68,7 @@ export async function fetchIssues(): Promise<GitHubIssue[]> {
   // Fetch priced open issues (directory)
   const pricedRes = await fetch(`${base}/partner-open-issues.json`);
   const pricedJson: StorageIssue[] = await pricedRes.json();
-  
+
   // Fetch mirror state for assignment data
   const mirrorRes = await fetch(`${base}/mirror-state.json`);
   const mirrorJson: Record<string, MirrorStateEntry> = await mirrorRes.json();
