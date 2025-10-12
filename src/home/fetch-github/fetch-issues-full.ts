@@ -30,14 +30,19 @@ type MirrorStateEntry = {
   directory_issue_url?: string;
 };
 
+// Generate a stable 53-bit hash to minimize collisions for node_id
+// Based on a dual-DJB2 accumulator producing up to 53 bits
 function hashStringToNumber(input: string): number {
-  let hash = 0;
+  let h1 = 5381;
+  let h2 = 52711;
   for (let i = 0; i < input.length; i++) {
-    hash = (hash << 5) - hash + input.charCodeAt(i);
-    hash |= 0; // Convert to 32bit integer
+    const ch = input.charCodeAt(i);
+    h1 = (h1 * 33) ^ ch;
+    h2 = (h2 * 33) ^ ch;
   }
-  // Ensure positive 32-bit integer
-  return hash >>> 0;
+  // Combine to a positive 53-bit integer
+  const combined = (h1 >>> 0) * 0x1000 + (h2 >>> 0 & 0x0fff);
+  return combined;
 }
 
 function mapStorageIssueToGitHubIssue(issue: StorageIssue, mirror?: MirrorStateEntry): GitHubIssue {
@@ -57,7 +62,7 @@ function mapStorageIssueToGitHubIssue(issue: StorageIssue, mirror?: MirrorStateE
     created_at: issue.created_at,
     updated_at: issue.updated_at,
     assigned: isAssigned,
-    assignee: isAssigned ? { id: 0, login: "assigned" } : null,
+    assignee: isAssigned && assigneesArr.length > 0 ? assigneesArr[0] : null,
     assignees: assigneesArr,
   };
 }

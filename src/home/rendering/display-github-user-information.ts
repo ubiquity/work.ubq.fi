@@ -1,8 +1,8 @@
-import { isOrgMemberWithoutScope } from "../getters/get-github-access-token";
 import { GitHubUser } from "../github-types";
 import { toolbar } from "../ready-toolbar";
 import { renderErrorInModal } from "./display-popup-modal";
-import { authenticationElement, getSupabase, renderAugmentAccessButton } from "./render-github-login-button";
+import { authenticationElement, getSupabase, renderEnablePrivateIssuesButton } from "./render-github-login-button";
+import { isMissingRepoScope } from "../getters/get-github-access-token";
 
 export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
   const authenticatedDivElement = document.createElement("div");
@@ -37,10 +37,16 @@ export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
     window.location.replace("/");
   });
 
-  if (await isOrgMemberWithoutScope()) {
-    const accessButton = renderAugmentAccessButton();
-    containerDivElement.appendChild(accessButton);
-    authenticationElement.appendChild(containerDivElement);
+  // If token lacks 'repo' scope, offer to enable private issues via re-auth
+  try {
+    if (await isMissingRepoScope()) {
+      const privateIssuesButton = renderEnablePrivateIssuesButton();
+      containerDivElement.appendChild(privateIssuesButton);
+      authenticationElement.appendChild(containerDivElement);
+    }
+  } catch (e) {
+    // Non-fatal: failure to detect scopes shouldn't break UI
+    console.warn("Unable to detect GitHub scopes", e);
   }
 
   authenticationElement.appendChild(authenticatedDivElement);
