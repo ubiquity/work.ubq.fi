@@ -57,9 +57,9 @@ function getProposalsOnlyFilter(getProposals: boolean) {
     const labels = Array.isArray(issue?.labels) ? issue.labels : [];
     const hasPriceLabel = labels.some((label) => {
       if (typeof label === "string") {
-        return /^(Price:|Pricing:)\s*/.test(label);
+        return /^(Price:)\s*/.test(label);
       }
-      return label.name?.startsWith("Price: ") || label.name?.startsWith("Pricing: ");
+      return label.name?.startsWith("Price: ") ?? false;
     });
 
     return getProposals ? !hasPriceLabel : hasPriceLabel;

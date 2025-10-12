@@ -93,9 +93,9 @@ function setUpIssueElement(issueElement: HTMLDivElement, task: GitHubIssue, orga
 }
 
 function parseAndGenerateLabels(task: GitHubIssue) {
-  type LabelKey = "Price: " | "Pricing: " | "Time: " | "Priority: ";
+  type LabelKey = "Price: " | "Time: " | "Priority: ";
 
-  const labelOrder: Record<Exclude<LabelKey, "Pricing: ">, number> = { "Price: ": 1, "Time: ": 2, "Priority: ": 3 } as const;
+  const labelOrder: Record<LabelKey, number> = { "Price: ": 1, "Time: ": 2, "Priority: ": 3 } as const;
 
   const acc = { labels: [] as { order: number; label: string }[], otherLabels: [] as string[] };
 
@@ -103,13 +103,13 @@ function parseAndGenerateLabels(task: GitHubIssue) {
     const name = typeof label === "string" ? label : label?.name || "";
     if (!name) continue;
 
-    const match = name.match(/^(Price: |Pricing: |Time: |Priority: )/);
+    const match = name.match(/^(Price: |Time: |Priority: )/);
     if (match) {
       const key = match[0] as LabelKey;
       const value = name.replace(match[0], "");
-      const cssClass = key === "Pricing: " ? "price" : key.toLowerCase().replace(": ", "").trim();
+      const cssClass = key.toLowerCase().replace(": ", "").trim();
       const labelStr = `<label class="${cssClass}">${value}</label>`;
-      const order = key === "Pricing: " ? labelOrder["Price: "] : labelOrder[key as Exclude<LabelKey, "Pricing: ">];
+      const order = labelOrder[key];
       acc.labels.push({ order, label: labelStr });
     } else if (!name.startsWith("Partner: ") && !name.startsWith("id: ") && !name.startsWith("Unavailable")) {
       acc.otherLabels.push(name);
