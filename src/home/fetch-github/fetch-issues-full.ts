@@ -34,8 +34,9 @@ function hashStringToNumber(input: string): number {
 }
 
 function mapStorageIssueToGitHubIssue(issue: StorageIssue): GitHubIssue {
-  const repository_url = `https://github.com/${issue.owner}/${issue.repo}`;
+  const repositoryUrl = `https://github.com/${issue.owner}/${issue.repo}`;
   const id = hashStringToNumber(issue.node_id);
+  const hasAssignees = Array.isArray(issue.assignees) && issue.assignees.length > 0;
   return {
     id,
     node_id: issue.node_id,
@@ -43,13 +44,13 @@ function mapStorageIssueToGitHubIssue(issue: StorageIssue): GitHubIssue {
     title: issue.title,
     body: issue.body || "",
     labels: issue.labels,
-    repository_url,
+    repository_url: repositoryUrl,
     html_url: issue.url,
     created_at: issue.created_at,
     updated_at: issue.updated_at,
-    assignee: issue.assignees && issue.assignees.length > 0 ? ({} as unknown) : null,
+    assignee: hasAssignees ? { id: 0, login: "assigned" } : null,
     assignees: Array.isArray(issue.assignees) ? issue.assignees : [],
-  } as unknown as GitHubIssue;
+  };
 }
 
 export async function fetchIssues(): Promise<GitHubIssue[]> {
