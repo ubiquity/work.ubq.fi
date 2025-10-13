@@ -347,9 +347,9 @@
     max-height: 48px;
   }
   #authenticated > img {
-    height: 35px;
+
     margin-left: 4px;
-    border-radius: 50%;
+    border-radius: 4px;
   }
   .toolbar[data-authenticated="true"] > #github-login-button {
     display: none;
@@ -992,4 +992,10 @@
   #filters-bottom {
     display: none;
   }
+}
+
+#enable-private-issues-button {
+    border: none;
+    height: 48px;
+    padding: 0 12px;
 }

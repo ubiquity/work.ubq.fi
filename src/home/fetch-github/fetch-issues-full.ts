@@ -41,7 +41,7 @@ function hashStringToNumber(input: string): number {
     h2 = (h2 * 33) ^ ch;
   }
   // Combine to a positive 53-bit integer
-  const combined = (h1 >>> 0) * 0x1000 + (h2 >>> 0 & 0x0fff);
+  const combined = (h1 >>> 0) * 0x1000 + ((h2 >>> 0) & 0x0fff);
   return combined;
 }
 

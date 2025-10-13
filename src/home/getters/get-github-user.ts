@@ -12,26 +12,36 @@ export async function getGitHubUser(): Promise<GitHubUser | null> {
 }
 
 async function getSessionToken(): Promise<string | null> {
-  const cachedSessionToken = getLocalStore(`sb-${SUPABASE_STORAGE_KEY}-auth-token`) as OAuthToken | null;
-  if (cachedSessionToken) {
-    return cachedSessionToken.provider_token;
-  }
+  // Prefer a fresh token from the URL fragment first (after OAuth redirect)
   const newSessionToken = await getNewSessionToken();
-  if (newSessionToken) {
-    return newSessionToken;
-  }
-  return null;
+  if (newSessionToken) return newSessionToken;
+
+  // Fallback to cached token stored by Supabase in localStorage
+  const cachedSessionToken = getLocalStore(`sb-${SUPABASE_STORAGE_KEY}-auth-token`) as OAuthToken | null;
+  return cachedSessionToken?.provider_token ?? null;
 }
 
 async function getNewSessionToken(): Promise<string | null> {
-  const hash = window.location.hash;
-  const params = new URLSearchParams(hash.substr(1)); // remove the '#' and parse
+  let hash = window.location.hash || "";
+  // Strip all leading '#'
+  hash = hash.replace(/^#+/, "");
+  if (!hash) return null;
+
+  const params = new URLSearchParams(hash);
   const providerToken = params.get("provider_token");
   if (!providerToken) {
     const error = params.get("error_description");
-    // supabase auth provider has failed for some reason
-    console.error(`GitHub login provider: ${error}`);
+    console.error(`GitHub login provider: ${error ?? "missing provider_token"}`);
   }
+
+  // Clean the hash from the URL to prevent double-hash issues on subsequent auth
+  try {
+    const cleanUrl = window.location.pathname + window.location.search;
+    window.history.replaceState({}, "", cleanUrl);
+  } catch {
+    // no-op if history API not available
+  }
+
   return providerToken || null;
 }
 
