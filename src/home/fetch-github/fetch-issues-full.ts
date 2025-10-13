@@ -31,7 +31,11 @@ type MirrorStateEntry = {
 };
 
 // Generate a stable 53-bit hash to minimize collisions for node_id
-// Based on a dual-DJB2 accumulator producing up to 53 bits
+// Based on a dual-DJB2 accumulator producing up to 53 bits.
+// The magic numbers 5381 and 52711 are used as initial values for the hash accumulators:
+//   - 5381 is the traditional starting value for the DJB2 hash function, chosen by Daniel J. Bernstein for its good distribution properties.
+//   - 52711 is a large prime number used as a second accumulator to extend the bit width and further reduce hash collisions.
+// This dual-accumulator approach helps produce a more stable and unique hash for string inputs.
 function hashStringToNumber(input: string): number {
   let h1 = 5381;
   let h2 = 52711;
