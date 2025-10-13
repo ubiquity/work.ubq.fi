@@ -9,6 +9,8 @@ import { bottomBar, bottomBarClearLabels, closeModal, modal, modalBodyInner, tit
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
 import { waitForElement } from "./utils";
 
+const LABEL_PREFIX_REGEX = /^(Price: |Time: |Priority: )/;
+
 export function renderGitHubIssues(tasks: GitHubIssue[], skipAnimation: boolean) {
   const container = taskManager.getContainer();
   if (container.classList.contains("ready")) {
@@ -103,7 +105,7 @@ function parseAndGenerateLabels(task: GitHubIssue) {
     const name = typeof label === "string" ? label : label?.name || "";
     if (!name) continue;
 
-    const match = name.match(/^(Price: |Time: |Priority: )/);
+    const match = name.match(LABEL_PREFIX_REGEX);
     if (match) {
       const key = match[0] as LabelKey;
       const value = name.replace(match[0], "");
