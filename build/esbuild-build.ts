@@ -9,9 +9,12 @@ const typescriptEntries = ["src/home/home.ts"];
 const cssEntries = ["static/style/style.css"];
 const entries = [...typescriptEntries, ...cssEntries, "static/manifest.json", "static/favicon.svg", "static/icon-512x512.png"];
 
+const isProd = (process.env.NODE_ENV || "development") === "production";
+
 export const esBuildContext: esbuild.BuildOptions = {
   plugins: [invertColors, pwaManifest],
-  sourcemap: true,
+  // Use inline sourcemaps in dev to avoid network/map caching issues; linked maps in prod
+  sourcemap: isProd ? true : "inline",
   entryPoints: entries,
   bundle: true,
   minify: false,
