@@ -73,10 +73,11 @@ export class SearchScorer {
     if (issue.labels) {
       searchTerms.forEach((term) => {
         issue.labels.forEach((label) => {
-          const labelName = getLabelText(label).toLowerCase();
+          const originalLabel = getLabelText(label);
+          const labelName = originalLabel.toLowerCase();
           if (!labelName) return;
           if (labelName.includes(term)) {
-            matchDetails.labelMatches.push(labelName);
+            matchDetails.labelMatches.push(originalLabel);
             // Apply exponential boost for label matches at word start
             if (labelName.startsWith(term)) {
               score += 0.8;

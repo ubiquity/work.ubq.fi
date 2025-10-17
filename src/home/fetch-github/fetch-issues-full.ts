@@ -75,20 +75,21 @@ function mapStorageIssueToGitHubIssue(issue: StorageIssue, mirror?: MirrorStateE
 
 export async function fetchIssues(): Promise<GitHubIssue[]> {
   const base = "https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__";
+  // Fetch all three resources in parallel
+  const [pricedRes, mirrorRes, proposalsRes] = await Promise.all([
+    fetch(`${base}/partner-open-issues.json`),
+    fetch(`${base}/mirror-state.json`),
+    fetch(`${base}/partner-open-proposals.json`),
+  ]);
 
-  // Fetch priced open issues (directory)
-  const pricedRes = await fetch(`${base}/partner-open-issues.json`);
-  const pricedJson: StorageIssue[] = await pricedRes.json();
-
-  // Fetch mirror state for assignment data
-  const mirrorRes = await fetch(`${base}/mirror-state.json`);
-  const mirrorJson: Record<string, MirrorStateEntry> = await mirrorRes.json();
+  // Parse JSON in parallel
+  const [pricedJson, mirrorJson, proposalsJson]: [StorageIssue[], Record<string, MirrorStateEntry>, StorageIssue[]] = await Promise.all([
+    pricedRes.json(),
+    mirrorRes.json(),
+    proposalsRes.json(),
+  ]);
 
   const priced = pricedJson.map((it) => mapStorageIssueToGitHubIssue(it, mirrorJson[it.node_id]));
-
-  // Fetch unpriced open issues (proposals)
-  const proposalsRes = await fetch(`${base}/partner-open-proposals.json`);
-  const proposalsJson: StorageIssue[] = await proposalsRes.json();
   const proposals = proposalsJson.map((it) => mapStorageIssueToGitHubIssue(it, mirrorJson[it.node_id]));
 
   // Merge; datasets are disjoint by design (priced vs unpriced)

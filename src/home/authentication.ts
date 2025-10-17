@@ -23,7 +23,7 @@ export async function authentication() {
     await displayGitHubUserInformation(gitHubUser);
     const githubUserName = gitHubUser.login;
     await startIssueScraper(githubUserName);
-  } else if (!gitHubUser) {
+  } else {
     // Token present but user fetch failed; show login to recover from stale/invalid session
     renderGitHubLoginButton();
   }

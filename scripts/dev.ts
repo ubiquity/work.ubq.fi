@@ -17,10 +17,7 @@ const watchProc = watch.spawn();
 const serverStatus = serverProc.status;
 const watchStatus = watchProc.status;
 
-const result = await Promise.race([
-  serverStatus.then((s) => ({ who: "server", s })),
-  watchStatus.then((s) => ({ who: "watch", s })),
-]);
+const result = await Promise.race([serverStatus.then((s) => ({ who: "server", s })), watchStatus.then((s) => ({ who: "watch", s }))]);
 
 try {
   // Try gracefully terminate the other process
@@ -36,4 +33,3 @@ try {
 console.log(`\n${result.who} exited with code ${result.s.code}`);
 // Exit with non-zero if either failed
 Deno.exit(result.s.code ?? 1);
-

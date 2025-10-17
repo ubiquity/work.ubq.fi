@@ -109,16 +109,19 @@ interface GraphQlSearchResponse {
 
 export const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
 export async function handleIssueScraper(request: Request): Promise<Response> {
   try {
     switch (request.method) {
+      case "OPTIONS": {
+        return new Response(null, { headers: corsHeaders, status: 204 });
+      }
       case "POST": {
         const result = await validatePOST(request);
         if (!result.isValid || !result.gitHubUser) {
-          return new Response("Unauthorized", { headers: corsHeaders, status: 400 });
+          return new Response("Unauthorized", { headers: corsHeaders, status: 401 });
         }
         const githubUserName = result.gitHubUser.login;
         const timestamp = result.timestamp; // Unix timestamp in milliseconds
