@@ -29,4 +29,3 @@ Deno.serve({ port }, async (request: Request): Promise<Response> => {
 });
 
 console.log(`Deno server listening on http://localhost:${port}`);
-
