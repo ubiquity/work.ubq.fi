@@ -129,6 +129,28 @@ export async function onRequest(ctx: Context): Promise<Response> {
         const timestamp = result.timestamp; // Unix timestamp in milliseconds
 
         try {
+          // Ensure required environment variables are present in dev/prod
+          const missing: string[] = [];
+          if (!env.SUPABASE_URL) missing.push("SUPABASE_URL");
+          if (!env.SUPABASE_KEY) missing.push("SUPABASE_KEY");
+          if (!env.VOYAGEAI_API_KEY) missing.push("VOYAGEAI_API_KEY");
+          if (missing.length) {
+            return new Response(
+              JSON.stringify({
+                success: false,
+                retryInfo: {
+                  source: "configuration",
+                  status: 503,
+                  retryAfter: 3600,
+                  message: `Service not configured. Missing: ${missing.join(", ")}`,
+                },
+              }),
+              {
+                status: 503,
+                headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "3600" },
+              }
+            );
+          }
           const supabase = new SupabaseClient(env.SUPABASE_URL, env.SUPABASE_KEY);
           const response = await issueScraper(githubUserName, supabase, env.VOYAGEAI_API_KEY, result.authToken, timestamp);
           return new Response(response, {

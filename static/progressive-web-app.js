@@ -56,6 +56,12 @@ self.addEventListener("fetch", (event) => {
   // Ignore non-HTTP(S) requests (like 'chrome-extension://')
   if (url.protocol !== "http:" && url.protocol !== "https:") return;
 
+  // Only cache GET requests; bypass cache for others (e.g., HEAD/POST)
+  if (event.request.method !== "GET") {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   // If the request has query parameters, bypass the cache
   if (url.search) {
     event.respondWith(fetch(event.request));

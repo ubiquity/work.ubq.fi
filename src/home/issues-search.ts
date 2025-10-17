@@ -155,10 +155,7 @@ export class IssueSearch {
         const repoName = (parts[parts.length - 1] || "").toLowerCase();
         const orgName = (parts[parts.length - 2] || "").toLowerCase();
 
-        if (
-          (!!orgFilter && orgName.startsWith(orgFilter.toLowerCase())) ||
-          (!!repoFilter && repoName.startsWith(repoFilter.toLowerCase()))
-        ) {
+        if ((!!orgFilter && orgName.startsWith(orgFilter.toLowerCase())) || (!!repoFilter && repoName.startsWith(repoFilter.toLowerCase()))) {
           results.set(id, this._createEmptyResult(true));
         }
       }
