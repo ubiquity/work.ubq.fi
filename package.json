@@ -9,10 +9,9 @@
     "node": ">=20.10.0"
   },
   "scripts": {
-    "start": "run-p start-deno watch",
-    "start-deno": "deno run --allow-net --allow-read --allow-env server.ts",
-    "watch": "tsx build/esbuild-watch.ts",
-    "build": "tsx build/esbuild-build.ts",
+    "start": "deno task dev",
+    "watch": "deno task watch",
+    "build": "deno task build",
     "format": "run-s format:lint format:prettier format:cspell",
     "format:lint": "eslint --fix .",
     "format:prettier": "prettier --write .",

@@ -1,15 +1,13 @@
-import { config } from "dotenv";
-import esbuild from "esbuild";
-import { invertColors } from "./plugins/invert-colors";
-import { pwaManifest } from "./plugins/pwa-manifest";
-import { execSync } from "child_process";
-config();
+import "https://deno.land/std@0.224.0/dotenv/load.ts";
+import esbuild from "npm:esbuild";
+import { invertColors } from "./plugins/invert-colors.ts";
+import { pwaManifest } from "./plugins/pwa-manifest.ts";
 
 const typescriptEntries = ["src/home/home.ts"];
 const cssEntries = ["static/style/style.css"];
 const entries = [...typescriptEntries, ...cssEntries, "static/manifest.json", "static/favicon.svg", "static/icon-512x512.png"];
 
-const isProd = (process.env.NODE_ENV || "development") === "production";
+const isProd = (Deno.env.get("NODE_ENV") || "development") === "production";
 
 export const esBuildContext: esbuild.BuildOptions = {
   plugins: [invertColors, pwaManifest],
@@ -30,8 +28,8 @@ export const esBuildContext: esbuild.BuildOptions = {
   outdir: "static/dist",
   define: createEnvDefines(["SUPABASE_URL", "SUPABASE_ANON_KEY"], {
     SUPABASE_STORAGE_KEY: generateSupabaseStorageKey(),
-    GIT_REVISION: execSync(`git rev-parse --short HEAD`).toString().trim(),
-    NODE_ENV: process.env.NODE_ENV || "development",
+    GIT_REVISION: await gitShortRevision(),
+    NODE_ENV: Deno.env.get("NODE_ENV") || "development",
   }),
 };
 
@@ -43,7 +41,7 @@ esbuild
 function createEnvDefines(environmentVariables: string[], generatedAtBuild: Record<string, unknown>): Record<string, string> {
   const defines: Record<string, string> = {};
   for (const name of environmentVariables) {
-    const envVar = process.env[name];
+    const envVar = Deno.env.get(name);
     if (envVar !== undefined) {
       defines[name] = JSON.stringify(envVar);
     } else {
@@ -59,7 +57,7 @@ function createEnvDefines(environmentVariables: string[], generatedAtBuild: Reco
 }
 
 export function generateSupabaseStorageKey(): string | null {
-  const SUPABASE_URL = process.env.SUPABASE_URL;
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
   if (!SUPABASE_URL) {
     console.error("SUPABASE_URL environment variable is not set");
     return null;
@@ -79,4 +77,15 @@ export function generateSupabaseStorageKey(): string | null {
   }
 
   return domain.substring(lastSlashIndex + 1);
+}
+
+async function gitShortRevision(): Promise<string> {
+  try {
+    const cmd = new Deno.Command("git", { args: ["rev-parse", "--short", "HEAD"] });
+    const { code, stdout } = await cmd.output();
+    if (code === 0) return new TextDecoder().decode(stdout).trim();
+  } catch (_) {
+    // ignore
+  }
+  return "unknown";
 }

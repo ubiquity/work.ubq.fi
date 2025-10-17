@@ -1,5 +1,5 @@
-import esbuild from "esbuild";
-import { esBuildContext } from "./esbuild-build";
+import esbuild from "npm:esbuild";
+import { esBuildContext } from "./esbuild-build.ts";
 
 async function watch() {
   const ctx = await esbuild.context(esBuildContext);

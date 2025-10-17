@@ -8,17 +8,19 @@ cp .env.example .env
 
 Ensure that `SUPABASE_URL` and `SUPABASE_ANON_KEY` are set. This is for GitHub user registration on login.
 
+With Deno installed:
+
 ```sh
-yarn
-yarn start
-open http://localhost:8080
+deno task build   # one-time build
+deno task dev     # run server + watch
+# open http://localhost:8080
 ```
 
 ## Setup Scraper Function
 
 The scraper API (`/issue-scraper`) now runs on a local Deno server.
 
-- Local development: set environment variables in `.env` (e.g. `SUPABASE_URL`, `SUPABASE_KEY`/`SUPABASE_SERVICE_ROLE_KEY`, `VOYAGEAI_API_KEY`). The Deno server loads `.env` automatically.
+- Local development: set environment variables in `.env` (e.g. `SUPABASE_URL`, `SUPABASE_KEY`/`SUPABASE_SERVICE_ROLE_KEY`, `VOYAGEAI_API_KEY`). The Deno server loads `.env` automatically via std/dotenv.
 - Deployment: configure the same variables in your runtime environment (e.g., system env vars). No Cloudflare configuration is required.
 
 ### Automatic Light Mode
