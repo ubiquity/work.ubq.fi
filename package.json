@@ -19,8 +19,7 @@
     "format:cspell": "cspell **/*",
     "knip": "knip --config .github/knip.ts",
     "knip-ci": "knip --no-exit-code --reporter json --config .github/knip.ts",
-    "prepare": "husky install",
-    "test": "jest --setupFiles dotenv/config --coverage"
+    "prepare": "husky install"
   },
   "keywords": [
     "typescript",
@@ -45,11 +44,12 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
-    "@types/markdown-it": "^14.1.2",
     "@commitlint/config-conventional": "^18.4.3",
+    "@types/markdown-it": "^14.1.2",
     "@types/node": "^20.10.0",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
     "@typescript-eslint/parser": "^6.13.1",
+    "cspell": "^9.2.1",
     "esbuild": "^0.19.8",
     "eslint": "^8.54.0",
     "eslint-config-prettier": "^9.0.0",

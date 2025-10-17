@@ -1,4 +1,5 @@
 import { GitHubIssue } from "../github-types";
+import { getLabelText } from "../sorting/label-utils";
 import { SearchConfig, SearchResult } from "../types/search-types";
 import { StringSimilarity } from "./string-similarity";
 
@@ -71,8 +72,8 @@ export class SearchScorer {
     }
     if (issue.labels) {
       searchTerms.forEach((term) => {
-        issue.labels?.forEach((label) => {
-          const labelName = (typeof label === "object" && (label as any).name ? (label as any).name : typeof label === "string" ? label : "").toLowerCase();
+        issue.labels.forEach((label) => {
+          const labelName = getLabelText(label).toLowerCase();
           if (!labelName) return;
           if (labelName.includes(term)) {
             matchDetails.labelMatches.push(labelName);

@@ -4,6 +4,7 @@ import { fetchAvatar, ubiquityAvatarUrl } from "../fetch-github/fetch-avatar";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";
 import { renderErrorInModal } from "./display-popup-modal";
+import { getLabelText } from "../sorting/label-utils";
 import { renderPreviewIssueNav } from "./render-org-header";
 import { bottomBar, bottomBarClearLabels, closeModal, modal, modalBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
 import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
@@ -102,7 +103,7 @@ function parseAndGenerateLabels(task: GitHubIssue) {
   const acc = { labels: [] as { order: number; label: string }[], otherLabels: [] as string[] };
 
   for (const label of task.labels || []) {
-    const name = typeof label === "string" ? label : label?.name || "";
+    const name = getLabelText(label);
     if (!name) continue;
 
     const match = name.match(LABEL_PREFIX_REGEX);

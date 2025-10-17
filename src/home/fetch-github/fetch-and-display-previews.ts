@@ -4,6 +4,7 @@ import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-gi
 import { renderOrgHeaderLabel } from "../rendering/render-org-header";
 import { closeModal } from "../rendering/render-preview-modal";
 import { filterIssuesByAvailability } from "../sorting/filter-issues-by-availability";
+import { getLabelText } from "../sorting/label-utils";
 import { filterIssuesBySearch } from "../sorting/filter-issues-by-search";
 import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
@@ -55,12 +56,7 @@ viewToggle.addEventListener("click", () => {
 function getProposalsOnlyFilter(getProposals: boolean) {
   return (issue: GitHubIssue) => {
     const labels = Array.isArray(issue?.labels) ? issue.labels : [];
-    const hasPriceLabel = labels.some((label) => {
-      if (typeof label === "string") {
-        return /^(Price:)\s*/.test(label);
-      }
-      return label.name?.startsWith("Price: ") ?? false;
-    });
+    const hasPriceLabel = labels.some((label) => /^(Price:)\s*/.test(getLabelText(label)));
 
     return getProposals ? !hasPriceLabel : hasPriceLabel;
   };
