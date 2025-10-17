@@ -16,9 +16,10 @@ open http://localhost:8080
 
 ## Setup Scraper Function
 
-For local development of the scraper function, you need to set up a `.dev.vars` file based on the `.dev.vars.example` file.
+The scraper API (`/issue-scraper`) now runs on a local Deno server.
 
-For deployment, you would need to add the secrets to the Cloudflare Dashboard, for the worker.
+- Local development: set environment variables in `.env` (e.g. `SUPABASE_URL`, `SUPABASE_KEY`/`SUPABASE_SERVICE_ROLE_KEY`, `VOYAGEAI_API_KEY`). The Deno server loads `.env` automatically.
+- Deployment: configure the same variables in your runtime environment (e.g., system env vars). No Cloudflare configuration is required.
 
 ### Automatic Light Mode
 

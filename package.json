@@ -9,8 +9,8 @@
     "node": ">=20.10.0"
   },
   "scripts": {
-    "start": "run-p start-wrangler watch",
-    "start-wrangler": "npx wrangler pages dev static --port 8080",
+    "start": "run-p start-deno watch",
+    "start-deno": "deno run --allow-net --allow-read --allow-env server.ts",
     "watch": "tsx build/esbuild-watch.ts",
     "build": "tsx build/esbuild-build.ts",
     "format": "run-s format:lint format:prettier format:cspell",
@@ -29,7 +29,6 @@
     "open-source"
   ],
   "dependencies": {
-    "@cloudflare/workers-types": "^4.20241011.0",
     "@octokit/request-error": "^6.1.0",
     "@octokit/rest": "^20.0.2",
     "@supabase/supabase-js": "^2.39.0",
@@ -39,8 +38,8 @@
     "markdown-it-plain-text": "^0.3.0",
     "marked": "^11.0.0",
     "marked-footnote": "^1.2.4",
-    "voyageai": "^0.0.3-1",
-    "wrangler": "^3.83.0"
+    "voyageai": "^0.0.3-1"
+    
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",

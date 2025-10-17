@@ -1,11 +1,11 @@
-import { Context } from "./types";
-import { SupabaseClient } from "@supabase/supabase-js";
-import { VoyageAIClient, VoyageAIError } from "voyageai";
-import { Octokit } from "@octokit/rest";
-import markdownit from "markdown-it";
-import plainTextPlugin from "markdown-it-plain-text";
+// Deno-compatible request handler for the issue scraper endpoint
+import { SupabaseClient } from "npm:@supabase/supabase-js";
+import { VoyageAIClient, VoyageAIError } from "npm:voyageai";
+import { Octokit } from "npm:@octokit/rest";
+import markdownit from "npm:markdown-it";
+import plainTextPlugin from "npm:markdown-it-plain-text";
 import { validatePOST } from "./validators";
-import { RequestError } from "@octokit/request-error";
+import { RequestError } from "npm:@octokit/request-error";
 
 interface ApiError {
   source: "github" | "voyage" | "supabase";
@@ -112,28 +112,27 @@ export const corsHeaders = {
   "Access-Control-Allow-Methods": "GET",
   "Access-Control-Allow-Headers": "Content-Type",
 };
-
-export async function onRequest(ctx: Context): Promise<Response> {
-  const { request, env } = ctx;
+export async function handleIssueScraper(request: Request): Promise<Response> {
   try {
     switch (request.method) {
       case "POST": {
         const result = await validatePOST(request);
         if (!result.isValid || !result.gitHubUser) {
-          return new Response("Unauthorized", {
-            headers: corsHeaders,
-            status: 400,
-          });
+          return new Response("Unauthorized", { headers: corsHeaders, status: 400 });
         }
         const githubUserName = result.gitHubUser.login;
         const timestamp = result.timestamp; // Unix timestamp in milliseconds
 
         try {
+          const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+          const SUPABASE_KEY = Deno.env.get("SUPABASE_KEY");
+          const VOYAGEAI_API_KEY = Deno.env.get("VOYAGEAI_API_KEY");
+
           // Ensure required environment variables are present in dev/prod
           const missing: string[] = [];
-          if (!env.SUPABASE_URL) missing.push("SUPABASE_URL");
-          if (!env.SUPABASE_KEY) missing.push("SUPABASE_KEY");
-          if (!env.VOYAGEAI_API_KEY) missing.push("VOYAGEAI_API_KEY");
+          if (!SUPABASE_URL) missing.push("SUPABASE_URL");
+          if (!SUPABASE_KEY) missing.push("SUPABASE_KEY");
+          if (!VOYAGEAI_API_KEY) missing.push("VOYAGEAI_API_KEY");
           if (missing.length) {
             return new Response(
               JSON.stringify({
@@ -145,39 +144,23 @@ export async function onRequest(ctx: Context): Promise<Response> {
                   message: `Service not configured. Missing: ${missing.join(", ")}`,
                 },
               }),
-              {
-                status: 503,
-                headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "3600" },
-              }
+              { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "3600" } }
             );
           }
-          const supabase = new SupabaseClient(env.SUPABASE_URL, env.SUPABASE_KEY);
-          const response = await issueScraper(githubUserName, supabase, env.VOYAGEAI_API_KEY, result.authToken, timestamp);
-          return new Response(response, {
-            headers: corsHeaders,
-            status: 200,
-          });
+          const supabase = new SupabaseClient(SUPABASE_URL, SUPABASE_KEY);
+          const response = await issueScraper(githubUserName, supabase, VOYAGEAI_API_KEY, result.authToken, timestamp);
+          return new Response(response, { headers: corsHeaders, status: 200 });
         } catch (error) {
           console.error("Error processing request:", error);
-          return new Response("Internal Server Error", {
-            headers: corsHeaders,
-            status: 500,
-          });
+          return new Response("Internal Server Error", { headers: corsHeaders, status: 500 });
         }
       }
-
       default:
-        return new Response("Method Not Allowed", {
-          headers: corsHeaders,
-          status: 405,
-        });
+        return new Response("Method Not Allowed", { headers: corsHeaders, status: 405 });
     }
   } catch (error) {
     console.error("Error processing request:", error);
-    return new Response("Internal Server Error", {
-      headers: corsHeaders,
-      status: 500,
-    });
+    return new Response("Internal Server Error", { headers: corsHeaders, status: 500 });
   }
 }
 

@@ -1,7 +1,6 @@
 import { POSTRequestBody, ValidationResult } from "./types";
 import { GitHubUserResponse } from "../src/home/github-types";
-import { Request } from "@cloudflare/workers-types";
-import { Octokit } from "@octokit/rest";
+import { Octokit } from "npm:@octokit/rest";
 
 export async function validatePOST(request: Request): Promise<ValidationResult> {
   const jsonData: POSTRequestBody = await request.json();
