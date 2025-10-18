@@ -2,6 +2,7 @@
 import js from "@eslint/js";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
+
 // Resolve repo root for TS parser regardless of CWD (e.g., lint-staged)
 const tsconfigRootDir = new URL(".", import.meta.url).pathname;
 

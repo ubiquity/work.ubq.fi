@@ -20,5 +20,10 @@
       "tags": ["recommended"]
     }
   },
-  "unstable": ["kv", "sloppy-imports"]
+  "unstable": ["kv", "sloppy-imports"],
+  "imports": {
+    "@eslint/js": "npm:@eslint/js@^9.38.0",
+    "@typescript-eslint/eslint-plugin": "npm:@typescript-eslint/eslint-plugin@^8.46.1",
+    "@typescript-eslint/parser": "npm:@typescript-eslint/parser@^8.46.1"
+  }
 }
