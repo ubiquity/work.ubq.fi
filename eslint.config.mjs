@@ -4,6 +4,8 @@ import tsPlugin from "npm:@typescript-eslint/eslint-plugin@8.43.0";
 import tsParser from "npm:@typescript-eslint/parser@8.43.0";
 import globals from "npm:globals@15.12.0";
 import importPlugin from "npm:eslint-plugin-import@2.29.0";
+// Resolve repo root for TS parser regardless of CWD (e.g., lint-staged)
+const tsconfigRootDir = new URL(".", import.meta.url).pathname;
 
 export default [
   {
@@ -16,6 +18,7 @@ export default [
     languageOptions: {
       parser: tsParser,
       parserOptions: {
+        tsconfigRootDir,
         project: ["./tsconfig.json"],
         ecmaVersion: "latest",
         sourceType: "module",

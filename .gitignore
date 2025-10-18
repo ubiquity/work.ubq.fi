@@ -21,3 +21,4 @@ cypress/videos
 
 # Cloudflare
 .dev.vars
+logs/
