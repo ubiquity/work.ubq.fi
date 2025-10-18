@@ -4,19 +4,21 @@
     "build": "deno run -A build/esbuild-build.ts",
     "watch": "deno run -A build/esbuild-watch.ts",
     "dev": "deno run --unstable-kv -A scripts/dev.ts",
-    "fmt": "deno fmt",
-    "lint": "deno lint"
+    "fmt": "deno run -A npm:prettier --write .",
+    "lint": "deno lint",
+    "lint:eslint": "deno run -A npm:eslint@9.38.0 . --config eslint.config.mjs",
+    "fmt:prettier": "deno run -A npm:prettier@3.2.5 --write .",
+    "fmt:prettier:check": "deno run -A npm:prettier@3.2.5 --check .",
+    "cspell": "deno run -A npm:cspell@9.2.1 \"**/*\"",
+    "knip": "deno run -A npm:knip@3.13.2 --exports --config .github/knip.ts",
+    "knip:ci": "deno run -A npm:knip@3.13.2 --exports --no-exit-code --reporter json --config .github/knip.ts",
+    "check": "deno task lint:eslint && deno task fmt:prettier:check"
   },
-  "fmt": {
-    "useTabs": false,
-    "lineWidth": 120,
-    "indentWidth": 2
-  },
+  "nodeModulesDir": "none",
   "lint": {
     "rules": {
       "tags": ["recommended"]
     }
-  }
-  ,
+  },
   "unstable": ["kv", "sloppy-imports"]
 }

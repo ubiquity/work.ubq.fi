@@ -29,6 +29,15 @@ The scraper API (`/issue-scraper`) now runs on a local Deno server.
 - This plugin specifically seeks greyscale colors. Any colors with saturation are ignored.
 - Any deliberate use of color (with saturation) should be added in `special.css` to not be processed.
 
+## Contributing
+
+- Deno-only policy: use Deno tasks and `npm:` tools through Deno. Do not run `npm`, `pnpm`, `yarn`, `node`, or `npx` in this repo.
+- Run server: `deno task dev` (watch) or `deno task serve` (server only).
+- Build assets: `deno task build` (esbuild via `npm:esbuild`).
+- Formatting: `deno task fmt` (Prettier). Check mode: `deno task fmt:prettier:check`.
+- Linting: `deno task lint:eslint` (ESLint). This repo does not use `deno fmt`.
+- Git hooks: pre-commit runs lint-staged (Prettier/ESLint) via Deno; commit messages are checked with Commitlint.
+
 ## Features for End Users
 
 - Login with GitHub to view issues locally

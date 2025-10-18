@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run lint-staged via Deno/npm (no node_modules)
+deno run -A npm:lint-staged
+
