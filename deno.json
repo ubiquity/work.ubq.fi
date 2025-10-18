@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "serve": "deno run --allow-net --allow-read --allow-env server.ts",
+    "serve": "deno run --unstable-kv --allow-net --allow-read --allow-env server.ts",
     "build": "deno run -A build/esbuild-build.ts",
     "watch": "deno run -A build/esbuild-watch.ts",
     "dev": "deno run -A scripts/dev.ts",
@@ -18,4 +18,3 @@
     }
   }
 }
-

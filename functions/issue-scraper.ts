@@ -1,10 +1,10 @@
 // Deno-compatible request handler for the issue scraper endpoint
-import { SupabaseClient } from "npm:@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
 import { VoyageAIClient, VoyageAIError } from "npm:voyageai";
 import { Octokit } from "npm:@octokit/rest";
 import markdownit from "npm:markdown-it";
 import plainTextPlugin from "npm:markdown-it-plain-text";
-import { validatePOST } from "./validators";
+import { validatePOST } from "./validators.ts";
 import { RequestError } from "npm:@octokit/request-error";
 
 interface ApiError {
@@ -150,7 +150,7 @@ export async function handleIssueScraper(request: Request): Promise<Response> {
               { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "3600" } }
             );
           }
-          const supabase = new SupabaseClient(SUPABASE_URL, SUPABASE_KEY);
+          const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
           const response = await issueScraper(githubUserName, supabase, VOYAGEAI_API_KEY, result.authToken, timestamp);
           return new Response(response, { headers: corsHeaders, status: 200 });
         } catch (error) {

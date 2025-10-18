@@ -1,4 +1,4 @@
-import { validatePOST } from "./validators";
+import { validatePOST } from "./validators.ts";
 
 export const corsHeaders = {
   "Access-Control-Allow-Origin": "*",

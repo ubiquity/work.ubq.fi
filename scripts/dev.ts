@@ -1,6 +1,6 @@
 // Simple dev runner to start server and esbuild watch concurrently
 const serve = new Deno.Command(Deno.execPath(), {
-  args: ["run", "--allow-net", "--allow-read", "--allow-env", "server.ts"],
+  args: ["run", "--unstable-kv", "--allow-net", "--allow-read", "--allow-env", "server.ts"],
   stdout: "inherit",
   stderr: "inherit",
 });

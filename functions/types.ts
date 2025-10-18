@@ -1,4 +1,4 @@
-import { GitHubUser } from "../src/home/github-types";
+import { GitHubUser } from "../src/home/github-types.ts";
 
 export interface POSTRequestBody {
   authToken: string;

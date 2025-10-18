@@ -1,5 +1,5 @@
-import { POSTRequestBody, ValidationResult } from "./types";
-import { GitHubUserResponse } from "../src/home/github-types";
+import { POSTRequestBody, ValidationResult } from "./types.ts";
+import { GitHubUserResponse } from "../src/home/github-types.ts";
 import { Octokit } from "npm:@octokit/rest";
 
 export async function validatePOST(request: Request): Promise<ValidationResult> {
