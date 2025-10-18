@@ -20,7 +20,7 @@ export function filterIssuesBySearch(filterText: string) {
   return sortedIssues;
 }
 
-export function parseSearchQuery(searchText: string): ParseResult {
+function parseSearchQuery(searchText: string): ParseResult {
   const input = searchText.trim();
   const lower = input.toLowerCase();
 
@@ -31,7 +31,7 @@ export function parseSearchQuery(searchText: string): ParseResult {
       repoFilter: undefined,
     };
   }
-  
+
   const pattern = /^(?:@([^/\s]+)(?:\/([^/\s]+))?|\/([^/\s]+))/;
   const match = pattern.exec(lower);
 

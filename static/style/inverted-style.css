@@ -347,7 +347,6 @@
     max-height: 48px;
   }
   #authenticated > img {
-
     margin-left: 4px;
     border-radius: 4px;
   }
@@ -995,7 +994,7 @@
 }
 
 #enable-private-issues-button {
-    border: none;
-    height: 48px;
-    padding: 0 12px;
+  border: none;
+  height: 48px;
+  padding: 0 12px;
 }

@@ -36,7 +36,7 @@ jobs:
         with:
           name: static
           path: |
-              static
-              functions
-              package.json
-              yarn.lock
+            static
+            functions
+            package.json
+            yarn.lock

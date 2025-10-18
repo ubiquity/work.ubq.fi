@@ -233,9 +233,9 @@ export class IssueSearch {
 
   private _getSearchableContent(issue: GitHubIssue): string {
     // Remove URLs from the content
-    const removeUrls = (text: string): string => {
+    function removeUrls(text: string): string {
       return text.replace(/(?:https?:\/\/|http?:\/\/|www\.)[^\s]+/g, "");
-    };
+    }
 
     const title = issue.title;
     const body = removeUrls(issue.body || "");

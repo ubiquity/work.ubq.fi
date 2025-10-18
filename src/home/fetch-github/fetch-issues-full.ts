@@ -73,7 +73,7 @@ function mapStorageIssueToGitHubIssue(issue: StorageIssue, mirror?: MirrorStateE
   };
 }
 
-export async function fetchIssues(): Promise<GitHubIssue[]> {
+async function fetchIssues(): Promise<GitHubIssue[]> {
   const base = "https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__";
   // Fetch all three resources in parallel
   const [pricedRes, mirrorRes, proposalsRes] = await Promise.all([

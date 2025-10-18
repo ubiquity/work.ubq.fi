@@ -12,7 +12,7 @@ type RateLimit = {
   user: boolean;
 };
 
-export function rateLimitModal(message: string) {
+function rateLimitModal(message: string) {
   displayPopupMessage({ modalHeader: `GitHub API rate limit exceeded.`, modalBody: message, isError: false });
 }
 

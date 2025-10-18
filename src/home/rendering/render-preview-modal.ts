@@ -5,7 +5,7 @@ export const titleAnchor = document.getElementById("preview-title-anchor") as HT
 export const titleHeader = document.getElementById("preview-title") as HTMLHeadingElement;
 export const modalBodyInner = document.getElementById("preview-body-inner") as HTMLDivElement;
 export const bottomBar = document.getElementById("bottom-bar") as HTMLDivElement;
-export const issuesContainer = document.getElementById("issues-container");
+const issuesContainer = document.getElementById("issues-container");
 
 const closeButton = modal.querySelector(".close-preview") as HTMLButtonElement;
 

@@ -26,7 +26,7 @@ jobs:
           commit_sha: ${{ github.event.workflow_run.head_sha }}
           workflow_run_id: ${{ github.event.workflow_run.id }}
           statics_directory: "static"
-          
+
   update_env_secrets_in_cloudflare:
     name: Update environment secrets in Cloudflare
     runs-on: ubuntu-22.04
@@ -46,4 +46,3 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: bash .github/sync-env-vars.sh
-

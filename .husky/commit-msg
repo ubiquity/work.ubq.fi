@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-bunx commitlint --edit "$1"
-bunx lint-staged
+# Lint commit message
+deno run -A npm:@commitlint/cli --edit "$1"

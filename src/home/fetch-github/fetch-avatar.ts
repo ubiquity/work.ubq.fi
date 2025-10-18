@@ -1,14 +1,12 @@
 export const ubiquityAvatarUrl = "https://avatars.githubusercontent.com/u/76412717?v=4";
 
-export type OrgNameAndAvatarUrl = {
+type OrgNameAndAvatarUrl = {
   owner: string;
   avatar_url: string;
 };
 
-export async function fetchPartnerAvatars(): Promise<OrgNameAndAvatarUrl[]> {
-  const response = await fetch(
-    "https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/owners-avatars.json"
-  );
+async function fetchPartnerAvatars(): Promise<OrgNameAndAvatarUrl[]> {
+  const response = await fetch("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/owners-avatars.json");
   const jsonData = await response.json();
   return jsonData;
 }

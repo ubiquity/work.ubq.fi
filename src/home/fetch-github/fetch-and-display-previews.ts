@@ -10,7 +10,7 @@ import { Sorting } from "../sorting/generate-sorting-buttons";
 import { sortIssuesController } from "../sorting/sort-issues-controller";
 import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity";
 
-export type Options = {
+type Options = {
   ordering: "normal" | "reverse";
 };
 
@@ -32,9 +32,9 @@ export function swapAvailabilityFilter() {
 }
 
 // start at view based on URL
-export let isProposalOnlyViewer = new URLSearchParams(window.location.search).get("proposal") === "true";
+let isProposalOnlyViewer = new URLSearchParams(window.location.search).get("proposal") === "true";
 
-export const viewToggle = document.getElementById("view-toggle") as HTMLInputElement;
+const viewToggle = document.getElementById("view-toggle") as HTMLInputElement;
 
 if (isProposalOnlyViewer) {
   viewToggle.checked = true;

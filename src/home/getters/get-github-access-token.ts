@@ -33,7 +33,7 @@ export async function isMissingRepoScope(): Promise<boolean> {
   return !scopes?.includes("repo");
 }
 
-export function getGitHubUserName(): string | null {
+function getGitHubUserName(): string | null {
   const oauthToken = getLocalStore(`sb-${SUPABASE_STORAGE_KEY}-auth-token`) as OAuthToken | null;
 
   const username = oauthToken?.user?.user_metadata?.user_name;

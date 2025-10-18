@@ -1,6 +1,7 @@
-import { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
+import type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 
-export interface AvatarCache {
+// Local-only type formerly exported; not used across modules.
+interface AvatarCache {
   [organization: string]: string | null;
 }
 
