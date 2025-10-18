@@ -11,6 +11,18 @@ Deno.serve({ port }, async (request: Request): Promise<Response> => {
   const pathname = url.pathname;
   console.log(`REQ ${request.method} ${pathname}`);
 
+  // Handle CORS preflight globally to avoid 405 from static server
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    });
+  }
+
   // API routes
   if (pathname === "/issue-scraper") {
     const { handleIssueScraper } = await import("./functions/issue-scraper.ts");

@@ -1,5 +1,4 @@
 import { POSTRequestBody, ValidationResult } from "./types.ts";
-import { GitHubUserResponse } from "../src/home/github-types.ts";
 import { Octokit } from "npm:@octokit/rest";
 
 export async function validatePOST(request: Request): Promise<ValidationResult> {
@@ -10,11 +9,8 @@ export async function validatePOST(request: Request): Promise<ValidationResult> 
   const octokit = new Octokit({ auth: authToken });
 
   try {
-    const response = (await octokit.request("GET /user")) as GitHubUserResponse;
-
-    const gitHubUser = response.data;
-
-    return { isValid: true, gitHubUser: gitHubUser, referralCode: referralCode, authToken: authToken, timestamp };
+    const { data: gitHubUser } = await octokit.request("GET /user");
+    return { isValid: true, gitHubUser, referralCode, authToken, timestamp };
   } catch (error) {
     console.error("User is not logged in");
     return { isValid: false };

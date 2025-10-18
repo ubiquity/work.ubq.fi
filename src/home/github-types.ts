@@ -12,7 +12,7 @@ export type TaskStorageItems = {
   loggedIn: boolean;
 };
 
-export type GitHubUserResponse = RestEndpointMethodTypes["users"]["getByUsername"]["response"];
+export type GitHubUserResponse = RestEndpointMethodTypes["users"]["getAuthenticated"]["response"];
 export type GitHubUser = GitHubUserResponse["data"];
 
 // Minimal GitHub issue shape consumed by the UI
