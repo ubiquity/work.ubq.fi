@@ -1,14 +1,14 @@
 import { marked } from "marked";
 import markedFootnote from "marked-footnote";
-import { fetchAvatar, ubiquityAvatarUrl } from "../fetch-github/fetch-avatar";
-import { GitHubIssue } from "../github-types";
-import { taskManager } from "../home";
-import { renderErrorInModal } from "./display-popup-modal";
-import { getLabelText } from "../sorting/label-utils";
-import { renderPreviewIssueNav } from "./render-org-header";
-import { bottomBar, bottomBarClearLabels, closeModal, modal, modalBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
-import { setupKeyboardNavigation } from "./setup-keyboard-navigation";
-import { waitForElement } from "./utils";
+import { fetchAvatar, ubiquityAvatarUrl } from "../fetch-github/fetch-avatar.ts";
+import { GitHubIssue } from "../github-types.ts";
+import { taskManager } from "../home.ts";
+import { renderErrorInModal } from "./display-popup-modal.ts";
+import { getLabelText } from "../sorting/label-utils.ts";
+import { renderPreviewIssueNav } from "./render-org-header.ts";
+import { bottomBar, bottomBarClearLabels, closeModal, modal, modalBodyInner, titleAnchor, titleHeader } from "./render-preview-modal.ts";
+import { setupKeyboardNavigation } from "./setup-keyboard-navigation.ts";
+import { waitForElement } from "./utils.ts";
 
 const LABEL_PREFIX_REGEX = /^(Price: |Time: |Priority: )/;
 

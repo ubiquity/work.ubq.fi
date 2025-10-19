@@ -1,7 +1,7 @@
 declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
 import { Octokit } from "@octokit/rest";
-import { checkSupabaseSession } from "../rendering/render-github-login-button";
-import { getLocalStore } from "./get-local-store";
+import { checkSupabaseSession } from "../rendering/render-github-login-button.ts";
+import { getLocalStore } from "./get-local-store.ts";
 
 export async function getGitHubAccessToken(): Promise<string | null> {
   // better to use official function, looking up localstorage has flaws

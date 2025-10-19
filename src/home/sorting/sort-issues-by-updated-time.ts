@@ -1,4 +1,4 @@
-import { GitHubIssue } from "../github-types";
+import { GitHubIssue } from "../github-types.ts";
 
 export function sortIssuesByLatestActivity(issues: GitHubIssue[], ordering: "normal" | "reverse" = "normal") {
   return issues.sort((a, b) => {

@@ -1,9 +1,9 @@
 import { RequestError } from "@octokit/request-error";
 import { Octokit } from "@octokit/rest";
-import { handleRateLimit } from "../fetch-github/handle-rate-limit";
-import { GitHubUser, GitHubUserResponse } from "../github-types";
-import { OAuthToken } from "./get-github-access-token";
-import { getLocalStore } from "./get-local-store";
+import { handleRateLimit } from "../fetch-github/handle-rate-limit.ts";
+import { GitHubUser, GitHubUserResponse } from "../github-types.ts";
+import { OAuthToken } from "./get-github-access-token.ts";
+import { getLocalStore } from "./get-local-store.ts";
 declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
 
 export async function getGitHubUser(): Promise<GitHubUser | null> {

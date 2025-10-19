@@ -1,4 +1,4 @@
-import { GitHubIssue } from "../github-types";
+import { GitHubIssue } from "../github-types.ts";
 
 export function filterIssuesByAvailability(issues: GitHubIssue[]) {
   return issues.filter((issue) => {

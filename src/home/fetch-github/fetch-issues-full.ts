@@ -1,7 +1,7 @@
-import { saveIssuesToCache } from "../getters/get-indexed-db";
-import { GitHubIssue } from "../github-types";
-import { taskManager } from "../home";
-import { displayGitHubIssues } from "./fetch-and-display-previews";
+import { saveIssuesToCache } from "../getters/get-indexed-db.ts";
+import { GitHubIssue } from "../github-types.ts";
+import { taskManager } from "../home.ts";
+import { displayGitHubIssues } from "./fetch-and-display-previews.ts";
 
 // Fetches issues from the `partner-open-issues.json` artifact on the `__STORAGE__` branch
 // https://github.com/devpool-directory/devpool-directory/blob/__STORAGE__/README_STORAGE.md

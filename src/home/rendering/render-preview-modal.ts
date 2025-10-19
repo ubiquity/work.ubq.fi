@@ -1,4 +1,4 @@
-import { resetOrgHeaderLabel } from "./render-org-header";
+import { resetOrgHeaderLabel } from "./render-org-header.ts";
 
 export const modal = document.getElementById("preview-modal") as HTMLDivElement;
 export const titleAnchor = document.getElementById("preview-title-anchor") as HTMLAnchorElement;

@@ -1,8 +1,8 @@
-import { GitHubUser } from "../github-types";
-import { toolbar } from "../ready-toolbar";
-import { renderErrorInModal } from "./display-popup-modal";
-import { authenticationElement, getSupabase, renderEnablePrivateIssuesButton } from "./render-github-login-button";
-import { isMissingRepoScope } from "../getters/get-github-access-token";
+import { GitHubUser } from "../github-types.ts";
+import { toolbar } from "../ready-toolbar.ts";
+import { renderErrorInModal } from "./display-popup-modal.ts";
+import { authenticationElement, getSupabase, renderEnablePrivateIssuesButton } from "./render-github-login-button.ts";
+import { isMissingRepoScope } from "../getters/get-github-access-token.ts";
 
 export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
   const authenticatedDivElement = document.createElement("div");

@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { renderErrorInModal } from "./display-popup-modal";
+import { renderErrorInModal } from "./display-popup-modal.ts";
 
 declare const SUPABASE_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
 declare const SUPABASE_ANON_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts

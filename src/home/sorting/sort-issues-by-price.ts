@@ -1,5 +1,5 @@
-import { GitHubIssue, GitHubLabel } from "../github-types";
-import { getLabelText } from "./label-utils";
+import { GitHubIssue, GitHubLabel } from "../github-types.ts";
+import { getLabelText } from "./label-utils.ts";
 
 export function sortIssuesByPrice(issues: GitHubIssue[]) {
   return issues.sort((a, b) => {

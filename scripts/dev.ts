@@ -14,6 +14,21 @@ const watch = new Deno.Command(Deno.execPath(), {
 const serverProc = serve.spawn();
 const watchProc = watch.spawn();
 
+// Ensure child processes are cleaned up on Ctrl+C or kill
+function gracefulShutdown(signal: Deno.Signal) {
+  try {
+    serverProc.kill("SIGTERM");
+  } catch (_) {}
+  try {
+    watchProc.kill("SIGTERM");
+  } catch (_) {}
+  // Give children a brief moment to exit
+  setTimeout(() => Deno.exit(0), 50);
+}
+
+Deno.addSignalListener("SIGINT", () => gracefulShutdown("SIGINT"));
+Deno.addSignalListener("SIGTERM", () => gracefulShutdown("SIGTERM"));
+
 const serverStatus = serverProc.status;
 const watchStatus = watchProc.status;
 

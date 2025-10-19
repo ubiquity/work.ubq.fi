@@ -11,9 +11,9 @@ Allowed
   - `deno task dev` — run server + esbuild watch
   - `deno task serve` — run the server only
   - `deno task build` — bundle frontend assets via esbuild (npm:esbuild)
-  - `deno task fmt` — Prettier write (alias to `npm:prettier`)
+  - `deno task format` — Prettier write (alias to `npm:prettier`)
   - `deno task lint:eslint` — ESLint via `npm:eslint`
-  - `deno task fmt:prettier` — explicit Prettier task when needed
+  - `deno task format:check` — Prettier check mode when needed
 
 Disallowed
 - Do not run `npm`, `pnpm`, or `yarn` commands for this repo.
@@ -31,7 +31,7 @@ Build & Bundling
 - Do not call esbuild via Node binaries; always via `deno run`.
 
 Formatting & Linting
-- Formatting: Prettier only. Run `deno task fmt` or `deno task fmt:prettier`.
+- Formatting: Prettier only. Run `deno task format` or `deno task format:check`.
 - Linting: ESLint only. Run `deno task lint:eslint`.
 - Note: `deno fmt` is not used; the Deno fmt config has been removed from `deno.json`.
 

@@ -1,4 +1,4 @@
-import { GitHubIssue, GitHubLabel } from "../github-types";
+import { GitHubIssue, GitHubLabel } from "../github-types.ts";
 
 // Type guard for label objects with a name
 function isNamedLabel(l: GitHubLabel): l is { name: string } {

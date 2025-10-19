@@ -3,9 +3,10 @@ import esbuild from "npm:esbuild";
 import { invertColors } from "./plugins/invert-colors.ts";
 import { pwaManifest } from "./plugins/pwa-manifest.ts";
 
-const typescriptEntries = ["src/home/home.ts"];
+const typescriptEntry = "src/home/home.ts"; // not bundled here currently
 const cssEntries = ["static/style/style.css"];
-const entries = [...typescriptEntries, ...cssEntries, "static/manifest.json", "static/favicon.svg", "static/icon-512x512.png"];
+// Only include assets that esbuild can treat as files; manifest is written by the pwaManifest plugin
+const entries = [...cssEntries, "static/favicon.svg", "static/icon-512x512.png"];
 
 const isProd = (Deno.env.get("NODE_ENV") || "development") === "production";
 

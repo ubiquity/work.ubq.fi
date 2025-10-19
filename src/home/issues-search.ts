@@ -1,8 +1,8 @@
-import { GitHubIssue } from "./github-types";
-import { getLabelText } from "./sorting/label-utils";
-import { TaskManager } from "./task-manager";
-import { SearchResult, SearchWeights, SearchConfig } from "./types/search-types";
-import { SearchScorer } from "./search/search-scorer";
+import { GitHubIssue } from "./github-types.ts";
+import { getLabelText } from "./sorting/label-utils.ts";
+import { TaskManager } from "./task-manager.ts";
+import { SearchResult, SearchWeights, SearchConfig } from "./types/search-types.ts";
+import { SearchScorer } from "./search/search-scorer.ts";
 
 export class IssueSearch {
   private readonly _weights: SearchWeights = {

@@ -1,6 +1,6 @@
-import { GitHubIssue } from "../github-types";
-import { calculateTimeLabelValue } from "./calculate-time-label-value";
-import { getLabelText } from "./label-utils";
+import { GitHubIssue } from "../github-types.ts";
+import { calculateTimeLabelValue } from "./calculate-time-label-value.ts";
+import { getLabelText } from "./label-utils.ts";
 
 export function sortIssuesByTime(tasks: GitHubIssue[]) {
   return tasks.sort((a, b) => sumTime(b.labels) - sumTime(a.labels));

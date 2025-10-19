@@ -1,5 +1,5 @@
-import { GitHubIssue } from "../github-types";
-import { taskManager } from "../home";
+import { GitHubIssue } from "../github-types.ts";
+import { taskManager } from "../home.ts";
 
 interface ParseResult {
   orgFilter: string | undefined;

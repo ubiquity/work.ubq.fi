@@ -13,7 +13,7 @@ With Deno installed:
 ```sh
 deno task build   # one-time build
 deno task dev     # run server + watch
-# open http://localhost:8080
+# open http://localhost:8080 (override with PORT=8899 deno task dev)
 ```
 
 ## Setup Scraper Function
@@ -34,8 +34,10 @@ The scraper API (`/issue-scraper`) now runs on a local Deno server.
 - Deno-only policy: use Deno tasks and `npm:` tools through Deno. Do not run `npm`, `pnpm`, `yarn`, `node`, or `npx` in this repo.
 - Run server: `deno task dev` (watch) or `deno task serve` (server only).
 - Build assets: `deno task build` (esbuild via `npm:esbuild`).
-- Formatting: `deno task fmt` (Prettier). Check mode: `deno task fmt:prettier:check`.
-- Linting: `deno task lint:eslint` (ESLint). This repo does not use `deno fmt`.
+- Formatting: `deno task format` (Prettier). Check mode: `deno task format:check`.
+- Linting: `deno task lint` (ESLint). This repo does not use `deno fmt`.
+- Spell check: `deno task cspell`.
+- Static analysis (Knip): `deno task knip` — in a Deno‑only repo without `package.json`, this task is skipped gracefully.
 - Git hooks: pre-commit runs lint-staged (Prettier/ESLint) via Deno; commit messages are checked with Commitlint.
 
 ## Features for End Users

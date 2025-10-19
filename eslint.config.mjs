@@ -7,7 +7,17 @@ const tsconfigRootDir = new URL(".", import.meta.url).pathname;
 
 export default [
   {
-    ignores: ["**/*.js", ".github/**", ".wrangler/**", ".node_modules.bak/**", "static/dist/**"],
+    ignores: [
+      "**/*.js",
+      // Ignore local config/runtime helper files that are not part of the TS codebase
+      "eslint.config.mjs",
+      ".lintstagedrc.mjs",
+      "commitlint.config.mjs",
+      ".github/**",
+      ".wrangler/**",
+      ".node_modules.bak/**",
+      "static/dist/**",
+    ],
   },
   js.configs.recommended,
   // Type-checked rules for TypeScript
@@ -30,6 +40,8 @@ export default [
       "no-undef": "off",
       // Defer to TS for unused checks or reduce noise
       "no-unused-vars": "off",
+      // Allow intentionally empty catch blocks for cleanup/teardown
+      "no-empty": ["error", { allowEmptyCatch: true }],
       // Ported from .eslintrc
       "prefer-arrow-callback": ["warn", { allowNamedFunctions: true }],
       "func-style": ["warn", "declaration", { allowArrowFunctions: false }],

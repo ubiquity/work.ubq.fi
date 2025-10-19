@@ -1,14 +1,14 @@
-import { GitHubIssue } from "../github-types";
-import { taskManager } from "../home";
-import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-github-issues";
-import { renderOrgHeaderLabel } from "../rendering/render-org-header";
-import { closeModal } from "../rendering/render-preview-modal";
-import { filterIssuesByAvailability } from "../sorting/filter-issues-by-availability";
-import { getLabelText } from "../sorting/label-utils";
-import { filterIssuesBySearch } from "../sorting/filter-issues-by-search";
-import { Sorting } from "../sorting/generate-sorting-buttons";
-import { sortIssuesController } from "../sorting/sort-issues-controller";
-import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity";
+import { GitHubIssue } from "../github-types.ts";
+import { taskManager } from "../home.ts";
+import { applyAvatarsToIssues, renderGitHubIssues } from "../rendering/render-github-issues.ts";
+import { renderOrgHeaderLabel } from "../rendering/render-org-header.ts";
+import { closeModal } from "../rendering/render-preview-modal.ts";
+import { filterIssuesByAvailability } from "../sorting/filter-issues-by-availability.ts";
+import { getLabelText } from "../sorting/label-utils.ts";
+import { filterIssuesBySearch } from "../sorting/filter-issues-by-search.ts";
+import { Sorting } from "../sorting/generate-sorting-buttons.ts";
+import { sortIssuesController } from "../sorting/sort-issues-controller.ts";
+import { checkCacheIntegrityAndSyncTasks } from "./cache-integrity.ts";
 
 type Options = {
   ordering: "normal" | "reverse";

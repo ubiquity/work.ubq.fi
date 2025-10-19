@@ -1,7 +1,7 @@
-import { GitHubIssue } from "../github-types";
-import { getLabelText } from "../sorting/label-utils";
-import { SearchConfig, SearchResult } from "../types/search-types";
-import { StringSimilarity } from "./string-similarity";
+import { GitHubIssue } from "../github-types.ts";
+import { getLabelText } from "../sorting/label-utils.ts";
+import { SearchConfig, SearchResult } from "../types/search-types.ts";
+import { StringSimilarity } from "./string-similarity.ts";
 
 export class SearchScorer {
   constructor(private _config: SearchConfig) {}

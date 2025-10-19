@@ -1,15 +1,15 @@
-import { grid } from "../the-grid";
-import { authentication } from "./authentication";
-import { displayGitHubIssues } from "./fetch-github/fetch-and-display-previews";
-import { postLoadUpdateIssues } from "./fetch-github/fetch-issues-full";
-import { readyToolbar } from "./ready-toolbar";
-import { initiateReferralCodeTracking } from "./register-referral";
-import { renderServiceMessage } from "./render-service-message";
-import { renderErrorInModal } from "./rendering/display-popup-modal";
-import { loadIssueFromUrl } from "./rendering/render-github-issues";
-import { renderGitRevision } from "./rendering/render-github-login-button";
-import { generateSortingToolbar } from "./sorting/generate-sorting-buttons";
-import { TaskManager } from "./task-manager";
+import { grid } from "../the-grid.ts";
+import { authentication } from "./authentication.ts";
+import { displayGitHubIssues } from "./fetch-github/fetch-and-display-previews.ts";
+import { postLoadUpdateIssues } from "./fetch-github/fetch-issues-full.ts";
+import { readyToolbar } from "./ready-toolbar.ts";
+import { initiateReferralCodeTracking } from "./register-referral.ts";
+import { renderServiceMessage } from "./render-service-message.ts";
+import { renderErrorInModal } from "./rendering/display-popup-modal.ts";
+import { loadIssueFromUrl } from "./rendering/render-github-issues.ts";
+import { renderGitRevision } from "./rendering/render-github-login-button.ts";
+import { generateSortingToolbar } from "./sorting/generate-sorting-buttons.ts";
+import { TaskManager } from "./task-manager.ts";
 
 // All unhandled errors are caught and displayed in a modal
 window.addEventListener("error", (event: ErrorEvent) => renderErrorInModal(event.error));

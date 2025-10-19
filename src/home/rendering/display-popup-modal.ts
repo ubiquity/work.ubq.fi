@@ -1,5 +1,5 @@
-import { toolbar } from "../ready-toolbar";
-import { modal, modalBodyInner, titleAnchor, titleHeader } from "./render-preview-modal";
+import { toolbar } from "../ready-toolbar.ts";
+import { modal, modalBodyInner, titleAnchor, titleHeader } from "./render-preview-modal.ts";
 export function displayPopupMessage({ modalHeader, modalBody, isError, url }: { modalHeader: string; modalBody: string; isError: boolean; url?: string }) {
   titleHeader.textContent = modalHeader;
   if (url) {

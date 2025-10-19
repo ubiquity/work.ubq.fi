@@ -4,15 +4,14 @@
     "build": "deno run -A build/esbuild-build.ts",
     "watch": "deno run -A build/esbuild-watch.ts",
     "dev": "deno run --unstable-kv -A scripts/dev.ts",
-    "fmt": "deno run -A npm:prettier --write .",
-    "lint": "deno lint",
+    "format": "deno run -A npm:prettier@3.2.5 --write .",
+    "lint": "deno task lint:eslint",
     "lint:eslint": "deno run -A npm:eslint@9.38.0 . --config eslint.config.mjs",
-    "fmt:prettier": "deno run -A npm:prettier@3.2.5 --write .",
-    "fmt:prettier:check": "deno run -A npm:prettier@3.2.5 --check .",
+    "format:check": "deno run -A npm:prettier@3.2.5 --check .",
     "cspell": "deno run -A npm:cspell@9.2.1 \"**/*\"",
-    "knip": "deno run -A npm:knip@3.13.2 --exports --config .github/knip.ts",
-    "knip:ci": "deno run -A npm:knip@3.13.2 --exports --no-exit-code --reporter json --config .github/knip.ts",
-    "check": "deno task lint:eslint && deno task fmt:prettier:check"
+    "knip": "deno run -A scripts/run-knip.ts --exports --config .github/knip.ts",
+    "knip:ci": "deno run -A scripts/run-knip.ts --exports --no-exit-code --reporter json --config .github/knip.ts",
+    "check": "deno task lint:eslint && deno task format:check"
   },
   "nodeModulesDir": "none",
   "lint": {
@@ -22,6 +21,12 @@
   },
   "unstable": ["kv", "sloppy-imports"],
   "imports": {
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@^2.75.0",
+    "@octokit/rest": "npm:@octokit/rest@^20.0.2",
+    "@octokit/request-error": "npm:@octokit/request-error@^6.1.5",
+    "@octokit/plugin-rest-endpoint-methods": "npm:@octokit/plugin-rest-endpoint-methods@^13.2.2",
+    "marked": "npm:marked@^16.4.0",
+    "marked-footnote": "npm:marked-footnote@^1.4.0",
     "@eslint/js": "npm:@eslint/js@^9.38.0",
     "@typescript-eslint/eslint-plugin": "npm:@typescript-eslint/eslint-plugin@^8.46.1",
     "@typescript-eslint/parser": "npm:@typescript-eslint/parser@^8.46.1"
