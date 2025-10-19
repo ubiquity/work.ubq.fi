@@ -18,7 +18,7 @@ deno task dev
 
 # Or, serve manually in another terminal
 # Note: add --allow-run to enable auto-kill of occupied port during dev
-deno run --allow-net --allow-read --allow-env=PORT --allow-run scripts/deno_static_server.ts
+deno run --allow-net --allow-read --allow-env=PORT --allow-run scripts/deno-static-server.ts
 ```
 
 ## Server & Deployment

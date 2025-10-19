@@ -29,9 +29,10 @@
   "tasks": {
     "build": "deno run -A --env-file=.env build/esbuild-build.ts",
     "watch": "deno run -A --env-file=.env build/esbuild-watch.ts",
-    "dev": "sh -c 'deno task watch & deno run --allow-net --allow-read --allow-env=PORT --allow-run scripts/deno_static_server.ts'",
+    "dev": "sh -c 'deno task watch & deno run --watch-hmr=scripts,server --allow-net --allow-read --allow-env=PORT --allow-run scripts/deno-static-server.ts'",
     "fmt": "deno fmt",
     "lint": "deno lint",
+    "lint:filenames": "deno run -A scripts/check-filenames.ts",
     "cspell": "deno run -A npm:cspell ."
   }
 }
