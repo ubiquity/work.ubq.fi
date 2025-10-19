@@ -19,9 +19,9 @@ jobs:
         # submodules: "recursive" # Ensures submodules are checked out
 
       - name: Set up Deno
-        uses: denoland/setup-deno@v1
+        uses: denoland/setup-deno@v2
         with:
-          deno-version: v1.x
+          deno-version: v2.x
 
       - name: Enforce kebab-case filenames
         run: deno task lint:filenames
@@ -29,9 +29,15 @@ jobs:
       - name: Build
         run: |
           deno task build
+<<<<<<< Updated upstream
         env: # Set environment variables for the build
           SUPABASE_URL: "https://wfzpewmlyiozupulbuur.supabase.co"
           SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmenBld21seWlvenVwdWxidXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTU2NzQzMzksImV4cCI6MjAxMTI1MDMzOX0.SKIL3Q0NOBaMehH0ekFspwgcu3afp3Dl9EDzPqs1nKs"
+=======
+        env: # Provide safe fallbacks when secrets are unavailable (e.g., PRs)
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'anon-placeholder-key' }}
+>>>>>>> Stashed changes
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4

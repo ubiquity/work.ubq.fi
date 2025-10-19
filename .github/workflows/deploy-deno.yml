@@ -1,0 +1,179 @@
+name: Deploy (Deno Deploy)
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-deno-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+
+    env:
+      # Build-time envs required by `deno task build`
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Install jq
+        run: sudo apt-get update -y && sudo apt-get install -y jq
+
+      - name: Install deployctl CLI
+        run: deno install -A --no-check -r https://deno.land/x/deploy@1.12.0/deployctl.ts
+        env:
+          DENO_DIR: ${{ runner.temp }}/deno
+        shell: bash
+
+      - name: Add Deno bin to PATH
+        run: echo "${HOME}/.deno/bin" >> $GITHUB_PATH
+
+      - name: Build static assets
+        run: deno task build
+
+      - name: Deploy to Deno Deploy (production)
+        if: github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch
+        run: bash .github/workflows/deployment/deploy.sh production "$DENO_DEPLOY_TOKEN" "work-ubq-fi" "work-ubq-fi-preview"
+        env:
+          DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          VOYAGEAI_API_KEY: ${{ secrets.VOYAGEAI_API_KEY }}
+
+      - name: Determine deployed URL (production)
+        if: github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch
+        id: prod_url
+        env:
+          DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
+        run: |
+          set -euo pipefail
+          PROJECT="work-ubq-fi"
+          DEFAULT_URL="https://${PROJECT}.deno.dev"
+          if command -v jq >/dev/null 2>&1; then
+            RESP=$(curl -sS -H "Authorization: Bearer $DENO_DEPLOY_TOKEN" "https://dash.deno.com/api/projects/${PROJECT}" || true)
+            CUSTOM=$(printf '%s' "$RESP" | jq -r '(.domains[0].domain // .domains[0] // "")' 2>/dev/null || echo "")
+          else
+            CUSTOM=""
+          fi
+          URL="$DEFAULT_URL"
+          if [ -n "$CUSTOM" ]; then URL="https://$CUSTOM"; fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+
+      - name: Verify deployment (production)
+        if: github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch
+        id: verify_prod
+        run: |
+          set -euo pipefail
+          URL='${{ steps.prod_url.outputs.url }}'
+          echo "Probing $URL"
+          codes_ok="200 301 302 308"
+          status="warn"
+          http_code="000"
+          for i in 1 2 3; do
+            http_code=$(curl -sS -o /dev/null -w "%{http_code}" "$URL" || echo "000")
+            if echo "$codes_ok" | grep -q "\b$http_code\b"; then status="ok"; break; fi
+            sleep 5
+          done
+          echo "http_code=$http_code" >> "$GITHUB_OUTPUT"
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Production Deploy"
+            echo
+            echo "- URL: $URL"
+            echo "- HTTP: $http_code ($status)"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment production URL on commit
+        if: github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = `${{ toJSON(steps.prod_url.outputs.url) }}`;
+            const http = `${{ toJSON(steps.verify_prod.outputs.http_code) }}`;
+            const body = `✅ Deployed (production)\n\n- URL: ${url}\n- HTTP: ${http}`;
+            await github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body,
+            });
+
+      - name: Deploy to Deno Deploy (preview)
+        if: github.ref_type == 'branch' && github.ref_name != github.event.repository.default_branch
+        run: bash .github/workflows/deployment/deploy.sh preview "$DENO_DEPLOY_TOKEN" "work-ubq-fi" "work-ubq-fi-preview"
+        env:
+          DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          VOYAGEAI_API_KEY: ${{ secrets.VOYAGEAI_API_KEY }}
+
+      - name: Determine deployed URL (preview)
+        if: github.ref_type == 'branch' && github.ref_name != github.event.repository.default_branch
+        id: prev_url
+        env:
+          DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
+        run: |
+          set -euo pipefail
+          PROJECT="work-ubq-fi-preview"
+          DEFAULT_URL="https://${PROJECT}.deno.dev"
+          if command -v jq >/dev/null 2>&1; then
+            RESP=$(curl -sS -H "Authorization: Bearer $DENO_DEPLOY_TOKEN" "https://dash.deno.com/api/projects/${PROJECT}" || true)
+            CUSTOM=$(printf '%s' "$RESP" | jq -r '(.domains[0].domain // .domains[0] // "")' 2>/dev/null || echo "")
+          else
+            CUSTOM=""
+          fi
+          URL="$DEFAULT_URL"
+          if [ -n "$CUSTOM" ]; then URL="https://$CUSTOM"; fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+
+      - name: Verify deployment (preview)
+        if: github.ref_type == 'branch' && github.ref_name != github.event.repository.default_branch
+        id: verify_prev
+        run: |
+          set -euo pipefail
+          URL='${{ steps.prev_url.outputs.url }}'
+          echo "Probing $URL"
+          codes_ok="200 301 302 308"
+          status="warn"
+          http_code="000"
+          for i in 1 2 3; do
+            http_code=$(curl -sS -o /dev/null -w "%{http_code}" "$URL" || echo "000")
+            if echo "$codes_ok" | grep -q "\b$http_code\b"; then status="ok"; break; fi
+            sleep 5
+          done
+          echo "http_code=$http_code" >> "$GITHUB_OUTPUT"
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Preview Deploy"
+            echo
+            echo "- URL: $URL"
+            echo "- HTTP: $http_code ($status)"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment preview URL on commit
+        if: github.ref_type == 'branch' && github.ref_name != github.event.repository.default_branch
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = `${{ toJSON(steps.prev_url.outputs.url) }}`;
+            const http = `${{ toJSON(steps.verify_prev.outputs.http_code) }}`;
+            const body = `✅ Deployed (preview)\n\n- URL: ${url}\n- HTTP: ${http}`;
+            await github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body,
+            });
