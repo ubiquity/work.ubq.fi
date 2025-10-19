@@ -41,11 +41,29 @@ jobs:
       - name: Add Deno bin to PATH
         run: echo "${HOME}/.deno/bin" >> $GITHUB_PATH
 
+      - name: Preflight: check deploy token
+        id: preflight
+        env:
+          DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
+        run: |
+          if [ -n "${DENO_DEPLOY_TOKEN}" ]; then
+            echo "deploy=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=no" >> "$GITHUB_OUTPUT"
+            echo "⚠️ DENO_DEPLOY_TOKEN not set; skipping deploy steps." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Build static assets
-        run: deno task build
+        run: |
+          : "${SUPABASE_URL:='https://placeholder.supabase.co'}"
+          : "${SUPABASE_ANON_KEY:='anon-placeholder-key'}"
+          deno task build
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
       - name: Deploy to Deno Deploy (production)
-        if: github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch
+        if: steps.preflight.outputs.deploy == 'yes' && github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch
         run: bash .github/workflows/deployment/deploy.sh production "$DENO_DEPLOY_TOKEN" "work-ubq-fi" "work-ubq-fi-preview"
         env:
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
@@ -54,7 +72,7 @@ jobs:
           VOYAGEAI_API_KEY: ${{ secrets.VOYAGEAI_API_KEY }}
 
       - name: Determine deployed URL (production)
-        if: github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch
+        if: steps.preflight.outputs.deploy == 'yes' && github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch
         id: prod_url
         env:
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
@@ -73,7 +91,7 @@ jobs:
           echo "url=$URL" >> "$GITHUB_OUTPUT"
 
       - name: Verify deployment (production)
-        if: github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch
+        if: steps.preflight.outputs.deploy == 'yes' && github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch
         id: verify_prod
         run: |
           set -euo pipefail
@@ -97,7 +115,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Comment production URL on commit
-        if: github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch
+        if: steps.preflight.outputs.deploy == 'yes' && github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch
         uses: actions/github-script@v7
         with:
           script: |
@@ -112,7 +130,7 @@ jobs:
             });
 
       - name: Deploy to Deno Deploy (preview)
-        if: github.ref_type == 'branch' && github.ref_name != github.event.repository.default_branch
+        if: steps.preflight.outputs.deploy == 'yes' && github.ref_type == 'branch' && github.ref_name != github.event.repository.default_branch
         run: bash .github/workflows/deployment/deploy.sh preview "$DENO_DEPLOY_TOKEN" "work-ubq-fi" "work-ubq-fi-preview"
         env:
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
@@ -121,7 +139,7 @@ jobs:
           VOYAGEAI_API_KEY: ${{ secrets.VOYAGEAI_API_KEY }}
 
       - name: Determine deployed URL (preview)
-        if: github.ref_type == 'branch' && github.ref_name != github.event.repository.default_branch
+        if: steps.preflight.outputs.deploy == 'yes' && github.ref_type == 'branch' && github.ref_name != github.event.repository.default_branch
         id: prev_url
         env:
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
@@ -140,7 +158,7 @@ jobs:
           echo "url=$URL" >> "$GITHUB_OUTPUT"
 
       - name: Verify deployment (preview)
-        if: github.ref_type == 'branch' && github.ref_name != github.event.repository.default_branch
+        if: steps.preflight.outputs.deploy == 'yes' && github.ref_type == 'branch' && github.ref_name != github.event.repository.default_branch
         id: verify_prev
         run: |
           set -euo pipefail
@@ -164,7 +182,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Comment preview URL on commit
-        if: github.ref_type == 'branch' && github.ref_name != github.event.repository.default_branch
+        if: steps.preflight.outputs.deploy == 'yes' && github.ref_type == 'branch' && github.ref_name != github.event.repository.default_branch
         uses: actions/github-script@v7
         with:
           script: |
