@@ -41,7 +41,7 @@ jobs:
       - name: Add Deno bin to PATH
         run: echo "${HOME}/.deno/bin" >> $GITHUB_PATH
 
-      - name: Preflight: check deploy token
+      - name: Preflight - check deploy token
         id: preflight
         env:
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
