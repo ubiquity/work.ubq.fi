@@ -1,5 +1,5 @@
-import { RequestError } from "@octokit/request-error";
-import { Octokit } from "@octokit/rest";
+import { RequestError } from "https://esm.sh/@octokit/request-error@6.1.0";
+import { Octokit } from "https://esm.sh/@octokit/rest@20.0.2";
 import { getGitHubUser } from "../getters/get-github-user";
 import { toolbar } from "../ready-toolbar";
 import { renderErrorInModal } from "../rendering/display-popup-modal";

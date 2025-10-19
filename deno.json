@@ -1,0 +1,37 @@
+{
+  "$schema": "https://deno.land/x/deno/cli/schemas/config-file.v1.json",
+  "lint": {
+    "rules": {
+      "tags": ["recommended"]
+    }
+  },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 100,
+    "indentWidth": 2,
+    "semiColons": true
+  },
+  "exclude": [
+    "node_modules",
+    "static/dist",
+    ".git"
+  ],
+  "compilerOptions": {
+    "lib": ["deno.ns", "dom"],
+    "skipLibCheck": true
+  },
+  "imports": {
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@^2.39.0",
+    "@octokit/rest": "npm:@octokit/rest@^20.0.2",
+    "marked": "npm:marked@^11.0.0",
+    "marked-footnote": "npm:marked-footnote@^1.2.4"
+  },
+  "tasks": {
+    "build": "deno run -A --env-file=.env build/esbuild-build.ts",
+    "watch": "deno run -A --env-file=.env build/esbuild-watch.ts",
+    "dev": "sh -c 'deno task watch & deno run --allow-net --allow-read --allow-env=PORT scripts/deno_static_server.ts'",
+    "fmt": "deno fmt",
+    "lint": "deno lint",
+    "cspell": "deno run -A npm:cspell ."
+  }
+}

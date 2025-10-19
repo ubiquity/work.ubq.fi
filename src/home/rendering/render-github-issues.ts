@@ -1,5 +1,5 @@
-import { marked } from "marked";
-import markedFootnote from "marked-footnote";
+import { marked } from "https://esm.sh/marked@11.0.0";
+import markedFootnote from "https://esm.sh/marked-footnote@1.2.4";
 import { fetchAvatar, ubiquityAvatarUrl } from "../fetch-github/fetch-avatar";
 import { GitHubIssue } from "../github-types";
 import { taskManager } from "../home";

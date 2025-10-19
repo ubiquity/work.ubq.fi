@@ -1,7 +1,7 @@
-import { RequestError } from "@octokit/request-error";
-import { Octokit } from "@octokit/rest";
+import { RequestError } from "https://esm.sh/@octokit/request-error@6.1.0";
+import { Octokit } from "https://esm.sh/@octokit/rest@20.0.2";
 import { handleRateLimit } from "../fetch-github/handle-rate-limit";
-import { GitHubUser, GitHubUserResponse } from "../github-types";
+import { GitHubUser } from "../github-types";
 import { OAuthToken } from "./get-github-access-token";
 import { getLocalStore } from "./get-local-store";
 declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
@@ -48,8 +48,8 @@ async function getNewSessionToken(): Promise<string | null> {
 async function getNewGitHubUser(providerToken: string | null): Promise<GitHubUser | null> {
   const octokit = new Octokit({ auth: providerToken });
   try {
-    const response = (await octokit.request("GET /user")) as GitHubUserResponse;
-    return response.data;
+    const response = (await octokit.request("GET /user")) as any;
+    return response.data as GitHubUser;
   } catch (error) {
     if (!!error && typeof error === "object" && "status" in error && error.status === 403) {
       await handleRateLimit(providerToken ? octokit : undefined, error as RequestError);

@@ -1,12 +1,11 @@
-import esbuild from "esbuild";
-import fs from "fs";
-import path from "path";
+import type { Plugin } from "npm:esbuild";
+import * as path from "jsr:@std/path";
 
-export const invertColors: esbuild.Plugin = {
+export const invertColors: Plugin = {
   name: "invert-colors",
   setup(build) {
     build.onLoad({ filter: /\.css$/ }, async (args) => {
-      const contents = await fs.promises.readFile(args.path, "utf8");
+      const contents = await Deno.readTextFile(args.path);
 
       const updatedContents = contents.replace(/prefers-color-scheme: dark/g, "prefers-color-scheme: light");
 
@@ -36,11 +35,11 @@ export const invertColors: esbuild.Plugin = {
       });
 
       // Define the output path for the new CSS file
-      const outputPath = path.resolve("static/style", "inverted-style.css");
+      const outputPath = path.join(Deno.cwd(), "static", "style", "inverted-style.css");
       const outputDir = path.dirname(outputPath);
-      await fs.promises.mkdir(outputDir, { recursive: true });
+      await Deno.mkdir(outputDir, { recursive: true });
       // Write the new contents to the output file
-      await fs.promises.writeFile(outputPath, invertedContents, "utf8");
+      await Deno.writeTextFile(outputPath, invertedContents);
 
       // Return an empty result to esbuild since we're writing the file ourselves
       return { contents: "", loader: "css" };

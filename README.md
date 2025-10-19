@@ -4,21 +4,24 @@
 
 ```sh
 cp .env.example .env
+# Ensure SUPABASE_URL and SUPABASE_ANON_KEY are set
+
+# Build once
+deno task build
+
+# Or watch in one terminal
+deno task watch
+
+# Serve in another terminal
+deno run --allow-net --allow-read --allow-env=PORT scripts/deno_static_server.ts
+# then open http://localhost:8080
 ```
 
-Ensure that `SUPABASE_URL` and `SUPABASE_ANON_KEY` are set. This is for GitHub user registration on login.
+## Server & Deployment
 
-```sh
-yarn
-yarn start
-open http://localhost:8080
-```
+This project serves the built UI via a pure Deno HTTP server. Cloudflare Wrangler/Workers/Pages are no longer used.
 
-## Setup Scraper Function
-
-For local development of the scraper function, you need to set up a `.dev.vars` file based on the `.dev.vars.example` file.
-
-For deployment, you would need to add the secrets to the Cloudflare Dashboard, for the worker.
+For deployment, run the Deno server wherever you host (container, VM, etc.). The CI "Build" workflow still produces the `static/` artifact.
 
 ### Automatic Light Mode
 

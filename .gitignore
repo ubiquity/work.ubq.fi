@@ -2,22 +2,25 @@
 .DS_Store
 # node
 node_modules
+# bun
+bun.lock
+# cloudflare
+.wrangler
 # yarn2
 .yarn
 .pnp.cjs
 .pnp.loader.mjs
 static/dist
 .env
-.wrangler/
+ 
 
 cypress/screenshots
 cypress/videos
 
-# Wrangler
-.wrangler
+ 
 
 # vscode
 .vscode
 
-# Cloudflare
+# Local overrides
 .dev.vars

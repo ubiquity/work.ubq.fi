@@ -1,0 +1,23 @@
+
+ ⛅️ wrangler 4.43.0
+───────────────────
+✨ Compiled Worker successfully
+Using vars defined in .env
+Your Worker has access to the following bindings:
+Binding                                                               Resource                  Mode
+env.KVNamespace (0a6aaf0a6edb428189606b116da58ef7)                    KV Namespace              local
+env.YARN_VERSION ("1.22.22")                                          Environment Variable      local
+env.SUPABASE_URL ("(hidden)")                                         Environment Variable      local
+env.SUPABASE_ANON_KEY ("(hidden)")                                    Environment Variable      local
+env.SUPABASE_SERVICE_ROLE_KEY ("(hidden)")                            Environment Variable      local
+env.VITE_SUPABASE_URL ("(hidden)")                                    Environment Variable      local
+env.VITE_SUPABASE_ANON_KEY ("(hidden)")                               Environment Variable      local
+env.VITE_RPC_URL ("(hidden)")                                         Environment Variable      local
+env.GITHUB_TOKEN ("(hidden)")                                         Environment Variable      local
+
+⎔ Starting local server...
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mAddress already in use (127.0.0.1:8080). Please check that you are not already running a server on this address or specify a different port with --port.[0m
+
+
+🪵  Logs were written to "/Users/nv/.wrangler/logs/wrangler-2025-10-19_11-45-20_229.log"

@@ -1,5 +1,3 @@
-import { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
-
 export interface AvatarCache {
   [organization: string]: string | null;
 }
@@ -12,8 +10,10 @@ export type TaskStorageItems = {
   loggedIn: boolean;
 };
 
-export type GitHubUserResponse = RestEndpointMethodTypes["users"]["getByUsername"]["response"];
-export type GitHubUser = GitHubUserResponse["data"];
+export interface GitHubUser {
+  login: string;
+  avatar_url?: string | null;
+}
 
 // Minimal GitHub issue shape consumed by the UI
 export interface GitHubIssue {

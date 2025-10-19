@@ -1,4 +1,12 @@
-import { createClient } from "@supabase/supabase-js";
+// Lazy-load supabase at runtime in the browser from CDN to avoid bundling issues
+let supabase: any;
+async function ensureSupabase() {
+  if (!supabase) {
+    const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2.39.0");
+    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+  return supabase;
+}
 import { renderErrorInModal } from "./display-popup-modal";
 
 declare const SUPABASE_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
@@ -7,9 +15,8 @@ declare const NODE_ENV: string; // @DEV: passed in at build time check build/esb
 declare const GIT_REVISION: string; // @DEV: passed in at build time check build/esbuild-build.ts
 declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 export function getSupabase() {
+  if (!supabase) throw new Error("Supabase client not initialized yet");
   return supabase;
 }
 
@@ -23,7 +30,7 @@ export async function checkSupabaseSession() {
 
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await (await ensureSupabase()).auth.getSession();
 
   return session;
 }
@@ -32,7 +39,8 @@ async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
   // Avoid carrying any existing hash to prevent double-hash fragments after OAuth redirect
   const { origin, pathname, search } = window.location;
   const redirectTo = `${origin}${pathname}${search}`;
-  const { error } = await supabase.auth.signInWithOAuth({
+  const client = await ensureSupabase();
+  const { error } = await client.auth.signInWithOAuth({
     provider: "github",
     options: {
       scopes,
