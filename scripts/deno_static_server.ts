@@ -90,9 +90,10 @@ async function handler(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+  // Serve static assets from ./static
+  // Note: avoid setting urlRoot to "/"; letting it default serves all paths correctly.
   const res = await serveDir(req, {
     fsRoot: "static",
-    urlRoot: "/",
     quiet: true,
     enableCors: true,
     showDirListing: false,
