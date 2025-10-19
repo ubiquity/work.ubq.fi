@@ -2,6 +2,8 @@ name: Deploy (Deno Deploy)
 
 on:
   push:
+    branches:
+      - development
   workflow_dispatch:
 
 permissions:
