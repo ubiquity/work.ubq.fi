@@ -55,8 +55,7 @@ viewToggle.addEventListener("click", () => {
 
 function getProposalsOnlyFilter(getProposals: boolean) {
   return (issue: GitHubIssue) => {
-    const labels = Array.isArray(issue?.labels) ? issue.labels : [];
-    const hasPriceLabel = labels.some((label) => /^(Price:)\s*/.test(getLabelText(label)));
+    const hasPriceLabel = issue.labels.some((label) => /^Price:\s*/.test(getLabelText(label)));
 
     return getProposals ? !hasPriceLabel : hasPriceLabel;
   };

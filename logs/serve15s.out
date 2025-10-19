@@ -1,0 +1,24 @@
+Task not found: serve:15s
+Available tasks:
+- start (package.json)
+    run-p start-wrangler watch
+- start-wrangler (package.json)
+    npx wrangler pages dev static --port 8080
+- watch (package.json)
+    tsx build/esbuild-watch.ts
+- build (package.json)
+    tsx build/esbuild-build.ts
+- format (package.json)
+    run-s format:lint format:prettier format:cspell
+- format:lint (package.json)
+    eslint --fix .
+- format:prettier (package.json)
+    prettier --write .
+- format:cspell (package.json)
+    cspell **/*
+- knip (package.json)
+    knip --config .github/knip.ts
+- knip-ci (package.json)
+    knip --no-exit-code --reporter json --config .github/knip.ts
+- prepare (package.json)
+    husky install

@@ -49,13 +49,19 @@ function hashStringToNumber(input: string): number {
   return combined;
 }
 
+function isMirrorAssigned(mirror?: MirrorStateEntry): boolean {
+  if (!mirror) return false;
+  const arr = Array.isArray(mirror.assignees) ? mirror.assignees : [];
+  return mirror.assigned === true || arr.length > 0;
+}
+
 function mapStorageIssueToGitHubIssue(issue: StorageIssue, mirror?: MirrorStateEntry): GitHubIssue {
   const repositoryUrl = `https://github.com/${issue.owner}/${issue.repo}`;
   // Note: UI code expects a numeric `id` to use in DOM attributes and URL params.
   // GitHub's `node_id` is globally unique but a string; we derive a stable numeric id from it.
   const id = hashStringToNumber(issue.node_id);
   const assigneesArr: unknown[] = mirror && Array.isArray(mirror.assignees) ? (mirror.assignees as unknown[]) : [];
-  const isAssigned = mirror?.assigned === true || assigneesArr.length > 0;
+  const isAssigned = isMirrorAssigned(mirror);
   return {
     id,
     node_id: issue.node_id,

@@ -13,6 +13,6 @@ export function sortIssuesByPrice(issues: GitHubIssue[]) {
 function getPriceFromLabel(label: GitHubLabel) {
   const text = getLabelText(label);
   if (!text) return null;
-  const match = text.match(/^(Price:)\s*([\d,]+)/);
-  return match ? parseInt(match[2].replace(/,/g, ""), 10) : null;
+  const match = text.match(/^Price:\s*([\d,]+)/);
+  return match ? parseInt(match[1].replace(/,/g, ""), 10) : null;
 }
