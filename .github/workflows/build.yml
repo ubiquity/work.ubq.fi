@@ -29,12 +29,13 @@ jobs:
       - name: Build
         run: |
           # Provide safe fallbacks when secrets are unavailable (e.g., PRs)
-          : "${SUPABASE_URL:='https://placeholder.supabase.co'}"
-          : "${SUPABASE_ANON_KEY:='anon-placeholder-key'}"
+          export SUPABASE_URL="${SUPABASE_URL:-https://placeholder.supabase.co}"
+          export SUPABASE_ANON_KEY="${SUPABASE_ANON_KEY:-${SUPABASE_KEY:-anon-placeholder-key}}"
           deno task build
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
