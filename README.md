@@ -12,9 +12,13 @@ deno task build
 # Or watch in one terminal
 deno task watch
 
-# Serve in another terminal
-deno run --allow-net --allow-read --allow-env=PORT scripts/deno_static_server.ts
+# Recommended: one-shot dev entry (watch + server)
+deno task dev
 # then open http://localhost:8080
+
+# Or, serve manually in another terminal
+# Note: add --allow-run to enable auto-kill of occupied port during dev
+deno run --allow-net --allow-read --allow-env=PORT --allow-run scripts/deno-static-server.ts
 ```
 
 ## Server & Deployment

@@ -9,7 +9,7 @@ This repository runs on a pure Deno HTTP server. Do not add or rely on Cloudflar
 
 ## Local Development
 - Build assets: `deno task build` (or `deno task watch` while developing).
-- Start server: `deno run --allow-net --allow-read --allow-env=PORT scripts/deno_static_server.ts`.
+- Start server: `deno run --allow-net --allow-read --allow-env=PORT scripts/deno-static-server.ts`.
 - Default port is `8080` (override with `PORT=<number>`).
 
 ## CI/CD

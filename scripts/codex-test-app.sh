@@ -17,7 +17,7 @@ URL="http://127.0.0.1:${PORT}/"
 
 echo "Starting Deno server on port ${PORT}..."
 (
-  PORT=${PORT} deno run --allow-net --allow-read --allow-env=PORT scripts/deno_static_server.ts
+  PORT=${PORT} deno run --allow-net --allow-read --allow-env=PORT scripts/deno-static-server.ts
 ) > logs/deno_dev.out 2>&1 &
 spid=$!
 

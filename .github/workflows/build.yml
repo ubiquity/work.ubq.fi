@@ -23,6 +23,9 @@ jobs:
         with:
           deno-version: v1.x
 
+      - name: Enforce kebab-case filenames
+        run: deno task lint:filenames
+
       - name: Build
         run: |
           deno task build
