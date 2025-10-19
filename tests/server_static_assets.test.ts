@@ -59,26 +59,30 @@ Deno.test({
     const { child, port } = await startServer();
     const base = `http://127.0.0.1:${port}`;
     try {
+      const timeoutMs = 5000;
+      const fetchT = (input: string | URL, init: RequestInit = {}) => {
+        return fetch(input, { signal: AbortSignal.timeout(timeoutMs), ...init });
+      };
       // index.html via root
-      const resIndex = await fetch(base + "/", { headers: { accept: "text/html" } });
+      const resIndex = await fetchT(base + "/", { headers: { accept: "text/html" } });
       assertEquals(resIndex.status, 200);
       const html = await resIndex.text();
       assertStringIncludes(html.toLowerCase(), "<!doctype html>");
 
       // CSS asset
-      const resCss = await fetch(base + "/style/style.css");
+      const resCss = await fetchT(base + "/style/style.css");
       assertEquals(resCss.status, 200);
       assertStringIncludes(resCss.headers.get("content-type") || "", "text/css");
       const css = await resCss.text();
       assertStringIncludes(css, "#issues-container");
 
       // SVG asset
-      const resSvg = await fetch(base + "/favicon.svg");
+      const resSvg = await fetchT(base + "/favicon.svg");
       assertEquals(resSvg.status, 200);
       assertStringIncludes(resSvg.headers.get("content-type") || "", "image/svg+xml");
 
       // Plain 404 for non-HTML unknown file
-      const res404 = await fetch(base + "/nope.txt");
+      const res404 = await fetchT(base + "/nope.txt");
       assertEquals(res404.status, 404);
     } finally {
       await stopServer(child);
