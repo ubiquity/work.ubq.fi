@@ -21,7 +21,7 @@ export function grid(node = document.body, callback?: () => void) {
     }
 `;
 
-  // cspell:ignore mediump
+  // cspell:ignore mediump fract
   const fragmentShaderSource = `
     precision mediump float;
 

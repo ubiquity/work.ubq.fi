@@ -1,0 +1,75 @@
+name: Deno Tasks CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: ["**"]
+
+concurrency:
+  group: deno-tasks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tasks:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: build
+            run: deno task build
+
+          - name: check
+            run: deno task check
+
+          - name: cspell
+            run: deno task cspell
+
+          - name: knip
+            run: deno task knip
+
+          - name: test
+            run: deno test -A --no-check
+
+          - name: serve-smoke
+            run: |
+              PORT=0 deno task serve & pid=$!
+              sleep 2
+              kill -TERM "$pid" || true
+
+          - name: watch-smoke
+            run: |
+              deno task watch & pid=$!
+              sleep 2
+              kill -TERM "$pid" || true
+
+          - name: dev-smoke
+            run: |
+              PORT=0 deno task dev & pid=$!
+              sleep 3
+              kill -TERM "$pid" || true
+
+    env:
+      # Provide minimal, non-secret env required for build define injection
+      SUPABASE_URL: https://example.supabase.co
+      SUPABASE_ANON_KEY: anon_key_for_ci
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.x
+
+      - name: Print versions
+        run: |
+          deno --version
+
+      - name: Run ${{ matrix.name }}
+        shell: bash
+        run: ${{ matrix.run }}

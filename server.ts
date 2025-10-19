@@ -2,11 +2,14 @@
 import "https://deno.land/std@0.224.0/dotenv/load.ts";
 import { serveDir, serveFile } from "https://deno.land/std@0.224.0/http/file_server.ts";
 
-const port = Number(Deno.env.get("PORT")) || 8080;
+const requestedPort = Number(Deno.env.get("PORT"));
+const port = Number.isFinite(requestedPort) ? requestedPort : 8080;
+const serverPortFile = Deno.env.get("SERVER_PORT_FILE") ?? "logs/server.port";
+const serverPidFile = Deno.env.get("SERVER_PID_FILE") ?? "logs/server.pid";
 
 const kv = await Deno.openKv();
 
-Deno.serve({ port }, async (request: Request): Promise<Response> => {
+const handler = async (request: Request): Promise<Response> => {
   const url = new URL(request.url);
   const pathname = url.pathname;
   console.log(`REQ ${request.method} ${pathname}`);
@@ -36,7 +39,7 @@ Deno.serve({ port }, async (request: Request): Promise<Response> => {
   // Static file serving from ./static with SPA fallback
   const res = await serveDir(request, {
     fsRoot: "static",
-    urlRoot: "/",
+    // urlRoot intentionally omitted to serve from site root
     quiet: true,
   });
 
@@ -50,6 +53,64 @@ Deno.serve({ port }, async (request: Request): Promise<Response> => {
   }
 
   return res;
-});
+};
 
-console.log(`Deno server listening on http://localhost:${port}`);
+function start(portToUse: number) {
+  try {
+    Deno.serve(
+      {
+        port: portToUse,
+        onListen: async ({ hostname, port }) => {
+          console.log(`Deno server listening on http://${hostname || "localhost"}:${port}`);
+          try {
+            await Deno.mkdir("logs", { recursive: true });
+          } catch (_) {}
+          try {
+            await Deno.writeTextFile(serverPortFile, String(port));
+          } catch (err) {
+            console.warn("Failed writing server port file:", String(err));
+          }
+          try {
+            await Deno.writeTextFile(serverPidFile, String(Deno.pid));
+          } catch (err) {
+            console.warn("Failed writing server pid file:", String(err));
+          }
+        },
+      },
+      handler
+    );
+  } catch (err) {
+    // If the port is in use, retry with an ephemeral port
+    const msg = (err && (err as Error).message) || "";
+    const isAddrInUse = msg.includes("AddrInUse") || msg.includes("address already in use");
+    if (isAddrInUse && portToUse !== 0) {
+      console.warn(`Port ${portToUse} in use; retrying on an open port...`);
+      Deno.serve(
+        {
+          port: 0,
+          onListen: async ({ hostname, port }) => {
+            console.log(`Deno server listening on http://${hostname || "localhost"}:${port}`);
+            try {
+              await Deno.mkdir("logs", { recursive: true });
+            } catch (_) {}
+            try {
+              await Deno.writeTextFile(serverPortFile, String(port));
+            } catch (err) {
+              console.warn("Failed writing server port file:", String(err));
+            }
+            try {
+              await Deno.writeTextFile(serverPidFile, String(Deno.pid));
+            } catch (err) {
+              console.warn("Failed writing server pid file:", String(err));
+            }
+          },
+        },
+        handler
+      );
+      return;
+    }
+    throw err;
+  }
+}
+
+start(port);

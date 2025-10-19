@@ -1,19 +1,24 @@
 import "https://deno.land/std@0.224.0/dotenv/load.ts";
 import esbuild from "npm:esbuild";
+// Preload npm dependencies so Deno populates node_modules symlinks for esbuild resolution
+import "@supabase/supabase-js";
+import "@octokit/rest";
+import "marked";
+import "marked-footnote";
 import { invertColors } from "./plugins/invert-colors.ts";
 import { pwaManifest } from "./plugins/pwa-manifest.ts";
 
-const typescriptEntry = "src/home/home.ts"; // not bundled here currently
+const typescriptEntry = "src/home/home.ts";
 const cssEntries = ["static/style/style.css"];
-// Only include assets that esbuild can treat as files; manifest is written by the pwaManifest plugin
-const entries = [...cssEntries, "static/favicon.svg", "static/icon-512x512.png"];
+// Include main TS entry so SPA boots; manifest is written by the pwaManifest plugin
+const entries = [typescriptEntry, ...cssEntries, "static/favicon.svg", "static/icon-512x512.png"];
 
 const isProd = (Deno.env.get("NODE_ENV") || "development") === "production";
 
 export const esBuildContext: esbuild.BuildOptions = {
   plugins: [invertColors, pwaManifest],
-  // Use inline sourcemaps in dev to avoid network/map caching issues; linked maps in prod
-  sourcemap: isProd ? true : "inline",
+  // Use inline sourcemaps in dev to aid debugging; disable in production for smaller, faster builds
+  sourcemap: isProd ? false : "inline",
   entryPoints: entries,
   bundle: true,
   minify: false,

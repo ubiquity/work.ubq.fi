@@ -12,7 +12,7 @@ Allowed
   - `deno task serve` — run the server only
   - `deno task build` — bundle frontend assets via esbuild (npm:esbuild)
   - `deno task format` — Prettier write (alias to `npm:prettier`)
-  - `deno task lint:eslint` — ESLint via `npm:eslint`
+  - `deno task lint` — ESLint via `npm:eslint`
   - `deno task format:check` — Prettier check mode when needed
 
 Disallowed
@@ -32,7 +32,7 @@ Build & Bundling
 
 Formatting & Linting
 - Formatting: Prettier only. Run `deno task format` or `deno task format:check`.
-- Linting: ESLint only. Run `deno task lint:eslint`.
+- Linting: ESLint only. Run `deno task lint`.
 - Note: `deno fmt` is not used; the Deno fmt config has been removed from `deno.json`.
 
 Git Hooks
@@ -42,6 +42,11 @@ Git Hooks
 Local Server
 - Primary entry: `server.ts` (Deno KV enabled). Default port: 8080.
 - Static assets served from `static/`; SPA fallback to `static/index.html`.
+
+Server Execution Policy
+- Do not start or run local servers (e.g., `deno task serve`, `deno task dev`, or any command that binds to a port) unless the user explicitly asks you to do so in this session.
+- Default behavior is to avoid running servers. If a runtime check or smoke test seems helpful, ask the user to run it and provide concise steps, or request explicit permission first.
+- If the user authorizes starting a server, keep it short‑lived, state the exact command, duration/intent, and stop it promptly after verification.
 
 Notes for Agents
 - Prefer Deno standard library and first‑party APIs.

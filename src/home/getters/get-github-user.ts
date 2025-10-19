@@ -23,8 +23,8 @@ async function getSessionToken(): Promise<string | null> {
 
 async function getNewSessionToken(): Promise<string | null> {
   let hash = window.location.hash || "";
-  // Strip all leading '#'
-  hash = hash.replace(/^#+/, "");
+  // Strip a single leading '#'
+  hash = hash.replace(/^#/, "");
   if (!hash) return null;
 
   const params = new URLSearchParams(hash);

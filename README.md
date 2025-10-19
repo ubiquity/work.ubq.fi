@@ -33,6 +33,7 @@ The scraper API (`/issue-scraper`) now runs on a local Deno server.
 
 - Deno-only policy: use Deno tasks and `npm:` tools through Deno. Do not run `npm`, `pnpm`, `yarn`, `node`, or `npx` in this repo.
 - Run server: `deno task dev` (watch) or `deno task serve` (server only).
+- Quick smoke (15s, ephemeral port): `deno task serve:15s`
 - Build assets: `deno task build` (esbuild via `npm:esbuild`).
 - Formatting: `deno task format` (Prettier). Check mode: `deno task format:check`.
 - Linting: `deno task lint` (ESLint). This repo does not use `deno fmt`.
@@ -56,3 +57,13 @@ The scraper API (`/issue-scraper`) now runs on a local Deno server.
 #### Mobile
 
 ![screenshot 2](https://github.com/ubiquity/devpool-directory-ui/assets/4975670/b7861ce7-1f1f-49a9-b8e2-ebb20724ee67)
+
+### Running via Codex (non-interactive, 15s)
+
+To verify the server starts and does not hang under an agent, run a Codex sub-instance and execute the 15s task:
+
+```
+codex exec --yolo -C "$PWD" "Run the convenience task: deno task serve:15s. Expect an ephemeral port and a 15s runtime. Return output and exit."
+```
+
+This starts the server on an ephemeral port, streams the logs (e.g., "Deno server listening on http://0.0.0.0:<port>"), and exits after ~15 seconds without hanging.
