@@ -5,22 +5,34 @@ async function startServer(): Promise<{ child: Deno.ChildProcess; port: number }
   const cmd = new Deno.Command(Deno.execPath(), {
     args: ["run", "--unstable-kv", "--allow-net", "--allow-read", "--allow-env", "--allow-write", "server.ts"],
     stdout: "piped",
-    stderr: "piped",
+    // Discard stderr to avoid potential pipe backpressure if not consumed
+    stderr: "null",
     env: { PORT: "0" },
   });
 
   const child = cmd.spawn();
 
+  const td = new TextDecoder();
   const reader = child.stdout.getReader();
-  const decoder = new TextDecoder();
   let buf = "";
-  const deadline = Date.now() + 7000;
+  const timeoutMs = 7000;
   let port: number | undefined;
 
-  while (Date.now() < deadline) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    buf += decoder.decode(value);
+  // Helper to read with a timeout so we don't hang indefinitely if no output is produced
+  async function readWithTimeout(ms: number) {
+    const timer = new Promise<{ timeout: true }>((resolve) => setTimeout(() => resolve({ timeout: true }), ms));
+    const read = reader.read();
+    return (await Promise.race([read, timer])) as ReadableStreamReadResult<Uint8Array> | { timeout: true };
+  }
+
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const remaining = Math.max(1, timeoutMs - (Date.now() - start));
+    const res = await readWithTimeout(remaining);
+    if ((res as { timeout: true }).timeout) break;
+    const { value, done: isDone } = res as ReadableStreamReadResult<Uint8Array>;
+    if (isDone) break;
+    buf += td.decode(value);
     const m = buf.match(/listening on http:\/\/[^:]+:(\d+)/i);
     if (m) {
       port = Number(m[1]);
@@ -29,15 +41,13 @@ async function startServer(): Promise<{ child: Deno.ChildProcess; port: number }
   }
   try {
     reader.releaseLock();
-  } catch (_) {
-    // ignore
-  }
+  } catch (_) {}
 
   if (!port) {
     try {
       child.kill("SIGTERM");
     } catch (_) {}
-    throw new Error("Failed to determine server port from output: " + buf.slice(-200));
+    throw new Error("Failed to determine server port from output within timeout: " + buf.slice(-200));
   }
   return { child, port };
 }
