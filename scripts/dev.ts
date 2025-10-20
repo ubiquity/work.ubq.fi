@@ -1,9 +1,10 @@
-// Simple dev runner to start server and esbuild watch concurrently
-// Picks an available port automatically unless PORT is provided by the user.
+// Simple dev runner to start server and esbuild watch concurrently.
+// Rationale: provides a single entry that (1) runs both processes, (2) auto-picks a free port
+// when PORT is unset, and (3) cleans up both children on Ctrl+C/kill so CI/agents don’t hang.
 const desiredPort = Deno.env.get("PORT") ?? "0"; // 0 = auto-assign an open port
 
 const serve = new Deno.Command(Deno.execPath(), {
-  args: ["run", "--unstable-kv", "--allow-net", "--allow-read", "--allow-env", "--allow-write", "server.ts"],
+  args: ["run", "--allow-net", "--allow-read", "--allow-env", "--allow-write", "server.ts"],
   stdout: "inherit",
   stderr: "inherit",
   env: { PORT: desiredPort },

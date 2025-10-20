@@ -9,7 +9,7 @@ const serverPidFile = Deno.env.get("SERVER_PID_FILE") ?? "logs/server.pid";
 
 const kv = await Deno.openKv();
 
-const handler = async (request: Request): Promise<Response> => {
+async function handler(request: Request): Promise<Response> {
   const url = new URL(request.url);
   const pathname = url.pathname;
   console.log(`REQ ${request.method} ${pathname}`);
@@ -53,29 +53,33 @@ const handler = async (request: Request): Promise<Response> => {
   }
 
   return res;
-};
+}
+
+async function onListenCommon(hostname: string | undefined, port: number) {
+  console.log(`Deno server listening on http://${hostname || "localhost"}:${port}`);
+  try {
+    await Deno.mkdir("logs", { recursive: true });
+  } catch (_) {
+    console.warn("Failed creating logs directory:", String(_));
+  }
+  try {
+    await Deno.writeTextFile(serverPortFile, String(port));
+  } catch (err) {
+    console.warn("Failed writing server port file:", String(err));
+  }
+  try {
+    await Deno.writeTextFile(serverPidFile, String(Deno.pid));
+  } catch (err) {
+    console.warn("Failed writing server pid file:", String(err));
+  }
+}
 
 function start(portToUse: number) {
   try {
     Deno.serve(
       {
         port: portToUse,
-        onListen: async ({ hostname, port }) => {
-          console.log(`Deno server listening on http://${hostname || "localhost"}:${port}`);
-          try {
-            await Deno.mkdir("logs", { recursive: true });
-          } catch (_) {}
-          try {
-            await Deno.writeTextFile(serverPortFile, String(port));
-          } catch (err) {
-            console.warn("Failed writing server port file:", String(err));
-          }
-          try {
-            await Deno.writeTextFile(serverPidFile, String(Deno.pid));
-          } catch (err) {
-            console.warn("Failed writing server pid file:", String(err));
-          }
-        },
+        onListen: ({ hostname, port }) => onListenCommon(hostname, port),
       },
       handler
     );
@@ -88,22 +92,7 @@ function start(portToUse: number) {
       Deno.serve(
         {
           port: 0,
-          onListen: async ({ hostname, port }) => {
-            console.log(`Deno server listening on http://${hostname || "localhost"}:${port}`);
-            try {
-              await Deno.mkdir("logs", { recursive: true });
-            } catch (_) {}
-            try {
-              await Deno.writeTextFile(serverPortFile, String(port));
-            } catch (err) {
-              console.warn("Failed writing server port file:", String(err));
-            }
-            try {
-              await Deno.writeTextFile(serverPidFile, String(Deno.pid));
-            } catch (err) {
-              console.warn("Failed writing server pid file:", String(err));
-            }
-          },
+          onListen: ({ hostname, port }) => onListenCommon(hostname, port),
         },
         handler
       );

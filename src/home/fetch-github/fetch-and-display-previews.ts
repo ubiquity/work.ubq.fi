@@ -15,24 +15,25 @@ type Options = {
 };
 
 // decide initial value based on URL
-export let isFilteringAvailableIssues = new URLSearchParams(window.location.search).get("allIssues") === "true" ? false : true;
+export let isFilteringAvailableIssues = new URLSearchParams(globalThis.location?.search ?? "").get("allIssues") === "true" ? false : true;
 
 export function swapAvailabilityFilter() {
   isFilteringAvailableIssues = !isFilteringAvailableIssues;
 
   //url part
-  const newURL = new URL(window.location.href);
+  const href = globalThis.location?.href ?? "";
+  const newURL = new URL(href || "http://localhost/");
   if (isFilteringAvailableIssues) {
     newURL.searchParams.delete("allIssues");
   } else {
     newURL.searchParams.set("allIssues", "true");
   }
   console.log(newURL.toString());
-  window.history.replaceState({}, "", newURL.toString());
+  globalThis.history?.replaceState({}, "", newURL.toString());
 }
 
 // start at view based on URL
-let isProposalOnlyViewer = new URLSearchParams(window.location.search).get("proposal") === "true";
+let isProposalOnlyViewer = new URLSearchParams(globalThis.location?.search ?? "").get("proposal") === "true";
 
 const viewToggle = document.getElementById("view-toggle") as HTMLInputElement;
 
@@ -63,7 +64,7 @@ function getProposalsOnlyFilter(getProposals: boolean) {
 
 function filterIssuesByOrganization(issues: GitHubIssue[]): GitHubIssue[] {
   // get organization name from first thing after / in URL
-  const pathSegments = window.location.pathname.split("/").filter(Boolean);
+  const pathSegments = (globalThis.location?.pathname ?? "/").split("/").filter(Boolean);
   const urlOrgName = pathSegments.length > 0 ? pathSegments[0] : null;
 
   //  if there is no organization name in the URL, return all issues
@@ -78,7 +79,7 @@ function filterIssuesByOrganization(issues: GitHubIssue[]): GitHubIssue[] {
   // if no issues match the organization, redirect to home
   if (filteredIssues.length === 0) {
     console.log(`No issues found for organization "${urlOrgName}". Redirecting to the home page.`);
-    window.location.href = "/";
+    if (globalThis.location) globalThis.location.href = "/";
   }
 
   renderOrgHeaderLabel(urlOrgName);
@@ -106,7 +107,7 @@ export async function displayGitHubIssues({
   applyAvatarsToIssues();
 }
 
-export async function searchDisplayGitHubIssues({ searchText, skipAnimation = false }: { searchText: string; skipAnimation?: boolean }) {
+export function searchDisplayGitHubIssues({ searchText, skipAnimation = false }: { searchText: string; skipAnimation?: boolean }) {
   const searchResult = filterIssuesBySearch(searchText);
   let filteredIssues = searchResult.filter(getProposalsOnlyFilter(isProposalOnlyViewer));
   filteredIssues = filterIssuesByOrganization(filteredIssues);

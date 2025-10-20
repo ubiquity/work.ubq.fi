@@ -24,18 +24,24 @@ jobs:
           deno-version: v2.x
 
       - name: Build
+        id: build
+        if: ${{ secrets.SUPABASE_URL != '' && secrets.SUPABASE_ANON_KEY != '' }}
         run: |
-          export NODE_ENV="${NODE_ENV:-production}"
-          export SUPABASE_URL="${SUPABASE_URL:-https://placeholder.supabase.co}"
-          export SUPABASE_ANON_KEY="${SUPABASE_ANON_KEY:-${SUPABASE_KEY:-anon-placeholder-key}}"
+          set -euo pipefail
           deno task build
-        env: # Populate from secrets when available (fallbacks above cover PRs)
+        env: # Only use real secrets; no placeholders
           NODE_ENV: production
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
+      - name: Skip build (secrets unavailable)
+        if: ${{ !(secrets.SUPABASE_URL != '' && secrets.SUPABASE_ANON_KEY != '' ) }}
+        run: |
+          echo "Skipping build: required secrets are not available for this run."
+
       - name: Upload build artifact
+        if: ${{ steps.build.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
           name: static
