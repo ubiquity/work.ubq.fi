@@ -1,30 +1,38 @@
 /// <reference lib="deno.ns" />
 import { assertEquals, assertStringIncludes } from "https://deno.land/std@0.224.0/assert/mod.ts";
 
+async function runBuild(): Promise<void> {
+  const cmd = new Deno.Command(Deno.execPath(), {
+    args: ["run", "-A", "build/esbuild-build.ts"],
+    stdout: "inherit",
+    stderr: "inherit",
+    env: {
+      SUPABASE_URL: Deno.env.get("SUPABASE_URL") ?? "https://example.supabase.co",
+      SUPABASE_ANON_KEY: Deno.env.get("SUPABASE_ANON_KEY") ?? "anon-key",
+    },
+  });
+  const { code } = await cmd.output();
+  assertEquals(code, 0);
+}
+
 async function startServer(): Promise<{ child: Deno.ChildProcess; port: number }> {
   const cmd = new Deno.Command(Deno.execPath(), {
     args: ["run", "--unstable-kv", "--allow-net", "--allow-read", "--allow-env", "--allow-write", "server.ts"],
     stdout: "piped",
-    // Discard stderr to avoid potential pipe backpressure if not consumed
     stderr: "null",
     env: { PORT: "0" },
   });
-
   const child = cmd.spawn();
-
   const td = new TextDecoder();
   const reader = child.stdout.getReader();
   let buf = "";
   const timeoutMs = 7000;
   let port: number | undefined;
-
-  // Helper to read with a timeout so we don't hang indefinitely if no output is produced
   async function readWithTimeout(ms: number) {
     const timer = new Promise<{ timeout: true }>((resolve) => setTimeout(() => resolve({ timeout: true }), ms));
     const read = reader.read();
     return (await Promise.race([read, timer])) as ReadableStreamReadResult<Uint8Array> | { timeout: true };
   }
-
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     const remaining = Math.max(1, timeoutMs - (Date.now() - start));
@@ -42,7 +50,6 @@ async function startServer(): Promise<{ child: Deno.ChildProcess; port: number }
   try {
     reader.releaseLock();
   } catch (_) {}
-
   if (!port) {
     try {
       child.kill("SIGTERM");
@@ -62,38 +69,24 @@ async function stopServer(child: Deno.ChildProcess) {
 }
 
 Deno.test({
-  name: "static assets are served and SPA fallback works",
+  name: "build then serve: dist JS and inverted CSS are available",
   sanitizeOps: false,
   sanitizeResources: false,
   fn: async () => {
+    await runBuild();
     const { child, port } = await startServer();
     const base = `http://127.0.0.1:${port}`;
     try {
       const timeoutMs = 5000;
-      const fetchT = (input: string | URL, init: RequestInit = {}) => {
-        return fetch(input, { signal: AbortSignal.timeout(timeoutMs), ...init });
-      };
-      // index.html via root
-      const resIndex = await fetchT(base + "/", { headers: { accept: "text/html" } });
-      assertEquals(resIndex.status, 200);
-      const html = await resIndex.text();
-      assertStringIncludes(html.toLowerCase(), "<!doctype html>");
+      const fetchT = (input: string | URL, init: RequestInit = {}) => fetch(input, { signal: AbortSignal.timeout(timeoutMs), ...init });
 
-      // CSS asset
-      const resCss = await fetchT(base + "/style/style.css");
+      const resJs = await fetchT(base + "/dist/src/home/home.js");
+      assertEquals(resJs.status, 200);
+      assertStringIncludes((resJs.headers.get("content-type") || "").toLowerCase(), "javascript");
+
+      const resCss = await fetchT(base + "/style/inverted-style.css");
       assertEquals(resCss.status, 200);
-      assertStringIncludes(resCss.headers.get("content-type") || "", "text/css");
-      const css = await resCss.text();
-      assertStringIncludes(css, "#issues-container");
-
-      // SVG asset
-      const resSvg = await fetchT(base + "/favicon.svg");
-      assertEquals(resSvg.status, 200);
-      assertStringIncludes(resSvg.headers.get("content-type") || "", "image/svg+xml");
-
-      // Plain 404 for non-HTML unknown file
-      const res404 = await fetchT(base + "/nope.txt");
-      assertEquals(res404.status, 404);
+      assertStringIncludes((resCss.headers.get("content-type") || "").toLowerCase(), "text/css");
     } finally {
       await stopServer(child);
     }

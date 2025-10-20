@@ -19,7 +19,7 @@ const serverProc = serve.spawn();
 const watchProc = watch.spawn();
 
 // Ensure child processes are cleaned up on Ctrl+C or kill
-function gracefulShutdown(signal: Deno.Signal) {
+function gracefulShutdown(_signal: Deno.Signal) {
   try {
     serverProc.kill("SIGTERM");
   } catch (_) {}

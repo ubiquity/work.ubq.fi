@@ -93,7 +93,7 @@ export async function displayGitHubIssues({
   skipAnimation = false,
 }: {
   sorting?: Sorting;
-  options?: { ordering: string };
+  options?: Options;
   skipAnimation?: boolean;
 } = {}) {
   await checkCacheIntegrityAndSyncTasks();

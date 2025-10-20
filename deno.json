@@ -16,9 +16,10 @@
     "lint:eslint": "deno run -A npm:eslint@9.38.0 . --config eslint.config.mjs",
     "format:check": "deno run -A npm:prettier@3.2.5 --check .",
     "cspell": "deno run -A npm:cspell@9.2.1 \"**/*\"",
-    "knip": "deno run -A scripts/run-knip.ts --exports --config .github/knip.ts",
-    "knip:ci": "deno run -A scripts/run-knip.ts --exports --no-exit-code --reporter json --config .github/knip.ts",
-    "check": "deno task lint:eslint && deno task format:check"
+    "knip": "deno run -A scripts/run-knip.ts",
+    "knip:ci": "deno run -A scripts/run-knip.ts --no-exit-code --reporter json",
+    "check": "deno task lint:eslint && deno task format:check",
+    "verify": "deno task build && deno task check && deno task cspell && deno task knip && deno test -A --no-check"
   },
   "nodeModulesDir": "auto",
   "lint": {

@@ -1,0 +1,7 @@
+{
+  "name": "work.ubq.fi",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Deno-first app; package.json present for tooling compatibility (e.g., knip).",
+  "type": "module"
+}

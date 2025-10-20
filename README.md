@@ -38,7 +38,7 @@ The scraper API (`/issue-scraper`) now runs on a local Deno server.
 - Formatting: `deno task format` (Prettier). Check mode: `deno task format:check`.
 - Linting: `deno task lint` (ESLint). This repo does not use `deno fmt`.
 - Spell check: `deno task cspell`.
-- Static analysis (Knip): `deno task knip` — in a Deno‑only repo without `package.json`, this task is skipped gracefully.
+- Static analysis (Knip): `deno task knip` — runs via Deno’s `npm:` and checks unused files/exports (not dependencies). No Node required.
 - Git hooks: pre-commit runs lint-staged (Prettier/ESLint) via Deno; commit messages are checked with Commitlint.
 
 ## Features for End Users

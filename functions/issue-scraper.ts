@@ -112,6 +112,7 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
+/** @public */
 export async function handleIssueScraper(request: Request): Promise<Response> {
   try {
     switch (request.method) {

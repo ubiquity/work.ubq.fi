@@ -1,7 +1,6 @@
 declare const SUPABASE_STORAGE_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
 import { Octokit } from "@octokit/rest";
 import { checkSupabaseSession } from "../rendering/render-github-login-button.ts";
-import { getLocalStore } from "./get-local-store.ts";
 
 export async function getGitHubAccessToken(): Promise<string | null> {
   // better to use official function, looking up localstorage has flaws
@@ -33,16 +32,7 @@ export async function isMissingRepoScope(): Promise<boolean> {
   return !scopes?.includes("repo");
 }
 
-function getGitHubUserName(): string | null {
-  const oauthToken = getLocalStore(`sb-${SUPABASE_STORAGE_KEY}-auth-token`) as OAuthToken | null;
-
-  const username = oauthToken?.user?.user_metadata?.user_name;
-  if (username) {
-    return username;
-  }
-
-  return null;
-}
+// Removed unused helper (prefer checkSupabaseSession, see getGitHubAccessToken)
 
 export interface OAuthToken {
   provider_token: string;

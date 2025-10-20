@@ -6,6 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
+/** @public */
 export async function handleReferralManager(request: Request, kv: Deno.Kv): Promise<Response> {
   const url = new URL(request.url);
   try {

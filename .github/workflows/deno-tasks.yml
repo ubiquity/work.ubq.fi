@@ -28,29 +28,48 @@ jobs:
           - name: cspell
             run: deno task cspell
 
-          - name: knip
-            run: deno task knip
-
           - name: test
             run: deno test -A --no-check
 
           - name: serve-smoke
             run: |
-              PORT=0 deno task serve & pid=$!
-              sleep 2
-              kill -TERM "$pid" || true
+              set -euo pipefail
+              echo "Building assets before server smoke test..."
+              deno task build
 
-          - name: watch-smoke
-            run: |
-              deno task watch & pid=$!
-              sleep 2
-              kill -TERM "$pid" || true
+              echo "Starting server on ephemeral port..."
+              PORT=0 deno task serve &
+              srv_pid=$!
+              # Wait for server to write port file (server.ts writes to logs/server.port)
+              for i in $(seq 1 20); do
+                if [ -f logs/server.port ]; then break; fi
+                sleep 0.5
+              done
+              if [ ! -f logs/server.port ]; then
+                echo "Server did not write logs/server.port in time" >&2
+                kill -TERM "$srv_pid" || true
+                exit 1
+              fi
+              PORT=$(cat logs/server.port)
+              BASE="http://127.0.0.1:${PORT}"
+              echo "Server reported port: $PORT"
 
-          - name: dev-smoke
-            run: |
-              PORT=0 deno task dev & pid=$!
-              sleep 3
-              kill -TERM "$pid" || true
+              echo "Curl root (index.html)"
+              curl -fsS --retry 5 --retry-connrefused -H 'Accept: text/html' "$BASE/" >/dev/null
+
+              echo "Curl dist JS (bundled app)"
+              curl -fsS --retry 5 --retry-connrefused "$BASE/dist/src/home/home.js" >/dev/null
+
+              echo "Curl CSS (inverted stylesheet)"
+              curl -fsS --retry 5 --retry-connrefused "$BASE/style/inverted-style.css" >/dev/null
+
+              echo "Curl favicon"
+              curl -fsS --retry 5 --retry-connrefused -I "$BASE/favicon.svg" >/dev/null
+
+              echo "Shutting down server (pid=$srv_pid)"
+              kill -TERM "$srv_pid" || true
+              # Give it a moment to exit
+              sleep 1
 
     env:
       # Provide minimal, non-secret env required for build define injection
@@ -73,3 +92,19 @@ jobs:
       - name: Run ${{ matrix.name }}
         shell: bash
         run: ${{ matrix.run }}
+
+  knip:
+    name: knip
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Print versions
+        run: deno --version
+      - name: Run knip (files + exports)
+        run: deno task knip

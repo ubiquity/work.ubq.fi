@@ -38,8 +38,17 @@ export default [
     rules: {
       // Browser globals, use TS for undefined checks
       "no-undef": "off",
-      // Defer to TS for unused checks or reduce noise
+      // Enforce unused locals/args via TS-aware rule; allow `_`-prefixed ignores
       "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrors: "none",
+          ignoreRestSiblings: true,
+        },
+      ],
       // Allow intentionally empty catch blocks for cleanup/teardown
       "no-empty": ["error", { allowEmptyCatch: true }],
       // Ported from .eslintrc
@@ -52,6 +61,7 @@ export default [
         { selector: "typeLike", format: ["PascalCase"] },
         { selector: "variableLike", format: ["camelCase"] },
         { selector: "memberLike", modifiers: ["private"], format: ["camelCase"], leadingUnderscore: "require" },
+        { selector: "parameter", format: ["camelCase"], leadingUnderscore: "allow" },
         { selector: "variable", types: ["boolean"], format: ["PascalCase"], prefix: ["is", "should", "has", "can", "did", "will"] },
         { selector: "variable", format: ["camelCase", "UPPER_CASE"], leadingUnderscore: "allow", trailingUnderscore: "allow" },
         { selector: "typeParameter", format: ["PascalCase"], prefix: ["T"] },

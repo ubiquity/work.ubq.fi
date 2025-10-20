@@ -1,10 +1,5 @@
 import type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 
-// Local-only type formerly exported; not used across modules.
-interface AvatarCache {
-  [organization: string]: string | null;
-}
-
 export const GITHUB_TASKS_STORAGE_KEY = "gitHubTasks";
 
 export type TaskStorageItems = {
