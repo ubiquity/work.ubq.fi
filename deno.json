@@ -10,7 +10,7 @@
     "watch": "deno run -A build/esbuild-watch.ts",
     "dev:bg": "deno run --allow-run --allow-read --allow-write --allow-env --allow-net scripts/dev_bg.ts",
     "dev:stop": "deno run --allow-read --allow-write scripts/dev_stop.ts",
-    "dev": "deno run --unstable-kv -A scripts/dev.ts",
+    "dev": "deno run -A scripts/dev.ts",
     "format": "deno run -A npm:prettier@3.2.5 --write .",
     "lint": "deno task lint:eslint",
     "lint:eslint": "deno run -A npm:eslint@9.38.0 . --config eslint.config.mjs",
