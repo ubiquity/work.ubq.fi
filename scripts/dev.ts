@@ -31,7 +31,6 @@ function gracefulShutdown(_signal: Deno.Signal) {
 }
 
 Deno.addSignalListener("SIGINT", () => gracefulShutdown("SIGINT"));
-Deno.addSignalListener("SIGTERM", () => gracefulShutdown("SIGTERM"));
 
 const serverStatus = serverProc.status;
 const watchStatus = watchProc.status;
