@@ -23,6 +23,15 @@ The scraper API (`/issue-scraper`) now runs on a local Deno server.
 - Local development: set environment variables in `.env` (e.g. `SUPABASE_URL`, `SUPABASE_KEY`/`SUPABASE_SERVICE_ROLE_KEY`, `VOYAGEAI_API_KEY`). The Deno server loads `.env` automatically via std/dotenv.
 - Deployment: configure the same variables in your runtime environment (e.g., system env vars). No Cloudflare configuration is required.
 
+## Login Config (Supabase)
+
+- Required: `SUPABASE_URL`, `SUPABASE_ANON_KEY` for the browser bundle.
+- Server-side: provide either `SUPABASE_KEY` or `SUPABASE_SERVICE_ROLE_KEY` (the workflow and server accept both).
+- Local: set values in `.env` (see `.env.example:1`).
+- GitHub Secrets: set `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and either `SUPABASE_KEY` or `SUPABASE_SERVICE_ROLE_KEY` so CI builds and deploys correctly (`.github/workflows/deploy-deno.yml:1`).
+- Deno Deploy: the deploy script forwards whichever server-side key is present (`.github/workflows/deployment/deploy.sh:1`).
+- Ensure `SUPABASE_URL` points to a valid project ref (e.g., `https://wfzpewmlyiozupulbuur.supabase.co`). Update secrets if the project changes.
+
 ### Automatic Light Mode
 
 - There is a plugin (`build/plugins/invert-colors.ts`) that inverts the greyscale shades in `style.css` and outputs `inverted-style.css`.

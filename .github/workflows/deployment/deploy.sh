@@ -18,14 +18,21 @@ flags=(
   "--entrypoint=server.ts"
   "--exclude=src"
   "--env-var=SUPABASE_URL=$SUPABASE_URL"
-  "--env-var=SUPABASE_KEY=$SUPABASE_KEY"
 )
 
-if [ "${SUPABASE_ANON_KEY:-}" != "" ]; then
+## Resolve server-side key from SUPABASE_KEY or SUPABASE_SERVICE_ROLE_KEY
+if [ -z "${SUPABASE_KEY:-}" ] && [ -n "${SUPABASE_SERVICE_ROLE_KEY:-}" ]; then
+  SUPABASE_KEY="$SUPABASE_SERVICE_ROLE_KEY"
+fi
+if [ -n "${SUPABASE_KEY:-}" ]; then
+  flags+=("--env-var=SUPABASE_KEY=$SUPABASE_KEY")
+fi
+
+if [ -n "${SUPABASE_ANON_KEY:-}" ]; then
   flags+=("--env-var=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY")
 fi
 
-if [ "${VOYAGEAI_API_KEY:-}" != "" ]; then
+if [ -n "${VOYAGEAI_API_KEY:-}" ]; then
   flags+=("--env-var=VOYAGEAI_API_KEY=$VOYAGEAI_API_KEY")
 fi
 

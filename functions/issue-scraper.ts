@@ -129,13 +129,14 @@ export async function handleIssueScraper(request: Request): Promise<Response> {
 
         try {
           const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-          const SUPABASE_KEY = Deno.env.get("SUPABASE_KEY");
+          // Allow either SUPABASE_KEY or SUPABASE_SERVICE_ROLE_KEY for server-side usage
+          const SUPABASE_KEY = Deno.env.get("SUPABASE_KEY") ?? Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
           const VOYAGEAI_API_KEY = Deno.env.get("VOYAGEAI_API_KEY");
 
           // Ensure required environment variables are present in dev/prod
           const missing: string[] = [];
           if (!SUPABASE_URL) missing.push("SUPABASE_URL");
-          if (!SUPABASE_KEY) missing.push("SUPABASE_KEY");
+          if (!SUPABASE_KEY) missing.push("SUPABASE_KEY/SUPABASE_SERVICE_ROLE_KEY");
           if (!VOYAGEAI_API_KEY) missing.push("VOYAGEAI_API_KEY");
           if (missing.length) {
             return new Response(

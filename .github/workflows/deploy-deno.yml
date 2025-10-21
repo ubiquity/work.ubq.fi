@@ -45,15 +45,17 @@ jobs:
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           if [ -n "${DENO_DEPLOY_TOKEN}" ]; then
             missing=""
             if [ -z "${SUPABASE_URL}" ]; then missing="SUPABASE_URL"; fi
-            if [ -z "${SUPABASE_KEY}" ]; then
+            # Allow either SUPABASE_KEY or SUPABASE_SERVICE_ROLE_KEY
+            if [ -z "${SUPABASE_KEY}" ] && [ -z "${SUPABASE_SERVICE_ROLE_KEY}" ]; then
               if [ -z "$missing" ]; then
-                missing="SUPABASE_KEY"
+                missing="SUPABASE_KEY/SUPABASE_SERVICE_ROLE_KEY"
               else
-                missing="$missing, SUPABASE_KEY"
+                missing="$missing, SUPABASE_KEY/SUPABASE_SERVICE_ROLE_KEY"
               fi
             fi
             if [ -z "$missing" ]; then
@@ -88,6 +90,7 @@ jobs:
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           VOYAGEAI_API_KEY: ${{ secrets.VOYAGEAI_API_KEY }}
 
@@ -156,6 +159,7 @@ jobs:
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           VOYAGEAI_API_KEY: ${{ secrets.VOYAGEAI_API_KEY }}
 
