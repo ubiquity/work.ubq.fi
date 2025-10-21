@@ -43,9 +43,29 @@ jobs:
         id: preflight
         env:
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           if [ -n "${DENO_DEPLOY_TOKEN}" ]; then
-            echo "deploy=yes" >> "$GITHUB_OUTPUT"
+            missing=""
+            if [ -z "${SUPABASE_URL}" ]; then missing="SUPABASE_URL"; fi
+            if [ -z "${SUPABASE_ANON_KEY}" ]; then
+              if [ -z "$missing" ]; then
+                missing="SUPABASE_ANON_KEY"
+              else
+                missing="$missing, SUPABASE_ANON_KEY"
+              fi
+            fi
+            if [ -z "$missing" ]; then
+              echo "deploy=yes" >> "$GITHUB_OUTPUT"
+            else
+              echo "deploy=no" >> "$GITHUB_OUTPUT"
+              {
+                echo "⚠️ Missing secrets: $missing"
+                echo
+                echo "The deploy step requires these secrets to be configured."
+              } >> "$GITHUB_STEP_SUMMARY"
+            fi
           else
             echo "deploy=no" >> "$GITHUB_OUTPUT"
             echo "⚠️ DENO_DEPLOY_TOKEN not set; skipping deploy steps." >> "$GITHUB_STEP_SUMMARY"
