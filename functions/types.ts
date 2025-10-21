@@ -1,4 +1,7 @@
-import { GitHubUser } from "../src/home/github-types.ts";
+import type { RestEndpointMethodTypes } from "npm:@octokit/plugin-rest-endpoint-methods";
+
+type GitHubUserResponse = RestEndpointMethodTypes["users"]["getAuthenticated"]["response"];
+export type GitHubUser = GitHubUserResponse["data"];
 
 export interface POSTRequestBody {
   authToken: string;

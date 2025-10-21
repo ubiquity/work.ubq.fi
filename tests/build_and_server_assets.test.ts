@@ -80,7 +80,7 @@ Deno.test({
       const timeoutMs = 5000;
       const fetchT = (input: string | URL, init: RequestInit = {}) => fetch(input, { signal: AbortSignal.timeout(timeoutMs), ...init });
 
-      const resJs = await fetchT(base + "/dist/src/home/home.js");
+      const resJs = await fetchT(base + "/dist/home.js");
       assertEquals(resJs.status, 200);
       assertStringIncludes((resJs.headers.get("content-type") || "").toLowerCase(), "javascript");
 
