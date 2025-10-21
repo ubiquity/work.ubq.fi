@@ -33,7 +33,7 @@ jobs:
         run: sudo apt-get update -y && sudo apt-get install -y jq
 
       - name: Install deployctl CLI
-        run: deno install -gArf jsr:@deno/deployctl
+        run: deno install -gArf jsr:@deno/deployctl@1.13.1
         shell: bash
 
       - name: Add Deno bin to PATH
@@ -67,6 +67,7 @@ jobs:
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           VOYAGEAI_API_KEY: ${{ secrets.VOYAGEAI_API_KEY }}
 
       - name: Determine deployed URL (production)
@@ -134,6 +135,7 @@ jobs:
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           VOYAGEAI_API_KEY: ${{ secrets.VOYAGEAI_API_KEY }}
 
       - name: Determine deployed URL (preview)
