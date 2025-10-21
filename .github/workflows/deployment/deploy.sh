@@ -33,4 +33,4 @@ if [ "$MODE" = "production" ]; then
   flags+=("--prod")
 fi
 
-deployctl deploy "${flags[@]}" .
+deployctl deploy "${flags[@]}"
