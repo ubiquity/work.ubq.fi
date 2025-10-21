@@ -45,6 +45,7 @@ jobs:
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
           if [ -n "${DENO_DEPLOY_TOKEN}" ]; then
             missing=""
@@ -54,6 +55,13 @@ jobs:
                 missing="SUPABASE_ANON_KEY"
               else
                 missing="$missing, SUPABASE_ANON_KEY"
+              fi
+            fi
+            if [ -z "${SUPABASE_KEY}" ]; then
+              if [ -z "$missing" ]; then
+                missing="SUPABASE_KEY"
+              else
+                missing="$missing, SUPABASE_KEY"
               fi
             fi
             if [ -z "$missing" ]; then
