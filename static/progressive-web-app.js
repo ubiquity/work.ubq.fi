@@ -1,9 +1,9 @@
-const cacheName = "pwacache-v6"; // Increment this when files change
+const cacheName = "pwacache-v7"; // Increment this when files change
 const urlsToCache = [
   "/",
   "/index.html",
   "/manifest.json",
-  "/dist/src/home/home.js",
+  "/dist/home.js",
   "/style/style.css",
   "/style/inverted-style.css",
   "/style/fonts/ubiquity-nova-standard.woff",

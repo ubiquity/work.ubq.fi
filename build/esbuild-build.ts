@@ -39,10 +39,34 @@ export const esBuildContext: esbuild.BuildOptions = {
   }),
 };
 
-esbuild
-  .build(esBuildContext)
-  .then(() => console.log("\tesbuild complete"))
-  .catch(console.error);
+if (import.meta.main) {
+  await buildAndNormalizeOutputs();
+}
+
+async function buildAndNormalizeOutputs() {
+  try {
+    await esbuild.build(esBuildContext);
+    console.log("\tesbuild complete");
+    await flattenHomeBundle();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+async function flattenHomeBundle() {
+  const sourceBundle = "static/dist/src/home/home.js";
+  const targetBundle = "static/dist/home.js";
+  try {
+    await Deno.stat(sourceBundle);
+  } catch {
+    return;
+  }
+  await Deno.mkdir("static/dist", { recursive: true });
+  await Deno.copyFile(sourceBundle, targetBundle);
+  // Drop the nested directory so deployctl only sees file assets (avoid '/src' upload errors).
+  await Deno.remove("static/dist/src", { recursive: true });
+}
 
 function createEnvDefines(environmentVariables: string[], generatedAtBuild: Record<string, unknown>): Record<string, string> {
   const defines: Record<string, string> = {};
