@@ -34,8 +34,6 @@ jobs:
 
       - name: Install deployctl CLI
         run: deno install -gArf jsr:@deno/deployctl
-        env:
-          DENO_DIR: ${{ runner.temp }}/deno
         shell: bash
 
       - name: Add Deno bin to PATH
