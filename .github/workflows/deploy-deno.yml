@@ -39,24 +39,16 @@ jobs:
       - name: Add Deno bin to PATH
         run: echo "${HOME}/.deno/bin" >> $GITHUB_PATH
 
-      - name: Preflight - check deploy token
+      - name: Preflight - check deploy token and required secrets
         id: preflight
         env:
           DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
           if [ -n "${DENO_DEPLOY_TOKEN}" ]; then
             missing=""
             if [ -z "${SUPABASE_URL}" ]; then missing="SUPABASE_URL"; fi
-            if [ -z "${SUPABASE_ANON_KEY}" ]; then
-              if [ -z "$missing" ]; then
-                missing="SUPABASE_ANON_KEY"
-              else
-                missing="$missing, SUPABASE_ANON_KEY"
-              fi
-            fi
             if [ -z "${SUPABASE_KEY}" ]; then
               if [ -z "$missing" ]; then
                 missing="SUPABASE_KEY"
@@ -71,7 +63,8 @@ jobs:
               {
                 echo "⚠️ Missing secrets: $missing"
                 echo
-                echo "The deploy step requires these secrets to be configured."
+                echo "The deploy step requires SUPABASE_URL and SUPABASE_KEY."
+                echo "If SUPABASE_ANON_KEY is not set, a placeholder is used for the frontend build."
               } >> "$GITHUB_STEP_SUMMARY"
             fi
           else
@@ -81,8 +74,8 @@ jobs:
 
       - name: Build static assets
         run: |
-          : "${SUPABASE_URL:='https://placeholder.supabase.co'}"
-          : "${SUPABASE_ANON_KEY:='anon-placeholder-key'}"
+          export SUPABASE_URL="${SUPABASE_URL:-https://placeholder.supabase.co}"
+          export SUPABASE_ANON_KEY="${SUPABASE_ANON_KEY:-anon-placeholder-key}"
           deno task build
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

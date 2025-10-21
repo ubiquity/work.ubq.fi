@@ -1,5 +1,7 @@
-// Load environment variables from .env in development
-import "https://deno.land/std@0.224.0/dotenv/load.ts";
+// Load environment variables from .env only in local/dev, not on Deno Deploy
+if (!Deno.env.get("DENO_DEPLOYMENT_ID")) {
+  await import("https://deno.land/std@0.224.0/dotenv/load.ts");
+}
 import { serveDir, serveFile } from "https://deno.land/std@0.224.0/http/file_server.ts";
 
 const requestedPort = Number(Deno.env.get("PORT"));
