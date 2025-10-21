@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { renderErrorInModal } from "./display-popup-modal";
+import { renderErrorInModal } from "./display-popup-modal.ts";
 
 declare const SUPABASE_URL: string; // @DEV: passed in at build time check build/esbuild-build.ts
 declare const SUPABASE_ANON_KEY: string; // @DEV: passed in at build time check build/esbuild-build.ts
@@ -29,7 +29,9 @@ export async function checkSupabaseSession() {
 }
 
 async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
-  const redirectTo = window.location.href;
+  // Avoid carrying any existing hash to prevent double-hash fragments after OAuth redirect
+  const { origin, pathname, search } = window.location;
+  const redirectTo = `${origin}${pathname}${search}`;
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
@@ -42,12 +44,14 @@ async function gitHubLoginButtonHandler(scopes = "public_repo read:org") {
   }
 }
 
-const augmentAccessButton = document.createElement("button");
-export function renderAugmentAccessButton() {
-  augmentAccessButton.id = "augment-access-button";
-  augmentAccessButton.innerHTML = `<span title="Allow access to private repositories"><svg viewBox="0 0 24 24" class="svg-icon"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2m6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2m0 12H6V10h12z"></path></svg><span/>`;
-  augmentAccessButton.addEventListener("click", () => gitHubLoginButtonHandler("repo read:org"));
-  return augmentAccessButton;
+// Rebranded: Enable Private Issues button (requests 'repo' scope)
+const enablePrivateIssuesButton = document.createElement("button");
+export function renderEnablePrivateIssuesButton() {
+  enablePrivateIssuesButton.id = "enable-private-issues-button";
+  enablePrivateIssuesButton.setAttribute("aria-label", "Enable Private Issues");
+  enablePrivateIssuesButton.innerHTML = `<span title="Enable access to private issues"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M240-640h360v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85h-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640Zm0 480h480v-400H240v400Zm240-120q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM240-160v-400 400Z"/></svg><span/>`;
+  enablePrivateIssuesButton.addEventListener("click", () => gitHubLoginButtonHandler("repo read:org"));
+  return enablePrivateIssuesButton;
 }
 
 const gitHubLoginButton = document.createElement("button");

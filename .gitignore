@@ -10,9 +10,6 @@ static/dist
 .env
 .wrangler/
 
-cypress/screenshots
-cypress/videos
-
 # Wrangler
 .wrangler
 
@@ -21,3 +18,4 @@ cypress/videos
 
 # Cloudflare
 .dev.vars
+logs/

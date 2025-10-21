@@ -1,4 +1,4 @@
-import { checkSupabaseSession } from "../rendering/render-github-login-button";
+import { checkSupabaseSession } from "../rendering/render-github-login-button.ts";
 
 async function fetchWithRetry(input: RequestInfo, init?: RequestInit, retries: number = 3): Promise<Response> {
   for (let i = 0; i < retries; i++) {

@@ -1,5 +1,5 @@
-import { fetchAvatar, ubiquityAvatarUrl } from "../fetch-github/fetch-avatar";
-import { createUbiquitySvg } from "./create-ubiquity-svg";
+import { fetchAvatar, ubiquityAvatarUrl } from "../fetch-github/fetch-avatar.ts";
+import { createUbiquitySvg } from "./create-ubiquity-svg.ts";
 
 function updateBrandingImage(orgName: string): void {
   const brandingDiv = document.getElementById("branding");

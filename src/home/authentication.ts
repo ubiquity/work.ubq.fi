@@ -1,10 +1,10 @@
-import { getGitHubAccessToken } from "./getters/get-github-access-token";
-import { getGitHubUser } from "./getters/get-github-user";
-import { GitHubUser } from "./github-types";
-import { trackReferralCode } from "./register-referral";
-import { displayGitHubUserInformation } from "./rendering/display-github-user-information";
-import { renderGitHubLoginButton } from "./rendering/render-github-login-button";
-import { startIssueScraper } from "./scraper/issue-scraper";
+import { getGitHubAccessToken } from "./getters/get-github-access-token.ts";
+import { getGitHubUser } from "./getters/get-github-user.ts";
+import { GitHubUser } from "./github-types.ts";
+import { trackReferralCode } from "./register-referral.ts";
+import { displayGitHubUserInformation } from "./rendering/display-github-user-information.ts";
+import { renderGitHubLoginButton } from "./rendering/render-github-login-button.ts";
+import { startIssueScraper } from "./scraper/issue-scraper.ts";
 
 export async function authentication() {
   if (!navigator.onLine) {
@@ -23,5 +23,8 @@ export async function authentication() {
     await displayGitHubUserInformation(gitHubUser);
     const githubUserName = gitHubUser.login;
     await startIssueScraper(githubUserName);
+  } else {
+    // Token present but user fetch failed; show login to recover from stale/invalid session
+    renderGitHubLoginButton();
   }
 }

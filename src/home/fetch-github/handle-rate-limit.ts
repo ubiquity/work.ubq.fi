@@ -1,18 +1,18 @@
 import { RequestError } from "@octokit/request-error";
 import { Octokit } from "@octokit/rest";
-import { getGitHubUser } from "../getters/get-github-user";
-import { toolbar } from "../ready-toolbar";
-import { renderErrorInModal } from "../rendering/display-popup-modal";
-import { gitHubLoginButton } from "../rendering/render-github-login-button";
-import { modal } from "../rendering/render-preview-modal";
-import { displayPopupMessage } from "../rendering/display-popup-modal";
+import { getGitHubUser } from "../getters/get-github-user.ts";
+import { toolbar } from "../ready-toolbar.ts";
+import { renderErrorInModal } from "../rendering/display-popup-modal.ts";
+import { gitHubLoginButton } from "../rendering/render-github-login-button.ts";
+import { modal } from "../rendering/render-preview-modal.ts";
+import { displayPopupMessage } from "../rendering/display-popup-modal.ts";
 
 type RateLimit = {
   reset: number | null;
   user: boolean;
 };
 
-export function rateLimitModal(message: string) {
+function rateLimitModal(message: string) {
   displayPopupMessage({ modalHeader: `GitHub API rate limit exceeded.`, modalBody: message, isError: false });
 }
 

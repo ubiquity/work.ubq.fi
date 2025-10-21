@@ -1,0 +1,42 @@
+{
+  "tasks": {
+    "serve": "deno run --unstable-kv --allow-net --allow-read --allow-env --allow-write server.ts",
+    "serve:15s": "deno run --allow-run --allow-read --allow-write --allow-env --allow-net scripts/serve_15s.ts",
+    "serve:bg": "deno run --allow-run --allow-read --allow-write --allow-env --allow-net scripts/serve_bg.ts",
+    "serve:stop": "deno run --allow-read --allow-write scripts/serve_stop.ts",
+    "serve:status": "deno run --allow-net --allow-read --allow-env scripts/serve_status.ts",
+    "serve:wait": "deno run --allow-run --allow-net --allow-read --allow-write --allow-env scripts/serve_wait.ts",
+    "build": "deno run -A build/esbuild-build.ts",
+    "watch": "deno run -A build/esbuild-watch.ts",
+    "dev:bg": "deno run --allow-run --allow-read --allow-write --allow-env --allow-net scripts/dev_bg.ts",
+    "dev:stop": "deno run --allow-read --allow-write scripts/dev_stop.ts",
+    "dev": "deno run -A scripts/dev.ts",
+    "format": "deno run -A npm:prettier@3.2.5 --write .",
+    "lint": "deno task lint:eslint",
+    "lint:eslint": "deno run -A npm:eslint@9.38.0 . --config eslint.config.mjs",
+    "format:check": "deno run -A npm:prettier@3.2.5 --check .",
+    "cspell": "deno run -A npm:cspell@9.2.1 \"**/*\"",
+    "knip": "deno run -A scripts/run-knip.ts",
+    "knip:ci": "deno run -A scripts/run-knip.ts --no-exit-code --reporter json",
+    "check": "deno task lint:eslint && deno task format:check",
+    "verify": "deno task build && deno task check && deno task cspell && deno task knip && deno test -A --no-check"
+  },
+  "nodeModulesDir": "auto",
+  "lint": {
+    "rules": {
+      "tags": ["recommended"]
+    }
+  },
+  "unstable": ["kv", "sloppy-imports"],
+  "imports": {
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@^2.75.0",
+    "@octokit/rest": "npm:@octokit/rest@^20.0.2",
+    "@octokit/request-error": "npm:@octokit/request-error@^6.1.5",
+    "@octokit/plugin-rest-endpoint-methods": "npm:@octokit/plugin-rest-endpoint-methods@^13.2.2",
+    "marked": "npm:marked@^16.4.0",
+    "marked-footnote": "npm:marked-footnote@^1.4.0",
+    "@eslint/js": "npm:@eslint/js@^9.38.0",
+    "@typescript-eslint/eslint-plugin": "npm:@typescript-eslint/eslint-plugin@^8.46.1",
+    "@typescript-eslint/parser": "npm:@typescript-eslint/parser@^8.46.1"
+  }
+}

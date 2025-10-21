@@ -1,17 +1,17 @@
 export const ubiquityAvatarUrl = "https://avatars.githubusercontent.com/u/76412717?v=4";
 
-export type OrgNameAndAvatarUrl = {
-  ownerName: string;
+type OrgNameAndAvatarUrl = {
+  owner: string;
   avatar_url: string;
 };
 
-export async function fetchPartnerAvatars(): Promise<OrgNameAndAvatarUrl[]> {
-  const response = await fetch("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/devpool-partner-avatars.json");
+async function fetchPartnerAvatars(): Promise<OrgNameAndAvatarUrl[]> {
+  const response = await fetch("https://raw.githubusercontent.com/devpool-directory/devpool-directory/__STORAGE__/owners-avatars.json");
   const jsonData = await response.json();
   return jsonData;
 }
 
-// A global map of partner {ownerName => avatarUrl}
+// A global map of partner {owner => avatarUrl}
 const partnerAvatarMap = new Map<string, string>();
 
 export function fetchAvatar(orgName: string): string | undefined {
@@ -22,9 +22,9 @@ export async function fetchAvatars() {
   try {
     const partnerData = await fetchPartnerAvatars();
 
-    partnerData.forEach(({ ownerName, avatar_url: avatarUrl }) => {
-      if (avatarUrl) {
-        partnerAvatarMap.set(ownerName.toLowerCase(), avatarUrl);
+    partnerData.forEach(({ owner, avatar_url: avatarUrl }) => {
+      if (avatarUrl && owner) {
+        partnerAvatarMap.set(owner.toLowerCase(), avatarUrl);
       }
     });
   } catch (error) {

@@ -1,4 +1,5 @@
-import { GitHubIssue } from "../github-types";
+import { GitHubIssue, GitHubLabel } from "../github-types.ts";
+import { getLabelText } from "./label-utils.ts";
 
 export function sortIssuesByPrice(issues: GitHubIssue[]) {
   return issues.sort((a, b) => {
@@ -9,11 +10,9 @@ export function sortIssuesByPrice(issues: GitHubIssue[]) {
   });
 }
 
-function getPriceFromLabel(label: string | { name?: string }) {
-  if (typeof label === "string" || !label.name) return null;
-  if (label.name.startsWith("Price: ")) {
-    const match = label.name.match(/Price: (\d+)/);
-    return match ? parseInt(match[1], 10) : null;
-  }
-  return null;
+function getPriceFromLabel(label: GitHubLabel) {
+  const text = getLabelText(label);
+  if (!text) return null;
+  const match = text.match(/^Price:\s*([\d,]+)/);
+  return match ? parseInt(match[1].replace(/,/g, ""), 10) : null;
 }

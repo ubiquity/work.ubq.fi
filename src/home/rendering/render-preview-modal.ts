@@ -1,11 +1,11 @@
-import { resetOrgHeaderLabel } from "./render-org-header";
+import { resetOrgHeaderLabel } from "./render-org-header.ts";
 
 export const modal = document.getElementById("preview-modal") as HTMLDivElement;
 export const titleAnchor = document.getElementById("preview-title-anchor") as HTMLAnchorElement;
 export const titleHeader = document.getElementById("preview-title") as HTMLHeadingElement;
 export const modalBodyInner = document.getElementById("preview-body-inner") as HTMLDivElement;
 export const bottomBar = document.getElementById("bottom-bar") as HTMLDivElement;
-export const issuesContainer = document.getElementById("issues-container");
+const issuesContainer = document.getElementById("issues-container");
 
 const closeButton = modal.querySelector(".close-preview") as HTMLButtonElement;
 

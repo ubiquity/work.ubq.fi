@@ -1,9 +1,9 @@
-import { fetchAvatars } from "./fetch-github/fetch-avatar";
-import { getGitHubAccessToken } from "./getters/get-github-access-token";
-import { getIssuesFromCache } from "./getters/get-indexed-db";
-import { setLocalStore } from "./getters/get-local-store";
-import { GITHUB_TASKS_STORAGE_KEY, GitHubIssue } from "./github-types";
-import { IssueSearch } from "./issues-search";
+import { fetchAvatars } from "./fetch-github/fetch-avatar.ts";
+import { getGitHubAccessToken } from "./getters/get-github-access-token.ts";
+import { getIssuesFromCache } from "./getters/get-indexed-db.ts";
+import { setLocalStore } from "./getters/get-local-store.ts";
+import { GITHUB_TASKS_STORAGE_KEY, GitHubIssue } from "./github-types.ts";
+import { IssueSearch } from "./issues-search.ts";
 
 export class TaskManager {
   private _tasks: GitHubIssue[] = [];

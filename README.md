@@ -8,23 +8,38 @@ cp .env.example .env
 
 Ensure that `SUPABASE_URL` and `SUPABASE_ANON_KEY` are set. This is for GitHub user registration on login.
 
+With Deno installed:
+
 ```sh
-yarn
-yarn start
-open http://localhost:8080
+deno task build   # one-time build
+deno task dev     # run server + watch
+# open http://localhost:8080 (override with PORT=8899 deno task dev)
 ```
 
 ## Setup Scraper Function
 
-For local development of the scraper function, you need to set up a `.dev.vars` file based on the `.dev.vars.example` file.
+The scraper API (`/issue-scraper`) now runs on a local Deno server.
 
-For deployment, you would need to add the secrets to the Cloudflare Dashboard, for the worker.
+- Local development: set environment variables in `.env` (e.g. `SUPABASE_URL`, `SUPABASE_KEY`/`SUPABASE_SERVICE_ROLE_KEY`, `VOYAGEAI_API_KEY`). The Deno server loads `.env` automatically via std/dotenv.
+- Deployment: configure the same variables in your runtime environment (e.g., system env vars). No Cloudflare configuration is required.
 
 ### Automatic Light Mode
 
 - There is a plugin (`build/plugins/invert-colors.ts`) that inverts the greyscale shades in `style.css` and outputs `inverted-style.css`.
 - This plugin specifically seeks greyscale colors. Any colors with saturation are ignored.
 - Any deliberate use of color (with saturation) should be added in `special.css` to not be processed.
+
+## Contributing
+
+- Deno-only policy: use Deno tasks and `npm:` tools through Deno. Do not run `npm`, `pnpm`, `yarn`, `node`, or `npx` in this repo.
+- Run server: `deno task dev` (watch) or `deno task serve` (server only).
+- Quick smoke (15s, ephemeral port): `deno task serve:15s`
+- Build assets: `deno task build` (esbuild via `npm:esbuild`).
+- Formatting: `deno task format` (Prettier). Check mode: `deno task format:check`.
+- Linting: `deno task lint` (ESLint). This repo does not use `deno fmt`.
+- Spell check: `deno task cspell`.
+- Static analysis (Knip): `deno task knip` — runs via Deno’s `npm:` and checks unused files/exports (not dependencies). No Node required.
+- Git hooks: pre-commit runs lint-staged (Prettier/ESLint) via Deno; commit messages are checked with Commitlint.
 
 ## Features for End Users
 
@@ -42,3 +57,13 @@ For deployment, you would need to add the secrets to the Cloudflare Dashboard, f
 #### Mobile
 
 ![screenshot 2](https://github.com/ubiquity/devpool-directory-ui/assets/4975670/b7861ce7-1f1f-49a9-b8e2-ebb20724ee67)
+
+### Running via Codex (non-interactive, 15s)
+
+To verify the server starts and does not hang under an agent, run a Codex sub-instance and execute the 15s task:
+
+```
+codex exec --yolo -C "$PWD" "Run the convenience task: deno task serve:15s. Expect an ephemeral port and a 15s runtime. Return output and exit."
+```
+
+This starts the server on an ephemeral port, streams the logs (e.g., "Deno server listening on http://0.0.0.0:<port>"), and exits after ~15 seconds without hanging.

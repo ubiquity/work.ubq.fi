@@ -1,4 +1,4 @@
-import { GitHubIssue } from "../github-types";
+import { GitHubIssue } from "../github-types.ts";
 
 async function openIssuesDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {

@@ -1,8 +1,6 @@
-import { GitHubIssue } from "../github-types";
+import { GitHubIssue } from "../github-types.ts";
+import { isIssueAssigned } from "../utils/issue-utils.ts";
 
 export function filterIssuesByAvailability(issues: GitHubIssue[]) {
-  return issues.filter((issue) => {
-    if (issue.assignee) return false;
-    return true;
-  });
+  return issues.filter((issue) => !isIssueAssigned(issue));
 }

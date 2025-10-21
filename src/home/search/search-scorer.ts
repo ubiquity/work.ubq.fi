@@ -1,6 +1,7 @@
-import { GitHubIssue } from "../github-types";
-import { SearchConfig, SearchResult } from "../types/search-types";
-import { StringSimilarity } from "./string-similarity";
+import { GitHubIssue } from "../github-types.ts";
+import { getLabelText } from "../sorting/label-utils.ts";
+import { SearchConfig, SearchResult } from "../types/search-types.ts";
+import { StringSimilarity } from "./string-similarity.ts";
 
 export class SearchScorer {
   constructor(private _config: SearchConfig) {}
@@ -71,17 +72,17 @@ export class SearchScorer {
     }
     if (issue.labels) {
       searchTerms.forEach((term) => {
-        issue.labels?.forEach((label) => {
-          if (typeof label === "object" && label.name) {
-            const labelName = label.name.toLowerCase();
-            if (labelName.includes(term)) {
-              matchDetails.labelMatches.push(label.name);
-              // Apply exponential boost for label matches at word start
-              if (labelName.startsWith(term)) {
-                score += 0.8;
-              } else {
-                score += 0.5;
-              }
+        issue.labels.forEach((label) => {
+          const originalLabel = getLabelText(label);
+          const labelName = originalLabel.toLowerCase();
+          if (!labelName) return;
+          if (labelName.includes(term)) {
+            matchDetails.labelMatches.push(originalLabel);
+            // Apply exponential boost for label matches at word start
+            if (labelName.startsWith(term)) {
+              score += 0.8;
+            } else {
+              score += 0.5;
             }
           }
         });

@@ -1,7 +1,8 @@
-import { GitHubIssue } from "./github-types";
-import { TaskManager } from "./task-manager";
-import { SearchResult, SearchWeights, SearchConfig } from "./types/search-types";
-import { SearchScorer } from "./search/search-scorer";
+import { GitHubIssue } from "./github-types.ts";
+import { getLabelText } from "./sorting/label-utils.ts";
+import { TaskManager } from "./task-manager.ts";
+import { SearchResult, SearchWeights, SearchConfig } from "./types/search-types.ts";
+import { SearchScorer } from "./search/search-scorer.ts";
 
 export class IssueSearch {
   private readonly _weights: SearchWeights = {
@@ -62,21 +63,24 @@ export class IssueSearch {
       }
 
       const parts = issue.repository_url.split("/");
-      const repoName = parts.pop()!;
-      const orgName = parts.pop()!;
+      const repoName = (parts[parts.length - 1] || "").toLowerCase();
+      const orgName = (parts[parts.length - 2] || "").toLowerCase();
 
       if (orgFilter && repoFilter) {
-        if (orgName !== orgFilter || !orgName.startsWith(orgFilter) || !repoName.startsWith(repoFilter)) {
+        const isOrgMismatch = orgName !== orgFilter.toLowerCase();
+        const isOrgPartialMismatch = !orgName.startsWith(orgFilter.toLowerCase());
+        const isRepoPartialMismatch = !repoName.startsWith(repoFilter.toLowerCase());
+        if (isOrgMismatch || isOrgPartialMismatch || isRepoPartialMismatch) {
           results.set(id, this._createEmptyResult(false));
           continue;
         }
       } else if (orgFilter || repoFilter) {
-        const orgExact = !!orgFilter && orgName === orgFilter;
-        const repoExact = !!repoFilter && repoName === repoFilter;
-        const orgPartial = !!orgFilter && orgName.startsWith(orgFilter);
-        const repoPartial = !!repoFilter && repoName.startsWith(repoFilter);
+        const isOrgExact = !!orgFilter && orgName === orgFilter.toLowerCase();
+        const isRepoExact = !!repoFilter && repoName === repoFilter.toLowerCase();
+        const isOrgPartial = !!orgFilter && orgName.startsWith(orgFilter.toLowerCase());
+        const isRepoPartial = !!repoFilter && repoName.startsWith(repoFilter.toLowerCase());
 
-        if (!(orgExact || repoExact || orgPartial || repoPartial)) {
+        if (!(isOrgExact || isRepoExact || isOrgPartial || isRepoPartial)) {
           results.set(id, this._createEmptyResult(false));
           continue;
         }
@@ -102,11 +106,13 @@ export class IssueSearch {
         }
 
         const issueUrlParts = issue.repository_url.split("/");
-        const repoName = issueUrlParts.pop()!;
-        const orgName = issueUrlParts.pop()!;
+        const repoName = (issueUrlParts[issueUrlParts.length - 1] || "").toLowerCase();
+        const orgName = (issueUrlParts[issueUrlParts.length - 2] || "").toLowerCase();
 
-        const match = orgName === orgFilter && repoName.startsWith(repoFilter);
-        results.set(id, this._createEmptyResult(match));
+        const of = (orgFilter || "").toLowerCase();
+        const rf = (repoFilter || "").toLowerCase();
+        const isMatch = orgName === of && repoName.startsWith(rf);
+        results.set(id, this._createEmptyResult(isMatch));
       }
       return results;
     }
@@ -126,13 +132,13 @@ export class IssueSearch {
       }
 
       const issueUrlParts = issue.repository_url.split("/");
-      const repoName = issueUrlParts.pop()!;
-      const orgName = issueUrlParts.pop()!;
+      const repoName = (issueUrlParts[issueUrlParts.length - 1] || "").toLowerCase();
+      const orgName = (issueUrlParts[issueUrlParts.length - 2] || "").toLowerCase();
 
-      const orgMatch = !!orgFilter && orgName === orgFilter;
-      const repoMatch = !!repoFilter && repoName === repoFilter;
+      const isOrgMatch = !!orgFilter && orgName === orgFilter.toLowerCase();
+      const isRepoMatch = !!repoFilter && repoName === repoFilter.toLowerCase();
 
-      if (orgMatch || repoMatch) {
+      if (isOrgMatch || isRepoMatch) {
         results.set(id, this._createEmptyResult(true));
         hasExact = true;
       } else {
@@ -146,10 +152,10 @@ export class IssueSearch {
         if (!issue) continue;
 
         const parts = issue.repository_url.split("/");
-        const repoName = parts.pop()!;
-        const orgName = parts.pop()!;
+        const repoName = (parts[parts.length - 1] || "").toLowerCase();
+        const orgName = (parts[parts.length - 2] || "").toLowerCase();
 
-        if (orgName.startsWith(orgFilter!) || repoName.startsWith(repoFilter!)) {
+        if ((!!orgFilter && orgName.startsWith(orgFilter.toLowerCase())) || (!!repoFilter && repoName.startsWith(repoFilter.toLowerCase()))) {
           results.set(id, this._createEmptyResult(true));
         }
       }
@@ -227,13 +233,13 @@ export class IssueSearch {
 
   private _getSearchableContent(issue: GitHubIssue): string {
     // Remove URLs from the content
-    const removeUrls = (text: string): string => {
+    function removeUrls(text: string): string {
       return text.replace(/(?:https?:\/\/|http?:\/\/|www\.)[^\s]+/g, "");
-    };
+    }
 
     const title = issue.title;
     const body = removeUrls(issue.body || "");
-    const labels = issue.labels?.map((l) => (typeof l === "object" && l.name ? l.name : "")).join(" ") || "";
+    const labels = issue.labels?.map((l) => getLabelText(l)).join(" ") || "";
 
     return `${title} ${body} ${labels}`.toLowerCase();
   }

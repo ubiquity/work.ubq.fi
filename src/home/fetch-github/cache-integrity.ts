@@ -1,6 +1,6 @@
-import { getLocalStore } from "../getters/get-local-store";
-import { GITHUB_TASKS_STORAGE_KEY, TaskStorageItems } from "../github-types";
-import { taskManager } from "../home";
+import { getLocalStore } from "../getters/get-local-store.ts";
+import { GITHUB_TASKS_STORAGE_KEY, TaskStorageItems } from "../github-types.ts";
+import { taskManager } from "../home.ts";
 
 export async function checkCacheIntegrityAndSyncTasks() {
   const _cachedTasks = getLocalStore(GITHUB_TASKS_STORAGE_KEY) as TaskStorageItems;

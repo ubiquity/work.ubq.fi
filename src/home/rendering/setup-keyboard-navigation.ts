@@ -1,5 +1,5 @@
-import { taskManager } from "../home";
-import { viewIssueDetails } from "./render-github-issues";
+import { taskManager } from "../home.ts";
+import { viewIssueDetails } from "./render-github-issues.ts";
 
 const keyDownHandlerCurried = keyDownHandler();
 const disableKeyBoardNavigationCurried = disableKeyboardNavigationCurry;

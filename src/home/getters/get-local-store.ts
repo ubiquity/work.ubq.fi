@@ -1,6 +1,6 @@
-import { TaskStorageItems } from "../github-types";
-import { renderErrorInModal } from "../rendering/display-popup-modal";
-import { OAuthToken } from "./get-github-access-token";
+import { TaskStorageItems } from "../github-types.ts";
+import { renderErrorInModal } from "../rendering/display-popup-modal.ts";
+import { OAuthToken } from "./get-github-access-token.ts";
 
 // storage is key-based an can either store tasks, OAuth token or be empty
 export function getLocalStore(key: string): TaskStorageItems | OAuthToken | null {

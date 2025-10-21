@@ -18,25 +18,33 @@ jobs:
         # with:
         # submodules: "recursive" # Ensures submodules are checked out
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
         with:
-          node-version: 20.10.0
+          deno-version: v2.x
 
       - name: Build
+        id: build
+        if: ${{ secrets.SUPABASE_URL != '' && secrets.SUPABASE_ANON_KEY != '' }}
         run: |
-          yarn
-          yarn build
-        env: # Set environment variables for the build
-          SUPABASE_URL: "https://wfzpewmlyiozupulbuur.supabase.co"
-          SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmenBld21seWlvenVwdWxidXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTU2NzQzMzksImV4cCI6MjAxMTI1MDMzOX0.SKIL3Q0NOBaMehH0ekFspwgcu3afp3Dl9EDzPqs1nKs"
+          set -euo pipefail
+          deno task build
+        env: # Only use real secrets; no placeholders
+          NODE_ENV: production
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+
+      - name: Skip build (secrets unavailable)
+        if: ${{ !(secrets.SUPABASE_URL != '' && secrets.SUPABASE_ANON_KEY != '' ) }}
+        run: |
+          echo "Skipping build: required secrets are not available for this run."
 
       - name: Upload build artifact
+        if: ${{ steps.build.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
           name: static
           path: |
-              static
-              functions
-              package.json
-              yarn.lock
+            static
+            functions

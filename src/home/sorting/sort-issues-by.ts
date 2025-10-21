@@ -1,9 +1,9 @@
-import { GitHubIssue } from "../github-types";
-import { SORTING_OPTIONS } from "./generate-sorting-buttons";
-import { sortIssuesByPrice } from "./sort-issues-by-price";
-import { sortIssuesByPriority } from "./sort-issues-by-priority";
-import { sortIssuesByTime } from "./sort-issues-by-time";
-import { sortIssuesByLatestActivity } from "./sort-issues-by-updated-time";
+import { GitHubIssue } from "../github-types.ts";
+import { SORTING_OPTIONS } from "./generate-sorting-buttons.ts";
+import { sortIssuesByPrice } from "./sort-issues-by-price.ts";
+import { sortIssuesByPriority } from "./sort-issues-by-priority.ts";
+import { sortIssuesByTime } from "./sort-issues-by-time.ts";
+import { sortIssuesByLatestActivity } from "./sort-issues-by-updated-time.ts";
 
 export function sortIssuesBy(tasks: GitHubIssue[], sortBy: (typeof SORTING_OPTIONS)[number]) {
   switch (sortBy) {

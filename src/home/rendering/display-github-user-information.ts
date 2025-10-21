@@ -1,8 +1,8 @@
-import { isOrgMemberWithoutScope } from "../getters/get-github-access-token";
-import { GitHubUser } from "../github-types";
-import { toolbar } from "../ready-toolbar";
-import { renderErrorInModal } from "./display-popup-modal";
-import { authenticationElement, getSupabase, renderAugmentAccessButton } from "./render-github-login-button";
+import { GitHubUser } from "../github-types.ts";
+import { toolbar } from "../ready-toolbar.ts";
+import { renderErrorInModal } from "./display-popup-modal.ts";
+import { authenticationElement, getSupabase, renderEnablePrivateIssuesButton } from "./render-github-login-button.ts";
+import { isMissingRepoScope } from "../getters/get-github-access-token.ts";
 
 export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
   const authenticatedDivElement = document.createElement("div");
@@ -19,12 +19,6 @@ export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
   }
   img.alt = gitHubUser.login;
 
-  const divNameElement = document.createElement("div");
-
-  // Falls back to login because the name is not required for a GitHub user
-  divNameElement.textContent = gitHubUser.name || gitHubUser.login;
-  divNameElement.classList.add("full");
-  authenticatedDivElement.appendChild(divNameElement);
   authenticatedDivElement.appendChild(img);
 
   authenticatedDivElement.addEventListener("click", async function signOut() {
@@ -37,10 +31,16 @@ export async function displayGitHubUserInformation(gitHubUser: GitHubUser) {
     window.location.replace("/");
   });
 
-  if (await isOrgMemberWithoutScope()) {
-    const accessButton = renderAugmentAccessButton();
-    containerDivElement.appendChild(accessButton);
-    authenticationElement.appendChild(containerDivElement);
+  // If token lacks 'repo' scope, offer to enable private issues via re-auth
+  try {
+    if (await isMissingRepoScope()) {
+      const privateIssuesButton = renderEnablePrivateIssuesButton();
+      containerDivElement.appendChild(privateIssuesButton);
+      authenticationElement.appendChild(containerDivElement);
+    }
+  } catch (e) {
+    // Non-fatal: failure to detect scopes shouldn't break UI
+    console.warn("Unable to detect GitHub scopes", e);
   }
 
   authenticationElement.appendChild(authenticatedDivElement);

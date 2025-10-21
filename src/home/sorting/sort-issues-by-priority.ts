@@ -1,15 +1,18 @@
-import { GitHubIssue } from "../github-types";
+import { GitHubIssue } from "../github-types.ts";
+import { getLabelText } from "./label-utils.ts";
 
 export function sortIssuesByPriority(issues: GitHubIssue[]) {
   const priorityRegex = /Priority: (\d+)/;
 
   return issues.sort((a, b) => {
     function getPriority(issue: GitHubIssue) {
-      const priorityLabel = issue.labels.find(
-        (label): label is { name: string } => typeof label === "object" && "name" in label && typeof label.name === "string" && priorityRegex.test(label.name)
-      );
-      const match = priorityLabel?.name.match(priorityRegex);
-      return match ? parseInt(match[1], 10) : -1;
+      for (const label of issue.labels) {
+        const text = getLabelText(label);
+        if (!text) continue;
+        const match = text.match(priorityRegex);
+        if (match) return parseInt(match[1], 10);
+      }
+      return -1;
     }
 
     return getPriority(b) - getPriority(a);

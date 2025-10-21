@@ -1,4 +1,22 @@
 {
   "version": "0.2",
-  "words": ["devpool", "octocat", "ratelimit", "supabase", "UBIQUIBOT"]
+  "ignorePaths": ["static/dist/**", "deno.lock"],
+  "words": [
+    "devpool",
+    "octocat",
+    "ratelimit",
+    "supabase",
+    "UBIQUIBOT",
+    "VOYAGEAI",
+    "dataurl",
+    "greyscale",
+    "lintstagedrc",
+    "markdownit",
+    "NDCG",
+    "idcg",
+    "Rebranded",
+    "pwacache",
+    "iefix",
+    "codepaths"
+  ]
 }
