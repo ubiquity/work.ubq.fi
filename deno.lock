@@ -1,6 +1,7 @@
 {
   "version": "5",
   "specifiers": {
+    "jsr:@deno/deployctl@1.13.1": "1.13.1",
     "jsr:@luca/esbuild-deno-loader@*": "0.11.1",
     "jsr:@luca/esbuild-deno-loader@~0.11.1": "0.11.1",
     "jsr:@std/bytes@^1.0.2": "1.0.6",
@@ -39,6 +40,9 @@
     "npm:voyageai@*": "0.0.8"
   },
   "jsr": {
+    "@deno/deployctl@1.13.1": {
+      "integrity": "84245138a17546f184aebcc2dd49061b3437b8819be54195ab144e7b4e86be2a"
+    },
     "@luca/esbuild-deno-loader@0.11.1": {
       "integrity": "dc020d16d75b591f679f6b9288b10f38bdb4f24345edb2f5732affa1d9885267",
       "dependencies": [
