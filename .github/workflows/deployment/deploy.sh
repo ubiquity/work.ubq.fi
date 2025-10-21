@@ -16,7 +16,6 @@ flags=(
   "--project=$PROJECT"
   "--token=$TOKEN"
   "--entrypoint=server.ts"
-  "--exclude=src"
   "--env-var=SUPABASE_URL=$SUPABASE_URL"
   "--env-var=SUPABASE_KEY=$SUPABASE_KEY"
 )

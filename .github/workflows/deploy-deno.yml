@@ -33,7 +33,7 @@ jobs:
         run: sudo apt-get update -y && sudo apt-get install -y jq
 
       - name: Install deployctl CLI
-        run: deno install -gArf jsr:@deno/deployctl@1.13.1
+        run: deno install -gArf jsr:@deno/deployctl@1.12.0
         shell: bash
 
       - name: Add Deno bin to PATH
