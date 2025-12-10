@@ -9,18 +9,18 @@ jobs:
     uses: ubiquity/deno-deploy-workflow/.github/workflows/deno-deploy-reusable.yml@main
     with:
       project: work-ubq-fi
-      entrypoint: serve.ts
-      bun_version: 1.2.x
+      entrypoint: server.ts
       deno_version: 2.x
-      install_command: bun install
-      build_command: bun run build
+      build_command: deno task build
       build_env: |
         SUPABASE_URL=$SUPABASE_URL
         SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
-        FRONTEND_URL=https://work.ubq.fi
       runtime_env: |
         STATIC_DIR=static
       include: |
+        server.ts
+        deno.json
+        functions/**
         static/**
     secrets:
       DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
