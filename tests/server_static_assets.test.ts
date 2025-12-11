@@ -86,10 +86,10 @@ Deno.test({
       const css = await resCss.text();
       assertStringIncludes(css, "#issues-container");
 
-      // SVG asset
-      const resSvg = await fetchT(base + "/favicon.svg");
-      assertEquals(resSvg.status, 200);
-      assertStringIncludes(resSvg.headers.get("content-type") || "", "image/svg+xml");
+      // Favicon asset
+      const resFav = await fetchT(base + "/favicon.png");
+      assertEquals(resFav.status, 200);
+      assertStringIncludes(resFav.headers.get("content-type") || "", "image/png");
 
       // Plain 404 for non-HTML unknown file
       const res404 = await fetchT(base + "/nope.txt");
