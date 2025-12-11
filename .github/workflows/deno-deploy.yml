@@ -22,11 +22,7 @@ jobs:
         deno.json
         functions/**
         static/**
-      debug_fetch_paths: |
-        /
-        /style/style.css
-        /style/inverted-style.css
-        /dist/home.js
+      index_html_path: static/index.html
       debug_fetch_fail: true
     secrets:
       DENO_DEPLOY_TOKEN: ${{ secrets.DENO_DEPLOY_TOKEN }}
