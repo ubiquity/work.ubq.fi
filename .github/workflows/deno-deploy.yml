@@ -13,8 +13,8 @@ jobs:
       deno_version: 2.x
       build_command: deno task build
       build_env: |
-        SUPABASE_URL=$SUPABASE_URL
-        SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+        SUPABASE_URL=${{ vars.SUPABASE_URL }}
+        SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY }}
       runtime_env: |
         STATIC_DIR=static
       include: |
