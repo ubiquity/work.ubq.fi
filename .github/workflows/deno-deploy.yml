@@ -10,7 +10,6 @@ jobs:
     with:
       project: work-ubq-fi
       entrypoint: server.ts
-      deno_version: 2.x
       build_command: deno task build
       build_env: |
         SUPABASE_URL=${{ vars.SUPABASE_URL }}
