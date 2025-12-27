@@ -11,7 +11,7 @@ import { pwaManifest } from "./plugins/pwa-manifest.ts";
 const typescriptEntry = "src/home/home.ts";
 const cssEntries = ["static/style/style.css"];
 // Include main TS entry so SPA boots; manifest is written by the pwaManifest plugin
-const entries = [typescriptEntry, ...cssEntries, "static/favicon.png", "static/icon-192x192.png", "static/icon-512x512.png"];
+const entries = [typescriptEntry, ...cssEntries, "static/favicon-32.png", "static/favicon.png", "static/icon-192x192.png", "static/icon-512x512.png"];
 
 const isProd = (Deno.env.get("NODE_ENV") || "development") === "production";
 
