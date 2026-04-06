@@ -1,0 +1,30 @@
+name: Deno Deploy
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: ubiquity/deno-deploy-workflow/.github/workflows/deno-deploy-reusable.yml@main
+    with:
+      project: work-ubq-fi
+      entrypoint: server.ts
+      build_command: deno task build
+      build_env: |
+        SUPABASE_URL=${{ vars.SUPABASE_URL }}
+        SUPABASE_ANON_KEY=${{ vars.SUPABASE_ANON_KEY }}
+      runtime_env: |
+        STATIC_DIR=static
+      include: |
+        server.ts
+        deno.json
+        functions/**
+        static/**
+      debug_fetch_fail: true
+      required_env: |
+        DENO_DEPLOY_TOKEN
+        SUPABASE_URL
+        SUPABASE_ANON_KEY
+    secrets: inherit

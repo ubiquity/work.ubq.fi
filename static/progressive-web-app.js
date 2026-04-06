@@ -1,4 +1,4 @@
-const cacheName = "pwacache-v7"; // Increment this when files change
+const cacheName = "pwacache-v9"; // Increment this when files change
 const urlsToCache = [
   "/",
   "/index.html",
@@ -8,7 +8,8 @@ const urlsToCache = [
   "/style/inverted-style.css",
   "/style/fonts/ubiquity-nova-standard.woff",
   "/style/special.css",
-  "/favicon.svg",
+  "/favicon-32.png",
+  "/favicon.png",
 ];
 
 // Install event (caches all necessary files)
