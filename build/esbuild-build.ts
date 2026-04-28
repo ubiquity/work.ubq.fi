@@ -64,7 +64,7 @@ async function flattenHomeBundle() {
   }
   await Deno.mkdir("static/dist", { recursive: true });
   await Deno.copyFile(sourceBundle, targetBundle);
-  // Drop the nested directory so deployctl only sees file assets (avoid '/src' upload errors).
+  // Drop the nested directory so Deno Deploy only sees file assets (avoid '/src' upload errors).
   await Deno.remove("static/dist/src", { recursive: true });
 }
 
