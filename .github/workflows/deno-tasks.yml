@@ -58,13 +58,13 @@ jobs:
               curl -fsS --retry 5 --retry-connrefused -H 'Accept: text/html' "$BASE/" >/dev/null
 
               echo "Curl dist JS (bundled app)"
-              curl -fsS --retry 5 --retry-connrefused "$BASE/dist/src/home/home.js" >/dev/null
+              curl -fsS --retry 5 --retry-connrefused "$BASE/dist/home.js" >/dev/null
 
               echo "Curl CSS (inverted stylesheet)"
               curl -fsS --retry 5 --retry-connrefused "$BASE/style/inverted-style.css" >/dev/null
 
               echo "Curl favicon"
-              curl -fsS --retry 5 --retry-connrefused -I "$BASE/favicon.svg" >/dev/null
+              curl -fsS --retry 5 --retry-connrefused -I "$BASE/favicon.png" >/dev/null
 
               echo "Shutting down server (pid=$srv_pid)"
               kill -TERM "$srv_pid" || true
