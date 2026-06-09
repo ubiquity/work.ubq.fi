@@ -427,6 +427,7 @@ async function issueScraper(username: string, supabase: SupabaseClient, voyageAp
           id: issue.id,
           markdown: issue.markdown,
           plaintext: issue.plaintext,
+          repository: issue.payload.repository.full_name,
         })),
         storageFailed: storageFailed,
       },
