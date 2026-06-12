@@ -1,8 +1,8 @@
 /// <reference lib="deno.ns" />
-import { assertEquals, assertGreater } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import type { GitHubIssue } from "../src/home/github-types.ts";
 import type { DeveloperMatchProfile } from "../src/home/matching/developer-profile.ts";
-import { calculateMatchScore, sortIssuesByMatch } from "../src/home/matching/sort-issues-by-match.ts";
+import { sortIssuesByMatch } from "../src/home/matching/sort-issues-by-match.ts";
 
 function issue(partial: Partial<GitHubIssue> & Pick<GitHubIssue, "number" | "title">): GitHubIssue {
   return {
@@ -24,7 +24,7 @@ const profile: DeveloperMatchProfile = {
   updatedAt: 1,
 };
 
-Deno.test("calculateMatchScore rewards profile terms in task content", () => {
+Deno.test("sortIssuesByMatch rewards profile terms in task content", () => {
   const matching = issue({
     number: 1,
     title: "Add Deno routing fallback",
@@ -38,7 +38,10 @@ Deno.test("calculateMatchScore rewards profile terms in task content", () => {
     labels: ["Price: 450 USD", "Priority: 3 (High)", "Time: <4 Hours"],
   });
 
-  assertGreater(calculateMatchScore(matching, profile), calculateMatchScore(unrelated, profile));
+  assertEquals(
+    sortIssuesByMatch([unrelated, matching], profile).map((item) => item.number),
+    [1, 2]
+  );
 });
 
 Deno.test("sortIssuesByMatch ranks profile matches before higher-price unrelated tasks", () => {

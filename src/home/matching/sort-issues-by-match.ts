@@ -11,7 +11,7 @@ export function sortIssuesByMatch(issues: GitHubIssue[], profile: DeveloperMatch
   });
 }
 
-export function calculateMatchScore(issue: GitHubIssue, profile: DeveloperMatchProfile | null = loadDeveloperMatchProfile()): number {
+function calculateMatchScore(issue: GitHubIssue, profile: DeveloperMatchProfile | null = loadDeveloperMatchProfile()): number {
   const profileTerms = new Set(profile?.terms.map((term) => term.toLowerCase()) ?? []);
   const profileRepositories = new Set(profile?.repositories.map((repo) => repo.toLowerCase()) ?? []);
 

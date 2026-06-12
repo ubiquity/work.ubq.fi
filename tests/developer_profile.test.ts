@@ -3,7 +3,6 @@ import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import {
   buildDeveloperMatchProfile,
   loadDeveloperMatchProfile,
-  MATCH_PROFILE_STORAGE_KEY,
   saveDeveloperMatchProfile,
 } from "../src/home/matching/developer-profile.ts";
 
@@ -50,7 +49,7 @@ Deno.test("saveDeveloperMatchProfile skips empty profiles and loads saved profil
   };
 
   saveDeveloperMatchProfile({ terms: [], repositories: [], updatedAt: 1 }, adapter);
-  assertEquals(adapter.getItem(MATCH_PROFILE_STORAGE_KEY), null);
+  assertEquals(storage.size, 0);
 
   saveDeveloperMatchProfile({ terms: ["deno"], repositories: ["ubiquity/work.ubq.fi"], updatedAt: 2 }, adapter);
   assertEquals(loadDeveloperMatchProfile(adapter), {

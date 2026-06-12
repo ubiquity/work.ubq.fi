@@ -1,4 +1,4 @@
-export const MATCH_PROFILE_STORAGE_KEY = "devpoolMatchProfile";
+const MATCH_PROFILE_STORAGE_KEY = "devpoolMatchProfile";
 
 export interface DeveloperMatchProfile {
   terms: string[];
