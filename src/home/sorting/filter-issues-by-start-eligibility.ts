@@ -12,7 +12,11 @@ interface EligibilityContext extends EligibilitySession {
 export class StartEligibilityFilter {
   private _context?: EligibilityContext;
 
-  constructor(private readonly _endpoint: string, private readonly _fetch: typeof fetch = fetch, private readonly _now: () => number = Date.now) {}
+  constructor(
+    private readonly _endpoint: string,
+    private readonly _fetch: typeof fetch = fetch,
+    private readonly _now: () => number = Date.now
+  ) {}
 
   public async filter<TIssue extends { html_url: string; updated_at: string }>(issues: TIssue[], session: EligibilitySession) {
     if (this._context?.userId !== session.userId || this._context?.accessToken !== session.accessToken) {

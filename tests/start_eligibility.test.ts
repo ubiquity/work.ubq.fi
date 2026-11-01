@@ -27,7 +27,10 @@ Deno.test("availability is the default and only an explicit allIssues=true opts 
     { ...issue(3), assignee: { login: "someone" } },
     { ...issue(4), assignees: [{ login: "someone" }] },
   ] as Parameters<typeof filterIssuesByAvailability>[0];
-  assertEquals(filterIssuesByAvailability(tasks).map((task) => task.html_url), [issue(1).html_url]);
+  assertEquals(
+    filterIssuesByAvailability(tasks).map((task) => task.html_url),
+    [issue(1).html_url]
+  );
 });
 
 Deno.test("eligibility accepts only explicit approvals and preserves issue order", async () => {
