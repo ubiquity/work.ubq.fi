@@ -6,42 +6,71 @@
     <link rel="icon" href="/favicon.png" type="image/png" sizes="256x256" />
 
     <meta charset="UTF-8" />
-    <title>DevPool Directory | Ubiquity DAO</title>
+    <title>Blockchain and Web3 Jobs | DevPool Directory</title>
 
     <link rel="stylesheet" href="style/style.css" />
     <link rel="stylesheet" href="style/inverted-style.css" />
     <link rel="stylesheet" href="style/special.css" />
 
     <link rel="apple-touch-icon" href="/icon-512x512.png" />
-    <link rel="canonical" href="https://work.ubq.fi" />
+    <link rel="canonical" href="https://devpool.directory/" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="description" content="View and sort through all of the available work within the DevPool network." />
+    <meta
+      name="description"
+      content="Discover blockchain development jobs and opportunities in the DevPool network. Browse, apply, and connect with top Web3 projects at Ubiquity DAO."
+    />
+    <meta
+      name="keywords"
+      content="blockchain jobs, Web3 jobs, blockchain development, blockchain developer jobs, open source bounties, DevPool, Ubiquity DAO"
+    />
     <meta name="robots" content="index,follow" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000410" />
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f0f0f0" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:creator" content="@UbiquityDAO" />
-    <meta name="twitter:description" content="View and sort through all of the available work within the DevPool network." />
-    <meta name="twitter:title" content="DevPool Directory | Ubiquity DAO" />
+    <meta
+      name="twitter:description"
+      content="Discover blockchain development jobs and opportunities in the DevPool network. Browse, apply, and connect with top Web3 projects at Ubiquity DAO."
+    />
+    <meta name="twitter:title" content="Blockchain and Web3 Jobs | DevPool Directory" />
+    <meta name="twitter:image" content="https://devpool.directory/icon-512x512.png" />
+    <meta name="twitter:image:alt" content="Ubiquity DAO logo" />
 
-    <meta property="og:description" content="View and sort through all of the available work within the DevPool network." />
-    <meta property="og:site_name" content="DevPool Directory | Ubiquity DAO" />
-    <meta property="og:title" content="DevPool Directory | Ubiquity DAO" />
+    <meta
+      property="og:description"
+      content="Discover blockchain development jobs and opportunities in the DevPool network. Browse, apply, and connect with top Web3 projects at Ubiquity DAO."
+    />
+    <meta property="og:site_name" content="DevPool Directory" />
+    <meta property="og:title" content="Blockchain and Web3 Jobs | DevPool Directory" />
+    <meta property="og:image" content="https://devpool.directory/icon-512x512.png" />
+    <meta property="og:image:alt" content="Ubiquity DAO logo" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://work.ubq.fi" />
-    <meta property="twitter:domain" content="work.ubq.fi" />
-    <meta property="twitter:url" content="https://work.ubq.fi" />
+    <meta property="og:url" content="https://devpool.directory/" />
+    <meta name="twitter:domain" content="devpool.directory" />
+    <meta name="twitter:url" content="https://devpool.directory/" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
     <link rel="manifest" href="/manifest.json" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Ubiquity DAO",
+        "url": "https://devpool.directory/",
+        "logo": "https://devpool.directory/ubiquity-logo.svg",
+        "description": "Discover blockchain development jobs and opportunities in the DevPool network. Browse, apply, and connect with top Web3 projects at Ubiquity DAO.",
+        "sameAs": ["https://twitter.com/UbiquityDAO", "https://dao.ubq.fi"]
+      }
+    </script>
   </head>
   <body>
+    <h1 class="sr-only">Blockchain and Web3 Development Jobs in the DevPool Network</h1>
     <background><div class="gradient"></div><div class="gradient"></div><div id="grid"></div></background>
     <div id="issues-container"></div>
     <div id="toolbar" class="toolbar" data-authenticated="false">
       <label for="view-toggle"
         ><div id="branding">
-          <svg id="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 151" fill="currentColor">
+          <svg role="img" aria-label="Ubiquity DAO logo" id="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 151" fill="currentColor">
             <use xlink:href="ubiquity-logo.svg" href="ubiquity-logo.svg"></use>
           </svg>
           <span
@@ -56,22 +85,31 @@
     <div id="preview-modal" class="preview">
       <div class="preview-content">
         <div class="preview-header">
-          <button class="close-preview">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+          <button class="close-preview" aria-label="Close issue preview">
+            <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
               <path d="m336-280-56-56 144-144-144-143 56-56 144 144 143-144 56 56-144 143 144 144-56 56-143-144-144 144Z" />
             </svg>
           </button>
           <a id="preview-title-anchor" target="_blank">
-            <h1 id="preview-title"></h1>
+            <h2 id="preview-title"></h2>
             <span class="error">
-              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#808080">
+              <svg
+                role="img"
+                aria-label="Issue preview unavailable"
+                focusable="false"
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#808080"
+              >
                 <path
                   d="M109-120q-11 0-20-5.5T75-140q-5-9-5.5-19.5T75-180l370-640q6-10 15.5-15t19.5-5q10 0 19.5 5t15.5 15l370 640q6 10 5.5 20.5T885-140q-5 9-14 14.5t-20 5.5H109Zm69-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm0-120q17 0 28.5-11.5T520-400v-120q0-17-11.5-28.5T480-560q-17 0-28.5 11.5T440-520v120q0 17 11.5 28.5T480-360Zm0-100Z"
                 />
               </svg>
             </span>
             <span class="open-new-link">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+              <svg role="img" aria-label="Opens in a new tab" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
                 <path
                   d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"
                 />
@@ -85,14 +123,15 @@
       </div>
     </div>
     <div id="bottom-bar" class="toolbar"
-      ><div id="mobile-modal-scrub"><button id="scrub-left">&lsaquo;</button><button id="scrub-right">&rsaquo;</button></div
+      ><div id="mobile-modal-scrub"
+        ><button id="scrub-left" aria-label="Previous issue">&lsaquo;</button><button id="scrub-right" aria-label="Next issue">&rsaquo;</button></div
       ><div id="filters-bottom" class="filters-container"></div
     ></div>
     <div id="bottom-right">
       <a href="#" id="git-revision" target="_blank"></a>
-      <a id="faq-link" href="https://dao.ubq.fi/devpool-flow" target="_blank"
-        ><button
-          ><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+      <a aria-label="DevPool FAQ" id="faq-link" href="https://dao.ubq.fi/devpool-flow" target="_blank"
+        ><button aria-label="DevPool FAQ"
+          ><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
             <path
               d="M478-240q21 0 35.5-14.5T528-290q0-21-14.5-35.5T478-340q-21 0-35.5 14.5T428-290q0 21 14.5 35.5T478-240Zm-36-154h74q0-33 7.5-52t42.5-52q26-26 41-49.5t15-56.5q0-56-41-86t-97-30q-57 0-92.5 30T342-618l66 26q5-18 22.5-39t53.5-21q32 0 48 17.5t16 38.5q0 20-12 37.5T506-526q-44 39-54 59t-10 73Zm38 314q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"
             ></path></svg></button

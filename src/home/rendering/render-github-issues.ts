@@ -60,7 +60,7 @@ function everyNewIssue({ gitHubIssue, container }: { gitHubIssue: GitHubIssue; c
 }
 
 function setUpIssueElement(issueElement: HTMLDivElement, task: GitHubIssue, organizationName: string, repositoryName: string, labels: string[], url: string) {
-  const image = `<img />`;
+  const image = `<img alt="${organizationName} logo" />`;
 
   issueElement.innerHTML = `
       <div class="info"><div class="title"><h3>${
