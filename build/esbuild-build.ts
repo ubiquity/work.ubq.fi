@@ -34,6 +34,7 @@ export const esBuildContext: esbuild.BuildOptions = {
   outdir: "static/dist",
   define: createEnvDefines(["SUPABASE_URL", "SUPABASE_ANON_KEY"], {
     SUPABASE_STORAGE_KEY: generateSupabaseStorageKey(),
+    COMMAND_START_STOP_URL: Deno.env.get("COMMAND_START_STOP_URL") || "",
     GIT_REVISION: await gitShortRevision(),
     NODE_ENV: Deno.env.get("NODE_ENV") || "development",
   }),

@@ -187,12 +187,8 @@ export class SortingManager {
     const LABEL_ALL_ISSUES = "All Issues" as const;
     const input = document.createElement("input");
     input.type = "button";
-    input.value = LABEL_AVAILABLE;
+    input.value = isFilteringAvailableIssues ? LABEL_AVAILABLE : LABEL_ALL_ISSUES;
     input.id = `filter-availability-${this._instanceId}`;
-    // decide initial value based on URL
-    if (new URLSearchParams(window.location.search).get("allIssues") === "true") {
-      input.value = LABEL_ALL_ISSUES;
-    }
 
     input.addEventListener("click", () => {
       swapAvailabilityFilter();
