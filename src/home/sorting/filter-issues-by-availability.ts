@@ -1,6 +1,10 @@
 import { GitHubIssue } from "../github-types.ts";
 import { isIssueAssigned } from "../utils/issue-utils.ts";
 
+export function isAvailabilityFilterEnabled(search: string) {
+  return new URLSearchParams(search).get("allIssues") !== "true";
+}
+
 export function filterIssuesByAvailability(issues: GitHubIssue[]) {
   return issues.filter((issue) => !isIssueAssigned(issue));
 }
