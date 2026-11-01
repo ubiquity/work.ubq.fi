@@ -1,0 +1,142 @@
+{
+  "name": "work-ubq",
+  "displayName": "work.ubq.fi Tasks",
+  "description": "Browse partner tasks, set up repositories, and follow issues from VS Code.",
+  "version": "0.1.0",
+  "publisher": "ubiquity",
+  "license": "UNLICENSED",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": ["Other"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ubiquity/work.ubq.fi"
+  },
+  "main": "./extension.cjs",
+  "activationEvents": ["onStartupFinished"],
+  "extensionDependencies": ["vscode.git", "vscode.github-authentication"],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false
+    }
+  },
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "workUbq.tasks",
+          "name": "work.ubq.fi Tasks"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "workUbq.refresh",
+        "title": "Refresh Tasks",
+        "category": "work.ubq.fi",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "workUbq.findTask",
+        "title": "Find Task",
+        "category": "work.ubq.fi",
+        "icon": "$(search)"
+      },
+      {
+        "command": "workUbq.openIssue",
+        "title": "Open Issue",
+        "category": "work.ubq.fi"
+      },
+      {
+        "command": "workUbq.setupIssue",
+        "title": "Clone Task Repository",
+        "category": "work.ubq.fi"
+      },
+      {
+        "command": "workUbq.watchIssue",
+        "title": "Watch Task",
+        "category": "work.ubq.fi"
+      },
+      {
+        "command": "workUbq.unwatchIssue",
+        "title": "Stop Watching Task",
+        "category": "work.ubq.fi"
+      },
+      {
+        "command": "workUbq.closeIssue",
+        "title": "Close Issue",
+        "category": "work.ubq.fi"
+      },
+      {
+        "command": "workUbq.reopenIssue",
+        "title": "Reopen Issue",
+        "category": "work.ubq.fi"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "workUbq.refresh",
+          "when": "view == workUbq.tasks",
+          "group": "navigation"
+        },
+        {
+          "command": "workUbq.findTask",
+          "when": "view == workUbq.tasks",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "workUbq.openIssue",
+          "when": "view == workUbq.tasks",
+          "group": "1_open"
+        },
+        {
+          "command": "workUbq.setupIssue",
+          "when": "view == workUbq.tasks",
+          "group": "1_open"
+        },
+        {
+          "command": "workUbq.watchIssue",
+          "when": "view == workUbq.tasks && viewItem == task",
+          "group": "2_watch"
+        },
+        {
+          "command": "workUbq.unwatchIssue",
+          "when": "view == workUbq.tasks && viewItem == watchedTask",
+          "group": "2_watch"
+        },
+        {
+          "command": "workUbq.closeIssue",
+          "when": "view == workUbq.tasks",
+          "group": "3_status"
+        },
+        {
+          "command": "workUbq.reopenIssue",
+          "when": "view == workUbq.tasks",
+          "group": "3_status"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "work.ubq.fi",
+      "properties": {
+        "workUbq.notifications.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Poll watched GitHub issues for updates while VS Code is running.",
+          "scope": "application"
+        },
+        "workUbq.notifications.intervalMinutes": {
+          "type": "integer",
+          "default": 5,
+          "minimum": 5,
+          "description": "Minutes between checks. GitHub API rate limits apply.",
+          "scope": "application"
+        }
+      }
+    }
+  }
+}
