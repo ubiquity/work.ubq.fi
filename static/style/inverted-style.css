@@ -515,7 +515,8 @@
     padding-left: 12px;
     margin-left: 4px;
   }
-  .preview h1 {
+  .preview h1,
+  .preview #preview-title {
     margin: 8px;
     font-size: 24px;
     margin-block-start: 0;
@@ -597,7 +598,7 @@
   .preview-header > a:hover {
     opacity: 1;
   }
-  .preview-header > a > h1 {
+  .preview-header > a > #preview-title {
     word-wrap: initial;
     word-break: normal;
     display: inline;
