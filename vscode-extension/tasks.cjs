@@ -1,4 +1,4 @@
-/* global module, fetch, AbortSignal */
+/* global fetch, AbortSignal */
 // Host-independent API helpers; no GitHub token is stored here.
 /** @typedef {{ owner: string, repo: string, number: number, title: string, state: "open" | "closed", updated_at: string, assigned: boolean }} Task */
 /** @typedef {typeof fetch} Fetcher */

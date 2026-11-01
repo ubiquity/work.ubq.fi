@@ -1,4 +1,4 @@
-/* global require, module, setInterval, clearInterval */
+/* global setInterval, clearInterval */
 const defaultApi = require("./tasks.cjs");
 
 // Optional host/API/clock arguments keep integration tests independent of a running IDE.
