@@ -350,10 +350,7 @@ Deno.test("watching uses a current baseline, deduplicates tasks and refreshes st
     await app.command("watchIssue", task());
     equal(app.state.saved.length, 1);
     equal(app.children().length, 2);
-    equal(app.state.auth, [
-      { silent: true },
-      { silent: true },
-    ]);
+    equal(app.state.auth, [{ silent: true }, { silent: true }]);
     app.state.shouldNotify = true;
     app.configure();
     app.state.latest = task({ updated_at: "2026-10-03T00:00:00Z" });
