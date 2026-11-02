@@ -54,7 +54,10 @@ Deno.test("extension feed merges proposals, deduplicates, and joins mirror assig
   };
   const result = await api.loadTasks(fetcher);
   equal(requests.length, 3);
-  equal(result.map((item) => item.number), [42, 43, 44]);
+  equal(
+    result.map((item) => item.number),
+    [42, 43, 44]
+  );
   assert(result[0].assigned && result[1].assigned);
   // A duplicate cannot invent an arbitrary URL or another task identity.
   equal(api.issueUrl({ ...result[0], url: "https://untrusted.example" } as Task), "https://github.com/partner/project/issues/42");
@@ -262,7 +265,10 @@ Deno.test("extension activates all manifest commands, browses, clones and retain
   try {
     await app.start();
     const manifest = JSON.parse(await Deno.readTextFile(new URL("../vscode-extension/package.json", import.meta.url)));
-    equal([...app.commands.keys()].sort(), manifest.contributes.commands.map((item: { command: string }) => item.command).sort());
+    equal(
+      [...app.commands.keys()].sort(),
+      manifest.contributes.commands.map((item: { command: string }) => item.command).sort()
+    );
     equal(app.children().length, 2);
     equal(app.state.auth, []);
     equal(app.timers.size, 0);
