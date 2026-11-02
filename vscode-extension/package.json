@@ -8,14 +8,21 @@
   "engines": {
     "vscode": "^1.95.0"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/ubiquity/work.ubq.fi"
   },
   "main": "./extension.cjs",
-  "activationEvents": ["onStartupFinished"],
-  "extensionDependencies": ["vscode.git", "vscode.github-authentication"],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "extensionDependencies": [
+    "vscode.git",
+    "vscode.github-authentication"
+  ],
   "capabilities": {
     "untrustedWorkspaces": {
       "supported": false

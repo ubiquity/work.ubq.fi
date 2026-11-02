@@ -181,10 +181,7 @@ async function activate(context, vscode = require("vscode"), api = defaultApi, c
     if (!config.get("enabled", false)) return;
     const configuredMinutes = config.get("intervalMinutes", 5);
     const minutes = Number.isFinite(configuredMinutes) ? Math.max(5, configuredMinutes) : 5;
-    timer = clock.setInterval(
-      () => syncWatched(true).catch((error) => output.appendLine(`Update check failed: ${String(error)}`)),
-      minutes * 60000
-    );
+    timer = clock.setInterval(() => syncWatched(true).catch((error) => output.appendLine(`Update check failed: ${String(error)}`)), minutes * 60000);
   }
 
   context.subscriptions.push(
