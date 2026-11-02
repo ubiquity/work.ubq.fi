@@ -16,6 +16,12 @@ deno task dev     # run server + watch
 # open http://localhost:8080 (override with PORT=8899 deno task dev)
 ```
 
+## VS Code Extension
+
+Browse, clone, manage, and watch partner tasks directly in VS Code. See the
+[extension setup and usage](vscode-extension/README.md) for the zero-build development
+host, optional GitHub authentication, notifications, and offline tests.
+
 ## Setup Scraper Function
 
 The scraper API (`/issue-scraper`) now runs on a local Deno server.
